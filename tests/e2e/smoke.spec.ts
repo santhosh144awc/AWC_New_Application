@@ -164,6 +164,93 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
     }
   });
 
+  test('interactive SIP calculator updates reactively on input changes, supports step-up comparison, resets cleanly, and rejects invalid inputs', async ({ page }) => {
+    await page.goto('/tools/sip/');
+
+    // 1. Initial State Check (Default: 10,000 / mo, 10 yrs, 12% return)
+    const futureValEl = page.locator('#sip-future-value');
+    await expect(futureValEl).toBeVisible();
+    const initialText = await futureValEl.textContent();
+    expect(initialText).toContain('₹');
+
+    // 2. Modify Investment Amount Input
+    const amountInput = page.locator('input[type="number"]').first();
+    await amountInput.fill('20000');
+    // Verify value updated and is higher
+    const updatedText = await futureValEl.textContent();
+    expect(updatedText).not.toBe(initialText);
+
+    // 3. Enable Step-Up and Verify Comparison Card
+    const stepUpInput = page.locator('input[type="number"]').nth(3);
+    await stepUpInput.fill('10');
+    const stepUpCard = page.locator('.stepup-advantage-card');
+    await expect(stepUpCard).toBeVisible();
+    await expect(stepUpCard).toContainText('Step-Up Advantage');
+
+    // 4. Toggle Schedule Table
+    const toggleScheduleBtn = page.locator('.btn-toggle-schedule');
+    await toggleScheduleBtn.click();
+    const scheduleTable = page.locator('.schedule-table');
+    await expect(scheduleTable).toBeVisible();
+    const rows = page.locator('.schedule-table tbody tr');
+    await expect(rows).toHaveCount(10);
+
+    // 5. Reset Action
+    const resetBtn = page.locator('#reset-sip-btn');
+    await resetBtn.click();
+    await expect(amountInput).toHaveValue('10000');
+    await expect(stepUpInput).toHaveValue('0');
+    await expect(stepUpCard).not.toBeVisible();
+
+    // 6. Invalid Input Boundary: Rate > 100% displays validation error
+    const returnInput = page.locator('input[type="number"]').nth(1);
+    await returnInput.fill('150');
+    const errorMsg = page.locator('.field-error');
+    await expect(errorMsg).toBeVisible();
+    await expect(errorMsg).toContainText('between 0% and 100%');
+    await expect(page.locator('.invalid-state-box')).toBeVisible();
+  });
+
+  test('learning hub renders collection-driven approved articles, article detail page loads with TOC, and withheld/unknown articles return 404', async ({ page }) => {
+    // 1. Learning Hub
+    await page.goto('/learn/');
+    const articleCards = page.locator('.article-card');
+    await expect(articleCards).toHaveCount(10);
+
+    // Verify review transparency notice is present
+    const reviewNotice = page.locator('.review-notice');
+    await expect(reviewNotice).toBeVisible();
+    await expect(reviewNotice).toContainText('withheld under qualified professional review');
+
+    // 2. Navigate to an Approved Article Detail Page
+    const firstArticleLink = page.locator('.article-card .card-title-link').first();
+    const articleHref = await firstArticleLink.getAttribute('href');
+    expect(articleHref).toBeTruthy();
+
+    const response = await page.goto(articleHref!);
+    expect(response?.status()).toBe(200);
+
+    // Verify Table of Contents is present
+    const toc = page.locator('.toc-card');
+    await expect(toc).toBeVisible();
+
+    // Verify single H1
+    await expect(page.locator('h1')).toHaveCount(1);
+
+    // Verify author card has no unverified ARN
+    const authorCard = page.locator('.author-card');
+    await expect(authorCard).toBeVisible();
+    await expect(authorCard).not.toContainText('266896');
+
+    // 3. Withheld Article Returns 404 (Not Generated)
+    const withheldResponse = await page.goto('/learn/how-to-start-planning-for-retirement/');
+    expect(withheldResponse?.status()).toBe(404);
+
+    // 4. Non-existent Slug Returns 404
+    const unknownResponse = await page.goto('/learn/completely-non-existent-guide/');
+    expect(unknownResponse?.status()).toBe(404);
+  });
+
   test('generate required screenshots at desktop (1440px) and mobile (390px) for visual inspection', async ({ page }) => {
     const targets = [
       { name: 'home', path: '/' },
@@ -172,6 +259,7 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
       { name: 'tools', path: '/tools/' },
       { name: 'tool-sip', path: '/tools/sip/' },
       { name: 'learn', path: '/learn/' },
+      { name: 'learn-article', path: '/learn/what-is-sip-and-how-does-it-work/' },
       { name: 'about', path: '/about/' },
       { name: 'contact', path: '/contact/' },
     ];

@@ -50,18 +50,18 @@ const categories = [
 
           <div class="tools-grid">
             {cat.tools.map((tool) => (
-              <div class="tool-card">
+              <div class={`tool-card ${tool.id === 'tool-sip' ? 'active-tool-card' : ''}`}>
                 <div class="tool-meta">
                   <span class="tool-eyebrow">{tool.eyebrow}</span>
-                  <span class="tool-badge">{tool.statusBadge}</span>
+                  <span class={`tool-badge ${tool.id === 'tool-sip' ? 'badge-active' : ''}`}>{tool.statusBadge}</span>
                 </div>
 
                 <h3 class="tool-title">{tool.label}</h3>
                 <p class="tool-desc">{tool.description}</p>
 
                 <div class="tool-action">
-                  <a href={tool.path} class="btn-tool">
-                    View Simulator Shell →
+                  <a href={tool.path} class={`btn-tool ${tool.id === 'tool-sip' ? 'btn-tool-active' : ''}`}>
+                    {tool.id === 'tool-sip' ? 'Launch Calculator →' : 'View Simulator Shell →'}
                   </a>
                 </div>
               </div>
@@ -212,5 +212,21 @@ const categories = [
   .btn-tool:hover {
     color: var(--color-text-brand);
     text-decoration: underline;
+  }
+
+  .active-tool-card {
+    border-color: var(--color-primary-light, #93c5fd);
+    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.08);
+  }
+
+  .badge-active {
+    background-color: #ecfdf5 !important;
+    color: #047857 !important;
+    border-color: #a7f3d0 !important;
+  }
+
+  .btn-tool-active {
+    color: var(--color-primary, #1a365d);
+    font-weight: 800;
   }
 </style>

@@ -1,28 +1,30 @@
 ---
 interface Crumb {
   label: string;
-  href: string;
+  href?: string;
 }
 
 interface Props {
-  crumbs: Crumb[];
+  crumbs?: Crumb[];
+  items?: Crumb[];
 }
 
-const { crumbs } = Astro.props;
+const { crumbs, items } = Astro.props;
+const list = crumbs ?? items ?? [];
 ---
 
 <nav aria-label="Breadcrumb" class="breadcrumbs-nav">
   <ol class="breadcrumbs-list" role="list">
-    {crumbs.map((crumb, index) => {
-      const isLast = index === crumbs.length - 1;
+    {list.map((crumb, index) => {
+      const isLast = index === list.length - 1;
       return (
         <li class="breadcrumb-item">
-          {isLast ? (
-            <span class="breadcrumb-current" aria-current="page">{crumb.label}</span>
+          {isLast || !crumb.href ? (
+            <span class="breadcrumb-current" aria-current={isLast ? "page" : undefined}>{crumb.label}</span>
           ) : (
             <a href={crumb.href} class="breadcrumb-link">{crumb.label}</a>
-            <span class="breadcrumb-separator" aria-hidden="true">/</span>
           )}
+          {!isLast && <span class="breadcrumb-separator" aria-hidden="true">/</span>}
         </li>
       );
     })}

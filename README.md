@@ -18,8 +18,8 @@ This application is scaffolded cleanly from scratch in `new-app/` and is strictl
 
 | Package | Locked Version (`package-lock.json`) | Role in Architecture |
 | :--- | :--- | :--- |
-| **astro** | `5.18.2` | Core static-first SSG and component layout framework |
-| **react** | `19.0.0` | Client-side interactive islands and guided planners |
+| **astro** | `5.18.2` | Core static-first SSG, Content Collections Layer, and page layouts |
+| **react** | `19.0.0` | Client-side interactive calculator islands (`SipCalculatorIsland.tsx`) |
 | **react-dom** | `19.0.0` | React DOM renderer |
 | **@astrojs/react** | `4.2.1` | Astro official React island integration |
 | **typescript** | `5.7.3` | Strict-mode type safety across all application code |
@@ -45,6 +45,9 @@ new-app/
 │   ├── config/
 │   │   ├── businessProfile.ts # Authoritative business identity & compliance disclosures
 │   │   └── routes.ts        # Central route registry & navigation model (single source of truth)
+│   ├── content/
+│   │   └── articles/        # Migrated educational markdown articles audited in CONTENT_REVIEW_REGISTER.csv
+│   ├── content.config.ts    # Astro 5 Content Layer collection definitions & Zod validation schemas
 │   ├── domain/
 │   │   ├── finance/         # PURE TypeScript financial calculation engines (isolated from DOM/storage)
 │   │   │   ├── investmentRates.ts     # Effective annual return to geometric monthly compounding
@@ -56,6 +59,9 @@ new-app/
 │   │   │   ├── homeLoanAmortization.ts# Reducing-balance loan amortization with prepayment scenarios
 │   │   │   └── errors.ts              # FinanceValidationError and parameter boundary assertions
 │   │   └── tax/             # Centralized tax-rules registry versioned by Act and Tax Year
+│   ├── features/
+│   │   └── calculators/     # Client-side React islands for interactive calculations
+│   │       └── SipCalculatorIsland.tsx # Accessible SIP calculator island (sliders, schedules, step-up comparison)
 │   ├── layouts/
 │   │   └── BaseLayout.astro # Semantic HTML5 landmarks, OpenGraph, JSON-LD, WCAG skip link
 │   ├── lib/
@@ -64,8 +70,10 @@ new-app/
 │   │   ├── index.astro      # Polished, responsive Family Money Map homepage
 │   │   ├── health-check/    # 7-Pillars diagnostic framework & REAL Statement shells
 │   │   ├── plan/            # Goal planning roadmap shells (children, home, retirement, income)
-│   │   ├── tools/           # 9 categorized interactive calculation simulator shells
-│   │   ├── learn/           # Educational knowledge library with 5 structured guides
+│   │   ├── tools/           # 9 categorized interactive calculation simulator shells + active SIP calculator
+│   │   ├── learn/
+│   │   │   ├── index.astro  # Collection-driven educational hub displaying approved articles
+│   │   │   └── [slug].astro # Dynamic article detail routes with TOC, reading time, and tool CTAs
 │   │   ├── about.astro      # Founder story, heritage, and practice principles
 │   │   ├── contact.astro    # Direct contact channels & consultation expectations
 │   │   ├── disclaimer.astro # Statutory disclosures, mutual fund risk & intermediary notice
@@ -76,8 +84,8 @@ new-app/
 │       ├── design-tokens.css # Authored CSS tokens with measured WCAG contrast calculations
 │       └── global.css       # Accessible CSS reset and global typography rules
 ├── tests/
-│   ├── e2e/                 # Playwright tests (navigation, mobile drawer, overflow, screenshots)
-│   └── unit/                # Vitest unit test suite (8 test suites, 68 tests across all engines)
+│   ├── e2e/                 # Playwright tests (navigation, mobile drawer, SIP sliders, articles, 404)
+│   └── unit/                # Vitest unit test suite (9 test suites, 74 tests across engines)
 ├── astro.config.mjs         # Astro configuration with canonical site 'https://antwealth.in'
 ├── playwright.config.ts     # Cross-platform preview test configuration
 └── package.json             # Independent package manifest
@@ -93,22 +101,22 @@ All commands run strictly inside `new-app/`:
 # Start local development server
 npm run dev
 
-# Run unit tests (Vitest: 8 test files, 68 tests)
+# Run unit tests (Vitest: 9 test files, 74 tests)
 npm run test
 
-# Run Astro template diagnostic type check (0 errors, 0 warnings)
+# Run Astro template diagnostic type check (0 errors, 0 warnings across 66 files)
 npm run check
 
 # Run ESLint linter
 npm run lint
 
-# Build production static bundle (dist/)
+# Build production static bundle (dist/ - 35 static pages)
 npm run build
 
 # Preview production build locally
 npm run preview
 
-# Run browser e2e smoke & visual tests (Playwright: 6 tests across viewports)
+# Run browser e2e smoke & visual tests (Playwright: 8 test suites across viewports)
 npm run test:e2e
 ```
 
@@ -128,8 +136,9 @@ npm run test:e2e
 ## 6. Business Identity & Compliance Governance
 
 * **Founder Identity:** C. Santhosh Sathriyan, B.E., QPFP Certified. Active in Indian financial markets since 2012.
-* **AMFI Registration Status:** The firm is an AMFI-Registered Mutual Fund Distributor. While legacy documentation cites `ARN-266896`, the registration number is classified as `PENDING_VERIFICATION` in `src/config/businessProfile.ts` and withheld from public UI until confirmed against the official AMFI registry ([AMFI Locate Distributor](https://www.amfiindia.com/locate-distributor)).
+* **AMFI Registration Status:** The firm is an AMFI-Registered Mutual Fund Distributor. While legacy documentation cites `ARN-266896`, the registration number is classified as `PENDING_VERIFICATION` in `src/config/businessProfile.ts` and withheld from public UI and article frontmatter until confirmed against the official AMFI registry ([AMFI Locate Distributor](https://www.amfiindia.com/locate-distributor)).
 * **Canonical Domain:** `https://antwealth.in` is the single authoritative canonical domain.
 * **Staging Protection:** `public/robots.txt` disallows all crawlers during staging development to prevent premature search indexing.
 * **Regulatory Distinction:** Operates strictly as a Mutual Fund Distributor (MFD) earning trailing commissions from AMCs. Explicitly disclaims fee-based investment advisory under SEBI (Investment Advisers) Regulations.
 * **Zero Fabricated Testimonials:** Fictitious customer cards and unverified reviews are permanently suppressed.
+* **Educational Content Governance:** Only articles marked with `publicationStatus: 'APPROVED'` in `product-docs/CONTENT_REVIEW_REGISTER.csv` are published. Articles requiring specialized tax or regulatory review (e.g., retirement SWP tax haircuts or loan tax deductions) remain withheld.

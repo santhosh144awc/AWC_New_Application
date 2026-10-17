@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import SipCalculatorIsland from '../../features/calculators/SipCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/tools/sip/');
@@ -11,36 +11,21 @@ const crumbs = getBreadcrumbsForPath('/tools/sip/');
 <BaseLayout
   title="Monthly SIP Wealth Compounding Simulator — Ant Wealth Creation"
   description="Model monthly mutual fund compounding, annual step-up SIP acceleration, and long-term purchasing power with transparent mathematical assumptions."
-  currentPath="/tools/sip/"
+  canonicalUrl="https://antwealth.in/tools/sip/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Investment Simulator"
+      eyebrow="Interactive Wealth Simulator"
       title="Monthly SIP Wealth Compounding Simulator"
       description="Systematic Investment Plans (SIPs) transform small, disciplined monthly savings into substantial milestone capital. This tool models long-term compounding and illustrates how increasing your SIP annually accelerates goal achievement."
-      statusBadge="GATE-B Rate Semantics Review Pending"
     />
 
-    <StatusNotice
-      featureName="SIP Mathematical Compounding Engine"
-      gateNote="Under GATE-B (Annual Return & Monthly Compounding Semantics), whether the calculator operates on nominal monthly division (r/12) or effective geometric compounding ((1+r)^(1/12)-1) is being formalized into a single shared rate-conversion policy. In this shell, the planning parameters and compounding dynamics are presented without mock calculations."
-      expectedInputs={[
-        "Monthly investment installment amount (e.g., ₹5,000 to ₹1,00,000)",
-        "Assumed annual return rate (illustrative assumption, e.g. 8% to 14%)",
-        "Investment tenure in years (e.g. 5, 10, 15, 20+ years)",
-        "Optional Annual Step-Up percentage (e.g. 5% to 15% increase per year)",
-      ]}
-      expectedOutputs={[
-        "Total amount invested over the chosen tenure",
-        "Estimated final maturity wealth corpus",
-        "Estimated compound earnings generated",
-        "Year-by-year invested amount vs corpus accumulation breakdown table",
-        "Comparison of Fixed SIP vs Annual Step-Up SIP outcome",
-      ]}
-    />
+    <!-- Interactive SIP Calculator Island -->
+    <SipCalculatorIsland client:load />
 
+    <!-- Educational Deep-Dive Sections -->
     <section class="educational-insight-box" aria-labelledby="insight-heading">
       <h2 id="insight-heading" class="section-title">The Power of the Annual Step-Up SIP</h2>
       <p class="section-desc">
@@ -62,111 +47,171 @@ const crumbs = getBreadcrumbsForPath('/tools/sip/');
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/tools/" class="btn-subtle">← Back to All Tools</a>
-      <a href="/tools/lumpsum/" class="btn-subtle">Explore Lump Sum Growth Calculator →</a>
-    </div>
+    <!-- Strategy Pillars -->
+    <section class="strategy-section" aria-labelledby="strategy-heading">
+      <h2 id="strategy-heading" class="section-title">Four Principles of Disciplined SIP Compounding</h2>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="strategy-num">01</div>
+          <h3 class="strategy-name">Rupee Cost Averaging</h3>
+          <p class="strategy-text">
+            When equity markets decline, your fixed monthly installment automatically purchases more mutual fund units. When markets rise, you buy fewer units. This eliminates emotional market timing.
+          </p>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-num">02</div>
+          <h3 class="strategy-name">Time Over Market Timing</h3>
+          <p class="strategy-text">
+            Compounding is back-loaded: the growth generated in years 11 to 20 vastly exceeds the growth of the first decade. Staying invested through volatility is where true family wealth is created.
+          </p>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-num">03</div>
+          <h3 class="strategy-name">Step-Up Discipline</h3>
+          <p class="strategy-text">
+            Commit bonuses and annual salary increments to increasing your SIP. Stepping up your investment rate before lifestyle inflation absorbs raises dramatically cuts your working horizon.
+          </p>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-num">04</div>
+          <h3 class="strategy-name">Goal Alignment</h3>
+          <p class="strategy-text">
+            Do not run an SIP without a name. Earmark every SIP folio for a specific family milestone—children's education, primary home down payment, or self-sustaining retirement.
+          </p>
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
   .educational-insight-box {
-    margin: var(--space-12) 0;
+    margin-top: var(--space-10);
+    padding: var(--space-8);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
   }
 
   .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+    font-size: var(--font-size-2xl);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+    font-weight: 800;
   }
 
   .section-desc {
-    font-size: var(--text-body);
     color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    max-width: 70ch;
+    margin-bottom: var(--space-6);
   }
 
   .stepup-comparison-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     .stepup-comparison-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
     }
   }
 
   .stepup-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
     padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
   }
 
   .featured-stepup {
-    border-color: var(--primitive-teal-500);
-    border-width: 2px;
-    background-color: var(--primitive-teal-50);
+    border-color: var(--color-primary-light);
+    background: linear-gradient(135deg, rgba(26, 54, 93, 0.05) 0%, rgba(197, 160, 89, 0.08) 100%);
   }
 
   .stepup-type {
-    font-size: var(--text-caption);
+    display: block;
+    font-size: var(--font-size-xs);
     font-weight: 700;
-    color: var(--color-text-brand);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    display: block;
+    color: var(--color-text-secondary);
     margin-bottom: var(--space-2);
   }
 
   .stepup-metric {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
     font-weight: 800;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
   }
 
   .stepup-desc {
-    font-size: var(--text-body-sm);
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     margin: 0;
   }
 
-  .nav-links-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
+  .strategy-section {
     margin-top: var(--space-12);
   }
 
-  .btn-subtle {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  @media (min-width: 768px) {
+    .strategy-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .strategy-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .strategy-card {
+    padding: var(--space-6);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .strategy-num {
+    font-size: var(--font-size-xs);
+    font-weight: 800;
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .strategy-name {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .strategy-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
   }
 </style>

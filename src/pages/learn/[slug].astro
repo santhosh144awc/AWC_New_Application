@@ -1,0 +1,495 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => {
+    return data.publicationStatus === 'APPROVED';
+  });
+
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+
+const { article } = Astro.props;
+const { Content, headings } = await render(article);
+
+const canonicalUrl = `https://antwealth.in/learn/${article.id}/`;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Learn', href: '/learn/' },
+  { label: article.data.title },
+];
+
+// Filter h2 and h3 headings for Table of Contents
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// Fetch other approved articles for related reading (exclude current)
+const allApproved = await getCollection('articles', ({ data, id }) => {
+  return data.publicationStatus === 'APPROVED' && id !== article.id;
+});
+const relatedArticles = allApproved.slice(0, 3);
+---
+
+<BaseLayout
+  title={`${article.data.title} | Ant Wealth Creation`}
+  description={article.data.description}
+  canonicalUrl={canonicalUrl}
+>
+  <div class="article-page">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <header class="article-header">
+        <div class="article-meta-top">
+          <span class="category-badge">{article.data.category}</span>
+          <span class="reading-time">{article.data.readingTime}</span>
+          <time datetime={article.data.publishDate} class="publish-date">
+            Updated {new Date(article.data.publishDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </time>
+        </div>
+
+        <h1 class="article-title">{article.data.title}</h1>
+        <p class="article-lead">{article.data.description}</p>
+
+        <div class="author-card">
+          <div class="author-avatar" aria-hidden="true">SS</div>
+          <div class="author-details">
+            <span class="author-name">{article.data.author}</span>
+            <span class="author-title">AMFI-Registered Mutual Fund Distributor</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="article-layout">
+        <!-- Main Article Content -->
+        <main class="article-body" id="article-content">
+          <div class="prose-content">
+            <Content />
+          </div>
+
+          {article.data.calculatorCTA && (
+            <aside class="article-cta-box" aria-labelledby="cta-title">
+              <div class="cta-content">
+                <span class="cta-eyebrow">Interactive Financial Tool</span>
+                <h2 id="cta-title" class="cta-heading">{article.data.calculatorCTA.title}</h2>
+                <p class="cta-description">{article.data.calculatorCTA.description}</p>
+              </div>
+              <a href={article.data.calculatorCTA.href} class="btn btn-primary cta-btn">
+                {article.data.calculatorCTA.buttonLabel} &rarr;
+              </a>
+            </aside>
+          )}
+
+          <div class="article-footer-nav">
+            <a href="/learn/" class="back-link">&larr; Back to all learning guides</a>
+          </div>
+        </main>
+
+        <!-- Sidebar / Table of Contents -->
+        <aside class="article-sidebar" aria-label="Table of Contents and Related Topics">
+          {tocHeadings.length > 0 && (
+            <nav class="toc-card" aria-labelledby="toc-heading">
+              <h2 id="toc-heading" class="toc-title">In this article</h2>
+              <ul class="toc-list">
+                {tocHeadings.map((heading) => (
+                  <li class={`toc-item depth-${heading.depth}`}>
+                    <a href={`#${heading.slug}`} class="toc-link">
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          {relatedArticles.length > 0 && (
+            <div class="related-card">
+              <h2 class="related-title">More Practical Guides</h2>
+              <ul class="related-list">
+                {relatedArticles.map((rel) => (
+                  <li class="related-item">
+                    <span class="related-cat">{rel.data.category}</span>
+                    <a href={`/learn/${rel.id}/`} class="related-link">
+                      {rel.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div class="disclaimer-note">
+            <p>
+              <strong>Investor Note:</strong> All examples are illustrative and not financial guarantees or personalized advice. Mutual fund investments are subject to market risks. Read all scheme-related documents carefully.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .article-page {
+    padding: var(--space-6) 0 var(--space-16);
+    background-color: var(--color-surface-sunken);
+  }
+
+  .container {
+    max-width: var(--container-width-desktop);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  .article-header {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-8);
+    max-width: 840px;
+  }
+
+  .article-meta-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .category-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .reading-time, .publish-date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .article-title {
+    font-size: var(--font-size-3xl);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-3);
+    font-weight: 800;
+  }
+
+  .article-lead {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4);
+  }
+
+  .author-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    display: inline-flex;
+  }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .author-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .author-name {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .author-title {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* Two-column Layout */
+  .article-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .article-layout {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+
+  /* Main Body Prose */
+  .article-body {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .article-body {
+      padding: var(--space-8);
+    }
+  }
+
+  .prose-content {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    max-width: 68ch;
+  }
+
+  .prose-content :global(h2) {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: var(--space-8) 0 var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .prose-content :global(h3) {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: var(--space-6) 0 var(--space-3);
+  }
+
+  .prose-content :global(p) {
+    margin: 0 0 var(--space-4);
+  }
+
+  .prose-content :global(ul), .prose-content :global(ol) {
+    margin: 0 0 var(--space-4);
+    padding-left: var(--space-6);
+  }
+
+  .prose-content :global(li) {
+    margin-bottom: var(--space-2);
+  }
+
+  .prose-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-6) 0;
+    font-size: var(--font-size-sm);
+  }
+
+  .prose-content :global(th), .prose-content :global(td) {
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .prose-content :global(th) {
+    background-color: var(--color-surface-sunken);
+    font-weight: 700;
+  }
+
+  .prose-content :global(strong) {
+    color: var(--color-text-primary);
+    font-weight: 700;
+  }
+
+  .prose-content :global(em) {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    display: block;
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+  }
+
+  /* Interactive Tool CTA Box */
+  .article-cta-box {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: linear-gradient(135deg, rgba(26, 54, 93, 0.05) 0%, rgba(197, 160, 89, 0.08) 100%);
+    border: 1px solid var(--color-primary-light);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .article-cta-box {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .cta-eyebrow {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cta-heading {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: var(--space-1) 0;
+  }
+
+  .cta-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .cta-btn {
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .cta-btn {
+      align-self: center;
+    }
+  }
+
+  .article-footer-nav {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Sidebar */
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .toc-card, .related-card {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .toc-title, .related-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-3);
+  }
+
+  .toc-list, .related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: var(--space-2);
+  }
+
+  .toc-item.depth-3 {
+    padding-left: var(--space-3);
+  }
+
+  .toc-link {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+    transition: color 0.15s ease;
+  }
+
+  .toc-link:hover, .toc-link:focus-visible {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .related-item {
+    margin-bottom: var(--space-4);
+  }
+
+  .related-cat {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+  }
+
+  .related-link {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .related-link:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .disclaimer-note {
+    padding: var(--space-4);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+  }
+</style>

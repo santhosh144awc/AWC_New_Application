@@ -8,7 +8,7 @@
  *    first step-up occurs strictly at Month 13, second at Month 25, etc.
  */
 
-import { assertFiniteNonNegative, assertPositiveInteger, assertValidRatePercent, FinanceValidationError } from './errors';
+import { assertFiniteNonNegative, assertPositiveInteger, assertStandardInvestmentReturnPercent, FinanceValidationError } from './errors';
 import { effectiveAnnualToMonthlyRate } from './investmentRates';
 
 export interface SIPInput {
@@ -68,7 +68,7 @@ export function calculateSIP(input: SIPInput, includeMonthlySchedule = false): S
 
   assertFiniteNonNegative('monthlyInvestment', installment as number);
   assertPositiveInteger('tenureMonths', input.tenureMonths);
-  assertValidRatePercent('annualReturnPercent', annualRate as number);
+  assertStandardInvestmentReturnPercent('annualReturnPercent', annualRate as number);
 
   const stepUpPercent = input.annualStepUpPercent ?? 0;
   assertFiniteNonNegative('annualStepUpPercent', stepUpPercent);

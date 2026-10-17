@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -6,268 +7,342 @@ import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/learn/');
 
-const guides = [
-  {
-    title: "Financial Freedom in India: The 7-Step Roadmap",
-    slug: "financial-freedom-india",
-    category: "Foundations",
-    readingTime: "8 min read",
-    summary: "A practical, phased journey tailored for Indian middle-class families—from high-interest debt elimination to building self-sustaining multi-generational wealth.",
-    keyTakeaways: [
-      "Why emergency liquidity comes before equity investing",
-      "Shielding your downside through adequate term and health insurance",
-      "Transitioning from active salaried work to passive compounding income",
-    ],
-    relatedTool: { label: "7-Pillars Health Check", href: "/health-check/" },
-  },
-  {
-    title: "The Comprehensive Emergency Fund Guide",
-    slug: "emergency-fund-guide",
-    category: "Protection",
-    readingTime: "6 min read",
-    summary: "Why 6 to 12 months of non-negotiable living expenses must be parked in high-liquidity instruments before you take market volatility risk.",
-    keyTakeaways: [
-      "Calculating your true monthly burn rate (EMI + groceries + utilities + insurance)",
-      "Where to keep reserves: Liquid mutual funds vs sweep-in savings accounts",
-      "Common psychological traps: Chasing yield with emergency reserves",
-    ],
-    relatedTool: { label: "Net Worth Calculator", href: "/tools/net-worth/" },
-  },
-  {
-    title: "Term Insurance vs Investment-Linked Plans",
-    slug: "term-insurance-guide",
-    category: "Risk Shield",
-    readingTime: "7 min read",
-    summary: "Why mixing insurance with investment produces substandard results on both fronts, and how pure term insurance gives maximum cover for lowest premium.",
-    keyTakeaways: [
-      "The hidden costs and low IRR (4% to 5%) of traditional endowment plans",
-      "Using Human Life Value (HLV) to calculate 15-20x annual expense coverage",
-      "The MWP (Married Women's Property) Act shield for Indian business owners and professionals",
-    ],
-    relatedTool: { label: "Term Life Calculator", href: "/tools/life-insurance/" },
-  },
-  {
-    title: "Selecting the Right Mutual Funds for Long Horizons",
-    slug: "mutual-fund-selection-guide",
-    category: "Wealth Creation",
-    readingTime: "10 min read",
-    summary: "Demystifying market capitalizations, expense ratios, rolling returns, and portfolio overlap to build a resilient equity mutual fund portfolio.",
-    keyTakeaways: [
-      "Large-cap index funds vs flexi-cap vs mid/small-cap allocations",
-      "Why rolling returns matter far more than trailing 1-year returns",
-      "Avoiding portfolio clutter: Why 3 to 4 well-chosen funds are all you need",
-    ],
-    relatedTool: { label: "Monthly SIP Simulator", href: "/tools/sip/" },
-  },
-  {
-    title: "Tax-Efficient Investing in India (Under Review)",
-    slug: "tax-efficient-investing-guide",
-    category: "Tax Planning",
-    readingTime: "9 min read",
-    summary: "Understanding capital gains taxation on equity and debt mutual funds, Section 80C phase-out realities, and tax harvesting strategies.",
-    keyTakeaways: [
-      "Long-Term Capital Gains (LTCG) vs Short-Term Capital Gains (STCG) on equity",
-      "Debt fund taxation post-Finance Act amendments",
-      "Note: Tax rules are under ongoing legal review per the proposed Income-tax Act, 2025",
-    ],
-    relatedTool: { label: "Retirement Planner", href: "/plan/retirement/" },
-  },
-];
+// Retrieve all approved educational guides from the articles content collection
+const approvedArticles = await getCollection('articles', ({ data }) => {
+  return data.publicationStatus === 'APPROVED';
+});
+
+// Sort by featured first, then by date descending
+approvedArticles.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
+
+// Distinct categories for quick reference
+const categories = Array.from(new Set(approvedArticles.map((a) => a.data.category)));
 ---
 
 <BaseLayout
-  title="Financial Learning Library — Ant Wealth Creation"
-  description="Practical, jargon-free guides on financial freedom, debt management, life protection, and disciplined mutual fund investing in India."
-  currentPath="/learn/"
+  title="Financial Learning Library | Ant Wealth Creation"
+  description="Practical, fluff-free financial guides designed for Indian families. Learn how compounding works, how to choose mutual funds, and how to protect what you build."
+  canonicalUrl="https://antwealth.in/learn/"
 >
-  <div class="container page-container">
-    <Breadcrumbs crumbs={crumbs} />
+  <div class="learn-page">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
 
-    <PageIntro
-      eyebrow="Knowledge & Frameworks"
-      title="Financial Learning Library"
-      description="Clear, honest, and educational guides to help Indian families make informed money decisions without jargon, sales pressure, or get-rich-quick hype."
-    />
+      <PageIntro
+        eyebrow="Financial Education & Insights"
+        title="Knowledge That Protects and Grows Family Wealth"
+        description="Clear, honest, and practical financial guides tailored for Indian families. No financial jargon, no product pitching—just timeless principles for disciplined compounding."
+      />
 
-    <div class="guides-grid">
-      {guides.map((guide) => (
-        <article class="guide-card">
-          <div class="guide-header">
-            <span class="guide-category">{guide.category}</span>
-            <span class="guide-time">{guide.readingTime}</span>
-          </div>
+      <!-- Categories Summary Bar -->
+      <div class="categories-bar" aria-label="Article categories">
+        <span class="categories-label">Browse Topics:</span>
+        <div class="categories-tags">
+          {categories.map((cat) => (
+            <span class="cat-pill">{cat}</span>
+          ))}
+        </div>
+      </div>
 
-          <h2 class="guide-title">{guide.title}</h2>
-          <p class="guide-summary">{guide.summary}</p>
+      <!-- Articles Grid -->
+      <div class="articles-grid" role="feed" aria-label="Published learning guides">
+        {approvedArticles.map((article) => (
+          <article class={`article-card ${article.data.featured ? 'featured' : ''}`}>
+            <div class="card-meta">
+              <span class="card-category">{article.data.category}</span>
+              <span class="card-time">{article.data.readingTime}</span>
+            </div>
 
-          <div class="takeaways-box">
-            <h3 class="takeaways-heading">Key Insights:</h3>
-            <ul class="takeaways-list">
-              {guide.keyTakeaways.map((takeaway) => (
-                <li>{takeaway}</li>
-              ))}
-            </ul>
-          </div>
+            <h2 class="card-title">
+              <a href={`/learn/${article.id}/`} class="card-title-link">
+                {article.data.title}
+              </a>
+            </h2>
 
-          <div class="guide-footer">
-            <a href={guide.relatedTool.href} class="related-tool-link">
-              Launch {guide.relatedTool.label} →
-            </a>
-          </div>
-        </article>
-      ))}
+            <p class="card-summary">{article.data.description}</p>
+
+            <div class="card-footer">
+              <div class="card-tags">
+                {article.data.tags.slice(0, 3).map((tag) => (
+                  <span class="card-tag">#{tag}</span>
+                ))}
+              </div>
+
+              <a href={`/learn/${article.id}/`} class="read-more-link" aria-label={`Read full guide: ${article.data.title}`}>
+                Read Guide &rarr;
+              </a>
+            </div>
+
+            {article.data.calculatorCTA && (
+              <div class="card-tool-strip">
+                <span class="tool-strip-label">Related Tool:</span>
+                <a href={article.data.calculatorCTA.href} class="tool-strip-link">
+                  {article.data.calculatorCTA.buttonLabel}
+                </a>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <!-- Review Transparency Notice -->
+      <aside class="review-notice" aria-labelledby="review-notice-title">
+        <div class="notice-icon" aria-hidden="true">&#9432;</div>
+        <div class="notice-content">
+          <h3 id="review-notice-title" class="notice-title">Editorial Standards & Ongoing Review</h3>
+          <p class="notice-text">
+            Ant Wealth Creation adheres to strict factual verification. Two advanced roadmap guides covering post-retirement cash flow distributions and home loan prepayment vs mutual fund investing are currently withheld under qualified professional review (GATE-A & GATE-C) to ensure 100% statutory alignment with the Income-tax Act, 2025.
+          </p>
+        </div>
+      </aside>
     </div>
-
-    <section class="learning-philosophy" aria-labelledby="philosophy-heading">
-      <h2 id="philosophy-heading" class="philosophy-title">Our Educational Philosophy</h2>
-      <p class="philosophy-text">
-        At Ant Wealth Creation, we believe financial education must come before product selection. You will never see product hype, complex derivatives, or speculative trading tips here. We teach disciplined, boring, time-tested financial principles that protect your family and compound your wealth steadily.
-      </p>
-    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .page-container {
-    padding-bottom: var(--space-16);
+  .learn-page {
+    padding: var(--space-6) 0 var(--space-16);
+    background-color: var(--color-surface-sunken);
+    overflow-x: hidden;
   }
 
-  .guides-grid {
+  .container {
+    max-width: var(--container-width-desktop);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+    box-sizing: border-box;
+  }
+
+  .categories-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-6) 0 var(--space-8);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .categories-label {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .categories-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .cat-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  .articles-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-8);
-    margin-bottom: var(--space-16);
+    gap: var(--space-6);
   }
 
   @media (min-width: 768px) {
-    .guides-grid {
+    .articles-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .guide-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
+  @media (min-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .article-card {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: var(--space-8);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-subtle);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
   }
 
-  .guide-card:hover {
+  @media (min-width: 768px) {
+    .article-card {
+      padding: var(--space-6);
+    }
+  }
+
+  .article-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-light);
   }
 
-  .guide-header {
+  .article-card.featured {
+    border-top: 4px solid var(--color-primary);
+  }
+
+  .card-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-4);
-  }
-
-  .guide-category {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--primitive-teal-100);
-  }
-
-  .guide-time {
-    font-size: var(--text-caption);
-    color: var(--color-text-tertiary);
-  }
-
-  .guide-title {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    line-height: 1.3;
     margin-bottom: var(--space-3);
   }
 
-  .guide-summary {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-6);
-  }
-
-  .takeaways-box {
-    background-color: var(--primitive-navy-50);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-    margin-top: auto;
-    margin-bottom: var(--space-6);
-  }
-
-  .takeaways-heading {
-    font-size: var(--text-caption);
+  .card-category {
+    font-size: var(--font-size-xs);
     font-weight: 700;
+    color: var(--color-accent);
     text-transform: uppercase;
-    color: var(--color-text-brand);
-    margin-bottom: var(--space-2);
+    letter-spacing: 0.05em;
   }
 
-  .takeaways-list {
-    margin: 0;
-    padding-left: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    font-size: var(--text-caption);
+  .card-time {
+    font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    line-height: 1.5;
   }
 
-  .guide-footer {
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-4);
+  .card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-primary);
+    word-break: break-word;
   }
 
-  .related-tool-link {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
+  .card-title-link {
+    color: inherit;
     text-decoration: none;
-    transition: color var(--transition-fast);
   }
 
-  .related-tool-link:hover {
-    color: var(--primitive-teal-700);
+  .card-title-link:hover, .card-title-link:focus-visible {
+    color: var(--color-primary);
     text-decoration: underline;
   }
 
-  .learning-philosophy {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-10);
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .philosophy-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-4);
-  }
-
-  .philosophy-text {
-    font-size: var(--text-body);
+  .card-summary {
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    line-height: 1.7;
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--space-4);
+    flex-grow: 1;
+    word-break: break-word;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .card-tag {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  .read-more-link {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .read-more-link:hover {
+    text-decoration: underline;
+  }
+
+  .card-tool-strip {
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-surface-sunken);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+  }
+
+  .tool-strip-label {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .tool-strip-link {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+    word-break: break-word;
+  }
+
+  .tool-strip-link:hover {
+    text-decoration: underline;
+  }
+
+  .review-notice {
+    margin-top: var(--space-12);
+    padding: var(--space-5) var(--space-6);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .notice-icon {
+    font-size: var(--font-size-xl);
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .notice-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .notice-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
     margin: 0;
   }
 </style>

@@ -111,7 +111,7 @@ export const TOOL_ROUTES: NavRoute[] = [
     description: 'Illustrate monthly mutual fund compounding and the power of annual step-ups.',
     category: 'tool',
     eyebrow: 'Investments',
-    statusBadge: 'Shell Active • Rate Semantics Review',
+    statusBadge: 'Interactive Calculator Active • Verified Math',
   },
   {
     id: 'tool-lumpsum',

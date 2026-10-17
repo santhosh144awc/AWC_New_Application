@@ -50,9 +50,11 @@ describe('sip Domain Engine', () => {
       // Total invested = 12 * 10000 + 12 * 11000 = 252000
       expect(result.totalInvested).toBe(252000);
 
-      // Future value cross-check
-      expect(result.futureValue).toBeGreaterThan(result.totalInvested);
-      expect(result.totalGain).toBe(result.futureValue - result.totalInvested);
+      // Future value cross-check against independent annuity-due cash flow accumulation
+      const expectedFV = 283416.25;
+      expect(Math.abs(result.futureValue - expectedFV)).toBeLessThanOrEqual(0.01);
+      expect(Math.abs(result.totalGain - (expectedFV - 252000))).toBeLessThanOrEqual(0.01);
+      expect(result.futureValue).toBe(result.totalInvested + result.totalGain);
     });
   });
 
@@ -134,6 +136,13 @@ describe('sip Domain Engine', () => {
       expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: 12, annualStepUpPercent: -5 }))
         .toThrow(FinanceValidationError);
       expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: 12, annualStepUpPercent: 105 }))
+        .toThrow(FinanceValidationError);
+    });
+
+    it('rejects return rate outside standard consumer calculator contract (0% to 100%)', () => {
+      expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: -1 }))
+        .toThrow(FinanceValidationError);
+      expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: 101 }))
         .toThrow(FinanceValidationError);
     });
   });

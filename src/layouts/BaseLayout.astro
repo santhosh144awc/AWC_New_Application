@@ -8,6 +8,7 @@ interface Props {
   title?: string;
   description?: string;
   currentPath?: string;
+  canonicalUrl?: string;
   /** 
    * In pre-launch staging, defaults to 'noindex, nofollow' to prevent search engine ingestion of prototype routes.
    * Switch to 'index, follow' on production release.
@@ -22,7 +23,7 @@ const {
   robots = 'noindex, nofollow',
 } = Astro.props;
 
-const canonicalUrl = new URL(currentPath, BUSINESS_PROFILE.firm.canonicalDomain).href;
+const canonicalUrl = Astro.props.canonicalUrl ?? new URL(currentPath, BUSINESS_PROFILE.firm.canonicalDomain).href;
 ---
 
 <!doctype html>

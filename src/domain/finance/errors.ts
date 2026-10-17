@@ -73,7 +73,24 @@ export function assertPositiveInteger(name: string | number, value?: string | nu
 }
 
 /**
- * Validates that an annual percentage rate is within a plausible calculation domain.
+ * Validates that an assumed investment return rate is within the standard consumer calculator contract.
+ * Allowed range: 0 <= rate <= 100 (% per annum).
+ * Negative rates and rates above 100% are rejected to prevent nonsensical retail simulations.
+ */
+export function assertStandardInvestmentReturnPercent(name: string, value: number): void {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new FinanceValidationError(name, value, 'Return rate must be a finite number');
+  }
+  if (value < 0) {
+    throw new FinanceValidationError(name, value, 'Assumed return rate cannot be negative in standard calculators (min 0%)');
+  }
+  if (value > 100) {
+    throw new FinanceValidationError(name, value, 'Assumed return rate exceeds the standard calculator upper boundary (max 100%)');
+  }
+}
+
+/**
+ * Validates that an annual percentage rate is within a generic mathematical calculation domain.
  * Allowed range: -100 < rate <= 1000
  */
 export function assertValidRatePercent(name: string, value: number): void {
