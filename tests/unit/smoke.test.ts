@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { formatINR, formatIndianCompact, formatPercentage } from '../../src/lib/formatters';
 import { FINANCE_DOMAIN_VERSION } from '../../src/domain/finance';
 import { CENTRAL_TAX_RULES_REGISTRY } from '../../src/domain/tax';
+import { BUSINESS_PROFILE } from '../../src/config/businessProfile';
 
 describe('Unit Test Suite & Foundation Smoke Test', () => {
   it('should run tests cleanly inside Vitest test runner', () => {
@@ -11,7 +12,6 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
   describe('Indian Currency & Number Formatters (src/lib/formatters.ts)', () => {
     it('formats numbers into standard Indian Rupee notation', () => {
       expect(formatINR(0)).toBe('₹0');
-      // Indian numbering separates first 3 digits, then every 2 digits
       const formatted15L = formatINR(1500000).replace(/\u00a0/g, ' ');
       expect(formatted15L).toMatch(/₹\s?15,00,000/);
     });
@@ -26,6 +26,23 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
     it('formats percentages correctly', () => {
       expect(formatPercentage(12.5)).toBe('12.50%');
       expect(formatPercentage(8, 0)).toBe('8%');
+    });
+  });
+
+  describe('Business Profile & Identity Governance (Section 2A & 2B)', () => {
+    it('enforces ARN status as PENDING_VERIFICATION and avoids unverified user-facing display', () => {
+      expect(BUSINESS_PROFILE.regulatory.arnStatus).toBe('PENDING_VERIFICATION');
+      expect(BUSINESS_PROFILE.regulatory.amfiRegistrationText).toContain('pending registry confirmation');
+    });
+
+    it('specifies canonical domain consistently as https://antwealth.in', () => {
+      expect(BUSINESS_PROFILE.firm.canonicalDomain).toBe('https://antwealth.in');
+    });
+
+    it('contains verified founder details from authoritative sources', () => {
+      expect(BUSINESS_PROFILE.founder.fullName).toBe('C. Santhosh Sathriyan, B.E.');
+      expect(BUSINESS_PROFILE.firm.experienceSince).toBe('2012');
+      expect(BUSINESS_PROFILE.founder.credentials).toContain('QPFP Certified');
     });
   });
 

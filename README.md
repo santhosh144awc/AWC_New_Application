@@ -1,70 +1,67 @@
 # Ant Wealth Creation — New Web Application (`new-app/`)
 
-Clean technical foundation and modern static-first web architecture for **Ant Wealth Creation**, an AMFI-registered Mutual Fund Distributor (ARN-181534).
+Clean technical foundation and modern static-first web architecture for **Ant Wealth Creation**, an AMFI-registered Mutual Fund Distributor founded by **C. Santhosh Sathriyan, B.E.** (QPFP Certified).
 
-This application was scaffolded from scratch in `new-app/` and is strictly independent of the legacy reference application in `legacy-reference/AWC_Chatgpt/`.
+This application is scaffolded cleanly from scratch in `new-app/` and is strictly independent of the legacy reference application in `legacy-reference/AWC_Chatgpt/`.
 
 ---
 
 ## 1. Prerequisites
 
-- **Node.js**: `v20.0.0` or higher (verified with `v24.19.0`)
-- **npm**: `v10.0.0` or higher (verified with `v11.17.0`)
-- **Operating System**: Cross-platform (Windows, macOS, Linux)
+* **Node.js**: `v20.0.0` or higher (tested with `v24.19.0`)
+* **npm**: `v10.0.0` or higher (tested with `v11.17.0`)
+* **Operating System**: Cross-platform (Windows, macOS, Linux)
 
 ---
 
-## 2. Verified Technology Stack & Installed Versions
+## 2. Verified Technology Stack & Exact Locked Versions
 
-| Technology / Tool | Version | Role in Architecture |
+| Package | Locked Version (`package-lock.json`) | Role in Architecture |
 | :--- | :--- | :--- |
-| **Astro** | `^5.4.2` | Core static site generator and page layout framework |
-| **React** | `^19.0.0` | Client-side interactive islands and guided planners |
-| **React DOM** | `^19.0.0` | React DOM renderer |
-| **@astrojs/react** | `^4.2.1` | Astro official React island integration |
-| **TypeScript** | `^5.7.3` | Strict-mode type safety across all application code |
-| **Authored CSS** | Custom Tokens | Design tokens & CSS custom properties (`src/styles/`) |
-| **Vitest** | `^3.0.7` | Blazing-fast unit and mathematical test runner |
-| **Playwright** | `^1.51.0` | End-to-end browser smoke and regression testing |
-| **ESLint** | `^9.21.0` | Code quality and linting |
-| **@astrojs/check** | `^0.9.4` | Astro template diagnostic type checker |
+| **astro** | `5.18.2` | Core static-first SSG and component layout framework |
+| **react** | `19.0.0` | Client-side interactive islands and guided planners |
+| **react-dom** | `19.0.0` | React DOM renderer |
+| **@astrojs/react** | `4.2.1` | Astro official React island integration |
+| **typescript** | `5.7.3` | Strict-mode type safety across all application code |
+| **vitest** | `3.2.7` | Pure TypeScript calculation and unit test runner |
+| **@playwright/test** | `1.51.0` | End-to-end browser regression and visual smoke runner |
+| **eslint** | `9.21.0` | Code quality and linting (flat config) |
+| **@astrojs/check** | `0.9.4` | Astro template type diagnostics |
 
 ---
 
-## 3. Project Structure & Architecture
+## 3. Project Structure
 
 ```text
 new-app/
 ├── public/
 │   ├── assets/              # Approved active brand assets (provenance tracked below)
 │   ├── favicon.svg          # Branded SVG favicon
-│   └── robots.txt           # Search crawler directive with canonical sitemap
+│   └── robots.txt           # Pre-launch crawl prevention (switches to index at launch)
 ├── src/
 │   ├── components/
-│   │   ├── site/            # Site shell: Header.astro, Footer.astro
-│   │   └── ui/              # Small, accessible atomic UI primitives (future)
+│   │   ├── site/            # Site shell: Header.astro (accessible drawer), Footer.astro
+│   │   └── ui/              # Reusable primitives: SectionHeader, PillarCard, GoalCard, ToolPreviewCard
+│   ├── config/
+│   │   └── businessProfile.ts # Authoritative business identity & compliance disclosures
 │   ├── domain/
 │   │   ├── finance/         # PURE TypeScript financial calculation engine (isolated from DOM/storage)
 │   │   └── tax/             # Centralized tax-rules registry versioned by Act and Tax Year
-│   ├── features/            # Feature-specific interactive islands (future)
 │   ├── layouts/
-│   │   └── BaseLayout.astro # Base layout with semantic landmarks, OpenGraph & JSON-LD metadata
+│   │   └── BaseLayout.astro # Semantic HTML5 landmarks, OpenGraph, JSON-LD, WCAG skip link
 │   ├── lib/
 │   │   └── formatters.ts    # Indian numbering formatters (₹ Lakhs, Crores)
 │   ├── pages/
-│   │   ├── index.astro      # Temporary foundation shell home page
-│   │   └── 404.astro        # Branded accessible 404 Not Found page
+│   │   ├── index.astro      # Polished, responsive Family Money Map homepage
+│   │   └── 404.astro        # Branded accessible 404 recovery page
 │   └── styles/
-│       ├── design-tokens.css # Pure CSS custom properties (colors, typography, spacing, shadows)
+│       ├── design-tokens.css # Authored CSS tokens with measured WCAG contrast calculations
 │       └── global.css       # Accessible CSS reset and global typography rules
 ├── tests/
-│   ├── unit/                # Vitest unit test suite (pure functions, domain tests)
-│   └── e2e/                 # Playwright browser smoke tests
-├── astro.config.mjs         # Astro configuration with React integration
-├── tsconfig.json            # Strict TypeScript configuration with @ aliases
-├── vitest.config.ts         # Vitest unit test configuration
-├── playwright.config.ts     # Playwright e2e configuration
-├── eslint.config.js         # ESLint 9 flat configuration
+│   ├── e2e/                 # Playwright tests (navigation, mobile drawer, overflow, screenshots)
+│   └── unit/                # Vitest unit test suite (formatters, business profile governance)
+├── astro.config.mjs         # Astro configuration with canonical site 'https://antwealth.in'
+├── playwright.config.ts     # Cross-platform preview test configuration
 └── package.json             # Independent package manifest
 ```
 
@@ -93,7 +90,7 @@ npm run build
 # Preview production build locally
 npm run preview
 
-# Run browser e2e smoke tests (Playwright)
+# Run browser e2e smoke & visual tests (Playwright)
 npm run test:e2e
 ```
 
@@ -101,23 +98,20 @@ npm run test:e2e
 
 ## 5. Approved Asset Provenance
 
-Only verified, active brand assets were copied into `public/assets/`. Unreferenced concept drafts (~4.2 MB) in the legacy directory were excluded.
-
 | New Path | Legacy Source Path | Relevance & Provenance |
 | :--- | :--- | :--- |
 | `public/assets/logo_awc.png` | `legacy-reference/AWC_Chatgpt/public/assets/logo_awc.png` | Official Ant Wealth Creation primary brand logo |
 | `public/assets/logo_with_tagline.webp` | `legacy-reference/AWC_Chatgpt/public/assets/logo_with_tagline.webp` | Official primary brand logo with registered tagline |
-| `public/assets/santhosh_photo.webp` | `legacy-reference/AWC_Chatgpt/public/assets/santhosh_photo.webp` | Verified photo of founder Santhosh Kumar (ARN-181534) |
-| `public/assets/homeScreenimage.webp` | `legacy-reference/AWC_Chatgpt/public/assets/homeScreenimage.webp` | Verified hero imagery asset |
+| `public/assets/santhosh_photo.webp` | `legacy-reference/AWC_Chatgpt/public/assets/santhosh_photo.webp` | Verified photo of founder C. Santhosh Sathriyan, B.E. |
+| `public/assets/homeScreenimage.webp` | `legacy-reference/AWC_Chatgpt/public/assets/homeScreenimage.webp` | Verified Family Money Map hero journey graphic |
 
 ---
 
-## 6. Pre-Scaffold Correction Gates Enforced
+## 6. Business Identity & Compliance Governance
 
-Per Prompt 3 governance:
-- **GATE-A (Retirement Tax Treatment)**: "Annuity-Due + 12.5% LTCG flat haircut" is **BLOCKED**. Awaiting an independent domain calculation specification and mathematical test vectors.
-- **GATE-B (Compounding Semantics)**: Annual return vs monthly rate convention (nominal $r/12$ vs geometric $(1+r)^{1/12}-1$) is recorded as an **unresolved domain decision**. Rates are strictly illustrative assumptions, not guaranteed benchmarks.
-- **GATE-C (Tax Law Versioning)**: The Income-tax Act, 2025 took effect on 1 April 2026 (Sections 22, 130, 198). All future tax rules are versioned inside `src/domain/tax/` and marked as `PENDING_REVIEW` until certified by a professional tax consultant.
-- **GATE-D (Privacy & LocalStorage)**: Retracted "encrypted localStorage" claim. No financial inputs or personal values are persisted in the foundation phase.
-- **GATE-E (Inventory Reconciliation)**: An explicit inventory gate prevents premature calculator porting until legacy tool counts and routes are fully mapped.
-- **GATE-F (Compliance Claims)**: Absolute certainty terms like "exact monthly investment required" are replaced with "estimated monthly amount under the assumptions entered". All statutory notices are preserved.
+* **Founder Identity:** C. Santhosh Sathriyan, B.E., QPFP Certified. Active in Indian financial markets since 2012.
+* **AMFI Registration Status:** The firm is an AMFI-Registered Mutual Fund Distributor. While legacy documentation cites `ARN-266896`, the registration number is classified as `PENDING_VERIFICATION` in `src/config/businessProfile.ts` and withheld from public UI until confirmed against the official AMFI registry ([AMFI Locate Distributor](https://www.amfiindia.com/locate-distributor)).
+* **Canonical Domain:** `https://antwealth.in` is the single authoritative canonical domain.
+* **Staging Protection:** `public/robots.txt` disallows all crawlers during staging development to prevent premature search indexing.
+* **Regulatory Distinction:** Operates strictly as a Mutual Fund Distributor (MFD) earning trailing commissions from AMCs. Explicitly disclaims fee-based investment advisory under SEBI (Investment Advisers) Regulations.
+* **Zero Fabricated Testimonials:** Fictitious customer cards and unverified reviews are permanently suppressed.

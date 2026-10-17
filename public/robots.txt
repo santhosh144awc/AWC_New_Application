@@ -1,7 +1,15 @@
-# Ant Wealth Creation - robots.txt
-# Foundation & Staging Environment configuration
-User-agent: *
-Disallow: /api/
-Allow: /
+# Ant Wealth Creation — robots.txt
+# Canonical Domain: https://antwealth.in
+#
+# Pre-launch / Staging environment configuration:
+# Prevents search engines from crawling unreviewed prototype routes.
+#
+# LAUNCH CHECKLIST:
+# When ready for production launch:
+# 1. Update Disallow to allow public routes (e.g., Disallow: /api/)
+# 2. Add '@astrojs/sitemap' integration to astro.config.mjs
+# 3. Add: Sitemap: https://antwealth.in/sitemap-index.xml
 
-Sitemap: https://antwealthcreation.com/sitemap-index.xml
+User-agent: *
+Disallow: /
+

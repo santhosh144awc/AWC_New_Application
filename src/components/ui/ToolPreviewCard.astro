@@ -1,0 +1,105 @@
+---
+interface Props {
+  title: string;
+  category: string;
+  realQuestion: string;
+  description: string;
+  statusBadge?: string;
+}
+
+const { title, category, realQuestion, description, statusBadge = "Engine Under Spec Review" } = Astro.props;
+---
+
+<div class="tool-preview-card">
+  <div class="tool-meta-row">
+    <span class="tool-category">{category}</span>
+    <span class="tool-status">{statusBadge}</span>
+  </div>
+  <h3 class="tool-title">{title}</h3>
+  <p class="tool-real-question">"{realQuestion}"</p>
+  <p class="tool-desc">{description}</p>
+  <div class="tool-action-row">
+    <span class="tool-note">Scheduled for verified domain porting</span>
+  </div>
+</div>
+
+<style>
+  .tool-preview-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .tool-preview-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-interactive);
+  }
+
+  .tool-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .tool-category {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tool-status {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+
+  .tool-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .tool-real-question {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: var(--space-3);
+  }
+
+  .tool-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+    flex-grow: 1;
+  }
+
+  .tool-action-row {
+    border-top: 1px solid var(--primitive-slate-100);
+    padding-top: var(--space-3);
+  }
+
+  .tool-note {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+</style>

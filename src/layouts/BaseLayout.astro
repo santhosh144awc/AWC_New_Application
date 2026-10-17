@@ -1,19 +1,28 @@
 ---
 import Header from '../components/site/Header.astro';
 import Footer from '../components/site/Footer.astro';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
   currentPath?: string;
+  /** 
+   * In pre-launch staging, defaults to 'noindex, nofollow' to prevent search engine ingestion of prototype routes.
+   * Switch to 'index, follow' on production release.
+   */
+  robots?: string;
 }
 
 const {
-  title = 'Ant Wealth Creation — Make Better Money Decisions',
+  title = `${BUSINESS_PROFILE.firm.name} — ${BUSINESS_PROFILE.firm.tagline}`,
   description = 'Simple, transparent personal financial guidance for Indian families. Plan your children\'s education, home purchase, and dignified retirement.',
   currentPath = '/',
+  robots = 'noindex, nofollow',
 } = Astro.props;
+
+const canonicalUrl = new URL(currentPath, BUSINESS_PROFILE.firm.canonicalDomain).href;
 ---
 
 <!doctype html>
@@ -25,18 +34,18 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={new URL(currentPath, Astro.site || 'https://antwealth.in').href} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph Metadata -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={new URL(currentPath, Astro.site || 'https://antwealth.in').href} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content="/assets/homeScreenimage.webp" />
   </head>
   <body>
-    <!-- WCAG 2.2 Accessible Skip Link -->
+    <!-- WCAG Accessible Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Global Header Landmark -->

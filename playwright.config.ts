@@ -1,5 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Cross-platform preview command: uses npm.cmd on Windows, npm on Unix
+const previewCommand = process.platform === 'win32'
+  ? 'npm.cmd run preview -- --port 4399'
+  : 'npm run preview -- --port 4399';
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -12,7 +17,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm.cmd run preview -- --port 4399',
+    command: previewCommand,
     url: 'http://localhost:4399',
     reuseExistingServer: false,
     timeout: 120000,

@@ -1,7 +1,6 @@
 /* ==========================================================================
    Ant Wealth Creation — Design Tokens
-   Authoritative source: product-docs/design/DESIGN_SYSTEM.md
-   Target: WCAG 2.2 AA Standard (Contrast >= 4.5:1 text, >= 3:1 graphical)
+   Target: Designed against WCAG 2.2 AA Standards (Requires ongoing manual & automated testing)
    ========================================================================== */
 
 :root {
@@ -11,14 +10,26 @@
   --primitive-navy-800: #0B253D;
   --primitive-navy-700: #163654;
 
-  --primitive-teal-600: #008B7A;
-  --primitive-teal-500: #00AB96;  /* Growth Teal Accent */
+  /* Teal Palette 
+     Note: #008B7A has measured contrast 4.22:1 on #FFFFFF and 4.04:1 on #F8FAFC (fails 4.5:1 for normal text; passes 3:1 for large text).
+     Note: #00AB96 has measured contrast 2.89:1 on #FFFFFF (suitable for non-text borders/accents).
+     #006356 has measured contrast 6.9:1 on #FFFFFF (passes 4.5:1 AA for normal text).
+  */
+  --primitive-teal-700: #006356;  /* High-contrast Teal text */
+  --primitive-teal-600: #008B7A;  /* Medium Teal (large text / borders / icons) */
+  --primitive-teal-500: #00AB96;  /* Growth Teal Accent (non-text UI / graphical) */
   --primitive-teal-400: #1FD1BB;
   --primitive-teal-100: #DDF7F4;
   --primitive-teal-50:  #EFFFFD;
 
-  --primitive-gold-600: #B45309;
-  --primitive-gold-500: #D97706;  /* Warm Amber Accent */
+  /* Amber/Gold Palette
+     Note: #D97706 has measured contrast 3.19:1 on #FFFFFF (fails 4.5:1 normal text).
+     #B45309 has measured contrast 5.1:1 on #FFFFFF (passes 4.5:1 AA for normal text).
+     #92400E has measured contrast 7.1:1 on #FFFFFF (passes 7:1 AAA for normal text).
+  */
+  --primitive-gold-700: #92400E;  /* High-contrast Amber text (7.1:1 on white) */
+  --primitive-gold-600: #B45309;  /* Amber text / badge border (5.1:1 on white) */
+  --primitive-gold-500: #D97706;  /* Amber Accent (non-text / backgrounds) */
   --primitive-gold-400: #F59E0B;
   --primitive-gold-100: #FEF3C7;
   --primitive-gold-50:  #FFFBEB;
@@ -37,11 +48,14 @@
   --primitive-white:     #FFFFFF;
 
   /* Status Colors */
-  --primitive-emerald-600: #059669;
+  --primitive-emerald-700: #047857; /* 4.6:1 on white */
+  --primitive-emerald-600: #059669; /* 3.8:1 on white, 5.2:1 on emerald-100 */
   --primitive-emerald-100: #D1FAE5;
-  --primitive-rose-600:    #E11D48;
+  --primitive-rose-700:    #BE123C; /* 5.8:1 on white */
+  --primitive-rose-600:    #E11D48; /* 4.5:1 on white, 4.9:1 on rose-100 */
   --primitive-rose-100:    #FFE4E6;
-  --primitive-blue-600:    #2563EB;
+  --primitive-blue-700:    #1D4ED8; /* 6.5:1 on white */
+  --primitive-blue-600:    #2563EB; /* 4.6:1 on white */
   --primitive-blue-100:    #DBEAFE;
 
   /* 2. SEMANTIC COLOR TOKENS */
@@ -51,22 +65,27 @@
   --color-bg-surface-dark:  var(--primitive-navy-900);
   --color-bg-surface-elev:  var(--primitive-white);
 
-  --color-text-primary:     var(--primitive-navy-900);   /* Contrast: 15.6:1 */
-  --color-text-secondary:   var(--primitive-slate-700);  /* Contrast: 7.2:1 */
-  --color-text-muted:       var(--primitive-slate-500);  /* Contrast: 4.6:1 */
+  /* Typography Contrast Ratings (Calculated against #FFFFFF) */
+  --color-text-primary:     var(--primitive-navy-900);   /* #00182A: 15.6:1 (AAA) */
+  --color-text-secondary:   var(--primitive-slate-700);  /* #334155: 7.2:1 (AAA) */
+  --color-text-muted:       var(--primitive-slate-600);  /* #475569: 5.3:1 (AA pass for body) */
+  --color-text-subtle:      var(--primitive-slate-500);  /* #64748B: 4.6:1 (AA pass for secondary notes) */
   --color-text-inverse:     var(--primitive-white);
-  --color-text-brand:       var(--primitive-teal-600);   /* Contrast: 4.8:1 */
+  --color-text-brand:       var(--primitive-teal-700);   /* #006356: 6.9:1 (AA/AAA pass) */
+  --color-text-accent:      var(--primitive-gold-700);   /* #92400E: 7.1:1 (AAA pass) */
 
+  /* Borders & Dividers */
   --color-border-subtle:    var(--primitive-slate-200);
   --color-border-medium:    var(--primitive-slate-300);
-  --color-border-interactive: var(--primitive-teal-500);
+  --color-border-interactive: var(--primitive-teal-600);
   --color-border-focus:     var(--primitive-navy-900);
 
+  /* Interactive & Accents */
   --color-brand-primary:    var(--primitive-navy-900);
-  --color-brand-secondary:  var(--primitive-teal-500);
-  --color-brand-accent:     var(--primitive-gold-500);
-  --color-state-hover:      rgba(0, 171, 150, 0.08);
-  --color-state-active:     rgba(0, 171, 150, 0.16);
+  --color-brand-secondary:  var(--primitive-teal-600);
+  --color-brand-accent:     var(--primitive-gold-600);
+  --color-state-hover:      rgba(0, 99, 86, 0.08);
+  --color-state-active:     rgba(0, 99, 86, 0.16);
 
   /* 3. TYPOGRAPHY TOKENS */
   --font-family-heading:    'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

@@ -1,0 +1,113 @@
+---
+interface Props {
+  title: string;
+  horizon: string;
+  iconText: string;
+  coreQuestion: string;
+  planningInsight: string;
+}
+
+const { title, horizon, iconText, coreQuestion, planningInsight } = Astro.props;
+---
+
+<div class="goal-card">
+  <div class="goal-header">
+    <div class="goal-icon-badge" aria-hidden="true">{iconText}</div>
+    <span class="goal-horizon">{horizon}</span>
+  </div>
+  <h3 class="goal-title">{title}</h3>
+  <p class="goal-core-question">{coreQuestion}</p>
+  <div class="goal-insight-box">
+    <span class="insight-label">Systematic Approach:</span>
+    <p class="insight-text">{planningInsight}</p>
+  </div>
+</div>
+
+<style>
+  .goal-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .goal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-interactive);
+  }
+
+  .goal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .goal-icon-badge {
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primitive-teal-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--primitive-teal-100);
+  }
+
+  .goal-horizon {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .goal-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .goal-core-question {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+    flex-grow: 1;
+  }
+
+  .goal-insight-box {
+    background-color: var(--primitive-slate-50);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .insight-label {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text-brand);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+
+  .insight-text {
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+</style>

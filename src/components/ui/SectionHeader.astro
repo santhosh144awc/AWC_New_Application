@@ -1,0 +1,60 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  centered?: boolean;
+}
+
+const { eyebrow, title, subtitle, centered = false } = Astro.props;
+---
+
+<div class={`section-header ${centered ? 'text-center' : ''}`}>
+  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+  <h2 class="section-title">{title}</h2>
+  {subtitle && <p class="section-subtitle">{subtitle}</p>}
+</div>
+
+<style>
+  .section-header {
+    margin-bottom: var(--space-10);
+    max-width: 820px;
+  }
+
+  .section-header.text-center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    border: 1px solid var(--primitive-teal-100);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-3);
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    line-height: 1.2;
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.01em;
+  }
+
+  .section-subtitle {
+    font-size: var(--text-body-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>
