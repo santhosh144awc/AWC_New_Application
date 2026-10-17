@@ -46,7 +46,15 @@ new-app/
 │   │   ├── businessProfile.ts # Authoritative business identity & compliance disclosures
 │   │   └── routes.ts        # Central route registry & navigation model (single source of truth)
 │   ├── domain/
-│   │   ├── finance/         # PURE TypeScript financial calculation engine (isolated from DOM/storage)
+│   │   ├── finance/         # PURE TypeScript financial calculation engines (isolated from DOM/storage)
+│   │   │   ├── investmentRates.ts     # Effective annual return to geometric monthly compounding
+│   │   │   ├── sip.ts                 # Fixed & annual step-up SIP wealth accumulation
+│   │   │   ├── lumpsum.ts             # Effective annual lump-sum compound growth
+│   │   │   ├── targetCorpus.ts        # Target corpus reverse SIP solver with existing capital offset
+│   │   │   ├── goalPlanner.ts         # Inflation-adjusted goal planning engine
+│   │   │   ├── netWorth.ts            # REAL statement balance sheet consolidation & solvency metrics
+│   │   │   ├── homeLoanAmortization.ts# Reducing-balance loan amortization with prepayment scenarios
+│   │   │   └── errors.ts              # FinanceValidationError and parameter boundary assertions
 │   │   └── tax/             # Centralized tax-rules registry versioned by Act and Tax Year
 │   ├── layouts/
 │   │   └── BaseLayout.astro # Semantic HTML5 landmarks, OpenGraph, JSON-LD, WCAG skip link
@@ -69,7 +77,7 @@ new-app/
 │       └── global.css       # Accessible CSS reset and global typography rules
 ├── tests/
 │   ├── e2e/                 # Playwright tests (navigation, mobile drawer, overflow, screenshots)
-│   └── unit/                # Vitest unit test suite (formatters, routes registry, business profile)
+│   └── unit/                # Vitest unit test suite (8 test suites, 68 tests across all engines)
 ├── astro.config.mjs         # Astro configuration with canonical site 'https://antwealth.in'
 ├── playwright.config.ts     # Cross-platform preview test configuration
 └── package.json             # Independent package manifest
@@ -85,10 +93,10 @@ All commands run strictly inside `new-app/`:
 # Start local development server
 npm run dev
 
-# Run unit tests (Vitest)
+# Run unit tests (Vitest: 8 test files, 68 tests)
 npm run test
 
-# Run Astro template diagnostic type check
+# Run Astro template diagnostic type check (0 errors, 0 warnings)
 npm run check
 
 # Run ESLint linter
@@ -100,7 +108,7 @@ npm run build
 # Preview production build locally
 npm run preview
 
-# Run browser e2e smoke & visual tests (Playwright)
+# Run browser e2e smoke & visual tests (Playwright: 6 tests across viewports)
 npm run test:e2e
 ```
 

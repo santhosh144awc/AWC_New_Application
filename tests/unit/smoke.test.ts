@@ -48,7 +48,7 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
 
   describe('Architecture Gate Enforcements', () => {
     it('finance domain engine is scaffolded and explicitly blocks unverified formulas', () => {
-      expect(FINANCE_DOMAIN_VERSION).toBe('0.1.0-scaffold');
+      expect(FINANCE_DOMAIN_VERSION).toBe('1.0.0-phase6');
     });
 
     it('tax domain records Income-tax Act, 2025 transitional status as PENDING_REVIEW', () => {

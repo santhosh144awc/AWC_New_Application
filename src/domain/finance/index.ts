@@ -1,23 +1,41 @@
 /**
- * Ant Wealth Creation — Financial Domain Engine (Reserved)
- * 
+ * Ant Wealth Creation — Financial Domain Engine (Phase 6 Implementation)
+ *
  * ARCHITECTURAL CONTRACT:
- * 1. This folder contains PURE TypeScript calculation logic only.
- * 2. Absolutely NO React, Astro, DOM, window, or localStorage imports are allowed here.
- * 3. All modules must be 100% unit-tested with mathematical test vectors.
- * 
- * GATE STATUS:
- * - GATE-A (Retirement Calculation & Tax Haircut): BLOCKED. Awaiting separate calculation specification.
- * - GATE-B (Annual Return & Compounding Semantics): BLOCKED. Unresolved convention debate (nominal r/12 vs geometric (1+r)^(1/12)-1).
- * 
- * No financial formulas are implemented during Phase 3 (Foundation).
+ * 1. This folder contains 100% PURE TypeScript calculation logic only.
+ * 2. Absolutely NO React, Astro, DOM, window, network, or localStorage imports are allowed here.
+ * 3. All modules are tested with independent mathematical verification test vectors.
+ * 4. UI presentation formatting (currency formatting, roundings) is strictly isolated from engines.
+ *
+ * ACTIVE ENGINES:
+ * - investmentRates: Effective annual return to monthly compounding conversion
+ * - sip: Fixed and annual step-up SIP wealth accumulation (beginning-of-month annuity-due)
+ * - lumpsum: Effective annual lump-sum compound growth
+ * - targetCorpus: Required monthly SIP solver for target future corpus
+ * - goalPlanner: Inflation-adjusted goal planning with existing savings offset
+ * - netWorth: REAL statement balance sheet aggregation and solvency metrics
+ * - homeLoanAmortization: Reducing-balance loan amortization with prepayment scenarios
+ *
+ * SCOPE GATES STATUS:
+ * - GATE-A (Retirement accumulation / three-bucket distribution): DEFERRED / SCOPE BLOCKED.
+ * - GATE-C (Income tax haircuts / deductions / slab logic): DEFERRED / SCOPE BLOCKED.
+ * - Loan vs Invest crossover / Tax comparisons: DEFERRED / SCOPE BLOCKED.
+ * - Loan + SIP recovery crossover: DEFERRED / SCOPE BLOCKED.
+ * - SWP depletion & longevity: DEFERRED / SCOPE BLOCKED.
+ * - Life insurance HLV: DEFERRED / SCOPE BLOCKED.
+ * - Seven-Pillar scoring / health score: DEFERRED / SCOPE BLOCKED.
  */
 
-export const FINANCE_DOMAIN_VERSION = '0.1.0-scaffold';
+export const FINANCE_DOMAIN_VERSION = '1.0.0-phase6';
 
-export interface CalculationResult<T> {
-  success: boolean;
-  data?: T;
-  assumptions: string[];
-  disclaimers: string[];
-}
+// Errors & Validation
+export * from './errors';
+
+// Pure Financial Engines
+export * from './investmentRates';
+export * from './sip';
+export * from './lumpsum';
+export * from './targetCorpus';
+export * from './goalPlanner';
+export * from './netWorth';
+export * from './homeLoanAmortization';
