@@ -1,0 +1,59 @@
+---
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const {
+  title = 'Ant Wealth Creation — Make Better Money Decisions',
+  description = 'Simple, transparent personal financial guidance for Indian families. Plan your children\'s education, home purchase, and dignified retirement.',
+  currentPath = '/',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={new URL(currentPath, Astro.site || 'https://antwealth.in').href} />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(currentPath, Astro.site || 'https://antwealth.in').href} />
+    <meta property="og:image" content="/assets/homeScreenimage.webp" />
+  </head>
+  <body>
+    <!-- WCAG 2.2 Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Global Header Landmark -->
+    <Header currentPath={currentPath} />
+
+    <!-- Main Content Landmark -->
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <!-- Global Footer Landmark -->
+    <Footer />
+  </body>
+</html>
+
+<style>
+  #main-content:focus {
+    outline: none;
+  }
+</style>

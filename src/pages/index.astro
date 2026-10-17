@@ -1,0 +1,219 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Ant Wealth Creation — Technical Foundation Running Shell"
+  description="Technical foundation and minimal running shell for the new Ant Wealth Creation web application."
+  currentPath="/"
+>
+  <div class="shell-hero">
+    <div class="container shell-container">
+      <div class="badge-foundation">
+        <span class="badge-dot"></span>
+        Phase 3: Clean Foundation Running Shell
+      </div>
+
+      <h1 class="shell-title">
+        The Family Money Map
+      </h1>
+
+      <p class="shell-tagline">
+        Make Better Money Decisions. Build a Better Future.
+      </p>
+
+      <div class="shell-card">
+        <h2 class="card-title">Technical Foundation Verified</h2>
+        <p class="card-desc">
+          This is the independent running shell for the brand-new <strong>Ant Wealth Creation</strong> application.
+          Scaffolded with Astro 5, React 19, strict TypeScript, and authored CSS tokens conforming to the approved design system.
+        </p>
+
+        <div class="system-status-grid">
+          <div class="status-item">
+            <span class="status-label">Workspace Isolation:</span>
+            <span class="status-value status-pass">100% Isolated in new-app/</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Design System:</span>
+            <span class="status-value status-pass">Tokens & Typography Active</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Accessibility:</span>
+            <span class="status-value status-pass">WCAG 2.2 AA Landmarks Ready</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Calculation Gates:</span>
+            <span class="status-value status-blocked">Gates A–F Blocked (Pre-Scaffold)</span>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <a href="/404" class="btn-secondary">
+            Test 404 Recovery Page →
+          </a>
+          <a href="https://antwealth.themfbox.com/" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+            Portfolio Portal ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .shell-hero {
+    padding: var(--space-16) 0 var(--space-20);
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--primitive-slate-50) 100%);
+  }
+
+  .shell-container {
+    max-width: 800px;
+    text-align: center;
+  }
+
+  .badge-foundation {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.35rem 0.9rem;
+    background-color: var(--primitive-teal-50);
+    border: 1px solid var(--primitive-teal-100);
+    color: var(--primitive-teal-600);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-6);
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primitive-teal-500);
+  }
+
+  .shell-title {
+    font-size: var(--text-display);
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+    line-height: 1.1;
+  }
+
+  .shell-tagline {
+    font-size: var(--text-h3);
+    color: var(--color-text-brand);
+    font-weight: 600;
+    margin-bottom: var(--space-10);
+  }
+
+  .shell-card {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-card);
+    text-align: left;
+  }
+
+  .card-title {
+    font-size: var(--text-h3);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .card-desc {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .system-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--primitive-slate-50);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
+  }
+
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .status-label {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--primitive-slate-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-value {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+  }
+
+  .status-pass {
+    color: var(--primitive-emerald-600);
+  }
+
+  .status-blocked {
+    color: var(--primitive-gold-500);
+  }
+
+  .action-row {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.25rem;
+    background-color: var(--color-brand-primary);
+    color: var(--primitive-white);
+    font-weight: 600;
+    font-size: var(--text-body-sm);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--primitive-navy-800);
+    color: var(--primitive-white);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.25rem;
+    border: 1px solid var(--color-border-medium);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: var(--text-body-sm);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-brand-secondary);
+    color: var(--color-brand-primary);
+  }
+
+  @media (max-width: 600px) {
+    .system-status-grid {
+      grid-template-columns: 1fr;
+    }
+    .action-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

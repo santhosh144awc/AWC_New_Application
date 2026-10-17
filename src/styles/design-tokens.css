@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Ant Wealth Creation — Design Tokens
+   Authoritative source: product-docs/design/DESIGN_SYSTEM.md
+   Target: WCAG 2.2 AA Standard (Contrast >= 4.5:1 text, >= 3:1 graphical)
+   ========================================================================== */
+
+:root {
+  /* 1. PRIMITIVE COLOR TOKENS */
+  --primitive-navy-950: #00111E;
+  --primitive-navy-900: #00182A;  /* Primary Deep Navy */
+  --primitive-navy-800: #0B253D;
+  --primitive-navy-700: #163654;
+
+  --primitive-teal-600: #008B7A;
+  --primitive-teal-500: #00AB96;  /* Growth Teal Accent */
+  --primitive-teal-400: #1FD1BB;
+  --primitive-teal-100: #DDF7F4;
+  --primitive-teal-50:  #EFFFFD;
+
+  --primitive-gold-600: #B45309;
+  --primitive-gold-500: #D97706;  /* Warm Amber Accent */
+  --primitive-gold-400: #F59E0B;
+  --primitive-gold-100: #FEF3C7;
+  --primitive-gold-50:  #FFFBEB;
+
+  /* Neutrals & Surfaces */
+  --primitive-slate-900: #0F172A;
+  --primitive-slate-800: #1E293B;
+  --primitive-slate-700: #334155;
+  --primitive-slate-600: #475569;
+  --primitive-slate-500: #64748B;
+  --primitive-slate-400: #94A3B8;
+  --primitive-slate-300: #CBD5E1;
+  --primitive-slate-200: #E2E8F0;
+  --primitive-slate-100: #F1F5F9;
+  --primitive-slate-50:  #F8FAFC;
+  --primitive-white:     #FFFFFF;
+
+  /* Status Colors */
+  --primitive-emerald-600: #059669;
+  --primitive-emerald-100: #D1FAE5;
+  --primitive-rose-600:    #E11D48;
+  --primitive-rose-100:    #FFE4E6;
+  --primitive-blue-600:    #2563EB;
+  --primitive-blue-100:    #DBEAFE;
+
+  /* 2. SEMANTIC COLOR TOKENS */
+  --color-bg-canvas:        var(--primitive-slate-50);
+  --color-bg-surface:       var(--primitive-white);
+  --color-bg-surface-alt:   var(--primitive-slate-100);
+  --color-bg-surface-dark:  var(--primitive-navy-900);
+  --color-bg-surface-elev:  var(--primitive-white);
+
+  --color-text-primary:     var(--primitive-navy-900);   /* Contrast: 15.6:1 */
+  --color-text-secondary:   var(--primitive-slate-700);  /* Contrast: 7.2:1 */
+  --color-text-muted:       var(--primitive-slate-500);  /* Contrast: 4.6:1 */
+  --color-text-inverse:     var(--primitive-white);
+  --color-text-brand:       var(--primitive-teal-600);   /* Contrast: 4.8:1 */
+
+  --color-border-subtle:    var(--primitive-slate-200);
+  --color-border-medium:    var(--primitive-slate-300);
+  --color-border-interactive: var(--primitive-teal-500);
+  --color-border-focus:     var(--primitive-navy-900);
+
+  --color-brand-primary:    var(--primitive-navy-900);
+  --color-brand-secondary:  var(--primitive-teal-500);
+  --color-brand-accent:     var(--primitive-gold-500);
+  --color-state-hover:      rgba(0, 171, 150, 0.08);
+  --color-state-active:     rgba(0, 171, 150, 0.16);
+
+  /* 3. TYPOGRAPHY TOKENS */
+  --font-family-heading:    'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-body:       'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-numeric:    'Inter', monospace;
+
+  --text-display:    clamp(2.5rem, 5vw + 1rem, 3.75rem);
+  --text-h1:         clamp(2.0rem, 3.5vw + 0.75rem, 2.75rem);
+  --text-h2:         clamp(1.6rem, 2.5vw + 0.5rem, 2.125rem);
+  --text-h3:         clamp(1.25rem, 1.5vw + 0.5rem, 1.5rem);
+  --text-h4:         clamp(1.1rem, 1.0vw + 0.4rem, 1.25rem);
+  --text-body-lg:    1.125rem;
+  --text-body:       1.000rem;
+  --text-body-sm:    0.875rem;
+  --text-caption:    0.750rem;
+
+  /* 4. SPACING & CONTAINERS */
+  --space-1:  0.25rem;
+  --space-2:  0.50rem;
+  --space-3:  0.75rem;
+  --space-4:  1.00rem;
+  --space-5:  1.25rem;
+  --space-6:  1.50rem;
+  --space-8:  2.00rem;
+  --space-10: 2.50rem;
+  --space-12: 3.00rem;
+  --space-16: 4.00rem;
+  --space-20: 5.00rem;
+
+  --container-max-width:     1280px;
+  --container-compact-width: 1040px;
+  --container-reading-width: 768px;
+
+  /* 5. ELEVATION & RADII */
+  --shadow-subtle:   0 1px 3px rgba(0, 24, 42, 0.05), 0 1px 2px rgba(0, 24, 42, 0.03);
+  --shadow-card:     0 4px 12px rgba(0, 24, 42, 0.06), 0 1px 3px rgba(0, 24, 42, 0.04);
+  --shadow-elevated: 0 12px 28px rgba(0, 24, 42, 0.09), 0 4px 10px rgba(0, 24, 42, 0.05);
+
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 9999px;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}

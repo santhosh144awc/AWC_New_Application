@@ -1,0 +1,7 @@
+# Ant Wealth Creation - robots.txt
+# Foundation & Staging Environment configuration
+User-agent: *
+Disallow: /api/
+Allow: /
+
+Sitemap: https://antwealthcreation.com/sitemap-index.xml

@@ -1,0 +1,169 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+const navItems = [
+  { label: 'Health Check', href: '/health-check', status: 'planned' },
+  { label: 'Plan Goals', href: '/plan', status: 'planned' },
+  { label: 'Tools', href: '/tools', status: 'planned' },
+  { label: 'Learn', href: '/learn', status: 'planned' },
+  { label: 'About', href: '/about', status: 'planned' },
+];
+---
+
+<header class="site-header" role="banner">
+  <div class="container header-container">
+    <a href="/" class="brand-link" aria-label="Ant Wealth Creation Home">
+      <img 
+        src="/assets/logo_with_tagline.webp" 
+        alt="Ant Wealth Creation Logo" 
+        width="210" 
+        height="50" 
+        class="brand-logo"
+      />
+    </a>
+
+    <nav class="main-nav" aria-label="Main Navigation">
+      <ul class="nav-list" role="list">
+        {navItems.map((item) => (
+          <li class="nav-item">
+            <a 
+              href={item.href} 
+              class={`nav-link ${currentPath === item.href ? 'active' : ''}`}
+              aria-current={currentPath === item.href ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a 
+        href="https://antwealth.themfbox.com/" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="portfolio-link"
+      >
+        Portfolio Login
+        <span class="sr-only">(opens in new window)</span>
+        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+
+      <a href="/health-check" class="btn-start-header">
+        Start Here →
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background-color: var(--color-bg-surface);
+    border-bottom: 1px solid var(--color-border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    height: 44px;
+    width: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    list-style: none;
+  }
+
+  .nav-link {
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-1);
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--color-brand-primary);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .portfolio-link {
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .portfolio-link:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .btn-start-header {
+    background-color: var(--color-brand-primary);
+    color: var(--color-text-inverse);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    padding: 0.5rem 1.15rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .btn-start-header:hover {
+    background-color: var(--primitive-navy-800);
+    color: var(--color-text-inverse);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  @media (max-width: 900px) {
+    .main-nav {
+      display: none;
+    }
+  }
+</style>

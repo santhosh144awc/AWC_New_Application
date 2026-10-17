@@ -1,0 +1,227 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-container">
+    <div class="footer-grid">
+      <!-- Col 1: Identity & AMFI Credentials -->
+      <div class="footer-col">
+        <h3 class="footer-brand-title">Ant Wealth Creation</h3>
+        <p class="footer-tagline">Make Better Money Decisions. Build a Better Future.</p>
+        <div class="footer-credentials">
+          <p><strong>Founder:</strong> C. Santhosh Sathriyan, B.E.</p>
+          <p><strong>AMFI Registration:</strong> ARN-266896</p>
+          <p><strong>Designation:</strong> QPFP Certified</p>
+          <p><strong>Experience:</strong> Financial Markets Since 2012</p>
+        </div>
+      </div>
+
+      <!-- Col 2: Planned Life Goals -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Life Milestones</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="/plan/children">Child's Future</a></li>
+          <li><a href="/plan/home-purchase">Home Purchase</a></li>
+          <li><a href="/plan/retirement">Retirement Accumulation</a></li>
+          <li><a href="/plan/retirement-income">Retirement Income</a></li>
+          <li><a href="/health-check/real-statement">REAL Financial Statement</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Mathematical Simulators -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Tools & Simulators</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="/tools/sip">SIP Calculator</a></li>
+          <li><a href="/tools/home-loan-foreclosure">Home Loan Foreclosure</a></li>
+          <li><a href="/tools/loan-sip-recovery">Loan + SIP Recovery</a></li>
+          <li><a href="/tools/swp">SWP Longevity</a></li>
+          <li><a href="/tools/net-worth">Net Worth Tracker</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Contact & Consult -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Contact & Office</h4>
+        <p class="footer-contact-item">Dharmapuri, Tamil Nadu, India</p>
+        <p class="footer-contact-item">
+          <a href="tel:+918087971566">+91 80879 71566</a>
+        </p>
+        <p class="footer-contact-item">
+          <a href="mailto:santhosh@antwealth.in">santhosh@antwealth.in</a>
+        </p>
+        <p class="footer-contact-item">
+          <a href="https://wa.me/918087971566" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
+            Chat on WhatsApp ↗
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Statutory Regulatory Notices -->
+    <div class="statutory-notice-box">
+      <p class="statutory-risk-title">Mandatory Regulatory Disclosures:</p>
+      <p class="statutory-text">
+        <strong>Mutual Fund Risk Notice:</strong> Mutual Fund investments are subject to market risks, read all scheme related documents carefully.
+      </p>
+      <p class="statutory-text">
+        <strong>Intermediary Disclosure:</strong> Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor (ARN: 266896). Information and tools provided on this website are for educational and financial planning simulation purposes only and do not constitute fee-based investment advice or guaranteed return forecasts under SEBI (Investment Advisers) Regulations. Commission disclosures are maintained in compliance with regulatory standards.
+      </p>
+      <p class="statutory-text">
+        <strong>Simulation Disclaimer:</strong> All projections generated across website calculators are purely illustrative simulations based on user-entered mathematical assumptions. Projected returns are not guaranteed.
+      </p>
+    </div>
+
+    <!-- Legal & Copyright Bar -->
+    <div class="footer-bottom-bar">
+      <p class="copyright-text">
+        © {currentYear} Ant Wealth Creation. All Rights Reserved.
+      </p>
+      <div class="legal-nav">
+        <a href="/disclaimer">Disclaimers</a>
+        <span aria-hidden="true">•</span>
+        <a href="/privacy">Privacy Policy</a>
+        <span aria-hidden="true">•</span>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-bg-surface-dark);
+    color: var(--primitive-slate-300);
+    padding: var(--space-12) 0 var(--space-8);
+    margin-top: auto;
+    font-size: var(--text-body-sm);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-10);
+  }
+
+  .footer-brand-title {
+    color: var(--primitive-white);
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .footer-tagline {
+    color: var(--primitive-teal-400);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-credentials p {
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    color: var(--primitive-slate-400);
+  }
+
+  .footer-credentials strong {
+    color: var(--primitive-slate-200);
+  }
+
+  .footer-heading {
+    color: var(--primitive-white);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-links {
+    list-style: none;
+  }
+
+  .footer-links li {
+    margin-bottom: var(--space-2);
+  }
+
+  .footer-links a, .footer-contact-item a {
+    color: var(--primitive-slate-300);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer-links a:hover, .footer-contact-item a:hover {
+    color: var(--primitive-teal-400);
+  }
+
+  .footer-contact-item {
+    margin-bottom: var(--space-2);
+    font-size: 0.875rem;
+  }
+
+  .whatsapp-link {
+    color: var(--primitive-teal-400) !important;
+    font-weight: 600;
+  }
+
+  .statutory-notice-box {
+    border-top: 1px solid var(--primitive-navy-800);
+    border-bottom: 1px solid var(--primitive-navy-800);
+    padding: var(--space-6) 0;
+    margin-bottom: var(--space-6);
+  }
+
+  .statutory-risk-title {
+    color: var(--primitive-slate-200);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    font-size: 0.8rem;
+  }
+
+  .statutory-text {
+    font-size: 0.775rem;
+    line-height: 1.55;
+    color: var(--primitive-slate-400);
+    margin-bottom: var(--space-2);
+  }
+
+  .footer-bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--primitive-slate-500);
+  }
+
+  .legal-nav {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .legal-nav a {
+    color: var(--primitive-slate-400);
+    text-decoration: none;
+  }
+
+  .legal-nav a:hover {
+    color: var(--primitive-white);
+  }
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .footer-bottom-bar {
+      flex-direction: column;
+      gap: var(--space-4);
+      align-items: flex-start;
+    }
+  }
+</style>

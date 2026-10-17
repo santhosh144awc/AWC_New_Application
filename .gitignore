@@ -1,0 +1,27 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Environment variables & secrets
+.env
+.env.production
+.env.local
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test output & coverage
+coverage/
+playwright-report/
+test-results/
+
+# OS metadata
+.DS_Store
+Thumbs.db

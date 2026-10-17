@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Page Not Found (404) — Ant Wealth Creation"
+  description="The requested page could not be found. Navigate back to the Family Money Map."
+  currentPath="/404"
+>
+  <div class="not-found-hero">
+    <div class="container text-center not-found-container">
+      <span class="error-badge">404 Error</span>
+      <h1 class="error-title">Page Not Found</h1>
+      <p class="error-desc">
+        We couldn't locate the destination you were looking for on the Family Money Map.
+        The page may have moved as part of our platform upgrade.
+      </p>
+
+      <div class="recovery-box">
+        <h2 class="recovery-heading">Popular Starting Points:</h2>
+        <ul class="recovery-links" role="list">
+          <li><a href="/">← Return to Homepage</a></li>
+          <li><a href="/health-check">2-Minute Financial Health Check</a></li>
+          <li><a href="/tools/sip">SIP Calculator</a></li>
+          <li><a href="/plan/retirement">Retirement Planning Roadmap</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-hero {
+    padding: var(--space-16) 0 var(--space-20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+
+  .not-found-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .error-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--primitive-rose-100);
+    color: var(--primitive-rose-600);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .error-title {
+    font-size: var(--text-h1);
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .error-desc {
+    color: var(--color-text-secondary);
+    font-size: var(--text-body);
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .recovery-box {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-card);
+    text-align: left;
+  }
+
+  .recovery-heading {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .recovery-links {
+    list-style: none;
+  }
+
+  .recovery-links li {
+    margin-bottom: var(--space-2);
+  }
+
+  .recovery-links a {
+    font-weight: 500;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .recovery-links a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+  }
+</style>
