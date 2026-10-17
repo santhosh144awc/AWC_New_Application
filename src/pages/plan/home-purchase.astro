@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/plan/home-purchase/');
+---
+
+<BaseLayout
+  title="Home Purchase & Acquisition Cost Planner — Ant Wealth Creation"
+  description="Plan your family home purchase with true acquisition costs (stamp duty, registration, furnishing), safe 35% EMI thresholds, and down payment buffers."
+  currentPath="/plan/home-purchase/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Milestone Roadmap"
+      title="Family Home Purchase & Acquisition Cost Planner"
+      description="Buying a home involves significantly more than just the property agreement price. This roadmap helps families budget for total acquisition costs, down payment buffers, and safe monthly EMI burdens."
+      statusBadge="Planner Shell Active • GATE-C Tax Review Pending"
+    />
+
+    <StatusNotice
+      featureName="Home Purchase Affordability Engine"
+      gateNote="Under GATE-C (Tax Law Versioning), statutory tax relief on home loan interest (historically Section 24(b) of the 1961 Act, transitioning to Section 130 under the Income-tax Act, 2025) is subject to professional review. The simulation engine will be activated upon completion of tax review."
+      expectedInputs={[
+        "Target property purchase price in today's money (₹)",
+        "Planned purchase year (horizon in years)",
+        "Property price inflation expectation (typically 5%–7% annually)",
+        "Planned down payment percentage (typically 20%–25%)",
+        "Existing savings earmarked for down payment buffer",
+        "Target loan tenure (15 to 25 years) and assumed interest rate",
+        "Current monthly family take-home income",
+      ]}
+      expectedOutputs={[
+        "Future property cost at the target year",
+        "Total acquisition buffer (Stamp duty, registration, interior setup: ~10%)",
+        "Total upfront down payment cash required",
+        "Estimated monthly home loan EMI",
+        "EMI-to-Income burden ratio with safe threshold benchmark (under 35%–40%)",
+      ]}
+    />
+
+    <section class="acquisition-rules-box" aria-labelledby="rules-heading">
+      <h2 id="rules-heading" class="section-title">The Three Hidden Costs of Buying a Home</h2>
+      
+      <div class="rules-grid">
+        <div class="rule-card">
+          <span class="rule-tag">Hidden Cost 01</span>
+          <h3 class="rule-title">Stamp Duty & Registration (~7%–8%)</h3>
+          <p class="rule-desc">State registration fees and stamp duty cannot be financed through most home loans; they must be funded upfront entirely from family cash reserves.</p>
+        </div>
+
+        <div class="rule-card">
+          <span class="rule-tag">Hidden Cost 02</span>
+          <h3 class="rule-title">Interior & Movement Buffer (~5%–10%)</h3>
+          <p class="rule-desc">Electricals, woodwork, modular kitchen, and moving costs typically add 5% to 10% to the base agreement price, often catching first-time buyers off-guard.</p>
+        </div>
+
+        <div class="rule-card">
+          <span class="rule-tag">Hidden Cost 03</span>
+          <h3 class="rule-title">The Emergency Fund Trap</h3>
+          <p class="rule-desc">Never exhaust your 6-month family emergency reserve to meet a down payment shortfall. A home with zero emergency cash buffer creates acute financial distress.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/plan/" class="btn-subtle">← Back to All Goal Roadmaps</a>
+      <a href="/tools/home-loan-foreclosure/" class="btn-subtle">Explore Loan Foreclosure Simulator →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .acquisition-rules-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .rules-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .rule-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .rule-tag {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .rule-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .rule-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

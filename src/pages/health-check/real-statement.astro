@@ -1,0 +1,260 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/health-check/real-statement/');
+
+const statementStages = [
+  {
+    step: 'Tab 1',
+    title: 'Monthly Household Cash Flow',
+    focus: 'Inflows vs Outflows',
+    description: 'Map take-home salaries, business earnings, and investment income against household essentials, children education, insurance premiums, and lifestyle costs.',
+    liveFeedback: 'Computes Discretionary Surplus (₹) and Family Savings Rate (%).',
+  },
+  {
+    step: 'Tab 2',
+    title: 'Liquid & Safety Assets',
+    focus: 'Emergency Liquidity',
+    description: 'Itemize savings bank accounts, fixed deposits, liquid funds, PPF, EPF, NPS debt, and sovereign gold bonds.',
+    liveFeedback: 'Computes Emergency Fund Runway (Months of living expenses covered).',
+  },
+  {
+    step: 'Tab 3',
+    title: 'Growth Capital & Property',
+    focus: 'Asset Allocation',
+    description: 'Separate long-term wealth creators (Equity mutual funds, direct stocks) from physical assets. Crucially separates your primary residence from productive real estate and commercial land.',
+    liveFeedback: 'Computes Equity-to-Debt Asset Allocation ratio.',
+  },
+  {
+    step: 'Tab 4',
+    title: 'Liabilities & Productive Net Worth',
+    focus: 'True Balance Sheet',
+    description: 'Aggregate home loans, vehicle loans, education loans, and credit card balances. Calculates Actual Productive Net Worth by subtracting personal residence and private vehicles from total assets.',
+    liveFeedback: 'Computes Solvency Ratio, Debt-to-Asset Ratio, and Productive Net Worth.',
+  },
+];
+---
+
+<BaseLayout
+  title="REAL Financial Statement & Balance Sheet — Ant Wealth Creation"
+  description="Comprehensive family cash flow, asset allocation, and productive net worth balance sheet. Evaluates true solvency without counting consumption assets."
+  currentPath="/health-check/real-statement/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Comprehensive Balance Sheet"
+      title="REAL Financial Statement & Household Balance Sheet"
+      description="Most families believe their net worth is high because their primary home has appreciated. The REAL Financial Statement separates your personal consumption assets from the productive investments that will actually fund your life milestones."
+      statusBadge="Multi-Stage Architecture Under Development"
+    />
+
+    <StatusNotice
+      featureName="REAL Financial Statement Engine"
+      gateNote="Under GATE-D (Privacy & Local Storage Governance), real financial inputs are not persisted in browser storage during this foundation phase. The 4-stage conversational wizard is currently being structured with zero third-party transmission, in-memory isolation, and explicit user-controlled session export."
+      expectedInputs={[
+        "Monthly household gross & net income streams",
+        "Mandatory vs discretionary living expenses",
+        "Liquid bank balances & fixed deposits",
+        "Retirement debt assets (EPF, PPF, NPS)",
+        "Equity mutual fund & stock portfolios",
+        "Primary home market value vs remaining loan principal",
+        "Outstanding personal, vehicle, or education loans",
+      ]}
+      expectedOutputs={[
+        "Monthly Family Savings Surplus Rate (%)",
+        "Liquid Emergency Runway (Months covered)",
+        "Total Accounting Net Worth vs Actual Productive Net Worth",
+        "Debt-to-Income & Solvency Ratios",
+        "Visual 5-Asset Allocation Breakdown (Liquid, Debt, Equity, Gold, Real Estate)",
+      ]}
+    />
+
+    <section class="statement-stages-section" aria-labelledby="stages-heading">
+      <h2 id="stages-heading" class="section-title">The 4-Stage Progressive Structure</h2>
+      <p class="section-desc">
+        To prevent document fatigue, the new application organizes the statement into 4 focused conversational stages:
+      </p>
+
+      <div class="stages-grid">
+        {statementStages.map((st) => (
+          <div class="stage-card">
+            <div class="stage-badge-row">
+              <span class="stage-badge">{st.step}</span>
+              <span class="stage-focus">{st.focus}</span>
+            </div>
+            <h3 class="stage-title">{st.title}</h3>
+            <p class="stage-desc">{st.description}</p>
+            <div class="stage-feedback-box">
+              <span class="feedback-label">Calculated Metrics:</span>
+              <p class="feedback-text">{st.liveFeedback}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Navigation & Next Steps -->
+    <div class="statement-nav-strip">
+      <a href="/health-check/" class="btn-back">← Back to 7-Pillar Health Check</a>
+      <a href="/plan/" class="btn-forward">Explore Milestone Goal Planners →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .statement-stages-section {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .stages-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .stages-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .stage-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stage-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .stage-badge {
+    font-size: var(--text-caption);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .stage-focus {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .stage-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .stage-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-4);
+    flex-grow: 1;
+  }
+
+  .stage-feedback-box {
+    background-color: var(--primitive-slate-50);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .feedback-label {
+    display: block;
+    font-weight: 700;
+    color: var(--color-text-brand);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+
+  .feedback-text {
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .statement-nav-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-back, .btn-forward {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-back {
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-medium);
+  }
+
+  .btn-back:hover {
+    color: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+  }
+
+  .btn-forward {
+    background-color: var(--color-brand-primary);
+    color: var(--primitive-white);
+  }
+
+  .btn-forward:hover {
+    background-color: var(--primitive-navy-800);
+  }
+</style>

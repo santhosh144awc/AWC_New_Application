@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/net-worth/');
+---
+
+<BaseLayout
+  title="Family Net Worth & Balance Sheet Calculator — Ant Wealth Creation"
+  description="Consolidate all family financial assets, physical real estate, retirement savings, and outstanding liabilities into a true net worth baseline."
+  currentPath="/tools/net-worth/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Financial Diagnostics"
+      title="Family Net Worth & Balance Sheet Calculator"
+      description="Consolidate everything you own against everything you owe to calculate your true family net worth and track your real financial progress."
+      statusBadge="Asset Classification Logic Pending"
+    />
+
+    <StatusNotice
+      featureName="Balance Sheet Aggregation & Net Worth Engine"
+      gateNote="Under GATE-D (Financial Data Isolation & Classification), net worth calculations require distinguishing productive liquid wealth (mutual funds, stocks, PF) from illiquid consumption assets (primary residence, vehicles, personal jewellery) without persisting sensitive user data. This shell establishes the asset/liability framework."
+      expectedInputs={[
+        "Cash & liquid emergency reserves (savings accounts, short-term FDs)",
+        "Invested financial assets (equity mutual funds, stocks, PPF, EPF, NPS)",
+        "Real estate & physical assets (market value of properties, gold/jewellery)",
+        "Outstanding liabilities (home mortgage, vehicle loans, education loans, credit card balances)",
+      ]}
+      expectedOutputs={[
+        "Gross family assets breakdown (Liquid vs Semi-Liquid vs Illiquid)",
+        "Total family liabilities and debt ratio (Debt-to-Asset ratio)",
+        "True net worth (Total Assets minus Total Liabilities)",
+        "Productive liquid net worth ratio (excluding primary home)",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">Productive vs Non-Productive Net Worth</h2>
+      <p class="section-desc">
+        Not all net worth is created equal. A high paper net worth trapped in a self-occupied home does not fund monthly groceries or retirement:
+      </p>
+
+      <div class="worth-types-grid">
+        <div class="worth-card">
+          <span class="worth-badge">Productive Net Worth</span>
+          <h3 class="worth-title">Financial & Income-Generating Assets</h3>
+          <p class="worth-desc">Mutual funds, equities, provident funds, and cash generate dividends, interest, or compound capital growth that buys your financial freedom.</p>
+        </div>
+
+        <div class="worth-card">
+          <span class="worth-badge">Consumption Net Worth</span>
+          <h3 class="worth-title">Self-Occupied & Depreciating Assets</h3>
+          <p class="worth-desc">Your primary residence, personal vehicle, and household goods provide utility and comfort, but incur maintenance costs rather than providing cash flow.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/health-check/real-statement/" class="btn-subtle">← Explore REAL Financial Statement</a>
+      <a href="/tools/" class="btn-subtle">Back to All Tools →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .worth-types-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .worth-types-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .worth-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .worth-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .worth-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .worth-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

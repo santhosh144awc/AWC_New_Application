@@ -1,0 +1,393 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../config/routes';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+
+const crumbs = getBreadcrumbsForPath('/about/');
+const { founder, firm, regulatory } = BUSINESS_PROFILE;
+---
+
+<BaseLayout
+  title="About Us & Founder Story — Ant Wealth Creation"
+  description="Learn about Ant Wealth Creation, our founder C. Santhosh Sathriyan, our insurance heritage, and our mission to simplify wealth creation for Indian families."
+  currentPath="/about/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Our Mission & Heritage"
+      title="About Ant Wealth Creation"
+      description="Founded with a clear conviction: to guide Indian families toward financial confidence through disciplined, transparent, and goal-oriented wealth planning."
+    />
+
+    <section class="founder-section" aria-labelledby="founder-heading">
+      <div class="founder-grid">
+        <div class="founder-image-col">
+          <div class="founder-photo-wrapper">
+            <img
+              src={founder.photoPath}
+              alt={founder.fullName}
+              class="founder-photo"
+              loading="lazy"
+            />
+          </div>
+          <div class="founder-badge-card">
+            <div class="founder-name">{founder.fullName}</div>
+            <div class="founder-creds">{founder.credentials}</div>
+            <div class="founder-loc">{firm.headquarters}</div>
+          </div>
+        </div>
+
+        <div class="founder-content-col">
+          <span class="eyebrow-accent">Meet the Founder</span>
+          <h2 id="founder-heading" class="founder-title">
+            "Every family deserves a financial roadmap built on clarity, not commissions."
+          </h2>
+
+          <div class="founder-narrative">
+            <p>
+              {founder.bio}
+            </p>
+            <p>
+              {founder.heritage}
+            </p>
+            <p>
+              {founder.foundingStory}
+            </p>
+          </div>
+
+          <div class="milestones-row">
+            <div class="milestone-box">
+              <span class="milestone-num">{firm.experienceSince}</span>
+              <span class="milestone-label">Market Experience Since</span>
+            </div>
+            <div class="milestone-box">
+              <span class="milestone-num">{firm.foundingYear}</span>
+              <span class="milestone-label">Firm Established</span>
+            </div>
+            <div class="milestone-box">
+              <span class="milestone-num">100%</span>
+              <span class="milestone-label">Pure Goal-Focused</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles-section" aria-labelledby="principles-heading">
+      <h2 id="principles-heading" class="section-title">The Four Core Pillars of Our Practice</h2>
+      <p class="section-desc">
+        These four non-negotiable principles guide every interaction, recommendation, and tool we build:
+      </p>
+
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="principle-number">01</div>
+          <h3 class="principle-title">Family Protection First</h3>
+          <p class="principle-text">
+            Wealth creation without an adequate emergency cushion and comprehensive pure term and health insurance is built on sand. We ensure your downside is fortified before risking capital in equity markets.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">02</div>
+          <h3 class="principle-title">Clarity Over Jargon</h3>
+          <p class="principle-text">
+            Financial planning shouldn't require an MBA. We translate complex market mechanics, tax regulations, and compounding math into intuitive, plain-English frameworks anyone can understand.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">03</div>
+          <h3 class="principle-title">Goal-Centric Discipline</h3>
+          <p class="principle-text">
+            We don't chase hot stock tips or short-term trading fads. Every rupee invested is tied to a specific milestone: buying a home, funding higher education, or securing a dignified retirement.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">04</div>
+          <h3 class="principle-title">Transparent Intermediation</h3>
+          <p class="principle-text">
+            As an AMFI-Registered Mutual Fund Distributor, we disclose regulatory status honestly and operate with total transparency regarding mutual fund distribution commissions and investment risk.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="regulatory-disclosure-box" aria-labelledby="reg-heading">
+      <h2 id="reg-heading" class="reg-title">Regulatory Standing & Professional Disclosures</h2>
+      <p class="reg-text">
+        <strong>{regulatory.amfiRegistrationText}:</strong> {regulatory.sebiRIAStatusNotice}
+      </p>
+      <p class="reg-text">
+        Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully before investing. For formal verification, visit the <a href={regulatory.arnVerificationSourceUrl} target="_blank" rel="noopener noreferrer" class="reg-link">AMFI Official Distributor Portal</a>.
+      </p>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/health-check/" class="btn-subtle">Take the 7-Pillars Health Check →</a>
+      <a href="/contact/" class="btn-subtle">Get in Touch with Santhosh →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .founder-section {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    margin-bottom: var(--space-16);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  @media (min-width: 1024px) {
+    .founder-section {
+      padding: var(--space-12);
+    }
+  }
+
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .founder-grid {
+      grid-template-columns: 280px 1fr;
+      gap: var(--space-12);
+    }
+  }
+
+  .founder-image-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .founder-photo-wrapper {
+    width: 200px;
+    height: 200px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 4px solid var(--primitive-teal-500);
+    box-shadow: var(--shadow-elevated);
+    margin-bottom: var(--space-4);
+  }
+
+  .founder-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .founder-badge-card {
+    background-color: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .founder-name {
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .founder-creds {
+    font-size: var(--text-caption);
+    color: var(--color-text-brand);
+    font-weight: 600;
+    margin: var(--space-1) 0;
+  }
+
+  .founder-loc {
+    font-size: var(--text-caption);
+    color: var(--color-text-tertiary);
+  }
+
+  .eyebrow-accent {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .founder-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    line-height: 1.3;
+    margin-bottom: var(--space-6);
+  }
+
+  .founder-narrative {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-8);
+  }
+
+  .milestones-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-6);
+  }
+
+  .milestone-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .milestone-num {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-brand-primary);
+  }
+
+  .milestone-label {
+    font-size: var(--text-caption);
+    color: var(--color-text-tertiary);
+  }
+
+  .principles-section {
+    margin-bottom: var(--space-16);
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .principles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .principle-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .principle-number {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--primitive-teal-500);
+    margin-bottom: var(--space-2);
+  }
+
+  .principle-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .principle-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .regulatory-disclosure-box {
+    background-color: var(--primitive-navy-50);
+    border: 1px solid var(--primitive-navy-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-12);
+  }
+
+  .reg-title {
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .reg-text {
+    font-size: var(--text-caption);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-2);
+  }
+
+  .reg-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .reg-link {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

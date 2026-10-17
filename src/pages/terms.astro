@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../config/routes';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+
+const crumbs = getBreadcrumbsForPath('/terms/');
+const { firm, regulatory, disclosures } = BUSINESS_PROFILE;
+---
+
+<BaseLayout
+  title="Terms of Use & Service Boundaries — Ant Wealth Creation"
+  description="Terms and conditions governing the use of Ant Wealth Creation website, calculators, educational frameworks, and distributor services."
+  currentPath="/terms/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Terms & Conditions"
+      title="Terms of Use"
+      description="The standard terms governing your access to the Ant Wealth Creation website, financial tools, and distribution services."
+    />
+
+    <div class="legal-card">
+      <section class="legal-section">
+        <h2 class="legal-heading">1. Acceptance of Terms</h2>
+        <p>
+          By accessing or using the website of Ant Wealth Creation ({firm.canonicalDomain}), you agree to be bound by these Terms of Use, our Privacy Policy, and all applicable Indian securities laws and regulations. If you do not agree with any part of these terms, please discontinue use of this site.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">2. Nature of Services & Intermediary Capacity</h2>
+        <p>
+          Ant Wealth Creation operates as an AMFI-Registered Mutual Fund Distributor. The materials, calculators, and articles provided on this website are designed solely to facilitate personal financial awareness and milestone goal planning.
+        </p>
+        <p>
+          {regulatory.sebiRIAStatusNotice}
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">3. Use of Calculators & Simulation Accuracy</h2>
+        <p>
+          All calculators and financial modeling interfaces provided on this platform are intended solely for simulation purposes based on user inputs. We make no warranties, express or implied, regarding the mathematical precision of projections in volatile market conditions or their future realisation.
+        </p>
+        <p>
+          {disclosures.mutualFundRisk}
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">4. Intellectual Property</h2>
+        <p>
+          All logos, branding marks, design systems, visual assets, text copy, and custom computational workflows on this website are the intellectual property of Ant Wealth Creation and protected by applicable copyright and trademark laws.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">5. Governing Law & Jurisdiction</h2>
+        <p>
+          These Terms of Use shall be governed by and construed in accordance with the laws of the Republic of India. Any disputes arising in connection with the website or services shall be subject to the exclusive jurisdiction of the competent courts in Dharmapuri, Tamil Nadu, India.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .legal-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-subtle);
+    max-width: 860px;
+  }
+
+  @media (min-width: 768px) {
+    .legal-card {
+      padding: var(--space-12);
+    }
+  }
+
+  .legal-section {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .legal-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .legal-heading {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p:last-child {
+    margin-bottom: 0;
+  }
+</style>

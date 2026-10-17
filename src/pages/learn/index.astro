@@ -1,0 +1,273 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/learn/');
+
+const guides = [
+  {
+    title: "Financial Freedom in India: The 7-Step Roadmap",
+    slug: "financial-freedom-india",
+    category: "Foundations",
+    readingTime: "8 min read",
+    summary: "A practical, phased journey tailored for Indian middle-class families—from high-interest debt elimination to building self-sustaining multi-generational wealth.",
+    keyTakeaways: [
+      "Why emergency liquidity comes before equity investing",
+      "Shielding your downside through adequate term and health insurance",
+      "Transitioning from active salaried work to passive compounding income",
+    ],
+    relatedTool: { label: "7-Pillars Health Check", href: "/health-check/" },
+  },
+  {
+    title: "The Comprehensive Emergency Fund Guide",
+    slug: "emergency-fund-guide",
+    category: "Protection",
+    readingTime: "6 min read",
+    summary: "Why 6 to 12 months of non-negotiable living expenses must be parked in high-liquidity instruments before you take market volatility risk.",
+    keyTakeaways: [
+      "Calculating your true monthly burn rate (EMI + groceries + utilities + insurance)",
+      "Where to keep reserves: Liquid mutual funds vs sweep-in savings accounts",
+      "Common psychological traps: Chasing yield with emergency reserves",
+    ],
+    relatedTool: { label: "Net Worth Calculator", href: "/tools/net-worth/" },
+  },
+  {
+    title: "Term Insurance vs Investment-Linked Plans",
+    slug: "term-insurance-guide",
+    category: "Risk Shield",
+    readingTime: "7 min read",
+    summary: "Why mixing insurance with investment produces substandard results on both fronts, and how pure term insurance gives maximum cover for lowest premium.",
+    keyTakeaways: [
+      "The hidden costs and low IRR (4% to 5%) of traditional endowment plans",
+      "Using Human Life Value (HLV) to calculate 15-20x annual expense coverage",
+      "The MWP (Married Women's Property) Act shield for Indian business owners and professionals",
+    ],
+    relatedTool: { label: "Term Life Calculator", href: "/tools/life-insurance/" },
+  },
+  {
+    title: "Selecting the Right Mutual Funds for Long Horizons",
+    slug: "mutual-fund-selection-guide",
+    category: "Wealth Creation",
+    readingTime: "10 min read",
+    summary: "Demystifying market capitalizations, expense ratios, rolling returns, and portfolio overlap to build a resilient equity mutual fund portfolio.",
+    keyTakeaways: [
+      "Large-cap index funds vs flexi-cap vs mid/small-cap allocations",
+      "Why rolling returns matter far more than trailing 1-year returns",
+      "Avoiding portfolio clutter: Why 3 to 4 well-chosen funds are all you need",
+    ],
+    relatedTool: { label: "Monthly SIP Simulator", href: "/tools/sip/" },
+  },
+  {
+    title: "Tax-Efficient Investing in India (Under Review)",
+    slug: "tax-efficient-investing-guide",
+    category: "Tax Planning",
+    readingTime: "9 min read",
+    summary: "Understanding capital gains taxation on equity and debt mutual funds, Section 80C phase-out realities, and tax harvesting strategies.",
+    keyTakeaways: [
+      "Long-Term Capital Gains (LTCG) vs Short-Term Capital Gains (STCG) on equity",
+      "Debt fund taxation post-Finance Act amendments",
+      "Note: Tax rules are under ongoing legal review per the proposed Income-tax Act, 2025",
+    ],
+    relatedTool: { label: "Retirement Planner", href: "/plan/retirement/" },
+  },
+];
+---
+
+<BaseLayout
+  title="Financial Learning Library — Ant Wealth Creation"
+  description="Practical, jargon-free guides on financial freedom, debt management, life protection, and disciplined mutual fund investing in India."
+  currentPath="/learn/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Knowledge & Frameworks"
+      title="Financial Learning Library"
+      description="Clear, honest, and educational guides to help Indian families make informed money decisions without jargon, sales pressure, or get-rich-quick hype."
+    />
+
+    <div class="guides-grid">
+      {guides.map((guide) => (
+        <article class="guide-card">
+          <div class="guide-header">
+            <span class="guide-category">{guide.category}</span>
+            <span class="guide-time">{guide.readingTime}</span>
+          </div>
+
+          <h2 class="guide-title">{guide.title}</h2>
+          <p class="guide-summary">{guide.summary}</p>
+
+          <div class="takeaways-box">
+            <h3 class="takeaways-heading">Key Insights:</h3>
+            <ul class="takeaways-list">
+              {guide.keyTakeaways.map((takeaway) => (
+                <li>{takeaway}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="guide-footer">
+            <a href={guide.relatedTool.href} class="related-tool-link">
+              Launch {guide.relatedTool.label} →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <section class="learning-philosophy" aria-labelledby="philosophy-heading">
+      <h2 id="philosophy-heading" class="philosophy-title">Our Educational Philosophy</h2>
+      <p class="philosophy-text">
+        At Ant Wealth Creation, we believe financial education must come before product selection. You will never see product hype, complex derivatives, or speculative trading tips here. We teach disciplined, boring, time-tested financial principles that protect your family and compound your wealth steadily.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .guides-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-16);
+  }
+
+  @media (min-width: 768px) {
+    .guides-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .guide-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .guide-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .guide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .guide-category {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--primitive-teal-100);
+  }
+
+  .guide-time {
+    font-size: var(--text-caption);
+    color: var(--color-text-tertiary);
+  }
+
+  .guide-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    line-height: 1.3;
+    margin-bottom: var(--space-3);
+  }
+
+  .guide-summary {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .takeaways-box {
+    background-color: var(--primitive-navy-50);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-top: auto;
+    margin-bottom: var(--space-6);
+  }
+
+  .takeaways-heading {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-brand);
+    margin-bottom: var(--space-2);
+  }
+
+  .takeaways-list {
+    margin: 0;
+    padding-left: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-caption);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .guide-footer {
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-4);
+  }
+
+  .related-tool-link {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .related-tool-link:hover {
+    color: var(--primitive-teal-700);
+    text-decoration: underline;
+  }
+
+  .learning-philosophy {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-10);
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .philosophy-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .philosophy-text {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/life-insurance/');
+---
+
+<BaseLayout
+  title="Human Life Value (HLV) Term Insurance Calculator — Ant Wealth Creation"
+  description="Calculate your family's true term insurance protection requirement based on annual living expenses, existing liabilities, and future milestones."
+  currentPath="/tools/life-insurance/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Protection Diagnostic"
+      title="Human Life Value (HLV) Term Insurance Calculator"
+      description="Calculate pure term protection needs scientifically so your dependents remain financially resilient regardless of life's uncertainties."
+      statusBadge="HLV Underwriting Logic Pending"
+    />
+
+    <StatusNotice
+      featureName="Scientific Human Life Value (HLV) Engine"
+      gateNote="Under Protection Pillar Guidelines, term insurance requirements must follow the expense-replacement and liability-coverage method: HLV = (Annual Family Expenses * Years) + Outstanding Loans + Critical Goals - Liquid Assets. In this shell, the methodology is transparently outlined without premature insurance quotes."
+      expectedInputs={[
+        "Annual family living expenses (excluding earner's personal expenses)",
+        "Years of dependency until youngest dependent is independent (e.g. 15 to 25 years)",
+        "Total outstanding loan balances (home loan, auto loan, personal debt)",
+        "Future children education and major milestone funding requirements",
+        "Current liquid financial assets already accumulated",
+      ]}
+      expectedOutputs={[
+        "Total gross protection requirement",
+        "Net pure term life insurance cover required today",
+        "Evaluation of coverage gap compared to existing policies",
+        "Guidance on pure term insurance vs high-cost endowment plans",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Three Pillars of Adequate Life Coverage</h2>
+      <p class="section-desc">
+        Never rely on arbitrary thumb rules like '10x salary'. A robust life insurance calculation must cover three distinct financial realities:
+      </p>
+
+      <div class="insurance-pillars-grid">
+        <div class="pillar-card">
+          <span class="pillar-badge">Pillar 1</span>
+          <h3 class="pillar-title">Expense Replacement</h3>
+          <p class="pillar-desc">A capital sum large enough that interest/safe yields provide for monthly household expenses for 20+ years.</p>
+        </div>
+
+        <div class="pillar-card">
+          <span class="pillar-badge">Pillar 2</span>
+          <h3 class="pillar-title">Immediate Debt Clearance</h3>
+          <p class="pillar-desc">100% of all outstanding loans (especially home and car loans) cleared immediately so family retains the home debt-free.</p>
+        </div>
+
+        <div class="pillar-card">
+          <span class="pillar-badge">Pillar 3</span>
+          <h3 class="pillar-title">Locked Future Goals</h3>
+          <p class="pillar-desc">Guaranteed earmarks for children's higher education and marriage that cannot be compromised.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/health-check/" class="btn-subtle">← Review 7-Pillars Health Check</a>
+      <a href="/tools/net-worth/" class="btn-subtle">Calculate Net Worth →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .insurance-pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .insurance-pillars-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pillar-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .pillar-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .pillar-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .pillar-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

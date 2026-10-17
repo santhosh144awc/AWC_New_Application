@@ -1,0 +1,319 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/health-check/');
+
+const pillarsDetail = [
+  {
+    num: '01',
+    name: 'Cash Flow & Surplus',
+    desc: 'Measures your monthly savings discipline and whether your family reliably retains a 25%+ surplus after living expenses.',
+    benchmark: '25%–35% of monthly net income',
+    whyItMatters: 'Without a positive monthly surplus, all long-term goal funding is compromised.',
+  },
+  {
+    num: '02',
+    name: 'Emergency Buffer',
+    desc: 'Evaluates household liquidity to sustain essential groceries, school fees, and EMIs if primary income halts unexpectedly.',
+    benchmark: '6–9 months of true living essentials',
+    whyItMatters: 'Prevents you from liquidating equity portfolios or taking high-cost loans during life shocks.',
+  },
+  {
+    num: '03',
+    name: 'Debt Solvency',
+    desc: 'Assesses total monthly loan repayments (home loan, car, personal loans) against take-home income.',
+    benchmark: 'Total debt EMIs kept below 35%–40%',
+    whyItMatters: 'Excessive debt crowding limits your ability to invest for children’s education and retirement.',
+  },
+  {
+    num: '04',
+    name: 'Pure Risk Protection',
+    desc: 'Checks whether the family breadwinner is protected with high-cover pure term insurance (15x income) and standalone health cover.',
+    benchmark: '12x–20x pure term cover + family floater health cover',
+    whyItMatters: 'Protects the family’s standard of living without draining savings on medical emergencies.',
+  },
+  {
+    num: '05',
+    name: 'Productive Growth Assets',
+    desc: 'Evaluates whether long-term investments are allocated to beat real-world inflation over 7+ year horizons.',
+    benchmark: 'Disciplined equity mutual fund asset allocation',
+    whyItMatters: 'Keeping all savings in low-yield fixed deposits guarantees purchasing-power loss over time.',
+  },
+  {
+    num: '06',
+    name: 'Milestone Goal Clarity',
+    desc: 'Verifies whether education, home purchase, and wealth targets have explicit time horizons and earmarked portfolios.',
+    benchmark: 'Dedicated asset-allocated buckets for each major goal',
+    whyItMatters: 'Goals without specific dates and asset allocations remain mere wishes.',
+  },
+  {
+    num: '07',
+    name: 'Retirement Independence',
+    desc: 'Evaluates your progress toward accumulating an inflation-protected lifelong corpus for 30+ years of post-work living.',
+    benchmark: '25x–30x annual retirement living expenses',
+    whyItMatters: 'Longevity risk means your money must continue compounding long after you retire.',
+  },
+];
+---
+
+<BaseLayout
+  title="Family Financial Health Diagnostic — Ant Wealth Creation"
+  description="Evaluate your family's financial resilience across 7 vital pillars. Product-neutral, 100% private self-assessment with zero forced lead capture."
+  currentPath="/health-check/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Diagnostic Assessment"
+      title="The 7 Pillars of Family Financial Health"
+      description="A structured, product-neutral framework to assess where your family foundation is rock solid and where dangerous vulnerabilities exist. Completely private with zero forced phone number capture."
+      statusBadge="Diagnostic Suite Under Specification Review"
+    />
+
+    <StatusNotice
+      featureName="7-Pillar Health Scorecard"
+      gateNote="The automated scoring engine is undergoing mathematical specification review. In this staging build, we outline the exact 7 pillars, evaluation criteria, and sound financial benchmarks without generating artificial scores."
+      expectedInputs={[
+        "Monthly net income and living expenses",
+        "Liquid emergency savings balance",
+        "Total monthly loan EMIs",
+        "Existing life insurance cover type (Term vs Endowment)",
+        "Long-term equity vs debt asset allocation",
+        "Earmarked milestone target dates",
+        "Current age and planned retirement timeline",
+      ]}
+      expectedOutputs={[
+        "Weighted Financial Resilience Score (0–100)",
+        "Pillar-by-pillar status (Strong, Building, Vulnerable)",
+        "Top 3 prioritized action areas based on the hierarchy of financial needs",
+        "Printable 1-page family financial diagnostic report",
+      ]}
+    />
+
+    <section class="pillars-framework-section" aria-labelledby="framework-heading">
+      <h2 id="framework-heading" class="section-title">The 7 Foundations Evaluated</h2>
+      <p class="section-desc">
+        Every question in the diagnostic maps directly to one of these 7 essential pillars. Review each area below to prepare your family numbers:
+      </p>
+
+      <div class="pillars-detail-grid">
+        {pillarsDetail.map((p) => (
+          <div class="pillar-detail-card">
+            <div class="pillar-badge-row">
+              <span class="pillar-num">{p.num}</span>
+              <span class="pillar-benchmark-tag">{p.benchmark}</span>
+            </div>
+            <h3 class="pillar-title">{p.name}</h3>
+            <p class="pillar-desc">{p.desc}</p>
+            <div class="pillar-why-box">
+              <span class="why-label">Why It Matters:</span>
+              <p class="why-text">{p.whyItMatters}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Deep Dive: REAL Financial Statement Banner -->
+    <section class="deep-dive-card" aria-labelledby="real-statement-heading">
+      <div class="deep-dive-content">
+        <span class="deep-dive-tag">Advanced Diagnostic</span>
+        <h2 id="real-statement-heading" class="deep-dive-title">Ready for a Full Household Balance Sheet?</h2>
+        <p class="deep-dive-desc">
+          Map your complete household cash flows, living costs, assets, and liabilities to calculate your <strong>Actual Productive Net Worth</strong> (excluding personal residence and vehicles).
+        </p>
+      </div>
+      <div class="deep-dive-action">
+        <a href="/health-check/real-statement/" class="btn-deep-dive">
+          Explore REAL Financial Statement →
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .pillars-framework-section {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .pillars-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .pillars-detail-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .pillars-detail-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pillar-detail-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pillar-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .pillar-num {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-text-brand);
+  }
+
+  .pillar-benchmark-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    text-align: right;
+  }
+
+  .pillar-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .pillar-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+    flex-grow: 1;
+  }
+
+  .pillar-why-box {
+    background-color: var(--primitive-slate-50);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .why-label {
+    display: block;
+    font-weight: 700;
+    color: var(--color-text-brand);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+
+  .why-text {
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .deep-dive-card {
+    background: linear-gradient(135deg, var(--primitive-navy-900) 0%, var(--primitive-navy-800) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    color: var(--primitive-white);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    box-shadow: var(--shadow-card);
+    margin-top: var(--space-12);
+  }
+
+  @media (min-width: 768px) {
+    .deep-dive-card {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .deep-dive-tag {
+    display: inline-block;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primitive-teal-400);
+    margin-bottom: var(--space-2);
+  }
+
+  .deep-dive-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    color: var(--primitive-white);
+    margin-bottom: var(--space-2);
+  }
+
+  .deep-dive-desc {
+    font-size: var(--text-body-sm);
+    color: var(--primitive-slate-300);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 620px;
+  }
+
+  .btn-deep-dive {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--primitive-teal-500);
+    color: var(--primitive-white);
+    font-weight: 700;
+    font-size: var(--text-body-sm);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .btn-deep-dive:hover {
+    background-color: var(--primitive-teal-600);
+  }
+</style>

@@ -58,4 +58,56 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
       expect(reg.professionalReviewStatus).toBe('PENDING_REVIEW');
     });
   });
+
+  describe('Route Registry & Navigation Architecture (src/config/routes.ts)', () => {
+    it('provides exactly 6 primary top-navigation routes', async () => {
+      const { TOP_NAV_ROUTES } = await import('../../src/config/routes');
+      expect(TOP_NAV_ROUTES).toHaveLength(6);
+      expect(TOP_NAV_ROUTES.map(r => r.path)).toEqual([
+        '/',
+        '/health-check/',
+        '/plan/',
+        '/tools/',
+        '/learn/',
+        '/about/',
+      ]);
+    });
+
+    it('registers all 24 distinct canonical application routes without duplicates', async () => {
+      const { getAllRegisteredRoutes } = await import('../../src/config/routes');
+      const allRoutes = getAllRegisteredRoutes();
+      expect(allRoutes.length).toBe(24);
+
+      const paths = allRoutes.map(r => r.path);
+      const uniquePaths = new Set(paths);
+      expect(uniquePaths.size).toBe(paths.length);
+
+      for (const route of allRoutes) {
+        expect(route.path.startsWith('/')).toBe(true);
+        expect(route.path.endsWith('/')).toBe(true);
+        expect(route.label.trim().length).toBeGreaterThan(0);
+        expect(route.description.trim().length).toBeGreaterThan(0);
+      }
+    });
+
+    it('generates accurate, hierarchical breadcrumb trails', async () => {
+      const { getBreadcrumbsForPath } = await import('../../src/config/routes');
+      
+      const homeCrumbs = getBreadcrumbsForPath('/');
+      expect(homeCrumbs).toHaveLength(1);
+      expect(homeCrumbs[0].label).toBe('Home');
+
+      const sipCrumbs = getBreadcrumbsForPath('/tools/sip/');
+      expect(sipCrumbs).toHaveLength(3);
+      expect(sipCrumbs[0].href).toBe('/');
+      expect(sipCrumbs[1].href).toBe('/tools/');
+      expect(sipCrumbs[2].label).toBe('SIP Wealth Simulator');
+
+      const childCrumbs = getBreadcrumbsForPath('/plan/children/');
+      expect(childCrumbs).toHaveLength(3);
+      expect(childCrumbs[0].href).toBe('/');
+      expect(childCrumbs[1].href).toBe('/plan/');
+      expect(childCrumbs[2].label).toBe("Children's Future");
+    });
+  });
 });

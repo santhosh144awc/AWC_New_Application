@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/sip-growth/');
+---
+
+<BaseLayout
+  title="SIP Target Corpus Goal Planner — Ant Wealth Creation"
+  description="Reverse calculate the required monthly SIP contribution needed to accumulate a target milestone wealth corpus."
+  currentPath="/tools/sip-growth/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Reverse Calculator"
+      title="SIP Target Corpus Goal Planner"
+      description="Reverse calculate the exact monthly investment required today to achieve your desired target capital corpus in the future."
+      statusBadge="Mathematical Specification Pending"
+    />
+
+    <StatusNotice
+      featureName="Target Corpus Reverse Calculation Engine"
+      gateNote="Under GATE-B (Rate Semantics & Annuity Formula Verification), the inverse annuity formula solving for PMT = FV * i / ((1+i)^n - 1) is awaiting mathematical verification against edge cases. This shell introduces the methodology without generating premature numerical schedules."
+      expectedInputs={[
+        "Target future wealth amount (e.g. ₹25 Lakhs, ₹1 Crore, ₹5 Crores)",
+        "Time horizon to reach goal in years (e.g. 3 to 25 years)",
+        "Expected annual rate of return (e.g. 8% to 14%)",
+        "Optional annual step-up rate assumption (e.g. 0% to 10%)",
+      ]}
+      expectedOutputs={[
+        "Required fixed monthly SIP amount",
+        "Alternative: Required initial SIP with 10% annual step-up",
+        "Total principal you will invest over the period",
+        "Total wealth created via compound market growth",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Cost of Delaying Your Goal</h2>
+      <p class="section-desc">
+        Postponing your investment start date steeply increases the monthly burden required to accumulate the exact same target corpus:
+      </p>
+
+      <div class="delay-comparison-grid">
+        <div class="delay-card optimal-delay">
+          <span class="delay-badge">Start Today (15 Year Horizon)</span>
+          <div class="delay-metric">Lower Monthly Burden</div>
+          <p class="delay-desc">Time does the heavy lifting of compounding, allowing you to invest less total cash to hit ₹1 Crore.</p>
+        </div>
+
+        <div class="delay-card">
+          <span class="delay-badge">Wait 5 Years (10 Year Horizon)</span>
+          <div class="delay-metric">~2x Monthly Outflow</div>
+          <p class="delay-desc">Shortening the horizon requires more than double the monthly installment to reach the exact same ₹1 Crore target.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/tools/sip/" class="btn-subtle">← Standard SIP Simulator</a>
+      <a href="/plan/" class="btn-subtle">Explore Full Family Goal Roadmaps →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .delay-comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .delay-comparison-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .delay-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .optimal-delay {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .delay-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .delay-metric {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .delay-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

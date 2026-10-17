@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../config/routes';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+
+const crumbs = getBreadcrumbsForPath('/privacy/');
+const { firm, contact } = BUSINESS_PROFILE;
+---
+
+<BaseLayout
+  title="Privacy Policy & Data Protection — Ant Wealth Creation"
+  description="Our commitment to client confidentiality, local calculator data isolation, and compliance with the Digital Personal Data Protection Act, 2023."
+  currentPath="/privacy/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Data Governance"
+      title="Privacy Policy & Data Protection"
+      description="We respect your family's financial privacy. Learn how your data is handled with local-first calculation boundaries and strict confidentiality."
+    />
+
+    <div class="legal-card">
+      <section class="legal-section">
+        <h2 class="legal-heading">1. Commitment to Client Confidentiality</h2>
+        <p>
+          At Ant Wealth Creation, client trust is our highest priority. We do not sell, rent, monetize, or trade your personal or financial data with third-party advertisers, data brokers, or lending telemarketers under any circumstances.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">2. Local-First Financial Calculator Data Isolation</h2>
+        <p>
+          All financial calculators, goal roadmaps, and balance sheet simulators hosted on this website are engineered to operate client-side within your browser session. 
+        </p>
+        <p>
+          Inputs you enter—such as monthly savings amounts, salary figures, debt balances, or target retirement ages—are processed ephemerally. In this phase of development, no financial numbers are transmitted to remote servers, logged to analytics systems, or persisted in unencrypted permanent local storage.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">3. Information Collected via Direct Inquiries</h2>
+        <p>
+          When you voluntarily contact us via WhatsApp, phone, or email to request a personal financial consultation, we collect only the information necessary to serve your inquiry:
+        </p>
+        <ul class="legal-list">
+          <li>Your name and contact phone number or email address</li>
+          <li>General financial goals or portfolio queries you choose to share</li>
+        </ul>
+        <p>
+          This information is used strictly to communicate with you regarding your mutual fund investments and financial planning milestones.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">4. Compliance with the DPDP Act, 2023</h2>
+        <p>
+          Ant Wealth Creation complies with the principles of the Digital Personal Data Protection Act, 2023 (DPDP Act). You have the right to request access to your contact information, request corrections, or request deletion of your records from our consultation records at any time.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">5. Grievance Redressal & Privacy Officer</h2>
+        <p>
+          For any questions regarding this Privacy Policy or to exercise your data rights, contact our founder directly:
+        </p>
+        <p>
+          <strong>C. Santhosh Sathriyan</strong><br />
+          Ant Wealth Creation<br />
+          Email: <a href={`mailto:${contact.email}`} class="legal-link">{contact.email}</a><br />
+          Phone: {contact.phoneDisplay}<br />
+          Location: {firm.headquarters}
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .legal-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-subtle);
+    max-width: 860px;
+  }
+
+  @media (min-width: 768px) {
+    .legal-card {
+      padding: var(--space-12);
+    }
+  }
+
+  .legal-section {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .legal-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .legal-heading {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .legal-list {
+    margin: 0 0 var(--space-4) 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+  }
+
+  .legal-link {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+</style>

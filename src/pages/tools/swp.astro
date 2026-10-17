@@ -1,0 +1,178 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/swp/');
+---
+
+<BaseLayout
+  title="Systematic Withdrawal Plan (SWP) Cash-Flow Simulator — Ant Wealth Creation"
+  description="Model monthly cash outflows, capital longevity, and balance depletion from an invested mutual fund corpus."
+  currentPath="/tools/swp/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Cash-Flow Modeling"
+      title="Systematic Withdrawal Plan (SWP) Simulator"
+      description="Plan regular monthly cash flows from your accumulated corpus while keeping the remaining balance invested to combat inflation."
+      statusBadge="Depletion Schedule Math Review Pending"
+    />
+
+    <StatusNotice
+      featureName="SWP Cash-Flow & Depletion Schedule Engine"
+      gateNote="Under GATE-B (Depletion Mechanics), monthly cash-flow sequences, timing of withdrawal (beginning vs end of period), and portfolio longevity must be validated against pure mathematical test vectors. The legacy 4-line stub has been retired. This shell introduces the mechanism safely without placeholder simulations."
+      expectedInputs={[
+        "Initial total capital corpus amount (e.g. ₹50 Lakhs to ₹5 Crores)",
+        "Desired monthly withdrawal amount (e.g. ₹25,000 to ₹2,00,000)",
+        "Expected annual portfolio return rate (e.g. 6% to 10%)",
+        "Target withdrawal duration in years (e.g. 10 to 30 years)",
+        "Optional annual withdrawal increase percentage to match inflation",
+      ]}
+      expectedOutputs={[
+        "Total cumulative money withdrawn over the tenure",
+        "Remaining closing capital corpus at the end of tenure",
+        "Portfolio longevity (estimated years until corpus exhaustion, if withdrawal exceeds growth)",
+        "Month-by-month opening balance, withdrawal, growth, and closing balance table",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Golden Rule of Sustainable SWP</h2>
+      <p class="section-desc">
+        To prevent premature corpus exhaustion, the initial withdrawal rate should be kept below the net real return rate of the portfolio:
+      </p>
+
+      <div class="swp-rules-grid">
+        <div class="swp-card safe-rule">
+          <span class="swp-badge">Sustainable Range</span>
+          <div class="swp-metric">4% – 6% Annual Rate</div>
+          <p class="swp-desc">Withdrawing 4% to 6% of the initial corpus annually allows the portfolio to sustain inflation and last 25 to 30+ years.</p>
+        </div>
+
+        <div class="swp-card danger-rule">
+          <span class="swp-badge">Depletion Risk</span>
+          <div class="swp-metric">&gt; 9% Annual Rate</div>
+          <p class="swp-desc">High withdrawal rates combined with early market volatility can quickly trigger capital erosion and rapid exhaustion.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/tools/" class="btn-subtle">← Back to All Tools</a>
+      <a href="/plan/retirement-income/" class="btn-subtle">View Three-Bucket Strategy →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .swp-rules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .swp-rules-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .swp-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .safe-rule {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .danger-rule {
+    border-color: var(--primitive-amber-500);
+    border-width: 2px;
+    background-color: var(--primitive-amber-50);
+  }
+
+  .swp-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .swp-metric {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .swp-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/plan/retirement-income/');
+
+const buckets = [
+  {
+    num: 'Bucket 1',
+    name: 'Immediate Liquidity',
+    timeline: 'Years 1 to 3',
+    assetClass: 'Liquid & Overnight Funds / Bank Sweep',
+    objective: '100% Market-Crash Immunity',
+    description: 'Holds 36 months of predictable family living expenses in ultra-safe liquid instruments. You never have to sell equities during an economic downturn to pay groceries or medical bills.',
+  },
+  {
+    num: 'Bucket 2',
+    name: 'Income & Replenishment',
+    timeline: 'Years 4 to 7',
+    assetClass: 'Conservative Hybrid & Arbitrage Funds',
+    objective: 'Low Volatility & Stability',
+    description: 'Generates stable accrual and periodic returns. Acts as a safety buffer that systematically replenishes Bucket 1 every 2 to 3 years without triggering heavy capital losses.',
+  },
+  {
+    num: 'Bucket 3',
+    name: 'Long-Term Growth',
+    timeline: 'Years 8 and Beyond',
+    assetClass: 'Diversified Equity Mutual Funds',
+    objective: 'Long-Term Inflation Beating',
+    description: 'Invested in high-quality diversified equity funds to outpace 6%–8% living inflation over a 15–25 year horizon, ensuring your purchasing power does not degrade over a 30-year retirement.',
+  },
+];
+---
+
+<BaseLayout
+  title="Retirement Distribution & Three-Bucket Cash Flow — Ant Wealth Creation"
+  description="Structure your retirement corpus across three strategic buckets (Liquidity, Safety, Growth) to generate steady, inflation-protected monthly cash flow for life."
+  currentPath="/plan/retirement-income/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Milestone Roadmap"
+      title="Retirement Distribution & Three-Bucket Cash Flow"
+      description="Accumulating a retirement corpus is only half the battle. Distributing it safely without running out of money requires an asset allocation that balances today's cash flow needs with tomorrow's inflation protection."
+      statusBadge="Distribution Strategy Shell Active"
+    />
+
+    <StatusNotice
+      featureName="Three-Bucket Decumulation Simulator"
+      gateNote="Under GATE-A, post-retirement cash flow simulation is blocked pending completion of the unified retirement calculation specification. In this shell, we present the structural 3-bucket architecture and required simulation parameters."
+      expectedInputs={[
+        "Total accumulated retirement corpus available today (₹)",
+        "Desired starting monthly pension / cash flow required (₹)",
+        "Expected annual inflation rate during retirement (e.g. 6%–7%)",
+        "Assumed return rates across Bucket 1 (Liquid), Bucket 2 (Conservative), and Bucket 3 (Equity)",
+        "Desired safety buffer duration (e.g., 3 years vs 5 years in Bucket 1)",
+      ]}
+      expectedOutputs={[
+        "Initial capital allocation required across Bucket 1, Bucket 2, and Bucket 3",
+        "Annual inflation-adjusted monthly pension payout forecast",
+        "Estimated longevity of the corpus across 25, 30, and 35 year horizons",
+        "Periodic rebalancing triggers and replenishment roadmap",
+      ]}
+    />
+
+    <section class="buckets-architecture-section" aria-labelledby="buckets-heading">
+      <h2 id="buckets-heading" class="section-title">The Three-Bucket Architecture Explained</h2>
+      <p class="section-desc">
+        How Indian retirees avoid the devastating risk of selling market-linked investments during a crash:
+      </p>
+
+      <div class="buckets-grid">
+        {buckets.map((b) => (
+          <div class="bucket-card">
+            <div class="bucket-badge-row">
+              <span class="bucket-num">{b.num}</span>
+              <span class="bucket-timeline">{b.timeline}</span>
+            </div>
+
+            <h3 class="bucket-name">{b.name}</h3>
+            <div class="bucket-meta">
+              <span class="meta-label">Instruments:</span>
+              <span class="meta-val">{b.assetClass}</span>
+            </div>
+            <div class="bucket-meta">
+              <span class="meta-label">Objective:</span>
+              <span class="meta-val">{b.objective}</span>
+            </div>
+
+            <p class="bucket-desc">{b.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/plan/retirement/" class="btn-subtle">← Back to Retirement Accumulation</a>
+      <a href="/tools/swp/" class="btn-subtle">Explore SWP Longevity Simulator →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .buckets-architecture-section {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .buckets-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .buckets-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .bucket-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bucket-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .bucket-num {
+    font-size: var(--text-caption);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .bucket-timeline {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .bucket-name {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .bucket-meta {
+    font-size: 0.8rem;
+    margin-bottom: var(--space-2);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .meta-label {
+    font-weight: 700;
+    color: var(--color-text-brand);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .meta-val {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .bucket-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-top: var(--space-3);
+    flex-grow: 1;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

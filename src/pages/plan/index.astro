@@ -1,0 +1,290 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import { GOAL_ROUTES, getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/plan/');
+
+const goalRoadmaps = [
+  {
+    route: GOAL_ROUTES[0], // /plan/children/
+    icon: '🎓',
+    primaryQuestion: 'How much will college tuition, hostel, and overseas master’s degrees cost in 10 to 18 years?',
+    approach: 'Calculates the future corpus needed under 8%–10% education inflation, integrates existing dedicated assets, and calculates the required monthly step-up SIP.',
+  },
+  {
+    route: GOAL_ROUTES[1], // /plan/home-purchase/
+    icon: '🏡',
+    primaryQuestion: 'How do you accumulate a 20% down payment plus 10% acquisition costs without exhausting family liquidity?',
+    approach: 'Models property acquisition costs, down payment target buffers, and ensures future EMI commitments stay safely below 35% of monthly income.',
+  },
+  {
+    route: GOAL_ROUTES[2], // /plan/retirement/
+    icon: '🌅',
+    primaryQuestion: 'What is the required corpus to retire with dignity and peace of mind across 30+ post-work years?',
+    approach: 'Accounts for post-retirement lifestyle expenses, longevity protection, and transitioning from accumulation to distribution.',
+  },
+  {
+    route: GOAL_ROUTES[3], // /plan/retirement-income/
+    icon: '🛡️',
+    primaryQuestion: 'How should your accumulated retirement corpus be divided to generate lifelong, inflation-protected cash flow?',
+    approach: 'Deploys the 3-Bucket decumulation model: Bucket 1 (Liquidity for years 1–3), Bucket 2 (Safety for years 4–7), and Bucket 3 (Growth for years 8+).',
+  },
+];
+---
+
+<BaseLayout
+  title="Milestone Goal Planning Hub — Ant Wealth Creation"
+  description="Goal-based financial planning roadmaps for Indian families. Plan children's education, home purchase, and lifelong retirement independence."
+  currentPath="/plan/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Milestone Goal Architecture"
+      title="Plan What Matters Most to Your Family"
+      description="Financial planning begins with identifying what your money must accomplish. Explore our dedicated milestone roadmaps designed to help you quantify goals, adjust for inflation, and invest with discipline."
+      statusBadge="Milestone Planning Hub Active"
+    />
+
+    <section class="roadmaps-grid-section" aria-labelledby="roadmaps-heading">
+      <h2 id="roadmaps-heading" class="sr-only">Dedicated Milestone Roadmaps</h2>
+
+      <div class="roadmaps-grid">
+        {goalRoadmaps.map((item) => (
+          <div class="roadmap-card">
+            <div class="card-header">
+              <span class="card-icon" aria-hidden="true">{item.icon}</span>
+              <span class="card-horizon">{item.route.eyebrow}</span>
+            </div>
+
+            <h3 class="card-title">{item.route.label}</h3>
+            <p class="card-question">"{item.primaryQuestion}"</p>
+            <p class="card-approach">{item.approach}</p>
+
+            <div class="card-status-strip">
+              <span class="status-indicator">●</span>
+              <span class="status-text">{item.route.statusBadge}</span>
+            </div>
+
+            <div class="card-action">
+              <a href={item.route.path} class="btn-card">
+                Explore Roadmap Shell →
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Goal Planning Principles Strip -->
+    <section class="principles-box" aria-labelledby="principles-heading">
+      <h2 id="principles-heading" class="principles-title">The Three Rules of Goal-Based Planning</h2>
+      <div class="principles-grid">
+        <div class="principle-item">
+          <span class="principle-num">1</span>
+          <h3 class="principle-item-title">Match Time Horizons to Asset Classes</h3>
+          <p class="principle-item-desc">Never put money needed within 3 years into volatile equities. Conversely, never leave 10+ year milestone savings in low-yield bank deposits.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-num">2</span>
+          <h3 class="principle-item-title">Always Use Realistic Future Inflation</h3>
+          <p class="principle-item-desc">Education inflation in India runs at 8%–10%, and healthcare inflation runs higher than CPI. We factor compounding cost realities into every milestone.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-num">3</span>
+          <h3 class="principle-item-title">Protect Before You Project</h3>
+          <p class="principle-item-desc">A goal plan without pure term life insurance and comprehensive health cover is fragile. Real protection ensures goals are funded regardless of life events.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .roadmaps-grid-section {
+    margin: var(--space-8) 0 var(--space-16);
+  }
+
+  .roadmaps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .roadmaps-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .roadmap-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .roadmap-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-interactive);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    line-height: 1;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primitive-teal-50);
+    border: 1px solid var(--primitive-teal-100);
+    border-radius: var(--radius-md);
+  }
+
+  .card-horizon {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .card-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-question {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: var(--space-3);
+  }
+
+  .card-approach {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-6);
+    flex-grow: 1;
+  }
+
+  .card-status-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.75rem;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-slate-50);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-5);
+  }
+
+  .status-indicator {
+    font-size: 0.6rem;
+  }
+
+  .card-action {
+    border-top: 1px solid var(--primitive-slate-100);
+    padding-top: var(--space-4);
+  }
+
+  .btn-card {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--primitive-white);
+    background-color: var(--color-brand-primary);
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .btn-card:hover {
+    background-color: var(--primitive-navy-800);
+  }
+
+  .principles-box {
+    background-color: var(--primitive-slate-50);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+  }
+
+  .principles-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .principles-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .principle-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .principle-num {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    margin-bottom: var(--space-2);
+  }
+
+  .principle-item-title {
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .principle-item-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/loan-sip-recovery/');
+---
+
+<BaseLayout
+  title="Home Loan Interest Recovery via SIP — Ant Wealth Creation"
+  description="Discover how starting a parallel mutual fund SIP alongside your home loan EMI can recover up to 100% of your total loan interest."
+  currentPath="/tools/loan-sip-recovery/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Dual Engine Strategy"
+      title="Home Loan Interest Recovery via SIP"
+      description="Pairing a disciplined parallel SIP alongside your home loan can accumulate a corpus that matches or exceeds the entire interest paid to the lender."
+      statusBadge="Parallel Compounding Math Pending"
+    />
+
+    <StatusNotice
+      featureName="Loan + SIP Interest Recovery Engine"
+      gateNote="Under GATE-B (Dual Engine Rate Semantics), simultaneous calculation of decreasing loan amortization alongside compounding equity mutual fund accumulation requires strictly defined cash-flow timelines. In this shell, the conceptual model is explained without unverified numerical projections."
+      expectedInputs={[
+        "Total loan amount borrowed (e.g. ₹50 Lakhs)",
+        "Loan interest rate (e.g. 8.5% p.a.)",
+        "Loan tenure (e.g. 20 years)",
+        "Parallel SIP percentage of monthly EMI (typically 10% to 20% of EMI)",
+        "Assumed equity SIP annual return rate (e.g. 11% to 13%)",
+      ]}
+      expectedOutputs={[
+        "Total interest payable on the home loan over the tenure",
+        "Recommended parallel monthly SIP amount",
+        "Total capital invested in the parallel SIP",
+        "Estimated SIP maturity corpus at loan completion",
+        "Net recovery percentage (SIP Gain vs Total Interest Paid)",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Math Behind Interest Neutralization</h2>
+      <p class="section-desc">
+        When you take a 20-year home loan of ₹50 Lakhs at 8.5%, total interest payable is approximately ₹54 Lakhs—more than the original property loan itself!
+      </p>
+
+      <div class="recovery-flow-card">
+        <h3 class="recovery-flow-title">How 15% of your EMI flips the equation</h3>
+        <p class="recovery-flow-desc">
+          By allocating an extra 15% of your EMI amount into a diversified equity SIP starting in Month 1, the 20-year power of compounding enables that small parallel investment to grow into a corpus that can completely offset the ₹54 Lakhs interest paid, effectively making your home loan interest-free over time.
+        </p>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/tools/home-loan-foreclosure/" class="btn-subtle">← Home Loan Prepayment Calculator</a>
+      <a href="/tools/loan-vs-invest/" class="btn-subtle">Compare Loan vs Invest Trade-offs →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .recovery-flow-card {
+    background-color: var(--primitive-teal-50);
+    border: 2px solid var(--primitive-teal-500);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .recovery-flow-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .recovery-flow-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

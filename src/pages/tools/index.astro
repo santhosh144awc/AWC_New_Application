@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import { TOOL_ROUTES, getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/');
+
+const categories = [
+  {
+    name: 'Wealth & Investments',
+    desc: 'Simulate long-term compounding, evaluate annual step-up benefits, and test multi-lump-sum injection horizons.',
+    tools: TOOL_ROUTES.filter(t => ['tool-sip', 'tool-lumpsum', 'tool-sip-growth'].includes(t.id)),
+  },
+  {
+    name: 'Loans & Debt Management',
+    desc: 'Model reducing balance mortgage dynamics, calculate parallel SIP foreclosures, and analyze prepayment trade-offs.',
+    tools: TOOL_ROUTES.filter(t => ['tool-home-foreclosure', 'tool-loan-recovery', 'tool-loan-vs-invest'].includes(t.id)),
+  },
+  {
+    name: 'Cash Flow & Family Protection',
+    desc: 'Model retirement systematic withdrawals, test capital depletion limits, and assess true human life protection needs.',
+    tools: TOOL_ROUTES.filter(t => ['tool-swp', 'tool-life-insurance', 'tool-net-worth'].includes(t.id)),
+  },
+];
+---
+
+<BaseLayout
+  title="Financial Simulators & Calculation Tools Library — Ant Wealth Creation"
+  description="Explore our practical question-driven financial tools. Sizing SIPs, loan foreclosure strategies, SWP cash flows, and human life value audits."
+  currentPath="/tools/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Interactive Simulation Suite"
+      title="Tools Designed Around Real-Life Questions"
+      description="Most financial calculators ask for complex inputs without explaining why they matter. Our simulators answer specific everyday family dilemmas with transparent mathematical assumptions."
+      statusBadge="Tool Directory Active • Calculation Engines Under Spec Review"
+    />
+
+    <div class="directory-container">
+      {categories.map((cat) => (
+        <section class="category-section" aria-labelledby={`cat-${cat.name.replace(/\s+/g, '-').toLowerCase()}`}>
+          <div class="category-header">
+            <h2 id={`cat-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} class="category-title">{cat.name}</h2>
+            <p class="category-desc">{cat.desc}</p>
+          </div>
+
+          <div class="tools-grid">
+            {cat.tools.map((tool) => (
+              <div class="tool-card">
+                <div class="tool-meta">
+                  <span class="tool-eyebrow">{tool.eyebrow}</span>
+                  <span class="tool-badge">{tool.statusBadge}</span>
+                </div>
+
+                <h3 class="tool-title">{tool.label}</h3>
+                <p class="tool-desc">{tool.description}</p>
+
+                <div class="tool-action">
+                  <a href={tool.path} class="btn-tool">
+                    View Simulator Shell →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .directory-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin-top: var(--space-8);
+  }
+
+  .category-section {
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: var(--space-10);
+  }
+
+  .category-section:last-child {
+    border-bottom: none;
+  }
+
+  .category-header {
+    margin-bottom: var(--space-6);
+    max-width: 720px;
+  }
+
+  .category-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .category-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tools-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tool-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-interactive);
+  }
+
+  .tool-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .tool-eyebrow {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tool-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    max-width: 100%;
+    word-break: break-word;
+  }
+
+  .tool-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .tool-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-6);
+    flex-grow: 1;
+  }
+
+  .tool-action {
+    border-top: 1px solid var(--primitive-slate-100);
+    padding-top: var(--space-4);
+  }
+
+  .btn-tool {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .btn-tool:hover {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+</style>

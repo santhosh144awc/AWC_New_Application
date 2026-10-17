@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/lumpsum/');
+---
+
+<BaseLayout
+  title="Lump Sum One-Time Investment Calculator — Ant Wealth Creation"
+  description="Model the long-term compound growth of a one-time capital investment across varying horizons and expected market returns."
+  currentPath="/tools/lumpsum/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Wealth Simulator"
+      title="Lump Sum One-Time Investment Calculator"
+      description="Calculate how an initial one-time capital investment multiplies over time through compound interest and disciplined multi-year horizons."
+      statusBadge="GATE-B Rate Semantics Review Pending"
+    />
+
+    <StatusNotice
+      featureName="Lump Sum Mathematical Compounding Engine"
+      gateNote="Under GATE-B (Annual Return Compounding Semantics), the calculation engine A = P * (1 + r)^t is undergoing review for compounding interval standards. In this shell, parameters and wealth principles are displayed without placeholder or synthetic outputs."
+      expectedInputs={[
+        "Initial one-time investment lump sum (e.g. ₹50,000 to ₹50,00,000)",
+        "Assumed annual rate of return (e.g. 7% to 15%)",
+        "Investment duration in years (e.g. 1 to 30 years)",
+      ]}
+      expectedOutputs={[
+        "Total invested principal amount",
+        "Total estimated future maturity value",
+        "Total accumulated compound wealth gain",
+        "Year-by-year principal vs gain progression table",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Rule of 72 & Compound Acceleration</h2>
+      <p class="section-desc">
+        A helpful mental model for one-time investments is the Rule of 72: dividing 72 by your expected annual rate of return estimates how many years it takes for your capital to double.
+      </p>
+
+      <div class="doubling-grid">
+        <div class="doubling-card">
+          <span class="rate-badge">8% Assumed Return</span>
+          <div class="doubling-years">~ 9 Years</div>
+          <p class="doubling-desc">Capital doubles approximately every 9 years (72 / 8).</p>
+        </div>
+
+        <div class="doubling-card">
+          <span class="rate-badge">10% Assumed Return</span>
+          <div class="doubling-years">~ 7.2 Years</div>
+          <p class="doubling-desc">Capital doubles approximately every 7.2 years (72 / 10).</p>
+        </div>
+
+        <div class="doubling-card featured-doubling">
+          <span class="rate-badge">12% Assumed Return</span>
+          <div class="doubling-years">~ 6 Years</div>
+          <p class="doubling-desc">Capital doubles approximately every 6 years (72 / 12), quadrupling in 12 years.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/tools/sip/" class="btn-subtle">← Explore Monthly SIP Simulator</a>
+      <a href="/tools/sip-growth/" class="btn-subtle">View Target Corpus Planner →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .doubling-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .doubling-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .doubling-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .featured-doubling {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .rate-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .doubling-years {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .doubling-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

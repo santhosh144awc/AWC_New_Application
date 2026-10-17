@@ -1,80 +1,79 @@
 import { test, expect } from '@playwright/test';
+import { getAllRegisteredRoutes, TOP_NAV_ROUTES } from '../../src/config/routes';
 
-test.describe('Ant Wealth Creation — Homepage & Navigation Suite', () => {
-  test('homepage loads with verified title, hero content, landmarks, and no console errors', async ({ page }) => {
-    const consoleErrors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        consoleErrors.push(msg.text());
-      }
-    });
+test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', () => {
+  const routesToTest = getAllRegisteredRoutes();
 
-    page.on('pageerror', (err) => {
-      consoleErrors.push(err.message);
-    });
+  test('every registered internal route resolves to a real page with unique title, single h1, main landmark, and no console errors', async ({ page }) => {
+    const titlesSeen = new Set<string>();
 
-    await page.goto('/');
-
-    // 1. Verify page title
-    await expect(page).toHaveTitle(/Ant Wealth Creation/);
-
-    // 2. Verify main landmark & Hero Heading
-    const mainLandmark = page.locator('#main-content');
-    await expect(mainLandmark).toBeVisible();
-
-    const heroHeading = page.locator('#hero-title');
-    await expect(heroHeading).toBeVisible();
-    await expect(heroHeading).toContainText('Make Better Money Decisions. Build a Better Future.');
-
-    // 3. Verify main CTA button and navigation to valid section anchor
-    const primaryHeroBtn = page.locator('a.btn-primary-hero');
-    await expect(primaryHeroBtn).toBeVisible();
-    const heroBtnHref = await primaryHeroBtn.getAttribute('href');
-    expect(heroBtnHref).toBe('#financial-health');
-
-    // Click primary CTA and verify target section exists and is visible
-    const targetSection = page.locator('#financial-health');
-    await expect(targetSection).toBeVisible();
-
-    // 4. Verify no internal navigation points to a missing route or missing section ID
-    const internalAnchors = await page.locator('header a, footer a').elementHandles();
-    for (const anchor of internalAnchors) {
-      const href = await anchor.getAttribute('href');
-      if (href && href.startsWith('#')) {
-        const targetId = href.replace('#', '');
-        if (targetId) {
-          const matchingElement = page.locator(`[id="${targetId}"]`);
-          const count = await matchingElement.count();
-          expect(count).toBeGreaterThan(0);
+    for (const route of routesToTest) {
+      const consoleErrors: string[] = [];
+      const errorHandler = (msg: any) => {
+        if (msg.type() === 'error') {
+          consoleErrors.push(msg.text());
         }
-      }
+      };
+      const pageErrorHandler = (err: any) => {
+        consoleErrors.push(err.message);
+      };
+
+      page.on('console', errorHandler);
+      page.on('pageerror', pageErrorHandler);
+
+      const response = await page.goto(route.path);
+      expect(response?.status(), `Route ${route.path} should return HTTP 200`).toBe(200);
+
+      // Verify unique, descriptive title
+      const pageTitle = await page.title();
+      expect(pageTitle.length, `Route ${route.path} title should be descriptive`).toBeGreaterThan(15);
+      expect(titlesSeen.has(pageTitle), `Page title "${pageTitle}" on ${route.path} should be unique`).toBe(false);
+      titlesSeen.add(pageTitle);
+
+      // Verify single primary h1
+      const h1Elements = page.locator('h1');
+      await expect(h1Elements, `Route ${route.path} must have exactly one h1`).toHaveCount(1);
+      const h1Text = await h1Elements.first().textContent();
+      expect(h1Text?.trim().length).toBeGreaterThan(0);
+
+      // Verify main landmark
+      const mainLandmark = page.locator('#main-content, main');
+      expect(await mainLandmark.count(), `Route ${route.path} must have a main landmark`).toBeGreaterThan(0);
+
+      // Verify no uncaught browser runtime errors
+      expect(consoleErrors, `Route ${route.path} produced console errors`).toEqual([]);
+
+      page.off('console', errorHandler);
+      page.off('pageerror', pageErrorHandler);
     }
-
-    // 5. Verify 7 Pillars section and content
-    const pillars = page.locator('.pillar-card');
-    await expect(pillars).toHaveCount(7);
-
-    // 6. Verify 4 Goal Cards
-    const goalCards = page.locator('.goal-card');
-    await expect(goalCards).toHaveCount(4);
-
-    // 7. Verify 4 Tool Preview Cards
-    const toolCards = page.locator('.tool-preview-card');
-    await expect(toolCards).toHaveCount(4);
-
-    // 8. Verify Founder Profile & Regulatory Distinction
-    const aboutSection = page.locator('#about');
-    await expect(aboutSection).toBeVisible();
-    await expect(aboutSection).toContainText('C. Santhosh Sathriyan');
-    await expect(aboutSection).toContainText('AMFI-Registered Mutual Fund Distributor');
-
-    // 9. Confirm no uncaught browser runtime console errors
-    expect(consoleErrors).toEqual([]);
   });
 
-  test('mobile navigation opens and closes accessibly with keyboard and buttons', async ({ page }) => {
-    // Set viewport to mobile standard 375x667
-    await page.setViewportSize({ width: 375, height: 667 });
+  test('all top-level navigation destinations are reachable on desktop and mobile', async ({ page }) => {
+    // Desktop Viewport
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    for (const topRoute of TOP_NAV_ROUTES) {
+      const navLink = page.locator(`.desktop-nav a[href="${topRoute.path}"]`);
+      await expect(navLink, `Top nav desktop link for ${topRoute.path} should exist`).toBeVisible();
+    }
+
+    // Mobile Viewport
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const toggleBtn = page.locator('#mobile-menu-toggle');
+    await toggleBtn.click();
+    await page.waitForTimeout(200);
+
+    for (const topRoute of TOP_NAV_ROUTES) {
+      const drawerLink = page.locator(`#mobile-nav-drawer .mobile-nav-link[href="${topRoute.path}"]`);
+      await expect(drawerLink, `Mobile drawer link for ${topRoute.path} should exist`).toBeVisible();
+    }
+  });
+
+  test('mobile navigation drawer supports keyboard use, Escape to close, and accessible state attributes', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
 
     const toggleBtn = page.locator('#mobile-menu-toggle');
@@ -100,47 +99,110 @@ test.describe('Ant Wealth Creation — Homepage & Navigation Suite', () => {
     await expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
   });
 
-  test('no horizontal overflow at narrow mobile viewport (360px and 390px)', async ({ page }) => {
+  test('no horizontal overflow at 360px and 390px widths on representative pages', async ({ page }) => {
+    const representativePaths = [
+      '/',
+      '/health-check/',
+      '/plan/',
+      '/tools/',
+      '/tools/sip/',
+      '/learn/',
+      '/about/',
+      '/contact/',
+      '/disclaimer/',
+    ];
+
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto('/');
 
-      // Check document scroll width does not exceed client width
-      const hasHorizontalOverflow = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
-      });
+      for (const path of representativePaths) {
+        await page.goto(path);
+        const hasHorizontalOverflow = await page.evaluate(() => {
+          return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+        });
 
-      expect(hasHorizontalOverflow).toBe(false);
+        expect(hasHorizontalOverflow, `Horizontal overflow detected on ${path} at ${width}px`).toBe(false);
+      }
     }
   });
 
-  test('404 route renders recovery navigation without broken links', async ({ page }) => {
-    await page.goto('/non-existent-page-test');
-    await expect(page).toHaveTitle(/Page Not Found/);
+  test('every internal navigation, footer, and related link targets an existing route or valid section anchor', async ({ page }) => {
+    await page.goto('/');
 
-    const returnLink = page.getByRole('link', { name: /Return to Homepage/i });
-    await expect(returnLink).toBeVisible();
+    const allLinks = await page.locator('header a, footer a, main a').elementHandles();
+    const validPaths = new Set(routesToTest.map(r => r.path));
+    validPaths.add('/');
 
-    // Verify recovery links point to real homepage sections
-    const recoveryLinks = await page.locator('.recovery-links a').elementHandles();
-    expect(recoveryLinks.length).toBeGreaterThan(1);
+    for (const link of allLinks) {
+      const href = await link.getAttribute('href');
+      if (!href) continue;
+
+      // Skip external links, tel, mailto, whatsapp
+      if (
+        href.startsWith('http://') ||
+        href.startsWith('https://') ||
+        href.startsWith('tel:') ||
+        href.startsWith('mailto:')
+      ) {
+        continue;
+      }
+
+      // Check section anchors
+      if (href.startsWith('#')) {
+        const targetId = href.replace('#', '');
+        if (targetId) {
+          const matchCount = await page.locator(`[id="${targetId}"]`).count();
+          expect(matchCount, `Anchor #${targetId} on homepage must point to an existing ID`).toBeGreaterThan(0);
+        }
+        continue;
+      }
+
+      // Check internal path
+      const normalized = href.endsWith('/') ? href : `${href}/`;
+      const isKnown = validPaths.has(normalized) || validPaths.has(href);
+      expect(isKnown, `Internal link target "${href}" must be a registered route`).toBe(true);
+    }
   });
 
-  test('capture desktop and mobile screenshots for visual inspection', async ({ page }) => {
-    // Desktop Full-page Screenshot (1440x900)
+  test('generate required screenshots at desktop (1440px) and mobile (390px) for visual inspection', async ({ page }) => {
+    const targets = [
+      { name: 'home', path: '/' },
+      { name: 'health-check', path: '/health-check/' },
+      { name: 'plan', path: '/plan/' },
+      { name: 'tools', path: '/tools/' },
+      { name: 'tool-sip', path: '/tools/sip/' },
+      { name: 'learn', path: '/learn/' },
+      { name: 'about', path: '/about/' },
+      { name: 'contact', path: '/contact/' },
+    ];
+
+    // 1. Desktop Screenshots (1440px)
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
-    await page.screenshot({ path: 'tests/e2e/screenshots/desktop-homepage.png', fullPage: true });
+    for (const t of targets) {
+      await page.goto(t.path);
+      await page.screenshot({
+        path: `tests/e2e/screenshots/desktop-${t.name}.png`,
+        fullPage: true,
+      });
+    }
 
-    // Mobile Viewport Screenshot (390x844)
+    // 2. Mobile Screenshots (390px)
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    await page.screenshot({ path: 'tests/e2e/screenshots/mobile-hero.png' });
+    for (const t of targets) {
+      await page.goto(t.path);
+      await page.screenshot({
+        path: `tests/e2e/screenshots/mobile-${t.name}.png`,
+        fullPage: true,
+      });
+    }
 
-    // Mobile Drawer Open Screenshot
+    // Mobile Drawer Open
+    await page.goto('/');
     const toggleBtn = page.locator('#mobile-menu-toggle');
     await toggleBtn.click();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'tests/e2e/screenshots/mobile-drawer-open.png' });
+    await page.screenshot({
+      path: 'tests/e2e/screenshots/mobile-drawer-open.png',
+    });
   });
 });

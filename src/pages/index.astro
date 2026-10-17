@@ -357,8 +357,8 @@ const coreValues = [
           </p>
         </div>
         <div class="diagnostic-banner-action">
-          <a href="#about" class="btn-diagnostic">
-            Discuss Your 7 Pillars with Santhosh →
+          <a href="/health-check/" class="btn-diagnostic">
+            Explore 7-Pillars Diagnostic Framework →
           </a>
         </div>
       </div>
@@ -409,6 +409,12 @@ const coreValues = [
           />
         ))}
       </div>
+
+      <div class="section-cta-row">
+        <a href="/plan/" class="btn-section-cta">
+          Explore All Life Milestone Roadmaps →
+        </a>
+      </div>
     </div>
   </section>
 
@@ -430,6 +436,12 @@ const coreValues = [
             description={tool.description}
           />
         ))}
+      </div>
+
+      <div class="section-cta-row">
+        <a href="/tools/" class="btn-section-cta">
+          Browse All 9 Calculation Simulators →
+        </a>
       </div>
     </div>
   </section>
@@ -459,6 +471,12 @@ const coreValues = [
             </div>
           </article>
         ))}
+      </div>
+
+      <div class="section-cta-row">
+        <a href="/learn/" class="btn-section-cta">
+          Read All Educational Guides →
+        </a>
       </div>
     </div>
   </section>
@@ -508,6 +526,12 @@ const coreValues = [
             <p class="distinction-text">
               Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor. We receive trailing commissions from Asset Management Companies (AMCs) for mutual fund distribution. We do not charge fees for investment advice or claim to be a SEBI-registered Investment Adviser (RIA). Our educational simulators and roadmaps are provided for personal financial simulation and planning clarity.
             </p>
+          </div>
+
+          <div class="about-action-row">
+            <a href="/about/" class="btn-section-cta">
+              Read Full Founder Story & Practice Heritage →
+            </a>
           </div>
         </div>
       </div>
@@ -1123,6 +1147,37 @@ const coreValues = [
     line-height: 1.55;
     color: var(--color-text-secondary);
     margin: 0;
+  }
+
+  .section-cta-row {
+    margin-top: var(--space-10);
+    text-align: center;
+  }
+
+  .about-action-row {
+    margin-top: var(--space-6);
+  }
+
+  .btn-section-cta {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--primitive-teal-200);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    box-shadow: var(--shadow-subtle);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-section-cta:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-500);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
   }
 
   /* ==========================================================================

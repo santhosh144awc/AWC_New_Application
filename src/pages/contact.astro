@@ -1,0 +1,320 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../config/routes';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+
+const crumbs = getBreadcrumbsForPath('/contact/');
+const { contact } = BUSINESS_PROFILE;
+---
+
+<BaseLayout
+  title="Contact Us & Direct Consultation — Ant Wealth Creation"
+  description="Connect directly with C. Santhosh Sathriyan at Ant Wealth Creation via phone, WhatsApp, or email to discuss your family wealth roadmap."
+  currentPath="/contact/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Direct Connection"
+      title="Contact Ant Wealth Creation"
+      description="No call centres, no sales bots. Reach out directly to founder C. Santhosh Sathriyan to discuss your family's personal finance milestones."
+    />
+
+    <div class="contact-layout-grid">
+      <div class="contact-channels-col">
+        <h2 class="col-heading">Direct Contact Channels</h2>
+
+        <div class="channel-cards">
+          <div class="channel-card primary-channel">
+            <span class="channel-type">Instant Messaging</span>
+            <h3 class="channel-title">WhatsApp Discussion</h3>
+            <p class="channel-desc">The fastest way to ask a quick question or schedule a 1-on-1 discovery call.</p>
+            <a
+              href={contact.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-channel btn-whatsapp"
+            >
+              Chat on WhatsApp ({contact.phoneDisplay}) →
+            </a>
+          </div>
+
+          <div class="channel-card">
+            <span class="channel-type">Direct Phone</span>
+            <h3 class="channel-title">Telephone Consultation</h3>
+            <p class="channel-desc">Available for planned consultation calls and active client inquiries.</p>
+            <a href={`tel:${contact.phone}`} class="channel-link">
+              {contact.phoneDisplay}
+            </a>
+          </div>
+
+          <div class="channel-card">
+            <span class="channel-type">Email Communication</span>
+            <h3 class="channel-title">Email Inquiries</h3>
+            <p class="channel-desc">Send portfolio queries, financial statements, or detailed milestone goals.</p>
+            <a href={`mailto:${contact.email}`} class="channel-link">
+              {contact.email}
+            </a>
+          </div>
+
+          <div class="channel-card">
+            <span class="channel-type">Office Location</span>
+            <h3 class="channel-title">Headquarters</h3>
+            <p class="channel-desc">{contact.locationDisplay}</p>
+          </div>
+        </div>
+
+        <div class="portal-box">
+          <h3 class="portal-heading">Existing Investor?</h3>
+          <p class="portal-text">Access your consolidated portfolio valuations, capital gains reports, and transaction statements:</p>
+          <a
+            href={contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-subtle"
+          >
+            Launch Client Portal (TheMFBox) →
+          </a>
+        </div>
+      </div>
+
+      <div class="consultation-guidelines-col">
+        <div class="guidelines-card">
+          <h2 class="col-heading">What to Expect During a Consultation</h2>
+          <p class="guidelines-intro">
+            We value your time and confidentiality. Here is how we conduct our initial financial discussions:
+          </p>
+
+          <ol class="guidelines-steps">
+            <li>
+              <strong>Goal Discovery First:</strong> We understand your family priorities—children's college horizons, retirement dreams, or home debt—before discussing any investment product.
+            </li>
+            <li>
+              <strong>Protection Audit:</strong> We verify that your emergency fund and health/life insurance shields are adequate to protect your dependents.
+            </li>
+            <li>
+              <strong>No Hard Selling:</strong> We never push high-commission insurance endowments, complex ULIPs, or speculative trading tips.
+            </li>
+            <li>
+              <strong>Transparent Intermediation:</strong> All mutual fund distributor commissions and regulatory disclosures are stated upfront.
+            </li>
+          </ol>
+
+          <div class="confidentiality-notice">
+            <span class="confidentiality-icon">🔒</span>
+            <div>
+              <strong>Strict Client Confidentiality</strong>
+              <p>Your financial information, income details, and family goals are never shared with any third party.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .contact-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 1024px) {
+    .contact-layout-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+    }
+  }
+
+  .col-heading {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  .channel-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .channel-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .primary-channel {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .channel-type {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .channel-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .channel-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+  }
+
+  .channel-link {
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .channel-link:hover {
+    color: var(--primitive-teal-700);
+    text-decoration: underline;
+  }
+
+  .btn-channel {
+    display: inline-block;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .btn-whatsapp {
+    background-color: #25D366;
+    color: #ffffff;
+  }
+
+  .btn-whatsapp:hover {
+    background-color: #1eb956;
+  }
+
+  .portal-box {
+    background-color: var(--primitive-navy-50);
+    border: 1px solid var(--primitive-navy-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .portal-heading {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .portal-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+  }
+
+  .guidelines-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .guidelines-intro {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .guidelines-steps {
+    margin: 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+  }
+
+  .guidelines-steps li strong {
+    color: var(--color-brand-primary);
+  }
+
+  .confidentiality-notice {
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .confidentiality-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .confidentiality-notice strong {
+    font-size: var(--text-body-sm);
+    color: var(--color-brand-primary);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .confidentiality-notice p {
+    font-size: var(--text-caption);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .btn-subtle {
+    display: inline-block;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

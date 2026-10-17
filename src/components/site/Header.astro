@@ -1,16 +1,12 @@
 ---
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
+import { TOP_NAV_ROUTES } from '../../config/routes';
 
-// Section navigation for the homepage to avoid dead routes before route shells are built in later phases
-const navItems = [
-  { label: 'Financial Health', href: '#financial-health' },
-  { label: 'Everyday Questions', href: '#everyday-problem' },
-  { label: 'Life Goals', href: '#goals' },
-  { label: 'Tools', href: '#tools' },
-  { label: 'Journey', href: '#journey' },
-  { label: 'Learn', href: '#learn' },
-  { label: 'About', href: '#about' },
-];
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
 ---
 
 <header class="site-header" role="banner">
@@ -28,13 +24,20 @@ const navItems = [
     <!-- Desktop Navigation -->
     <nav class="desktop-nav" aria-label="Main Navigation">
       <ul class="nav-list" role="list">
-        {navItems.map((item) => (
-          <li class="nav-item">
-            <a href={item.href} class="nav-link">
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {TOP_NAV_ROUTES.map((item) => {
+          const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
+          return (
+            <li class="nav-item">
+              <a 
+                href={item.path} 
+                class={`nav-link ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </nav>
 
@@ -55,11 +58,11 @@ const navItems = [
         </svg>
       </a>
 
-      <a href="#financial-health" class="btn-primary-header">
-        Explore 7 Pillars →
+      <a href="/health-check/" class="btn-primary-header">
+        Start Here →
       </a>
 
-      <!-- Mobile Hamburger Toggle Button (Minimum 44x44px touch target) -->
+      <!-- Mobile Hamburger Toggle Button (Minimum 48x48px touch target) -->
       <button 
         type="button"
         id="mobile-menu-toggle"
@@ -107,9 +110,9 @@ const navItems = [
 
     <nav class="mobile-nav-list-wrapper">
       <ul class="mobile-nav-list" role="list">
-        {navItems.map((item) => (
+        {TOP_NAV_ROUTES.map((item) => (
           <li class="mobile-nav-item">
-            <a href={item.href} class="mobile-nav-link">
+            <a href={item.path} class="mobile-nav-link">
               {item.label}
             </a>
           </li>
@@ -118,8 +121,8 @@ const navItems = [
     </nav>
 
     <div class="mobile-drawer-actions">
-      <a href="#financial-health" class="btn-mobile-primary">
-        Explore 7 Pillars →
+      <a href="/health-check/" class="btn-mobile-primary">
+        Start 2-Min Health Check →
       </a>
       <a 
         href={BUSINESS_PROFILE.contact.portfolioLoginUrl} 
@@ -142,7 +145,6 @@ const navItems = [
 </header>
 
 <script>
-  // Mobile Navigation Drawer Script with Keyboard Trap & Accessible State
   function initMobileMenu() {
     const toggleBtn = document.getElementById('mobile-menu-toggle');
     const closeBtn = document.getElementById('mobile-drawer-close');
@@ -154,7 +156,6 @@ const navItems = [
     function openMenu() {
       drawer?.removeAttribute('hidden');
       backdrop?.removeAttribute('hidden');
-      // Trigger CSS animation frame
       requestAnimationFrame(() => {
         drawer?.classList.add('is-open');
         backdrop?.classList.add('is-open');
@@ -190,7 +191,6 @@ const navItems = [
     closeBtn?.addEventListener('click', closeMenu);
     backdrop.addEventListener('click', closeMenu);
 
-    // Close on link click inside drawer
     const drawerLinks = drawer.querySelectorAll('a');
     drawerLinks.forEach((link) => {
       link.addEventListener('click', () => {
@@ -198,7 +198,6 @@ const navItems = [
       });
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && toggleBtn.getAttribute('aria-expanded') === 'true') {
         closeMenu();
@@ -206,7 +205,6 @@ const navItems = [
     });
   }
 
-  // Initialize on load and on Astro page transitions
   initMobileMenu();
   document.addEventListener('astro:page-load', initMobileMenu);
 </script>
@@ -239,7 +237,6 @@ const navItems = [
     width: auto;
   }
 
-  /* Desktop Nav */
   .desktop-nav {
     display: none;
   }
@@ -263,8 +260,19 @@ const navItems = [
     transition: color var(--transition-fast);
   }
 
-  .nav-link:hover {
+  .nav-link:hover, .nav-link.active {
     color: var(--color-brand-primary);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--primitive-teal-600);
+    border-radius: var(--radius-pill);
   }
 
   .nav-link:focus-visible {
@@ -326,7 +334,6 @@ const navItems = [
     outline-offset: 2px;
   }
 
-  /* Mobile Hamburger Toggle */
   .mobile-menu-toggle {
     display: flex;
     align-items: center;
@@ -369,7 +376,6 @@ const navItems = [
     transition: transform var(--transition-fast);
   }
 
-  /* Drawer Backdrop */
   .mobile-nav-backdrop {
     position: fixed;
     top: 0;
@@ -387,7 +393,6 @@ const navItems = [
     opacity: 1;
   }
 
-  /* Mobile Drawer */
   .mobile-nav-drawer {
     position: fixed;
     top: 0;
@@ -496,7 +501,6 @@ const navItems = [
     font-weight: 600;
   }
 
-  /* Responsive Breakpoints */
   @media (min-width: 900px) {
     .desktop-nav {
       display: block;

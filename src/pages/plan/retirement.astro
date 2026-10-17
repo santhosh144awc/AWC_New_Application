@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/plan/retirement/');
+---
+
+<BaseLayout
+  title="Retirement Wealth Accumulation Roadmap — Ant Wealth Creation"
+  description="Plan your retirement accumulation with inflation-adjusted living expenses, longevity protection, and disciplined milestone compounding."
+  currentPath="/plan/retirement/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Milestone Roadmap"
+      title="Retirement Wealth Accumulation Roadmap"
+      description="Retirement is not an end point; it is a 30-year financial phase that requires careful accumulation, inflation hedging, and risk mitigation. This roadmap models the required wealth corpus to sustain your family lifestyle."
+      statusBadge="GATE-A Blocked • Math Specification Review"
+    />
+
+    <StatusNotice
+      featureName="Retirement Accumulation Calculation Engine"
+      gateNote="Under GATE-A (Retirement Tax Treatment), applying a flat 12.5% haircut to annual returns or retirement corpus is not approved as an accurate model of capital gains taxation. A dedicated retirement calculation specification accounting for asset types, realization schedules, and statutory exemptions must be completed before calculations are implemented."
+      expectedInputs={[
+        "Current age and planned retirement age (e.g. Current: 35, Retiring: 60)",
+        "Monthly family living expenses in today's money (₹)",
+        "Post-retirement life expectancy assumption (e.g. age 85 to 90)",
+        "Assumed annual inflation rate before and after retirement",
+        "Expected employment benefits (EPF, Gratuity, Superannuation, NPS)",
+        "Existing dedicated retirement savings (Mutual funds, PPF, NPS)",
+        "Assumed pre-retirement and post-retirement returns (illustrative assumptions)",
+      ]}
+      expectedOutputs={[
+        "Total required retirement corpus at retirement age",
+        "Estimated monthly living expenditure at retirement age (inflation-adjusted)",
+        "Expected value of existing employment benefits and investments",
+        "Net corpus shortfall requiring new investment",
+        "Illustrative Monthly SIP required (Fixed vs 10% Annual Step-Up options)",
+      ]}
+    />
+
+    <section class="retirement-dynamics-box" aria-labelledby="dynamics-heading">
+      <h2 id="dynamics-heading" class="section-title">The Three Realities of Modern Indian Retirement</h2>
+
+      <div class="dynamics-grid">
+        <div class="dynamic-card">
+          <span class="dynamic-num">01</span>
+          <h3 class="dynamic-title">Rising Longevity Risk</h3>
+          <p class="dynamic-desc">With advances in healthcare, an Indian professional retiring at 58 or 60 will likely live to age 85 or 90. Your corpus must sustain cash flows for over 300 to 360 months without depletion.</p>
+        </div>
+
+        <div class="dynamic-card">
+          <span class="dynamic-num">02</span>
+          <h3 class="dynamic-title">Healthcare Inflation Outpacing CPI</h3>
+          <p class="dynamic-desc">Medical and care costs often rise at 10%–14% annually in India—substantially higher than ordinary food and clothing inflation. Standard fixed-income deposits alone cannot protect purchasing power.</p>
+        </div>
+
+        <div class="dynamic-card">
+          <span class="dynamic-num">03</span>
+          <h3 class="dynamic-title">The Zero-Pension Reality</h3>
+          <p class="dynamic-desc">Unlike previous generations with defined-benefit government pensions, modern private sector professionals must build their own self-sustaining pension engine through disciplined equity and hybrid investing.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/plan/" class="btn-subtle">← Back to All Goal Roadmaps</a>
+      <a href="/plan/retirement-income/" class="btn-subtle">Explore 3-Bucket Post-Retirement Cash Flow →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .retirement-dynamics-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  .dynamics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .dynamics-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .dynamic-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .dynamic-num {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .dynamic-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .dynamic-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

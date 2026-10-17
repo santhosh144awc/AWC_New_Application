@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { getBreadcrumbsForPath } from '../config/routes';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+
+const crumbs = getBreadcrumbsForPath('/disclaimer/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+---
+
+<BaseLayout
+  title="Regulatory Disclaimers & Intermediary Disclosure — Ant Wealth Creation"
+  description="Mandatory statutory disclosures, mutual fund risk statements, and intermediary status under SEBI and AMFI guidelines."
+  currentPath="/disclaimer/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Statutory Compliance"
+      title="Regulatory Disclaimers & Disclosures"
+      description="Transparent disclosure of our regulatory status, simulation boundaries, and mutual fund investment risk."
+    />
+
+    <div class="legal-card">
+      <section class="legal-section">
+        <h2 class="legal-heading">1. Statutory Mutual Fund Risk Warning</h2>
+        <div class="callout-box">
+          <p class="highlighted-text">
+            <strong>{disclosures.mutualFundRisk}</strong>
+          </p>
+        </div>
+        <p>
+          Investments in mutual funds are subject to market risks, including the possible loss of principal amount invested. Net Asset Value (NAV) of the schemes may go up or down depending upon the factors and forces affecting the securities market, including fluctuations in interest rates, government policies, liquidity conditions, and macroeconomic variables.
+        </p>
+        <p>
+          Past performance of mutual funds, benchmark indices, or asset classes does not guarantee future results. Investors are advised to read Scheme Information Document (SID), Statement of Additional Information (SAI), and Key Information Memorandum (KIM) issued by the respective Asset Management Companies (AMCs) carefully before investing.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">2. Intermediary Status & Nature of Services</h2>
+        <p>
+          {disclosures.intermediaryStatement}
+        </p>
+        <p>
+          {regulatory.sebiRIAStatusNotice}
+        </p>
+        <p>
+          Ant Wealth Creation receives distributor commissions from Asset Management Companies for units distributed through its AMFI registration. In compliance with SEBI and AMFI directives, all commission structures across scheme categories are available upon request and disclosed in periodic portfolio statements.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">3. Illustrative Nature of Calculations & Financial Calculators</h2>
+        <p>
+          {disclosures.simulationDisclaimer}
+        </p>
+        <p>
+          The financial calculators, retirement schedules, loan comparison tools, and goal projection utilities hosted on this website are designed purely as conceptual, educational decision-support frameworks. They rely on simplified mathematical assumptions (such as constant compounding rates, uniform inflation, and static tax slabs) which do not mirror fluctuating real-world market conditions.
+        </p>
+        <p>
+          No calculator output should be construed as financial advice, a formal financial plan, or an assurance of future returns.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">4. Tax & Legal Review Caveat</h2>
+        <p>
+          Tax-related content, capital gains descriptions, and deductions cited on this website are based on general interpretations of prevailing Indian tax laws and are undergoing formal review under the proposed Income-tax Act, 2025. Tax laws are subject to change and individual applicability varies based on residency status, overall income slab, and asset classification. Visitors must consult a qualified Chartered Accountant or tax advisor for individual tax filing decisions.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">5. Development & Staging Notice</h2>
+        <div class="prototype-notice-box">
+          <p>
+            <strong>{disclosures.prototypeNotice}</strong>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .legal-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-subtle);
+    max-width: 860px;
+  }
+
+  @media (min-width: 768px) {
+    .legal-card {
+      padding: var(--space-12);
+    }
+  }
+
+  .legal-section {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .legal-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .legal-heading {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .callout-box {
+    background-color: var(--primitive-amber-50);
+    border-left: 4px solid var(--primitive-amber-500);
+    padding: var(--space-4) var(--space-6);
+    margin-bottom: var(--space-4);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  .highlighted-text {
+    color: var(--primitive-amber-900);
+    margin: 0 !important;
+  }
+
+  .prototype-notice-box {
+    background-color: var(--primitive-navy-50);
+    border: 1px dashed var(--primitive-navy-200);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-md);
+  }
+
+  .prototype-notice-box p {
+    color: var(--color-text-brand);
+    margin: 0;
+    font-size: var(--text-body-sm);
+  }
+</style>

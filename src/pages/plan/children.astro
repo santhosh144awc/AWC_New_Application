@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/plan/children/');
+---
+
+<BaseLayout
+  title="Children's Higher Education & Marriage Planner — Ant Wealth Creation"
+  description="Plan your children's college education and life milestones with real inflation modeling (8%–10%), asset earmarking, and systematic step-up SIPs."
+  currentPath="/plan/children/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Milestone Roadmap"
+      title="Children's Higher Education & Life Milestones"
+      description="Higher education costs in India and overseas compound significantly faster than ordinary CPI inflation. This roadmap helps families calculate the inflation-adjusted corpus required and model systematic funding pathways."
+      statusBadge="Goal Planner Shell Active • Math In Development"
+    />
+
+    <StatusNotice
+      featureName="Children's Future Calculation Engine"
+      gateNote="The multi-milestone education compounding engine is currently in development for Phase 6. We present the planning framework, inflation dynamics, and required inputs below without mock or guessed calculation outputs."
+      expectedInputs={[
+        "Child's current age (1 to 20 years)",
+        "Milestone target age (e.g., Undergraduate at 18, Postgraduate at 22, Marriage at 26)",
+        "Estimated cost in today's money (₹)",
+        "Expected education inflation rate (typically 8%–10%)",
+        "Existing earmarked assets (PPF, Sukanya Samriddhi, mutual funds, fixed deposits)",
+        "Annual step-up SIP capacity (e.g., 5%–10% annual increase alongside salary increments)",
+      ]}
+      expectedOutputs={[
+        "Future target required corpus adjusted for inflation across each milestone",
+        "Projected growth of existing earmarked savings",
+        "Net funding shortfall requiring new investment",
+        "Constant Monthly SIP vs 10% Annual Step-Up SIP comparison",
+      ]}
+    />
+
+    <section class="education-inflation-insight" aria-labelledby="inflation-heading">
+      <h2 id="inflation-heading" class="section-title">The Real Impact of Education Inflation</h2>
+      <p class="section-desc">
+        A professional 4-year degree costing ₹25 Lakhs today will not cost ₹25 Lakhs when your 4-year-old turns 18. Here is how compounding cost realities work over a 14-year horizon:
+      </p>
+
+      <div class="inflation-comparison-grid">
+        <div class="inflation-card">
+          <span class="inflation-rate">6% Inflation</span>
+          <p class="inflation-type">General Consumer Price Index (CPI)</p>
+          <div class="inflation-future-cost">₹56.5 Lakhs</div>
+          <p class="inflation-note">Often underestimates specialized tuition, books, and campus living costs.</p>
+        </div>
+
+        <div class="inflation-card featured-inflation">
+          <span class="inflation-rate">8% Inflation</span>
+          <p class="inflation-type">Realistic Domestic Higher Education</p>
+          <div class="inflation-future-cost">₹73.4 Lakhs</div>
+          <p class="inflation-note">Recommended baseline benchmark for Indian engineering, medicine, and management degrees.</p>
+        </div>
+
+        <div class="inflation-card">
+          <span class="inflation-rate">10% Inflation</span>
+          <p class="inflation-type">Global Degrees & Currency Depreciation</p>
+          <div class="inflation-future-cost">₹94.9 Lakhs</div>
+          <p class="inflation-note">Accounts for domestic tuition surges plus foreign exchange rupee depreciation.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/plan/" class="btn-subtle">← Back to All Goal Roadmaps</a>
+      <a href="/tools/sip/" class="btn-subtle">Explore SIP Compounding Simulator →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .education-inflation-insight {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .inflation-comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .inflation-comparison-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .inflation-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-inflation {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .inflation-rate {
+    font-size: var(--text-caption);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+  }
+
+  .inflation-type {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .inflation-future-cost {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .inflation-note {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

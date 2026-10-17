@@ -1,5 +1,6 @@
 ---
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
+import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../config/routes';
 ---
 
 <footer class="site-footer" role="contentinfo" id="footer-disclosures">
@@ -17,27 +18,25 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
         </div>
       </div>
 
-      <!-- Col 2: Life Milestones (Section links) -->
+      <!-- Col 2: Life Milestones -->
       <div class="footer-col">
         <h4 class="footer-heading">Life Milestones</h4>
         <ul class="footer-links" role="list">
-          <li><a href="#goals">Children's Higher Education</a></li>
-          <li><a href="#goals">Family Home Purchase</a></li>
-          <li><a href="#goals">Retirement Wealth Accumulation</a></li>
-          <li><a href="#goals">Retirement Sustainable Cash Flow</a></li>
-          <li><a href="#financial-health">REAL Financial Health Diagnostic</a></li>
+          {GOAL_ROUTES.map((goal) => (
+            <li><a href={goal.path}>{goal.label}</a></li>
+          ))}
+          <li><a href="/health-check/real-statement/">REAL Financial Statement</a></li>
         </ul>
       </div>
 
-      <!-- Col 3: Mathematical Simulators (Section links) -->
+      <!-- Col 3: Mathematical Simulators -->
       <div class="footer-col">
         <h4 class="footer-heading">Tools & Simulators</h4>
         <ul class="footer-links" role="list">
-          <li><a href="#tools">SIP Wealth Accumulation</a></li>
-          <li><a href="#tools">Home Loan Foreclosure Simulator</a></li>
-          <li><a href="#tools">Loan + Parallel SIP Recovery</a></li>
-          <li><a href="#tools">SWP Retirement Decumulation</a></li>
-          <li><a href="#tools">Productive Net Worth Balance Sheet</a></li>
+          {TOOL_ROUTES.slice(0, 5).map((tool) => (
+            <li><a href={tool.path}>{tool.label}</a></li>
+          ))}
+          <li><a href="/tools/">View All Tools Hub →</a></li>
         </ul>
       </div>
 
@@ -52,6 +51,11 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
           <a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a>
         </p>
         <p class="footer-contact-item">
+          <a href={CONTACT_ROUTE.path} class="contact-details-link">
+            Consultation Expectations & Redressal →
+          </a>
+        </p>
+        <p class="footer-contact-item">
           <a 
             href={BUSINESS_PROFILE.contact.whatsappUrl} 
             target="_blank" 
@@ -59,16 +63,6 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
             class="whatsapp-link"
           >
             Chat with Santhosh on WhatsApp ↗
-          </a>
-        </p>
-        <p class="footer-contact-item">
-          <a 
-            href={BUSINESS_PROFILE.contact.portfolioLoginUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="portfolio-footer-link"
-          >
-            Client Portfolio Login ↗
           </a>
         </p>
       </div>
@@ -101,11 +95,12 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
         {BUSINESS_PROFILE.disclosures.copyrightText}
       </p>
       <div class="legal-nav">
-        <a href="#statutory-notices">Disclaimers</a>
-        <span aria-hidden="true">•</span>
-        <a href="#statutory-notices">Privacy Notice</a>
-        <span aria-hidden="true">•</span>
-        <a href="#statutory-notices">Terms of Service</a>
+        {LEGAL_ROUTES.map((item, idx) => (
+          <>
+            <a href={item.path}>{item.label}</a>
+            {idx < LEGAL_ROUTES.length - 1 && <span aria-hidden="true">•</span>}
+          </>
+        ))}
       </div>
     </div>
   </div>
@@ -185,7 +180,12 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
     text-decoration: none;
   }
 
-  .whatsapp-link, .portfolio-footer-link {
+  .contact-details-link {
+    color: var(--primitive-teal-300) !important;
+    text-decoration: underline !important;
+  }
+
+  .whatsapp-link {
     display: inline-block;
     color: var(--primitive-teal-400);
     text-decoration: underline;

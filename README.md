@@ -41,9 +41,10 @@ new-app/
 ├── src/
 │   ├── components/
 │   │   ├── site/            # Site shell: Header.astro (accessible drawer), Footer.astro
-│   │   └── ui/              # Reusable primitives: SectionHeader, PillarCard, GoalCard, ToolPreviewCard
+│   │   └── ui/              # Reusable primitives: Breadcrumbs, PageIntro, StatusNotice, SectionHeader, PillarCard, GoalCard, ToolPreviewCard
 │   ├── config/
-│   │   └── businessProfile.ts # Authoritative business identity & compliance disclosures
+│   │   ├── businessProfile.ts # Authoritative business identity & compliance disclosures
+│   │   └── routes.ts        # Central route registry & navigation model (single source of truth)
 │   ├── domain/
 │   │   ├── finance/         # PURE TypeScript financial calculation engine (isolated from DOM/storage)
 │   │   └── tax/             # Centralized tax-rules registry versioned by Act and Tax Year
@@ -53,13 +54,22 @@ new-app/
 │   │   └── formatters.ts    # Indian numbering formatters (₹ Lakhs, Crores)
 │   ├── pages/
 │   │   ├── index.astro      # Polished, responsive Family Money Map homepage
+│   │   ├── health-check/    # 7-Pillars diagnostic framework & REAL Statement shells
+│   │   ├── plan/            # Goal planning roadmap shells (children, home, retirement, income)
+│   │   ├── tools/           # 9 categorized interactive calculation simulator shells
+│   │   ├── learn/           # Educational knowledge library with 5 structured guides
+│   │   ├── about.astro      # Founder story, heritage, and practice principles
+│   │   ├── contact.astro    # Direct contact channels & consultation expectations
+│   │   ├── disclaimer.astro # Statutory disclosures, mutual fund risk & intermediary notice
+│   │   ├── privacy.astro    # Privacy policy, local calculation isolation & DPDP Act
+│   │   ├── terms.astro      # Terms of use and service boundaries
 │   │   └── 404.astro        # Branded accessible 404 recovery page
 │   └── styles/
 │       ├── design-tokens.css # Authored CSS tokens with measured WCAG contrast calculations
 │       └── global.css       # Accessible CSS reset and global typography rules
 ├── tests/
 │   ├── e2e/                 # Playwright tests (navigation, mobile drawer, overflow, screenshots)
-│   └── unit/                # Vitest unit test suite (formatters, business profile governance)
+│   └── unit/                # Vitest unit test suite (formatters, routes registry, business profile)
 ├── astro.config.mjs         # Astro configuration with canonical site 'https://antwealth.in'
 ├── playwright.config.ts     # Cross-platform preview test configuration
 └── package.json             # Independent package manifest

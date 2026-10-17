@@ -1,0 +1,188 @@
+---
+interface Props {
+  featureName: string;
+  gateNote?: string;
+  expectedInputs?: string[];
+  expectedOutputs?: string[];
+}
+
+const { 
+  featureName, 
+  gateNote = "The interactive calculation engine for this tool is undergoing rigorous mathematical specification review. In accordance with project governance, mock or constant calculations are strictly prohibited.",
+  expectedInputs = [],
+  expectedOutputs = []
+} = Astro.props;
+---
+
+<div class="status-notice-card" role="region" aria-label="Development Status Notice">
+  <div class="notice-header">
+    <span class="notice-pill">Under Active Development</span>
+    <h2 class="notice-title">{featureName} — Engineering Status</h2>
+  </div>
+
+  <p class="notice-explanation">
+    {gateNote}
+  </p>
+
+  {(expectedInputs.length > 0 || expectedOutputs.length > 0) && (
+    <div class="specs-grid">
+      {expectedInputs.length > 0 && (
+        <div class="spec-col">
+          <h3 class="spec-heading">Required Information Needed:</h3>
+          <ul class="spec-list">
+            {expectedInputs.map(item => <li>{item}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {expectedOutputs.length > 0 && (
+        <div class="spec-col">
+          <h3 class="spec-heading">Planned Simulation Outputs:</h3>
+          <ul class="spec-list">
+            {expectedOutputs.map(item => <li>{item}</li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+  )}
+
+  <div class="notice-footer">
+    <p class="notice-disclaimer">
+      <strong>Transparent Governance:</strong> We do not render simulated forms with fake, hardcoded numbers. Verified mathematical formulas backed by independent test vectors will be activated in an upcoming phase.
+    </p>
+    <div class="notice-actions">
+      <a href="/tools/" class="btn-subtle">← Browse All Tools</a>
+      <a href="/about/" class="btn-subtle">Learn How We Work →</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .status-notice-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--primitive-gold-200, #FDE68A);
+    border-left: 4px solid var(--primitive-gold-500);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-8);
+    box-shadow: var(--shadow-subtle);
+    margin: var(--space-8) 0;
+  }
+
+  @media (max-width: 480px) {
+    .status-notice-card {
+      padding: var(--space-5) var(--space-4);
+    }
+  }
+
+  .notice-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .notice-pill {
+    align-self: flex-start;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .notice-title {
+    font-size: var(--text-h3);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin: 0;
+  }
+
+  .notice-explanation {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0 0 var(--space-6) 0;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    background-color: var(--primitive-slate-50);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .specs-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .spec-heading {
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .spec-list {
+    margin: 0;
+    padding-left: var(--space-4);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .notice-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    border-top: 1px solid var(--primitive-slate-100);
+    padding-top: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .notice-footer {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .notice-disclaimer {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 540px;
+  }
+
+  .notice-actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>

@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+
+const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
+---
+
+<BaseLayout
+  title="Prepay Loan vs Invest Decision Simulator — Ant Wealth Creation"
+  description="Compare the financial trade-offs between aggressively prepaying a home loan versus investing surplus cash flow into diversified mutual funds."
+  currentPath="/tools/loan-vs-invest/"
+>
+  <div class="container page-container">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <PageIntro
+      eyebrow="Decision Framework"
+      title="Prepay Loan vs Invest Decision Simulator"
+      description="Resolve the classic personal finance dilemma: Should you use surplus funds to pay off your home loan early, or invest them into equity markets?"
+      statusBadge="Arbitrage & Risk Math Pending"
+    />
+
+    <StatusNotice
+      featureName="Loan vs Investment Arbitrage Engine"
+      gateNote="Under GATE-B & GATE-C (Tax & Differential Compounding), comparing guaranteed post-tax loan interest savings against uncertain, market-linked investment returns requires strict mathematical clarity on post-tax hurdle rates (Section 24(b) deduction caps). In this shell, the strategic trade-off matrix is detailed without speculative output."
+      expectedInputs={[
+        "Available surplus monthly cash flow (e.g. ₹15,000 to ₹50,000) OR Lump sum surplus",
+        "Existing loan interest rate (e.g. 8.5% p.a.)",
+        "Remaining loan tenure",
+        "Expected long-term investment return rate (e.g. 11% to 12%)",
+        "Tax regime and applicable home loan interest deductions",
+      ]}
+      expectedOutputs={[
+        "Guaranteed interest saved via prepayment route",
+        "Potential wealth accumulated via investment route",
+        "Net difference in financial net worth after loan tenure",
+        "Risk-adjusted comparison highlighting liquidity trade-offs",
+      ]}
+    />
+
+    <section class="educational-insight-box" aria-labelledby="insight-heading">
+      <h2 id="insight-heading" class="section-title">The Strategic Trade-Off Matrix</h2>
+      <p class="section-desc">
+        The choice between loan prepayment and investing involves more than just rate comparison—it balances peace of mind against long-term liquidity:
+      </p>
+
+      <div class="decision-grid">
+        <div class="decision-card">
+          <span class="decision-badge">Option A: Prepay Loan</span>
+          <h3 class="decision-title">Guaranteed & Debt-Free Peace of Mind</h3>
+          <ul class="decision-list">
+            <li>Guaranteed return equal to your effective loan interest rate.</li>
+            <li>Eliminates fixed EMI obligation, increasing family financial resilience.</li>
+            <li><strong>Trade-off:</strong> Cash is permanently locked in home equity with zero liquidity.</li>
+          </ul>
+        </div>
+
+        <div class="decision-card optimal-choice">
+          <span class="decision-badge">Option B: Invest Surplus</span>
+          <h3 class="decision-title">Long-Term Wealth & Liquidity</h3>
+          <ul class="decision-list">
+            <li>Historical equity returns generally exceed home loan interest rates over 10+ years.</li>
+            <li>Maintains accessible liquid wealth for family emergencies and goals.</li>
+            <li><strong>Trade-off:</strong> Market volatility requires stomach for short-term fluctuations.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav-links-strip">
+      <a href="/tools/home-loan-foreclosure/" class="btn-subtle">← Home Loan Prepayment Calculator</a>
+      <a href="/tools/loan-sip-recovery/" class="btn-subtle">Explore Loan + SIP Recovery →</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    padding-bottom: var(--space-16);
+  }
+
+  .educational-insight-box {
+    margin: var(--space-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
+  }
+
+  .decision-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .decision-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .decision-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .optimal-choice {
+    border-color: var(--primitive-teal-500);
+    border-width: 2px;
+    background-color: var(--primitive-teal-50);
+  }
+
+  .decision-badge {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .decision-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .decision-list {
+    margin: 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .nav-links-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-8);
+    margin-top: var(--space-12);
+  }
+
+  .btn-subtle {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-subtle:hover {
+    background-color: var(--primitive-teal-50);
+    border-color: var(--primitive-teal-100);
+  }
+</style>
