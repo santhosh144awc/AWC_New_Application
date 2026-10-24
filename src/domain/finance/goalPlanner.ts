@@ -8,7 +8,7 @@
  * 4. Required monthly SIP calculation via targetCorpus solver.
  */
 
-import { assertFiniteNonNegative, assertPositiveInteger, assertValidRatePercent, FinanceValidationError } from './errors';
+import { assertFiniteNonNegative, assertInflationPercent, assertPositiveInteger, assertStandardInvestmentReturnPercent, FinanceValidationError } from './errors';
 import { calculateTargetCorpus } from './targetCorpus';
 
 export interface GoalPlannerInput {
@@ -18,10 +18,10 @@ export interface GoalPlannerInput {
   /** Number of years until milestone is reached (integer >= 1) */
   readonly yearsHorizon?: number;
   readonly timeHorizonYears?: number;
-  /** Assumed annual inflation rate for this goal category (e.g. 8 for education, >= 0) */
+  /** Assumed annual inflation rate for this goal category (e.g. 8 for education, 0 <= r <= 100) */
   readonly annualInflationPercent?: number;
   readonly annualInflationRatePercent?: number;
-  /** Assumed effective annual rate of return on investments (-100 < r <= 1000) */
+  /** Assumed effective annual rate of return on investments (0 <= r <= 100) */
   readonly assumedAnnualReturnPercent?: number;
   readonly annualReturnRatePercent?: number;
   /** Existing savings/investments earmarked for this goal (optional, >= 0) */
@@ -65,11 +65,8 @@ export function calculateGoalPlan(input: GoalPlannerInput): GoalPlannerResult {
     throw new FinanceValidationError('costToday', cost as number, 'Goal cost must be a positive finite number (> 0)');
   }
   assertPositiveInteger('yearsHorizon', years as number);
-  assertFiniteNonNegative('annualInflationPercent', inflationPercent as number);
-  if ((inflationPercent as number) > 100) {
-    throw new FinanceValidationError('annualInflationPercent', inflationPercent, 'Annual inflation rate cannot exceed 100%');
-  }
-  assertValidRatePercent('assumedAnnualReturnPercent', returnPercent as number);
+  assertInflationPercent('annualInflationPercent', inflationPercent as number);
+  assertStandardInvestmentReturnPercent('assumedAnnualReturnPercent', returnPercent as number);
   assertFiniteNonNegative('existingSavings', existingSavings);
 
   const yearsHorizon = years as number;

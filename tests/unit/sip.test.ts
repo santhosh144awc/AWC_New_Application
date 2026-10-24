@@ -139,11 +139,93 @@ describe('sip Domain Engine', () => {
         .toThrow(FinanceValidationError);
     });
 
-    it('rejects return rate outside standard consumer calculator contract (0% to 100%)', () => {
-      expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: -1 }))
-        .toThrow(FinanceValidationError);
-      expect(() => calculateSIP({ monthlyInstallment: 5000, tenureMonths: 24, annualReturnRatePercent: 101 }))
-        .toThrow(FinanceValidationError);
+    it('handles return rate boundaries: 0% and 100% succeed; below 0% and above 100% throw identifying parameter', () => {
+      // Exact minimum boundary: 0%
+      const minRes = calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: 0 });
+      expect(minRes.futureValue).toBe(60000);
+      expect(minRes.totalGain).toBe(0);
+
+      // Exact maximum boundary: 100%
+      const maxRes = calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: 100 });
+      expect(maxRes.futureValue).toBeGreaterThan(60000);
+
+      // Just below minimum: -0.01%
+      try {
+        calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: -0.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+
+      // Just above maximum: 100.01%
+      try {
+        calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: 100.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+
+      // Non-finite return: NaN, Infinity
+      try {
+        calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: NaN });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+
+      try {
+        calculateSIP({ monthlyInstallment: 5000, tenureMonths: 12, annualReturnRatePercent: Infinity });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+    });
+  });
+
+  describe('UI Headline Number Traceability Regression (Phase 2 Concept C)', () => {
+    it('confirms the default illustrative UI vector (₹10,000/mo, 10 yrs, 12% EAR, 0% step-up) matches authoritative engine output', () => {
+      const result = calculateSIP({
+        monthlyInvestment: 10000,
+        tenureMonths: 120,
+        annualReturnPercent: 12,
+        annualStepUpPercent: 0,
+      });
+
+      // Total invested = ₹12,00,000
+      expect(result.totalInvested).toBe(1200000);
+      // FV = 22,40,358.89559... rounding to ₹22,40,359 in UI presentation
+      expect(Math.round(result.futureValue)).toBe(2240359);
+      // Total gain = 10,40,358.89559... rounding to ₹10,40,359 in UI presentation
+      expect(Math.round(result.totalGain)).toBe(1040359);
+      expect(result.futureValue).toBe(result.totalInvested + result.totalGain);
+    });
+
+    it('confirms step-up comparative outputs match authoritative engine for 10% step-up vector', () => {
+      const stepUpResult = calculateSIP({
+        monthlyInvestment: 10000,
+        tenureMonths: 120,
+        annualReturnPercent: 12,
+        annualStepUpPercent: 10,
+      });
+      const fixedResult = calculateSIP({
+        monthlyInvestment: 10000,
+        tenureMonths: 120,
+        annualReturnPercent: 12,
+        annualStepUpPercent: 0,
+      });
+
+      // Step-up invested: 19,12,491
+      expect(Math.round(stepUpResult.totalInvested)).toBe(1912491);
+      // Step-up FV: 32,68,898.48... rounding to ₹32,68,898
+      expect(Math.round(stepUpResult.futureValue)).toBe(3268898);
+      // Fixed FV: 22,40,358.89... rounding to ₹22,40,359
+      expect(Math.round(fixedResult.futureValue)).toBe(2240359);
+      // Extra wealth generated: 10,28,539.58... rounding to ₹10,28,540
+      expect(Math.round(stepUpResult.futureValue - fixedResult.futureValue)).toBe(1028540);
     });
   });
 });

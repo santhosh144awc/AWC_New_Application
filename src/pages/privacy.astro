@@ -6,12 +6,12 @@ import { getBreadcrumbsForPath } from '../config/routes';
 import { BUSINESS_PROFILE } from '../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/privacy/');
-const { firm, contact } = BUSINESS_PROFILE;
+const { firm, contact, regulatory } = BUSINESS_PROFILE;
 ---
 
 <BaseLayout
-  title="Privacy Policy & Data Protection — Ant Wealth Creation"
-  description="Our commitment to client confidentiality, local calculator data isolation, and compliance with the Digital Personal Data Protection Act, 2023."
+  title="Privacy Policy & Website Data Practices — Ant Wealth Creation"
+  description="Learn about our current website practices, client-side calculator processing, voluntary inquiry handling, and privacy standards."
   currentPath="/privacy/"
 >
   <div class="container page-container">
@@ -19,61 +19,150 @@ const { firm, contact } = BUSINESS_PROFILE;
 
     <PageIntro
       eyebrow="Data Governance"
-      title="Privacy Policy & Data Protection"
-      description="We respect your family's financial privacy. Learn how your data is handled with local-first calculation boundaries and strict confidentiality."
+      title="Privacy Policy & Data Practices"
+      description="We respect your family's financial privacy. This policy describes our current website practices, local calculator boundaries, and voluntary communication handling."
+      icon="🛡️"
     />
 
     <div class="legal-card">
       <section class="legal-section">
-        <h2 class="legal-heading">1. Commitment to Client Confidentiality</h2>
+        <h2 class="legal-heading">1. Our Approach to Client Privacy &amp; Data Stewardship</h2>
         <p>
-          At Ant Wealth Creation, client trust is our highest priority. We do not sell, rent, monetize, or trade your personal or financial data with third-party advertisers, data brokers, or lending telemarketers under any circumstances.
+          At Ant Wealth Creation, client trust is foundational to our practice. {regulatory.soleProprietorStatement} We do not sell, rent, monetize, or trade your personal contact details or financial figures with third-party advertisers, data brokers, or lending telemarketers.
+        </p>
+        <p>
+          Information you voluntarily choose to share with us through available communication channels (such as WhatsApp, phone, or email) is used solely to respond to your inquiries, schedule consultation discussions, and provide requested mutual fund distribution services. We do not make absolute claims of "100% confidentiality" or "zero data collection" across internet communication channels, but we implement rigorous, disciplined data-handling standards to protect your privacy.
         </p>
       </section>
 
       <section class="legal-section">
-        <h2 class="legal-heading">2. Local-First Financial Calculator Data Isolation</h2>
+        <h2 class="legal-heading">2. Client-Side Financial Calculator Isolation</h2>
         <p>
-          All financial calculators, goal roadmaps, and balance sheet simulators hosted on this website are engineered to operate client-side within your browser session. 
+          All interactive financial calculators, goal roadmaps, and balance sheet simulators hosted on this website are engineered to operate client-side within your browser session.
         </p>
         <p>
-          Inputs you enter—such as monthly savings amounts, salary figures, debt balances, or target retirement ages—are processed ephemerally. In this phase of development, no financial numbers are transmitted to remote servers, logged to analytics systems, or persisted in unencrypted permanent local storage.
-        </p>
-      </section>
-
-      <section class="legal-section">
-        <h2 class="legal-heading">3. Information Collected via Direct Inquiries</h2>
-        <p>
-          When you voluntarily contact us via WhatsApp, phone, or email to request a personal financial consultation, we collect only the information necessary to serve your inquiry:
-        </p>
-        <ul class="legal-list">
-          <li>Your name and contact phone number or email address</li>
-          <li>General financial goals or portfolio queries you choose to share</li>
-        </ul>
-        <p>
-          This information is used strictly to communicate with you regarding your mutual fund investments and financial planning milestones.
+          Inputs you enter—such as monthly savings amounts, salary figures, debt balances, or target retirement ages—are processed ephemerally in-memory. In the reviewed application source code, financial inputs entered into calculators are not transmitted to remote application servers, not logged in third-party analytics systems, and not persisted in browser cookies, web storage (localStorage or sessionStorage), or IndexedDB databases.
         </p>
       </section>
 
       <section class="legal-section">
-        <h2 class="legal-heading">4. Compliance with the DPDP Act, 2023</h2>
+        <h2 class="legal-heading">3. Verified Website Data Practices</h2>
         <p>
-          Ant Wealth Creation complies with the principles of the Digital Personal Data Protection Act, 2023 (DPDP Act). You have the right to request access to your contact information, request corrections, or request deletion of your records from our consultation records at any time.
+          To maintain complete transparency, the table below outlines data handling across each feature of this website:
+        </p>
+
+        <div class="table-wrap">
+          <table class="data-practices-table">
+            <thead>
+              <tr>
+                <th>Feature / Activity</th>
+                <th>Data Processed</th>
+                <th>Storage &amp; Persistence</th>
+                <th>External Transmission</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Financial Calculators</strong></td>
+                <td>Simulated numbers (SIP amounts, loan tenures, savings targets)</td>
+                <td>Ephemeral in browser memory only; cleared on refresh</td>
+                <td>None; computed locally in browser. No calculator values are transmitted to remote servers</td>
+              </tr>
+              <tr>
+                <td><strong>Voluntary Inquiries</strong></td>
+                <td>Name, phone number, email, and goals you share</td>
+                <td>Retained in business communication records subject to our intended enquiry retention schedule</td>
+                <td>Transmitted via your chosen platform (WhatsApp or email)</td>
+              </tr>
+              <tr>
+                <td><strong>Website Browsing &amp; Infrastructure</strong></td>
+                <td>Standard web connection metadata (IP address, user agent) handled by hosting provider (Hostinger)</td>
+                <td>Standard server access logs may be maintained by Hostinger; the exact server-log retention period and production TLS/header settings are unconfirmed. The application codebase itself installs no tracking databases</td>
+                <td>The reviewed application source code installs no third-party tracking pixels, cookies, or client-side analytics SDKs (e.g., Google Analytics, GTM, Meta Pixel). However, this source review does not establish what server-level logging or scripts may be active on production hosting</td>
+              </tr>
+              <tr>
+                <td><strong>Outbound Links (e.g. TheMFBox, WhatsApp, AMFI)</strong></td>
+                <td>Subject to external platform terms upon navigation</td>
+                <td>Governed by third-party provider's privacy policy</td>
+                <td>Direct connection to external service provider. Note: TheMFBox external portal functionality has not been verified</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">4. Sensitive Information Security Warning</h2>
+        <div class="security-warning-box">
+          <div class="warning-icon" aria-hidden="true">⚠️</div>
+          <div class="warning-body">
+            <strong>Protect Your Sensitive Financial Credentials:</strong>
+            <p>
+              Please do not transmit passwords, one-time PINs (OTPs), full bank account numbers, login credentials, debit/credit card CVVs, or unencrypted identity documents over ordinary email or WhatsApp messaging. Ant Wealth Creation maintains a strict operational policy: <strong>we will never ask you to share account passwords, OTPs, or bank-login credentials</strong>. The owner confirms that work devices and accounts are secured, but other production technical controls have not been independently verified. When document review is required for formal mutual fund KYC or account opening, an appropriate, secure sharing process will be coordinated directly.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">5. Enquiry Record Policy &amp; Retention Schedule</h2>
+        <p>
+          Our intended enquiry-retention schedule is to stop contact immediately when someone declines and to delete enquiry-only records within 30 days, unless retention is required by law or regulation. Where a person does not respond, we intend to close the enquiry 90 days after the last follow-up attempt and delete enquiry-only records, except where retention is required by law or regulation. Existing client records are separate and are retained as needed to provide continuing services and meet applicable requirements. This schedule is not an automated deletion feature of the website; the operational procedure for implementing it must be maintained separately.
+        </p>
+        <p>
+          Operational verification of this deletion procedure remains an open release-readiness action. You may contact us at any time to review the contact details we hold for you or request removal from our active inquiry notes.
         </p>
       </section>
 
       <section class="legal-section">
-        <h2 class="legal-heading">5. Grievance Redressal & Privacy Officer</h2>
+        <h2 class="legal-heading">6. Regulatory Framework &amp; Ongoing Legal Review</h2>
         <p>
-          For any questions regarding this Privacy Policy or to exercise your data rights, contact our founder directly:
+          This policy reflects our current operational website practices. In India, the Digital Personal Data Protection Act, 2023 (DPDP Act) and its implementing rules are subject to phased statutory rollout.
         </p>
         <p>
-          <strong>C. Santhosh Sathriyan</strong><br />
-          Ant Wealth Creation<br />
-          Email: <a href={`mailto:${contact.email}`} class="legal-link">{contact.email}</a><br />
-          Phone: {contact.phoneDisplay}<br />
-          Location: {firm.headquarters}
+          Ant Wealth Creation is committed to responsible personal data stewardship. Our website disclosures and consultation workflows remain subject to formal review with qualified Indian legal and compliance professionals to ensure appropriate alignment with applicable statutory obligations as provisions take effect.
         </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">7. Direct Contact &amp; Grievance Redressal</h2>
+        <p>
+          For any questions regarding this Privacy Policy, your contact records, or grievance redressal, contact founder C. Santhosh Sathriyan directly:
+        </p>
+        <div class="contact-details-box">
+          <p><strong>C. Santhosh Sathriyan, B.E.</strong></p>
+          <p>Founder &amp; Mutual Fund Distributor</p>
+          <p>Ant Wealth Creation (Sole Proprietorship)</p>
+          <p>AMFI Registration: {regulatory.arn} (Valid till {regulatory.arnValidity})</p>
+          <p>Email: <a href={`mailto:${contact.email}`} class="legal-link">{contact.email}</a></p>
+          <p>Phone: <a href={`tel:${contact.phone}`} class="legal-link">{contact.phoneDisplay}</a></p>
+          <p>Headquarters: {firm.headquarters}</p>
+        </div>
+      </section>
+
+      <section class="legal-section cross-links-section">
+        <h2 class="legal-heading">8. Related Policies &amp; Terms</h2>
+        <p>
+          Explore related policies and service boundaries governing Ant Wealth Creation:
+        </p>
+        <div class="cross-links-grid">
+          <a href="/terms/" class="cross-link-card">
+            <span class="card-title">Terms of Use →</span>
+            <span class="card-desc">Terms governing website access, intellectual property, and service boundaries.</span>
+          </a>
+          <a href="/commission-disclosure/" class="cross-link-card">
+            <span class="card-title">Commission Disclosure →</span>
+            <span class="card-desc">Distributor commissions, AMC trail structures, and Regular Plan transparency.</span>
+          </a>
+          <a href="/disclaimer/" class="cross-link-card">
+            <span class="card-title">Regulatory Disclaimers →</span>
+            <span class="card-desc">AMFI registration status, distributor commissions, and mutual fund market risks.</span>
+          </a>
+          <a href="/contact/" class="cross-link-card">
+            <span class="card-title">Contact &amp; Consultation →</span>
+            <span class="card-desc">Direct communication channels and consultation expectations.</span>
+          </a>
+        </div>
       </section>
     </div>
   </div>
@@ -90,7 +179,7 @@ const { firm, contact } = BUSINESS_PROFILE;
     border-radius: var(--radius-xl);
     padding: var(--space-8);
     box-shadow: var(--shadow-subtle);
-    max-width: 860px;
+    max-width: 880px;
   }
 
   @media (min-width: 768px) {
@@ -143,5 +232,133 @@ const { firm, contact } = BUSINESS_PROFILE;
   .legal-link {
     color: var(--color-text-brand);
     text-decoration: underline;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: var(--space-4) 0;
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+  }
+
+  .data-practices-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body-sm);
+    text-align: left;
+    min-width: 580px;
+  }
+
+  .data-practices-table th {
+    background-color: var(--awc-paper);
+    color: var(--awc-navy);
+    font-weight: 700;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--awc-line);
+  }
+
+  .data-practices-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--awc-line);
+    color: var(--color-text-secondary);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .data-practices-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .security-warning-box {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    background-color: var(--primitive-gold-50);
+    border-left: 4px solid var(--color-brand-accent);
+    padding: var(--space-4) var(--space-5);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-top: var(--space-3);
+  }
+
+  .warning-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .warning-body strong {
+    color: var(--primitive-gold-700);
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--text-body-sm);
+  }
+
+  .warning-body p {
+    color: var(--color-text-primary);
+    font-size: var(--text-body-sm);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .contact-details-box {
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-top: var(--space-3);
+  }
+
+  .contact-details-box p {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+  }
+
+  .contact-details-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  .cross-links-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .cross-links-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .cross-link-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .cross-link-card:hover {
+    border-color: var(--color-border-interactive);
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    margin-bottom: var(--space-1);
+  }
+
+  .card-desc {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    line-height: 1.4;
   }
 </style>

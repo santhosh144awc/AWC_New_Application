@@ -71,24 +71,131 @@ describe('goalPlanner Domain Engine', () => {
     });
   });
 
-  describe('Input Validation & Error Handling', () => {
-    it('rejects goal cost <= 0 or non-finite', () => {
-      expect(() => calculateGoalPlan({ currentGoalCost: 0, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 }))
-        .toThrow(FinanceValidationError);
-      expect(() => calculateGoalPlan({ currentGoalCost: -500, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 }))
-        .toThrow(FinanceValidationError);
+  describe('Input Validation & Boundary Error Handling', () => {
+    it('rejects goal cost <= 0 or non-finite identifying costToday parameter', () => {
+      try {
+        calculateGoalPlan({ currentGoalCost: 0, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('costToday');
+      }
+
+      try {
+        calculateGoalPlan({ currentGoalCost: -500, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('costToday');
+      }
+
+      try {
+        calculateGoalPlan({ currentGoalCost: NaN, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('costToday');
+      }
     });
 
-    it('rejects time horizon <= 0', () => {
-      expect(() => calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 0, annualInflationRatePercent: 6, annualReturnRatePercent: 12 }))
-        .toThrow(FinanceValidationError);
+    it('rejects time horizon invalid tenure (0, negative, fractional, NaN, Infinity) identifying yearsHorizon parameter', () => {
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 0, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('yearsHorizon');
+      }
+
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 2.5, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('yearsHorizon');
+      }
+
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: NaN, annualInflationRatePercent: 6, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('yearsHorizon');
+      }
     });
 
-    it('rejects inflation < 0 or > 100', () => {
-      expect(() => calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: -1, annualReturnRatePercent: 12 }))
-        .toThrow(FinanceValidationError);
-      expect(() => calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 101, annualReturnRatePercent: 12 }))
-        .toThrow(FinanceValidationError);
+    it('handles inflation rate boundaries: 0% and 100% succeed; below 0% and above 100% throw identifying parameter', () => {
+      // 0% inflation
+      const zeroInf = calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 0, annualReturnRatePercent: 12 });
+      expect(zeroInf.futureGoalCost).toBe(100000);
+
+      // 100% inflation
+      const maxInf = calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 1, annualInflationRatePercent: 100, annualReturnRatePercent: 12 });
+      expect(maxInf.futureGoalCost).toBe(200000);
+
+      // Below 0%
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: -0.01, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInflationPercent');
+      }
+
+      // Above 100%
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 100.01, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInflationPercent');
+      }
+
+      // NaN
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: NaN, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInflationPercent');
+      }
+    });
+
+    it('handles assumed return rate boundaries: 0% and 100% succeed; below 0% and above 100% throw identifying parameter', () => {
+      // 0% return
+      const zeroRet = calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 1, annualInflationRatePercent: 0, annualReturnRatePercent: 0 });
+      expect(zeroRet.requiredMonthlySIP).toBeCloseTo(100000 / 12, 2);
+
+      // 100% return
+      const maxRet = calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 1, annualInflationRatePercent: 0, annualReturnRatePercent: 100 });
+      expect(maxRet.requiredMonthlySIP).toBeLessThan(100000 / 12);
+
+      // Below 0%
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: -0.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('assumedAnnualReturnPercent');
+      }
+
+      // Above 100%
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: 100.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('assumedAnnualReturnPercent');
+      }
+
+      // NaN
+      try {
+        calculateGoalPlan({ currentGoalCost: 100000, timeHorizonYears: 5, annualInflationRatePercent: 6, annualReturnRatePercent: NaN });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('assumedAnnualReturnPercent');
+      }
     });
   });
 });

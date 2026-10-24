@@ -1,0 +1,66 @@
+---
+/**
+ * Calm empty state with an optional action slot.
+ * Renders hidden by default when `hidden` is passed (used for client-side no-results).
+ */
+interface Props {
+  title: string;
+  message: string;
+  icon?: string;
+  [attr: string]: unknown;
+}
+
+const { title, message, icon = '⌕', ...rest } = Astro.props;
+---
+
+<div class="empty-state" {...rest}>
+  <span class="empty-state__icon" aria-hidden="true">{icon}</span>
+  <h3 class="empty-state__title">{title}</h3>
+  <p class="empty-state__message">{message}</p>
+  <div class="empty-state__action"><slot /></div>
+</div>
+
+<style>
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-8) var(--space-5);
+    text-align: center;
+    border: 1px dashed #cbdad6;
+    border-radius: 18px;
+    background: var(--primitive-white);
+  }
+
+  .empty-state[hidden] {
+    display: none;
+  }
+
+  .empty-state__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--awc-mist);
+    font-size: 1.4rem;
+    color: var(--awc-navy);
+  }
+
+  .empty-state__title {
+    font-size: 1.1rem;
+    margin: var(--space-2) 0 0;
+  }
+
+  .empty-state__message {
+    margin: 0;
+    max-width: 420px;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+  }
+
+  .empty-state__action {
+    margin-top: var(--space-3);
+  }
+</style>

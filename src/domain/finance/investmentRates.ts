@@ -26,6 +26,10 @@ export interface RateConversionResult {
  * Converts an effective annual rate (supplied in percentage, e.g., 12.0 for 12%)
  * to its mathematically equivalent effective monthly rate decimal.
  * 
+ * NOTE: This is a low-level mathematical converter using assertValidRatePercent (-100 < r <= 1000).
+ * Consumer-facing financial engines (SIP, Lumpsum, Target Corpus, Goal Planner) must enforce
+ * their standard contract (0 <= r <= 100) via assertStandardInvestmentReturnPercent prior to conversion.
+ *
  * @param annualRatePercent Annual effective return rate as a percentage (-100 < r <= 1000)
  * @returns Monthly equivalent effective rate as a decimal (e.g. ~0.00948879 for 12%)
  */

@@ -5,7 +5,7 @@ publishDate: "2026-08-23"
 category: "Personal Finance"
 tags: ["Emergency Fund","Financial Safety","Liquid Funds","Cash Flow"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "5 min read"
 featured: true
 publicationStatus: APPROVED
@@ -46,4 +46,4 @@ Your emergency fund has two non-negotiable rules: **Safety** and **Instant Liqui
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor (AMFI registration confirmation pending).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*

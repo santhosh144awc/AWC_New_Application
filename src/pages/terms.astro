@@ -27,24 +27,33 @@ const { firm, regulatory, disclosures } = BUSINESS_PROFILE;
       <section class="legal-section">
         <h2 class="legal-heading">1. Acceptance of Terms</h2>
         <p>
-          By accessing or using the website of Ant Wealth Creation ({firm.canonicalDomain}), you agree to be bound by these Terms of Use, our Privacy Policy, and all applicable Indian securities laws and regulations. If you do not agree with any part of these terms, please discontinue use of this site.
+          These Terms of Use describe the terms governing access to the Ant Wealth Creation website ({firm.canonicalDomain}), its financial calculators, educational materials, and mutual fund distribution services. By accessing or using this website, you acknowledge these Terms along with our <a href="/privacy/">Privacy Policy</a>, <a href="/commission-disclosure/">Commission Disclosure</a>, and <a href="/disclaimer/">Regulatory Disclaimers</a>. If you do not agree with these terms, please discontinue your use of this website.
         </p>
       </section>
 
       <section class="legal-section">
         <h2 class="legal-heading">2. Nature of Services & Intermediary Capacity</h2>
         <p>
-          Ant Wealth Creation operates as an AMFI-Registered Mutual Fund Distributor. The materials, calculators, and articles provided on this website are designed solely to facilitate personal financial awareness and milestone goal planning.
+          Ant Wealth Creation provides mutual fund distribution services and educational goal-planning tools. The articles, calculators, and educational materials provided on this website are designed solely to facilitate personal financial awareness and milestone goal planning.
+        </p>
+        <p>
+          {regulatory.soleProprietorStatement}
         </p>
         <p>
           {regulatory.sebiRIAStatusNotice}
+        </p>
+        <p>
+          For comprehensive details on distributor roles, commission frameworks, and intermediary boundaries, please consult our <a href="/commission-disclosure/">Commission Disclosure</a> and <a href="/disclaimer/">Regulatory Disclaimers</a>.
         </p>
       </section>
 
       <section class="legal-section">
         <h2 class="legal-heading">3. Use of Calculators & Simulation Accuracy</h2>
         <p>
-          All calculators and financial modeling interfaces provided on this platform are intended solely for simulation purposes based on user inputs. We make no warranties, express or implied, regarding the mathematical precision of projections in volatile market conditions or their future realisation.
+          All financial calculators and modeling interfaces hosted on this platform are intended solely for illustrative simulation purposes based on user-entered assumptions. Real-world investment outcomes depend on fluctuating market conditions, macroeconomic variables, fund performance, and taxation.
+        </p>
+        <p>
+          Calculations do not constitute guaranteed returns, personalized investment advice, or a formal financial plan. Visitors should evaluate their personal risk tolerance, financial situation, and investment horizon before making investment decisions.
         </p>
         <p>
           {disclosures.mutualFundRisk}
@@ -52,16 +61,26 @@ const { firm, regulatory, disclosures } = BUSINESS_PROFILE;
       </section>
 
       <section class="legal-section">
-        <h2 class="legal-heading">4. Intellectual Property</h2>
+        <h2 class="legal-heading">4. Intellectual Property & Permitted Use</h2>
         <p>
-          All logos, branding marks, design systems, visual assets, text copy, and custom computational workflows on this website are the intellectual property of Ant Wealth Creation and protected by applicable copyright and trademark laws.
+          The branding marks, visual layouts, content, and computational calculators on this website are the intellectual property of Ant Wealth Creation, unless otherwise indicated. Visitors are granted a limited, personal, non-commercial right to use the calculators and educational materials. Commercial reproduction, systematic data extraction, automated scraping, or redistribution without prior written consent is strictly prohibited.
         </p>
       </section>
 
       <section class="legal-section">
         <h2 class="legal-heading">5. Governing Law & Jurisdiction</h2>
         <p>
-          These Terms of Use shall be governed by and construed in accordance with the laws of the Republic of India. Any disputes arising in connection with the website or services shall be subject to the exclusive jurisdiction of the competent courts in Dharmapuri, Tamil Nadu, India.
+          These Terms and the use of this informational website are governed by the laws of India, subject always to applicable consumer-protection provisions and other mandatory legal rights. Nothing in these Terms excludes a right to approach a court, consumer commission or other forum that has jurisdiction under applicable law. No exclusive Dharmapuri-only jurisdiction is intended.
+        </p>
+        <p>
+          Formal independent review by a qualified legal professional remains pending. This informational wording does not constitute a formal legal opinion or guarantee of enforceability.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2 class="legal-heading">6. Contact & Grievance Redressal</h2>
+        <p>
+          For questions, clarifications, or feedback regarding these Terms of Use or our services, please visit our <a href="/contact/">Contact &amp; Grievance Redressal</a> page or email us directly at <a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a>.
         </p>
       </section>
     </div>
@@ -117,5 +136,20 @@ const { firm, regulatory, disclosures } = BUSINESS_PROFILE;
 
   .legal-section p:last-child {
     margin-bottom: 0;
+  }
+
+  .legal-section a {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .legal-section a:hover {
+    color: var(--color-action-hover);
+  }
+
+  .legal-section a:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 </style>

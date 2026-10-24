@@ -11,7 +11,7 @@ const { contact } = BUSINESS_PROFILE;
 
 <BaseLayout
   title="Contact Us & Direct Consultation — Ant Wealth Creation"
-  description="Connect directly with C. Santhosh Sathriyan at Ant Wealth Creation via phone, WhatsApp, or email to discuss your family wealth roadmap."
+  description="Connect directly with founder C. Santhosh Sathriyan at Ant Wealth Creation via phone, WhatsApp, or email to discuss your family wealth roadmap."
   currentPath="/contact/"
 >
   <div class="container page-container">
@@ -21,6 +21,7 @@ const { contact } = BUSINESS_PROFILE;
       eyebrow="Direct Connection"
       title="Contact Ant Wealth Creation"
       description="No call centres, no sales bots. Reach out directly to founder C. Santhosh Sathriyan to discuss your family's personal finance milestones."
+      icon="💬"
     />
 
     <div class="contact-layout-grid">
@@ -31,7 +32,7 @@ const { contact } = BUSINESS_PROFILE;
           <div class="channel-card primary-channel">
             <span class="channel-type">Instant Messaging</span>
             <h3 class="channel-title">WhatsApp Discussion</h3>
-            <p class="channel-desc">The fastest way to ask a quick question or schedule a 1-on-1 discovery call.</p>
+            <p class="channel-desc">Direct messaging for preliminary questions or to schedule a 1-on-1 discovery call.</p>
             <a
               href={contact.whatsappUrl}
               target="_blank"
@@ -54,7 +55,7 @@ const { contact } = BUSINESS_PROFILE;
           <div class="channel-card">
             <span class="channel-type">Email Communication</span>
             <h3 class="channel-title">Email Inquiries</h3>
-            <p class="channel-desc">Send portfolio queries, financial statements, or detailed milestone goals.</p>
+            <p class="channel-desc">Send milestone planning questions, consultation requests, or general inquiries.</p>
             <a href={`mailto:${contact.email}`} class="channel-link">
               {contact.email}
             </a>
@@ -68,16 +69,17 @@ const { contact } = BUSINESS_PROFILE;
         </div>
 
         <div class="portal-box">
-          <h3 class="portal-heading">Existing Investor?</h3>
-          <p class="portal-text">Access your consolidated portfolio valuations, capital gains reports, and transaction statements:</p>
+          <h3 class="portal-heading">Client Portal</h3>
+          <p class="portal-text">Existing clients can access their distributor portal account (TheMFBox) via secure login:</p>
           <a
             href={contact.portfolioLoginUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-subtle"
+            class="btn-portal"
           >
             Launch Client Portal (TheMFBox) →
           </a>
+          <p class="portal-subtext">Note: The external portal requires individual login credentials. Its authenticated features are operated by the third-party provider and are not verified by this informational website.</p>
         </div>
       </div>
 
@@ -93,21 +95,33 @@ const { contact } = BUSINESS_PROFILE;
               <strong>Goal Discovery First:</strong> We understand your family priorities—children's college horizons, retirement dreams, or home debt—before discussing any investment product.
             </li>
             <li>
-              <strong>Protection Audit:</strong> We verify that your emergency fund and health/life insurance shields are adequate to protect your dependents.
+              <strong>Protection Review:</strong> We verify that your emergency fund and health/life insurance shields are adequate to protect your dependents.
             </li>
             <li>
-              <strong>No Hard Selling:</strong> We never push high-commission insurance endowments, complex ULIPs, or speculative trading tips.
+              <strong>No High-Pressure Sales:</strong> We never push high-commission insurance endowments, complex ULIPs, or speculative trading tips.
             </li>
             <li>
-              <strong>Transparent Intermediation:</strong> All mutual fund distributor commissions and regulatory disclosures are stated upfront.
+              <strong>Transparent Intermediation:</strong> All mutual fund distributor commissions, intermediary status, and regulatory disclosures are stated upfront. Read our <a href="/commission-disclosure/" class="consultation-link">Commission Disclosure</a> for full details.
             </li>
           </ol>
 
+          <div class="security-notice-box">
+            <div class="notice-icon-wrap" aria-hidden="true">🛡️</div>
+            <div class="notice-content">
+              <strong class="notice-title">Protect Your Sensitive Information</strong>
+              <p class="notice-text">
+                Please do not send passwords, OTPs, full bank account numbers, login credentials, or unencrypted financial statements over ordinary email or WhatsApp. We will never ask you for passwords, OTPs, or bank credentials. When document review is required, a secure sharing method will be coordinated directly.
+              </p>
+            </div>
+          </div>
+
           <div class="confidentiality-notice">
-            <span class="confidentiality-icon">🔒</span>
-            <div>
-              <strong>Strict Client Confidentiality</strong>
-              <p>Your financial information, income details, and family goals are never shared with any third party.</p>
+            <div class="notice-icon-wrap" aria-hidden="true">🔒</div>
+            <div class="notice-content">
+              <strong class="notice-title">Client Privacy &amp; Confidentiality</strong>
+              <p class="notice-text">
+                Your personal details and milestone plans are held in strict confidence and handled in accordance with our <a href="/privacy/" class="notice-link">Privacy Policy</a> and enquiry retention schedule. We never sell your personal information to third-party marketers.
+              </p>
             </div>
           </div>
         </div>
@@ -158,9 +172,9 @@ const { contact } = BUSINESS_PROFILE;
   }
 
   .primary-channel {
-    border-color: var(--primitive-teal-500);
+    border-color: var(--color-border-interactive);
     border-width: 2px;
-    background-color: var(--primitive-teal-50);
+    background-color: var(--awc-jade-soft);
   }
 
   .channel-type {
@@ -189,6 +203,7 @@ const { contact } = BUSINESS_PROFILE;
   }
 
   .channel-link {
+    display: inline-block;
     font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-brand-primary);
@@ -197,32 +212,45 @@ const { contact } = BUSINESS_PROFILE;
   }
 
   .channel-link:hover {
-    color: var(--primitive-teal-700);
+    color: var(--color-text-brand);
     text-decoration: underline;
   }
 
+  .channel-link:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
   .btn-channel {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: var(--text-body-sm);
     font-weight: 700;
     padding: var(--space-3) var(--space-5);
     border-radius: var(--radius-pill);
     text-decoration: none;
+    min-height: 44px;
     transition: background-color var(--transition-fast);
   }
 
   .btn-whatsapp {
-    background-color: #25D366;
-    color: #ffffff;
+    background-color: #128C7E;
+    color: var(--primitive-white);
   }
 
   .btn-whatsapp:hover {
-    background-color: #1eb956;
+    background-color: #0b685d;
+  }
+
+  .btn-whatsapp:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
   .portal-box {
-    background-color: var(--primitive-navy-50);
-    border: 1px solid var(--primitive-navy-100);
+    background-color: var(--awc-mist);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     padding: var(--space-6);
   }
@@ -240,6 +268,41 @@ const { contact } = BUSINESS_PROFILE;
     color: var(--color-text-secondary);
     line-height: 1.5;
     margin-bottom: var(--space-4);
+  }
+
+  .btn-portal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    background-color: var(--color-bg-surface);
+    text-decoration: none;
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    min-height: 44px;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-portal:hover {
+    background-color: var(--awc-jade-soft);
+    border-color: var(--awc-mint);
+    color: var(--color-action-hover);
+  }
+
+  .btn-portal:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .portal-subtext {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    line-height: 1.4;
+    margin-top: var(--space-3);
+    margin-bottom: 0;
   }
 
   .guidelines-card {
@@ -273,8 +336,20 @@ const { contact } = BUSINESS_PROFILE;
     color: var(--color-brand-primary);
   }
 
+  .security-notice-box {
+    background-color: var(--awc-sand);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+  }
+
   .confidentiality-notice {
-    background-color: var(--color-bg-subtle);
+    background-color: var(--awc-paper);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
     padding: var(--space-4);
     display: flex;
@@ -282,39 +357,46 @@ const { contact } = BUSINESS_PROFILE;
     align-items: flex-start;
   }
 
-  .confidentiality-icon {
-    font-size: 1.5rem;
-    line-height: 1;
+  .notice-icon-wrap {
+    font-size: 1.35rem;
+    line-height: 1.2;
+    flex-shrink: 0;
   }
 
-  .confidentiality-notice strong {
+  .notice-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .notice-title {
     font-size: var(--text-body-sm);
+    font-weight: 700;
     color: var(--color-brand-primary);
-    display: block;
-    margin-bottom: var(--space-1);
   }
 
-  .confidentiality-notice p {
+  .notice-text {
     font-size: var(--text-caption);
     color: var(--color-text-secondary);
     line-height: 1.5;
     margin: 0;
   }
 
-  .btn-subtle {
-    display: inline-block;
-    font-size: var(--text-body-sm);
-    font-weight: 600;
+  .notice-link,
+  .consultation-link {
     color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    text-decoration: underline;
+    font-weight: 600;
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  .notice-link:hover,
+  .consultation-link:hover {
+    color: var(--color-action-hover);
+  }
+
+  .notice-link:focus-visible,
+  .consultation-link:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 </style>

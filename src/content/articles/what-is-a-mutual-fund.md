@@ -5,7 +5,7 @@ publishDate: "2026-08-23"
 category: "Mutual Funds"
 tags: ["Mutual Funds","Investing Basics","SEBI","Wealth Creation"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "5 min read"
 featured: true
 publicationStatus: APPROVED
@@ -32,7 +32,7 @@ With a mutual fund:
 
 ## Major Types of Mutual Funds in India
 
-According to SEBI categorization guidelines, mutual funds are broadly categorized into three core buckets:
+Under the regulatory framework governed by the Securities and Exchange Board of India (SEBI)—including the SEBI (Mutual Funds) Regulations, 2026 (effective April 1, 2026, as amended)—mutual fund schemes follow standardized categorization rules across three core asset categories:
 
 ### 1. Equity Mutual Funds
 Equity funds invest at least 65% of their corpus in equity shares of listed companies. They are designed for long-term wealth creation (5+ years) because equities participate directly in economic growth and inflation-beating corporate earnings. Sub-types include Large-Cap, Mid-Cap, Small-Cap, Flexi-Cap, and Multi-Cap funds.
@@ -48,14 +48,14 @@ Hybrid funds combine both equities and debt instruments in varying proportions t
 * **Low Starting Barrier:** You can start investing systematically with as little as ₹500 per month via Systematic Investment Plans (SIP).
 * **Instant Diversification:** A single fund unit gives you exposure across banking, IT, manufacturing, healthcare, and infrastructure.
 * **High Liquidity:** Open-ended funds can be redeemed on any business day directly to your registered bank account.
-* **Strict Regulatory Oversight:** Regulated rigorously by the Securities and Exchange Board of India (SEBI) with transparent daily NAV disclosures.
+* **Strict Regulatory Oversight:** Supervised rigorously under the SEBI (Mutual Funds) Regulations framework with daily NAV disclosures and custodial asset segregation.
 
 ## Important Takeaways
 
 1. A mutual fund pools money from multiple investors to build a professionally managed, diversified portfolio.
 2. You do not need large sums to start; regular discipline via monthly SIPs allows you to harness compounding over time.
-3. Choose fund categories aligned with your specific financial goals and time horizons rather than chasing last year top performer.
+3. Choose fund categories aligned with your specific financial goals and time horizons rather than chasing last year's top performer.
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor (AMFI registration confirmation pending).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*

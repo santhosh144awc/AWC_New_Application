@@ -2,170 +2,341 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import LoanPrepaymentVsInvestmentIsland from '../../features/calculators/LoanPrepaymentVsInvestmentIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/tools/home-loan-foreclosure/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+
+const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
+  ? 'Ant Wealth Creation is an AMFI-registered mutual fund distributor.'
+  : `Ant Wealth Creation provides ${regulatory.registrationStatusText}.`;
 ---
 
 <BaseLayout
-  title="Home Loan Prepayment & Foreclosure Calculator — Ant Wealth Creation"
-  description="Evaluate interest savings, tenure reduction, and prepayment strategies on long-term home mortgages."
+  title="Home Loan Prepayment vs Parallel Investment Simulator — Ant Wealth Creation"
+  description="Compare whether prepaying your home loan or investing surplus cash in parallel creates a stronger net financial position over the exact same loan horizon and cash budget."
+  canonicalUrl="https://antwealth.in/tools/home-loan-foreclosure/"
   currentPath="/tools/home-loan-foreclosure/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Mortgage Strategy"
-      title="Home Loan Prepayment & Foreclosure Calculator"
-      description="Model how making regular part-prepayments or stepping up your monthly EMI cuts years off your home loan and saves lakhs in interest."
-      statusBadge="Amortization Math Verification Pending"
+      eyebrow="Money Decisions · Home Loan"
+      title="Should you prepay your home loan or invest alongside it?"
+      description="Compare two disciplined strategies using the exact same monthly household cash budget over the remaining loan tenure. All figures are objective mathematical simulations based on entered assumptions, not guarantees or forecasts."
     />
 
-    <StatusNotice
-      featureName="Home Loan Amortization & Prepayment Engine"
-      gateNote="Under GATE-B (Amortization & Interest Computation), monthly interest capitalization, partial prepayment fee rules (zero foreclosure penalty on floating rate loans per RBI guidelines), and EMI recalculation policies are undergoing formal test vector validation. This shell provides the strategic framework."
-      expectedInputs={[
-        "Outstanding loan principal balance (e.g. ₹20 Lakhs to ₹1.5 Crores)",
-        "Current annual loan interest rate (e.g. 8.5% to 9.5%)",
-        "Remaining loan tenure in months/years (e.g. 15 to 25 years)",
-        "Prepayment strategy: One-time lump sum prepayment OR Annual recurring lump sum OR Monthly EMI increase",
-      ]}
-      expectedOutputs={[
-        "Total interest saved over remaining tenure",
-        "Tenure reduction in months/years",
-        "New revised EMI (if choosing EMI reduction instead of tenure reduction)",
-        "Before vs After full amortization comparison schedule",
-      ]}
-    />
+    <!-- Interactive Concept C Home Loan Prepayment vs Parallel Investment Simulator Island -->
+    <LoanPrepaymentVsInvestmentIsland client:load />
 
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">The Three High-Impact Prepayment Tactics</h2>
-      <p class="section-desc">
-        Small, consistent adjustments to your mortgage repayment can dramatically shrink total interest paid to the bank:
-      </p>
+    <!-- Editorial Principles Section (Low Density, Clean Dividers) -->
+    <section class="editorial-principles-section" aria-labelledby="principles-heading">
+      <div class="principles-header">
+        <span class="eyebrow">Decision Framework</span>
+        <h2 id="principles-heading" class="principles-title">Strategic Principles for Mortgage Borrowers</h2>
+        <p class="principles-sub">
+          Neither debt prepayment nor parallel market investing is universally superior for every household. Evaluate the trade-offs through three objective financial lenses:
+        </p>
+      </div>
 
-      <div class="tactics-grid">
-        <div class="tactic-card">
-          <span class="tactic-badge">Tactic 1</span>
-          <h3 class="tactic-title">1 Extra EMI Every Year</h3>
-          <p class="tactic-desc">Paying just one additional EMI each year (using an annual bonus or Diwali allowance) can shave 4 to 6 years off a 20-year mortgage.</p>
+      <div class="principles-grid">
+        <div class="principle-column">
+          <div class="principle-number">01</div>
+          <h3 class="principle-heading">Interest Cost Reduction vs Market Growth</h3>
+          <p class="principle-text">
+            Prepaying reduces future loan interest under the loan's terms. The financial benefit depends on the loan's rate and schedule, applicable charges, and any tax effects. Investment growth is uncertain and can be negative.
+          </p>
         </div>
 
-        <div class="tactic-card">
-          <span class="tactic-badge">Tactic 2</span>
-          <h3 class="tactic-title">5% Annual EMI Step-Up</h3>
-          <p class="tactic-desc">Increasing your monthly EMI by 5% every year as your salary rises can cut your total loan duration almost in half.</p>
+        <div class="principle-column">
+          <div class="principle-number">02</div>
+          <h3 class="principle-heading">Emergency Liquidity & Capital Accessibility</h3>
+          <p class="principle-text">
+            Principal paid to your bank is committed to real estate equity and cannot be readily liquidated during emergencies without refinancing or sale. Before committing surplus money to loan prepayment or market-linked investments, consider keeping an emergency reserve that is accessible when needed and appropriate for your household's expenses and risks.
+          </p>
         </div>
 
-        <div class="tactic-card">
-          <span class="tactic-badge">Tactic 3</span>
-          <h3 class="tactic-title">Occasional Lump-Sum Paydowns</h3>
-          <p class="tactic-desc">Deploying windfalls or maturing fixed deposits directly toward principal reduces interest compounding permanently.</p>
+        <div class="principle-column">
+          <div class="principle-number">03</div>
+          <h3 class="principle-heading">The Equal Cash-Budget Fairness Rule</h3>
+          <p class="principle-text">
+            To compare both paths fairly, the model allocates the exact same total monthly cash budget in every single period. In Strategy A, once your debt is completely paid off, the freed cash flow (former EMI plus surplus) is invested through the end of the original comparison horizon.
+          </p>
         </div>
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/tools/loan-vs-invest/" class="btn-subtle">← Compare Loan Prepayment vs Investing</a>
-      <a href="/tools/loan-sip-recovery/" class="btn-subtle">Explore Loan + SIP Recovery →</a>
-    </div>
+    <!-- Related Planners & Explorations (Concept C Design) -->
+    <section class="related-tools-section" aria-labelledby="related-tools-title">
+      <div class="section-header-compact">
+        <span class="eyebrow">Explore Next</span>
+        <h2 id="related-tools-title" class="related-heading">Connect your mortgage strategy to your broader roadmap</h2>
+        <p class="related-sub">
+          Evaluate how disciplined monthly investing, multi-stage wealth growth, and family milestones fit alongside your home loan commitments.
+        </p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/tools/sip-growth/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-jade-soft)">📈</span>
+            <span class="card-tag">Growth Lab</span>
+          </div>
+          <h3 class="card-title">Advanced SIP Growth Simulator</h3>
+          <p class="card-desc">Model multi-stage wealth accumulation with annual step-ups, milestone lump sums, and holding horizons.</p>
+          <span class="card-action">Open growth simulator →</span>
+        </a>
+
+        <a href="/tools/sip/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-mint)">🪙</span>
+            <span class="card-tag">Monthly Investing</span>
+          </div>
+          <h3 class="card-title">Monthly SIP Calculator</h3>
+          <p class="card-desc">Explore regular monthly mutual fund investing without mortgage or multi-stage loan complexity.</p>
+          <span class="card-action">Open SIP calculator →</span>
+        </a>
+
+        <a href="/plan/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-sand)">🎯</span>
+            <span class="card-tag">Family Roadmap</span>
+          </div>
+          <h3 class="card-title">Plan a Family Goal</h3>
+          <p class="card-desc">Map household capital accumulation against children's education, home purchases, and long-term security.</p>
+          <span class="card-action">Explore goal planner →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Transparent Regulatory Disclosure -->
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer}
+        This simulation excludes lender prepayment charges and loan processing fees. Tax deductions and taxes on investment gains are not included in this tool. All investment returns and interest rates are user-entered mathematical assumptions and do not guarantee or predict actual portfolio or debt outcomes.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
-  .educational-insight-box {
-    margin: var(--space-12) 0;
+  /* Editorial Principles Section (Low-Density Concept C) */
+  .editorial-principles-section {
+    margin-top: 56px;
+    padding: 36px 32px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
   }
 
-  .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+  @media (max-width: 600px) {
+    .editorial-principles-section {
+      padding: 24px 18px;
+    }
   }
 
-  .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
+  .principles-header {
+    margin-bottom: 28px;
+  }
+
+  .principles-title {
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+    margin: 4px 0 8px;
+  }
+
+  .principles-sub {
+    font-size: 14.5px;
+    color: var(--color-text-muted);
     line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+    margin: 0;
+    max-width: 780px;
   }
 
-  .tactics-grid {
+  .principles-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: 28px;
+    border-top: 1px solid var(--awc-line);
+    padding-top: 28px;
   }
 
-  @media (min-width: 768px) {
-    .tactics-grid {
+  @media (min-width: 850px) {
+    .principles-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .principle-column:not(:last-child) {
+      border-right: 1px solid var(--awc-line);
+      padding-right: 32px;
+    }
+  }
+
+  .principle-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .principle-number {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--color-text-brand);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .principle-heading {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    line-height: 1.35;
+  }
+
+  .principle-text {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Related Tools Grid */
+  .related-tools-section {
+    margin-top: 56px;
+  }
+
+  .section-header-compact {
+    margin-bottom: 24px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-brand);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .related-heading {
+    font-size: clamp(20px, 2.5vw, 24px);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+    margin: 0 0 6px;
+  }
+
+  .related-sub {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 800px) {
+    .related-grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .tactic-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .tactic-badge {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: var(--space-2);
+  .related-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-interactive);
+    box-shadow: 0 8px 24px rgba(23, 48, 71, 0.08);
   }
 
-  .tactic-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .tactic-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  .nav-links-strip {
+  .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+    margin-bottom: 14px;
   }
 
-  .btn-subtle {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    background-color: rgba(74, 96, 114, 0.08);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0 0 16px;
+    flex-grow: 1;
+  }
+
+  .card-action {
+    font-size: 13px;
+    font-weight: 750;
     color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    margin-top: auto;
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  /* Regulatory Disclosure Note */
+  .regulatory-disclosure-note {
+    margin-top: 48px;
+    padding: 20px 24px;
+    background-color: var(--awc-paper);
+    border-left: 3px solid var(--color-border-interactive);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .regulatory-disclosure-note p {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
   }
 </style>

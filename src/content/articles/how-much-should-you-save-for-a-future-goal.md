@@ -5,7 +5,7 @@ publishDate: "2026-08-28"
 category: "Goals"
 tags: ["Goal Planning", "Inflation", "SIP", "Children Education", "Future Value"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "5 min read"
 featured: true
 publicationStatus: APPROVED
@@ -24,8 +24,8 @@ However, failing to account for **inflation and compounding** can leave a major 
 
 In India, general retail inflation averages 5%–6% per year, but **education and healthcare inflation** frequently runs at 8%–10% annually.
 
-* A higher education course costing **₹20 Lakhs today** will cost **₹51.8 Lakhs in 10 years** (at 10% annual inflation).
-* In 15 years, that same course will require **₹83.5 Lakhs**.
+* A higher education course costing **₹20 Lakhs today** will cost approximately **₹51.9 Lakhs in 10 years** (at an illustrative 10% annual inflation assumption: $20 \times (1.10)^{10}$).
+* In 15 years, that same course will require approximately **₹83.5 Lakhs** ($20 \times (1.10)^{15}$).
 
 Targeting today's price tag without inflation adjustments will fund only a fraction of the actual future requirement.
 
@@ -39,15 +39,19 @@ To calculate how much to save each month, you must look at three interconnected 
 
 ## 3. The Power of Starting Early
 
-Consider an inflation-adjusted target of **₹50 Lakhs**:
-* **15 Years Remaining (@ 12% return):** Requires **₹10,000 / month** in SIP.
-* **10 Years Remaining (@ 12% return):** Requires **₹21,700 / month** in SIP.
-* **5 Years Remaining (@ 10% return):** Requires **₹64,000 / month** in SIP.
+Consider an inflation-adjusted target of **₹50 Lakhs** (assuming zero initial savings and beginning-of-month annuity-due compounding, rounded to the nearest rupee):
+* **15 Years Remaining (@ 12% effective annual return):** Requires approximately **₹10,506 / month** in SIP.
+* **10 Years Remaining (@ 12% effective annual return):** Requires approximately **₹22,318 / month** in SIP.
+* **5 Years Remaining (@ 10% effective annual return):** Requires approximately **₹64,791 / month** in SIP.
 
-Delaying your plan by 5 years more than doubles the monthly investment required to reach the exact same goal!
+*(Note: These figures are modelled estimates under beginning-of-month annuity-due compounding using exact geometric monthly rate conversion, excluding taxes, transaction fees, and scheme expense ratios. Delaying your plan by 5 years more than doubles the monthly investment required to reach the exact same goal!)*
 
 ## 4. How to Map Your Goals Today
 
 1. List every major milestone with its expected target year.
-2. Apply realistic inflation (6% for living expenses/homes, 8%–10% for education).
+2. Apply realistic inflation (e.g., 5%–6% for general living expenses, 8%–10% for higher education as illustrative planning assumptions).
 3. Automate your monthly investments through disciplined SIPs mapped specifically to each goal.
+
+---
+
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*

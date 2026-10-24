@@ -6,7 +6,7 @@
  * 2. Full internal floating-point precision with yearly balance progression.
  */
 
-import { assertFiniteNonNegative, assertPositiveInteger, assertValidRatePercent } from './errors';
+import { assertFiniteNonNegative, assertPositiveInteger, assertStandardInvestmentReturnPercent } from './errors';
 
 export interface LumpsumInput {
   /** One-time principal investment amount (>= 0) */
@@ -15,7 +15,7 @@ export interface LumpsumInput {
   /** Investment duration in years (positive integer >= 1) */
   readonly years?: number;
   readonly durationYears?: number;
-  /** Assumed effective annual rate of return as percentage (-100 < r <= 1000) */
+  /** Assumed effective annual rate of return as percentage (0 <= r <= 100) */
   readonly annualReturnPercent?: number;
   readonly annualReturnRatePercent?: number;
   /** Whether to populate yearly schedule */
@@ -54,7 +54,7 @@ export function calculateLumpsum(input: LumpsumInput): LumpsumResult {
 
   assertFiniteNonNegative('principal', principal as number);
   assertPositiveInteger('years', years as number);
-  assertValidRatePercent('annualReturnPercent', annualReturnPercent as number);
+  assertStandardInvestmentReturnPercent('annualReturnPercent', annualReturnPercent as number);
 
   const annualDecimal = (annualReturnPercent as number) / 100;
   const yearlySchedule: LumpsumYearScheduleItem[] = [];

@@ -53,15 +53,31 @@ new-app/
 │   │   │   ├── investmentRates.ts     # Effective annual return to geometric monthly compounding
 │   │   │   ├── sip.ts                 # Fixed & annual step-up SIP wealth accumulation
 │   │   │   ├── lumpsum.ts             # Effective annual lump-sum compound growth
+│   │   │   ├── sipGrowth.ts           # Advanced multi-lump-sum, capped step-up & post-SIP holding simulator
 │   │   │   ├── targetCorpus.ts        # Target corpus reverse SIP solver with existing capital offset
 │   │   │   ├── goalPlanner.ts         # Inflation-adjusted goal planning engine
 │   │   │   ├── netWorth.ts            # REAL statement balance sheet consolidation & solvency metrics
 │   │   │   ├── homeLoanAmortization.ts# Reducing-balance loan amortization with prepayment scenarios
+│   │   │   ├── loanPrepaymentVsInvestment.ts # Home loan foreclosure vs parallel investment simulator
+│   │   │   ├── realFinancialStatement.ts # Comprehensive 4-stage cash flow, safety reserves & net worth engine
+│   │   │   ├── childrenFuturePlanner.ts  # Multi-child, multi-milestone education & marriage planner
+│   │   │   ├── homePurchase.ts           # Family home purchase, acquisition costs, loan affordability & funding planner
+│   │   │   ├── lifeInsurance.ts          # Human Life Value (HLV) & family protection needs planner
 │   │   │   └── errors.ts              # FinanceValidationError and parameter boundary assertions
 │   │   └── tax/             # Centralized tax-rules registry versioned by Act and Tax Year
 │   ├── features/
-│   │   └── calculators/     # Client-side React islands for interactive calculations
-│   │       └── SipCalculatorIsland.tsx # Accessible SIP calculator island (sliders, schedules, step-up comparison)
+│   │   ├── calculators/     # Client-side React islands for interactive calculations
+│   │   │   ├── SipCalculatorIsland.tsx      # Accessible SIP calculator island (paired sliders, schedules, step-up scenario comparison)
+│   │   │   ├── LumpSumCalculatorIsland.tsx  # Lump Sum one-time investment compounding calculator island
+│   │   │   ├── GoalPlannerIsland.tsx        # Single-goal milestone funding calculator island (inflation, existing savings offset, SIP solver)
+│   │   │   ├── SipGrowthCalculatorIsland.tsx # Advanced multi-lump-sum, capped step-up SIP simulator island
+│   │   │   ├── LoanPrepaymentVsInvestmentIsland.tsx # Home loan foreclosure vs parallel investment comparison island
+│   │   │   ├── NetWorthCalculatorIsland.tsx # Household net worth balance sheet calculator island
+│   │   │   ├── ChildrenFuturePlannerIsland.tsx # Multi-milestone children education roadmap island
+│   │   │   ├── HomePurchasePlannerIsland.tsx # Family home purchase & acquisition cost planner island
+│   │   │   └── LifeInsurancePlannerIsland.tsx # 4-step family life insurance protection needs planner island
+│   │   └── statement/       # Comprehensive financial diagnostics
+│   │       └── RealFinancialStatementWizard.tsx # 4-stage REAL Financial Statement & Household Balance Sheet wizard
 │   ├── layouts/
 │   │   └── BaseLayout.astro # Semantic HTML5 landmarks, OpenGraph, JSON-LD, WCAG skip link
 │   ├── lib/
@@ -84,8 +100,8 @@ new-app/
 │       ├── design-tokens.css # Authored CSS tokens with measured WCAG contrast calculations
 │       └── global.css       # Accessible CSS reset and global typography rules
 ├── tests/
-│   ├── e2e/                 # Playwright tests (navigation, mobile drawer, SIP sliders, articles, 404)
-│   └── unit/                # Vitest unit test suite (9 test suites, 74 tests across engines)
+│   ├── e2e/                 # Playwright tests (navigation, mobile drawer, calculators, REAL statement, net worth, 404)
+│   └── unit/                # Vitest unit test suite (13 test suites, 142 tests across pure finance engines)
 ├── astro.config.mjs         # Astro configuration with canonical site 'https://antwealth.in'
 ├── playwright.config.ts     # Cross-platform preview test configuration
 └── package.json             # Independent package manifest
@@ -101,10 +117,10 @@ All commands run strictly inside `new-app/`:
 # Start local development server
 npm run dev
 
-# Run unit tests (Vitest: 9 test files, 74 tests)
+# Run unit tests (Vitest: 14 test files, 158 tests)
 npm run test
 
-# Run Astro template diagnostic type check (0 errors, 0 warnings across 66 files)
+# Run Astro template diagnostic type check (0 errors, 0 warnings across 86 files)
 npm run check
 
 # Run ESLint linter
@@ -116,7 +132,7 @@ npm run build
 # Preview production build locally
 npm run preview
 
-# Run browser e2e smoke & visual tests (Playwright: 8 test suites across viewports)
+# Run browser e2e smoke & visual tests (Playwright: 6 spec files, 79 tests across viewports)
 npm run test:e2e
 ```
 
@@ -136,7 +152,7 @@ npm run test:e2e
 ## 6. Business Identity & Compliance Governance
 
 * **Founder Identity:** C. Santhosh Sathriyan, B.E., QPFP Certified. Active in Indian financial markets since 2012.
-* **AMFI Registration Status:** The firm is an AMFI-Registered Mutual Fund Distributor. While legacy documentation cites `ARN-266896`, the registration number is classified as `PENDING_VERIFICATION` in `src/config/businessProfile.ts` and withheld from public UI and article frontmatter until confirmed against the official AMFI registry ([AMFI Locate Distributor](https://www.amfiindia.com/locate-distributor)).
+* **AMFI Registration Status:** The firm is an AMFI-Registered Mutual Fund Distributor. Registration `ARN-266896` is confirmed based on official AMFI screenshot evidence supplied on 23 October 2026 (ARN holder: C Santhoshsathriyan, Valid 4 March 2026 to 16 March 2029, Dharmapuri, TN, PIN 636701, KYD Complete: Y).
 * **Canonical Domain:** `https://antwealth.in` is the single authoritative canonical domain.
 * **Staging Protection:** `public/robots.txt` disallows all crawlers during staging development to prevent premature search indexing.
 * **Regulatory Distinction:** Operates strictly as a Mutual Fund Distributor (MFD) earning trailing commissions from AMCs. Explicitly disclaims fee-based investment advisory under SEBI (Investment Advisers) Regulations.

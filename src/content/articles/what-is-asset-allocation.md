@@ -5,7 +5,7 @@ publishDate: "2026-08-23"
 category: "Wealth Creation"
 tags: ["Asset Allocation","Portfolio Management","Risk Management","Compounding"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "6 min read"
 featured: false
 publicationStatus: APPROVED
@@ -44,4 +44,4 @@ Different asset classes perform differently in any given year. By rebalancing on
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor (AMFI registration confirmation pending).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*

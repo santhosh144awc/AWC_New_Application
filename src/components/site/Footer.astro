@@ -1,48 +1,61 @@
 ---
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
-import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../config/routes';
+import {
+  CONTACT_ROUTE,
+  DIAGNOSTIC_ROUTES,
+  GOAL_ROUTES,
+  LEGAL_ROUTES,
+  TOOL_ROUTES,
+  TOP_NAV_ROUTES,
+} from '../../config/routes';
+
+const exploreRoutes = TOP_NAV_ROUTES.filter((r) => r.path !== '/');
+const realStatement = DIAGNOSTIC_ROUTES.find((r) => r.id === 'diag-real-statement');
+const goalLinks = [...GOAL_ROUTES, ...(realStatement ? [realStatement] : [])];
 ---
 
-<footer class="site-footer" role="contentinfo" id="footer-disclosures">
+<footer class="site-footer surface-dark" role="contentinfo" id="footer-disclosures">
   <div class="container footer-container">
     <div class="footer-grid">
-      <!-- Col 1: Identity & Credentials -->
+      <!-- Identity -->
       <div class="footer-col brand-col">
         <h3 class="footer-brand-title">{BUSINESS_PROFILE.firm.name}</h3>
         <p class="footer-tagline">{BUSINESS_PROFILE.firm.tagline}</p>
         <div class="footer-credentials">
           <p><strong>Founder:</strong> {BUSINESS_PROFILE.founder.fullName}</p>
-          <p><strong>Registration:</strong> {BUSINESS_PROFILE.regulatory.amfiRegistrationText}</p>
+          <p><strong>Status:</strong> {BUSINESS_PROFILE.regulatory.registrationStatusText}</p>
           <p><strong>Credentials:</strong> {BUSINESS_PROFILE.founder.credentials}</p>
           <p><strong>Experience:</strong> Financial Markets Since {BUSINESS_PROFILE.firm.experienceSince}</p>
         </div>
       </div>
 
-      <!-- Col 2: Life Milestones -->
-      <div class="footer-col">
-        <h4 class="footer-heading">Life Milestones</h4>
+      <!-- Explore -->
+      <nav class="footer-col" aria-label="Explore">
+        <h4 class="footer-heading">Explore</h4>
         <ul class="footer-links" role="list">
-          {GOAL_ROUTES.map((goal) => (
-            <li><a href={goal.path}>{goal.label}</a></li>
+          {exploreRoutes.map((route) => (
+            <li><a href={route.path}>{route.label}</a></li>
           ))}
-          <li><a href="/health-check/real-statement/">REAL Financial Statement</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <!-- Col 3: Mathematical Simulators -->
-      <div class="footer-col">
-        <h4 class="footer-heading">Tools & Simulators</h4>
+      <!-- Goals & tools -->
+      <nav class="footer-col" aria-label="Goals and tools">
+        <h4 class="footer-heading">Goals &amp; tools</h4>
         <ul class="footer-links" role="list">
-          {TOOL_ROUTES.slice(0, 5).map((tool) => (
+          {goalLinks.map((route) => (
+            <li><a href={route.path}>{route.label}</a></li>
+          ))}
+          {TOOL_ROUTES.slice(0, 3).map((tool) => (
             <li><a href={tool.path}>{tool.label}</a></li>
           ))}
-          <li><a href="/tools/">View All Tools Hub →</a></li>
+          <li><a href="/tools/">All tools →</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <!-- Col 4: Contact & Office -->
+      <!-- Contact -->
       <div class="footer-col">
-        <h4 class="footer-heading">Contact & Guidance</h4>
+        <h4 class="footer-heading">Contact</h4>
         <p class="footer-contact-item">{BUSINESS_PROFILE.firm.headquarters}</p>
         <p class="footer-contact-item">
           <a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a>
@@ -51,27 +64,33 @@ import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../con
           <a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a>
         </p>
         <p class="footer-contact-item">
-          <a href={CONTACT_ROUTE.path} class="contact-details-link">
-            Consultation Expectations & Redressal →
+          <a href={CONTACT_ROUTE.path}>Consultation expectations &amp; redressal →</a>
+        </p>
+        <p class="footer-contact-item">
+          <a
+            href={BUSINESS_PROFILE.contact.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp {BUSINESS_PROFILE.founder.shortName} ↗
           </a>
         </p>
         <p class="footer-contact-item">
-          <a 
-            href={BUSINESS_PROFILE.contact.whatsappUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="whatsapp-link"
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            Chat with Santhosh on WhatsApp ↗
+            Client portfolio login ↗
           </a>
         </p>
       </div>
     </div>
 
-    <!-- Statutory Regulatory Notices Box -->
+    <!-- Statutory notices (required disclosures; kept in full) -->
     <div class="statutory-notice-box" id="statutory-notices">
-      <p class="statutory-risk-title">Regulatory Disclosures & Consumer Information:</p>
-      
+      <p class="statutory-risk-title">Regulatory disclosures &amp; consumer information</p>
+
       <p class="statutory-text">
         <strong>Mutual Fund Market Risk Notice:</strong> {BUSINESS_PROFILE.disclosures.mutualFundRisk}
       </p>
@@ -81,7 +100,11 @@ import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../con
       </p>
 
       <p class="statutory-text">
-        <strong>Simulation & Projection Caveat:</strong> {BUSINESS_PROFILE.disclosures.simulationDisclaimer}
+        <strong>Simulation &amp; Projection Caveat:</strong> {BUSINESS_PROFILE.disclosures.simulationDisclaimer}
+      </p>
+
+      <p class="statutory-text">
+        <strong>Business Structure:</strong> {BUSINESS_PROFILE.disclosures.soleProprietorStatement}
       </p>
 
       <p class="statutory-subtle">
@@ -89,29 +112,25 @@ import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../con
       </p>
     </div>
 
-    <!-- Copyright and Legal Bar -->
     <div class="footer-bottom-bar">
       <p class="copyright-text">
         {BUSINESS_PROFILE.disclosures.copyrightText}
       </p>
-      <div class="legal-nav">
-        {LEGAL_ROUTES.map((item, idx) => (
-          <>
-            <a href={item.path}>{item.label}</a>
-            {idx < LEGAL_ROUTES.length - 1 && <span aria-hidden="true">•</span>}
-          </>
+      <nav class="legal-nav" aria-label="Legal">
+        {LEGAL_ROUTES.map((item) => (
+          <a href={item.path}>{item.label}</a>
         ))}
-      </div>
+      </nav>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    background-color: var(--color-bg-surface-dark);
-    color: var(--primitive-slate-300);
-    padding: var(--space-12) 0 var(--space-8);
     margin-top: auto;
+    padding: var(--space-12) 0 var(--space-8);
+    background-color: var(--awc-navy-night);
+    color: var(--color-text-on-dark);
     font-size: var(--text-body-sm);
   }
 
@@ -123,97 +142,83 @@ import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../con
   }
 
   .footer-brand-title {
-    color: var(--primitive-white);
-    font-size: 1.25rem;
-    font-family: var(--font-family-heading);
     margin-bottom: var(--space-2);
+    font-size: 1.25rem;
+    color: var(--primitive-white);
   }
 
   .footer-tagline {
-    color: var(--primitive-teal-400);
-    font-size: 0.9rem;
     margin-bottom: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--awc-gold);
+    font-weight: 700;
   }
 
   .footer-credentials p {
     margin: 4px 0;
-    color: var(--primitive-slate-300);
     font-size: 0.85rem;
+    color: var(--color-text-on-dark);
   }
 
   .footer-heading {
-    color: var(--primitive-white);
-    font-size: 0.95rem;
-    font-family: var(--font-family-heading);
-    font-weight: 600;
     margin-bottom: var(--space-3);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: #a7beb8;
   }
 
   .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
-  .footer-links a {
-    color: var(--primitive-slate-300);
+  .footer-links a,
+  .footer-contact-item a {
+    display: inline-block;
+    padding: 2px 0;
+    color: var(--color-text-on-dark);
     text-decoration: none;
-    transition: color var(--transition-fast);
   }
 
-  .footer-links a:hover {
-    color: var(--primitive-teal-400);
+  .footer-links a:hover,
+  .footer-contact-item a:hover {
+    color: var(--primitive-white);
+    text-decoration: underline;
   }
 
   .footer-contact-item {
     margin: var(--space-2) 0;
-    color: var(--primitive-slate-300);
-  }
-
-  .footer-contact-item a {
-    color: var(--primitive-teal-400);
-    text-decoration: none;
-  }
-
-  .contact-details-link {
-    color: var(--primitive-teal-300) !important;
-    text-decoration: underline !important;
-  }
-
-  .whatsapp-link {
-    display: inline-block;
-    color: var(--primitive-teal-400);
-    text-decoration: underline;
-    font-weight: 500;
+    color: var(--color-text-on-dark);
   }
 
   .statutory-notice-box {
-    background-color: var(--primitive-navy-950);
-    border: 1px solid var(--primitive-navy-700);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
     margin-bottom: var(--space-8);
+    padding: var(--space-6);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-lg);
   }
 
   .statutory-risk-title {
-    color: var(--primitive-gold-400);
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     margin-bottom: var(--space-3);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--awc-gold);
   }
 
   .statutory-text {
-    font-size: 0.825rem;
-    line-height: 1.6;
-    color: var(--primitive-slate-300);
     margin-bottom: var(--space-3);
+    font-size: 0.825rem;
+    line-height: 1.65;
+    color: var(--color-text-on-dark);
   }
 
   .statutory-text strong {
@@ -221,41 +226,45 @@ import { GOAL_ROUTES, TOOL_ROUTES, LEGAL_ROUTES, CONTACT_ROUTE } from '../../con
   }
 
   .statutory-subtle {
-    font-size: 0.775rem;
-    color: var(--primitive-slate-400);
-    font-style: italic;
     margin: 0;
+    font-size: 0.775rem;
+    font-style: italic;
+    color: #b7cbc6;
   }
 
   .footer-bottom-bar {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    border-top: 1px solid var(--primitive-navy-800);
-    padding-top: var(--space-6);
     align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
     text-align: center;
     font-size: 0.8rem;
   }
 
+  .copyright-text {
+    margin: 0;
+    color: #b7cbc6;
+  }
+
   .legal-nav {
     display: flex;
-    gap: var(--space-3);
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
   }
 
   .legal-nav a {
-    color: var(--primitive-slate-400);
-    text-decoration: none;
-  }
-
-  .legal-nav a:hover {
+    padding: 4px 0;
     color: var(--primitive-white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   @media (min-width: 768px) {
     .footer-grid {
-      grid-template-columns: 1.3fr 1fr 1fr 1fr;
+      grid-template-columns: 1.3fr 0.8fr 1.1fr 1.1fr;
     }
 
     .footer-bottom-bar {

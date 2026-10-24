@@ -2,231 +2,369 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import { TOOL_ROUTES, getBreadcrumbsForPath } from '../../config/routes';
+import ToolCard from '../../components/ui/ToolCard.astro';
+import EmptyState from '../../components/ui/EmptyState.astro';
+import Button from '../../components/ui/Button.astro';
+import { getBreadcrumbsForPath } from '../../config/routes';
+import { TOOL_INTENTS, getResolvedTools } from '../../config/toolDirectory';
 
 const crumbs = getBreadcrumbsForPath('/tools/');
 
-const categories = [
-  {
-    name: 'Wealth & Investments',
-    desc: 'Simulate long-term compounding, evaluate annual step-up benefits, and test multi-lump-sum injection horizons.',
-    tools: TOOL_ROUTES.filter(t => ['tool-sip', 'tool-lumpsum', 'tool-sip-growth'].includes(t.id)),
-  },
-  {
-    name: 'Loans & Debt Management',
-    desc: 'Model reducing balance mortgage dynamics, calculate parallel SIP foreclosures, and analyze prepayment trade-offs.',
-    tools: TOOL_ROUTES.filter(t => ['tool-home-foreclosure', 'tool-loan-recovery', 'tool-loan-vs-invest'].includes(t.id)),
-  },
-  {
-    name: 'Cash Flow & Family Protection',
-    desc: 'Model retirement systematic withdrawals, test capital depletion limits, and assess true human life protection needs.',
-    tools: TOOL_ROUTES.filter(t => ['tool-swp', 'tool-life-insurance', 'tool-net-worth'].includes(t.id)),
-  },
-];
+// Live tools first, then specification previews, then gated (blocked) previews.
+const order = { active: 0, preview: 1, blocked: 2 } as const;
+const tools = getResolvedTools()
+  .map((tool, index) => ({ tool, index }))
+  .sort((a, b) => order[a.tool.status] - order[b.tool.status] || a.index - b.index)
+  .map(({ tool }) => tool);
+
+const intentCounts = Object.fromEntries(
+  TOOL_INTENTS.map((intent) => [intent.id, tools.filter((t) => t.intents.includes(intent.id)).length]),
+);
+const liveCount = tools.filter((t) => t.status === 'active').length;
 ---
 
 <BaseLayout
-  title="Financial Simulators & Calculation Tools Library — Ant Wealth Creation"
-  description="Explore our practical question-driven financial tools. Sizing SIPs, loan foreclosure strategies, SWP cash flows, and human life value audits."
+  title="Tool Finder — Calculators & Planners by Situation | Ant Wealth Creation"
+  description="Find the right family-finance tool by situation: understand your finances, grow money, plan a goal, protect your family or understand a loan."
   currentPath="/tools/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Interactive Simulation Suite"
-      title="Tools Designed Around Real-Life Questions"
-      description="Most financial calculators ask for complex inputs without explaining why they matter. Our simulators answer specific everyday family dilemmas with transparent mathematical assumptions."
-      statusBadge="Tool Directory Active • Calculation Engines Under Spec Review"
+      eyebrow="Tool finder"
+      title="Start with your situation — not a formula"
+      description="Pick what you want to understand and we will show a small group of relevant tools. Each one explains what it helps with and whether it is live or still a preview."
+      statusBadge="Interactive Simulators & Planning Directory"
+      icon="⌘"
     />
 
-    <div class="directory-container">
-      {categories.map((cat) => (
-        <section class="category-section" aria-labelledby={`cat-${cat.name.replace(/\s+/g, '-').toLowerCase()}`}>
-          <div class="category-header">
-            <h2 id={`cat-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} class="category-title">{cat.name}</h2>
-            <p class="category-desc">{cat.desc}</p>
+    <div class="finder" data-tool-finder>
+      <aside class="finder-panel surface-dark" aria-labelledby="finder-heading">
+        <span class="eyebrow">What brings you here?</span>
+        <h2 id="finder-heading" class="finder-title">What would you like help with today?</h2>
+        <p class="finder-copy">Choose a situation to narrow the options, or search by tool name or question.</p>
+
+        <label for="tool-search" class="finder-label">Search by question or tool name</label>
+        <input
+          id="tool-search"
+          class="finder-input"
+          type="search"
+          placeholder="e.g. education, debt, SIP"
+          autocomplete="off"
+          spellcheck="false"
+        />
+
+        <div class="filter-list" role="group" aria-label="Filter tools by situation">
+          <button type="button" class="filter-btn is-selected" data-intent="all" aria-pressed="true">
+            <span class="filter-icon" aria-hidden="true">◆</span>
+            <span class="filter-text">Show everything</span>
+            <span class="filter-count">{tools.length}</span>
+          </button>
+          {TOOL_INTENTS.map((intent) => (
+            <button type="button" class="filter-btn" data-intent={intent.id} aria-pressed="false">
+              <span class="filter-icon" aria-hidden="true">{intent.icon}</span>
+              <span class="filter-text">{intent.label}</span>
+              <span class="filter-count">{intentCounts[intent.id]}</span>
+            </button>
+          ))}
+        </div>
+
+        <p class="finder-note">
+          Nothing you type here is saved or sent anywhere. Previews are marked and never run calculations.
+        </p>
+      </aside>
+
+      <section class="results" aria-labelledby="results-heading">
+        <div class="results-top">
+          <div>
+            <h2 id="results-heading" class="results-title" data-results-title>Explore all tools</h2>
+            <p class="results-count" id="tool-results-count" role="status" aria-live="polite">
+              {tools.length} tools shown · {liveCount} live
+            </p>
           </div>
+          <Button variant="light" size="sm" id="clear-filters" data-clear-filters hidden>Clear filters</Button>
+        </div>
 
-          <div class="tools-grid">
-            {cat.tools.map((tool) => (
-              <div class={`tool-card ${tool.id === 'tool-sip' ? 'active-tool-card' : ''}`}>
-                <div class="tool-meta">
-                  <span class="tool-eyebrow">{tool.eyebrow}</span>
-                  <span class={`tool-badge ${tool.id === 'tool-sip' ? 'badge-active' : ''}`}>{tool.statusBadge}</span>
-                </div>
+        <ul class="tool-grid" id="tool-grid" role="list">
+          {tools.map((tool) => <ToolCard tool={tool} />)}
+        </ul>
 
-                <h3 class="tool-title">{tool.label}</h3>
-                <p class="tool-desc">{tool.description}</p>
-
-                <div class="tool-action">
-                  <a href={tool.path} class={`btn-tool ${tool.id === 'tool-sip' ? 'btn-tool-active' : ''}`}>
-                    {tool.id === 'tool-sip' ? 'Launch Calculator →' : 'View Simulator Shell →'}
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+        <EmptyState
+          id="tool-empty"
+          data-tool-empty
+          hidden
+          title="No tools match that search"
+          message="Try a simpler word such as “loan”, “goal” or “SIP”, or clear the filters to browse every tool."
+        >
+          <Button variant="primary" id="tool-empty-reset" data-clear-filters>Show all tools</Button>
+        </EmptyState>
+      </section>
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  import { matchesIntent, matchesQuery } from '../../lib/toolFilter';
+
+  const root = document.querySelector<HTMLElement>('[data-tool-finder]');
+
+  if (root) {
+    const search = root.querySelector<HTMLInputElement>('#tool-search')!;
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.filter-btn'));
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-tool-card]'));
+    const count = root.querySelector<HTMLElement>('#tool-results-count')!;
+    const title = root.querySelector<HTMLElement>('[data-results-title]')!;
+    const empty = root.querySelector<HTMLElement>('[data-tool-empty]')!;
+    const clearButtons = Array.from(root.querySelectorAll<HTMLElement>('[data-clear-filters]'));
+    const topClear = root.querySelector<HTMLElement>('#clear-filters')!;
+
+    let intent = 'all';
+
+    const apply = () => {
+      const query = search.value;
+      let shown = 0;
+
+      for (const card of cards) {
+        const intents = (card.dataset.intents ?? '').split(' ');
+        const visible = matchesIntent(intents, intent) && matchesQuery(card.dataset.search ?? '', query);
+        card.hidden = !visible;
+        if (visible) shown += 1;
+      }
+
+      for (const button of buttons) {
+        const selected = button.dataset.intent === intent;
+        button.setAttribute('aria-pressed', String(selected));
+        button.classList.toggle('is-selected', selected);
+      }
+
+      const selectedLabel = buttons
+        .find((b) => b.dataset.intent === intent)
+        ?.querySelector('.filter-text')?.textContent;
+      title.textContent = intent === 'all' ? 'Explore all tools' : (selectedLabel ?? 'Explore tools');
+      count.textContent = `${shown} ${shown === 1 ? 'tool' : 'tools'} shown`;
+      empty.hidden = shown !== 0;
+      topClear.hidden = intent === 'all' && query.trim() === '';
+    };
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        intent = button.dataset.intent ?? 'all';
+        apply();
+      });
+    }
+
+    search.addEventListener('input', apply);
+
+    for (const control of clearButtons) {
+      control.addEventListener('click', () => {
+        intent = 'all';
+        search.value = '';
+        apply();
+        search.focus();
+      });
+    }
+
+    apply();
+  }
+</script>
 
 <style>
   .page-container {
     padding-bottom: var(--space-16);
   }
 
-  .directory-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-12);
-    margin-top: var(--space-8);
-  }
-
-  .category-section {
-    border-bottom: 1px solid var(--color-border-subtle);
-    padding-bottom: var(--space-10);
-  }
-
-  .category-section:last-child {
-    border-bottom: none;
-  }
-
-  .category-header {
-    margin-bottom: var(--space-6);
-    max-width: 720px;
-  }
-
-  .category-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .category-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  .tools-grid {
+  .finder {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 340px minmax(0, 1fr);
     gap: var(--space-6);
+    align-items: start;
   }
 
-  @media (min-width: 768px) {
-    .tools-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .tools-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .tool-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
+  .finder-panel {
+    position: sticky;
+    top: 96px;
     padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
-    display: flex;
-    flex-direction: column;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    border-radius: 27px;
+    background: var(--awc-navy);
+    color: var(--color-text-on-dark);
   }
 
-  .tool-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card);
-    border-color: var(--color-border-interactive);
+  .finder-title {
+    margin: var(--space-3) 0 var(--space-2);
+    font-size: 1.5rem;
+    line-height: 1.12;
+    color: var(--primitive-white);
   }
 
-  .tool-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
+  .finder-copy {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-on-dark);
+    line-height: 1.65;
+  }
+
+  .finder-label {
+    display: block;
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-on-dark);
+  }
+
+  .finder-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 0.9rem;
+    border: 2px solid transparent;
+    border-radius: 13px;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+  }
+
+  .finder-input::placeholder {
+    color: var(--primitive-slate-500);
+  }
+
+  .filter-list {
+    display: grid;
     gap: var(--space-2);
-    margin-bottom: var(--space-3);
+    margin-top: var(--space-5);
   }
 
-  .tool-eyebrow {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .tool-badge {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--color-text-accent);
-    background-color: var(--primitive-gold-50);
-    border: 1px solid var(--primitive-gold-100);
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-pill);
-    max-width: 100%;
-    word-break: break-word;
-  }
-
-  .tool-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .tool-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-6);
-    flex-grow: 1;
-  }
-
-  .tool-action {
-    border-top: 1px solid var(--primitive-slate-100);
-    padding-top: var(--space-4);
-  }
-
-  .btn-tool {
-    display: inline-flex;
+  .filter-btn {
+    display: flex;
     align-items: center;
-    font-size: var(--text-body-sm);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-  }
-
-  .btn-tool:hover {
-    color: var(--color-text-brand);
-    text-decoration: underline;
-  }
-
-  .active-tool-card {
-    border-color: var(--color-primary-light, #93c5fd);
-    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.08);
-  }
-
-  .badge-active {
-    background-color: #ecfdf5 !important;
-    color: #047857 !important;
-    border-color: #a7f3d0 !important;
-  }
-
-  .btn-tool-active {
-    color: var(--color-primary, #1a365d);
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 48px;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e9f3f1;
+    font-size: 0.8rem;
     font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .filter-btn.is-selected {
+    background: var(--awc-gold);
+    border-color: var(--awc-gold);
+    color: var(--awc-navy);
+  }
+
+  .filter-icon {
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 1.05rem;
+  }
+
+  .filter-text {
+    flex: 1;
+  }
+
+  .filter-count {
+    min-width: 24px;
+    padding: 0.05rem 0.45rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  .filter-btn.is-selected .filter-count {
+    background: rgba(23, 48, 71, 0.14);
+  }
+
+  .finder-note {
+    margin: var(--space-5) 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--color-text-on-dark);
+  }
+
+  .results-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .results-title {
+    font-size: 1.45rem;
+    letter-spacing: -0.04em;
+    color: var(--awc-navy);
+  }
+
+  .results-count {
+    margin: 2px 0 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-text-muted);
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 1099px) {
+    .finder {
+      grid-template-columns: 290px minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 899px) {
+    .finder {
+      grid-template-columns: 1fr;
+    }
+
+    .finder-panel {
+      position: static;
+    }
+
+    .filter-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 599px) {
+    .tool-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .finder-panel {
+      padding: var(--space-5);
+      border-radius: 22px;
+    }
+
+    .filter-btn {
+      padding: 0.6rem 0.65rem;
+      gap: var(--space-2);
+      font-size: 0.75rem;
+    }
+
+    .filter-icon {
+      display: none;
+    }
+
+    .results-top {
+      flex-direction: column;
+    }
   }
 </style>

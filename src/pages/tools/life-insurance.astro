@@ -2,108 +2,204 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import { LifeInsurancePlannerIsland } from '../../features/calculators/LifeInsurancePlannerIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/tools/life-insurance/');
+const { disclosures, regulatory } = BUSINESS_PROFILE;
+const registrationNotice = regulatory.registrationStatusText;
 ---
 
 <BaseLayout
-  title="Human Life Value (HLV) Term Insurance Calculator — Ant Wealth Creation"
-  description="Calculate your family's true term insurance protection requirement based on annual living expenses, existing liabilities, and future milestones."
+  title="How Much Financial Protection Might Your Family Need? — Ant Wealth Creation"
+  description="Estimate the financial protection your family may need across living expenses, liabilities, and future milestones, minus resources you choose to earmark."
   currentPath="/tools/life-insurance/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Protection Diagnostic"
-      title="Human Life Value (HLV) Term Insurance Calculator"
-      description="Calculate pure term protection needs scientifically so your dependents remain financially resilient regardless of life's uncertainties."
-      statusBadge="HLV Underwriting Logic Pending"
+      eyebrow="Family Protection Diagnostic"
+      title="How much financial protection might your family need?"
+      description="Estimate the financial support your family may need across ongoing living expenses, outstanding liabilities, and future milestones, minus resources you choose to earmark. This educational model provides an illustrative planning estimate—not an insurance recommendation, policy quote, underwriting decision, or guarantee."
+      statusBadge="Needs-Based Diagnostic Live"
     />
 
-    <StatusNotice
-      featureName="Scientific Human Life Value (HLV) Engine"
-      gateNote="Under Protection Pillar Guidelines, term insurance requirements must follow the expense-replacement and liability-coverage method: HLV = (Annual Family Expenses * Years) + Outstanding Loans + Critical Goals - Liquid Assets. In this shell, the methodology is transparently outlined without premature insurance quotes."
-      expectedInputs={[
-        "Annual family living expenses (excluding earner's personal expenses)",
-        "Years of dependency until youngest dependent is independent (e.g. 15 to 25 years)",
-        "Total outstanding loan balances (home loan, auto loan, personal debt)",
-        "Future children education and major milestone funding requirements",
-        "Current liquid financial assets already accumulated",
-      ]}
-      expectedOutputs={[
-        "Total gross protection requirement",
-        "Net pure term life insurance cover required today",
-        "Evaluation of coverage gap compared to existing policies",
-        "Guidance on pure term insurance vs high-cost endowment plans",
-      ]}
-    />
+    {/* Interactive React Planner Island */}
+    <LifeInsurancePlannerIsland client:load />
 
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">The Three Pillars of Adequate Life Coverage</h2>
-      <p class="section-desc">
-        Never rely on arbitrary thumb rules like '10x salary'. A robust life insurance calculation must cover three distinct financial realities:
-      </p>
+    {/* Three Pillars Editorial Framework (Concept C Low-Density) */}
+    <section class="educational-insight-box" id="how-protection-is-assembled" aria-labelledby="insight-heading">
+      <div class="insight-header">
+        <span class="insight-eyebrow">Needs-Based Modeling</span>
+        <h2 id="insight-heading" class="section-title">Understanding How Financial Protection Needs Are Assembled</h2>
+        <p class="section-desc">
+          Financial protection needs vary with dependants, household circumstances, debt structure, existing resources, and chosen assumptions. Rather than relying on rigid salary multiples, a structured evaluation models three distinct financial components:
+        </p>
+      </div>
 
       <div class="insurance-pillars-grid">
         <div class="pillar-card">
-          <span class="pillar-badge">Pillar 1</span>
-          <h3 class="pillar-title">Expense Replacement</h3>
-          <p class="pillar-desc">A capital sum large enough that interest/safe yields provide for monthly household expenses for 20+ years.</p>
+          <div class="pillar-top">
+            <span class="pillar-icon" style="background: var(--awc-jade-soft)">🛡️</span>
+            <span class="pillar-badge">Component 1</span>
+          </div>
+          <h3 class="pillar-title">Ongoing Living-Cost Support</h3>
+          <p class="pillar-desc">
+            A capital reserve calculated to fund monthly household living expenses over your family's dependency horizon, under transparent user-chosen inflation and return assumptions. Excludes separate debt EMIs to prevent double counting.
+          </p>
         </div>
 
         <div class="pillar-card">
-          <span class="pillar-badge">Pillar 2</span>
-          <h3 class="pillar-title">Immediate Debt Clearance</h3>
-          <p class="pillar-desc">100% of all outstanding loans (especially home and car loans) cleared immediately so family retains the home debt-free.</p>
+          <div class="pillar-top">
+            <span class="pillar-icon" style="background: var(--awc-sand)">🏛️</span>
+            <span class="pillar-badge">Component 2</span>
+          </div>
+          <h3 class="pillar-title">Liabilities & Transition Capital</h3>
+          <p class="pillar-desc">
+            Outstanding loan principals (such as home and vehicle loans) and an immediate liquid transition reserve that the household chooses to include in the modeled scenario.
+          </p>
         </div>
 
         <div class="pillar-card">
-          <span class="pillar-badge">Pillar 3</span>
-          <h3 class="pillar-title">Locked Future Goals</h3>
-          <p class="pillar-desc">Guaranteed earmarks for children's higher education and marriage that cannot be compromised.</p>
+          <div class="pillar-top">
+            <span class="pillar-icon" style="background: var(--awc-mint)">🎓</span>
+            <span class="pillar-badge">Component 3</span>
+          </div>
+          <h3 class="pillar-title">Future Family Milestones</h3>
+          <p class="pillar-desc">
+            Planned allocations for children's higher education, marriage, or family goals that you want to safeguard, adjusted for inflation and discounted to present value.
+          </p>
         </div>
+      </div>
+
+      <p class="insight-footnote">
+        * Note: Needs vary widely across household life stages. Pure term life insurance provides temporary financial protection during active dependency and liability years. This tool does not recommend or sell insurance policies; consult an IRDAI-registered insurance professional for personalized underwriting and policy selection.
+      </p>
+    </section>
+
+    {/* Canonical Related Navigation */}
+    <section class="related-nav" aria-labelledby="related-nav-heading">
+      <div class="related-header">
+        <span class="related-eyebrow">Connected Tools & Roadmaps</span>
+        <h2 id="related-nav-heading" class="related-title">Explore Related Household Decision Tools</h2>
+        <p class="related-desc">
+          Evaluate overall household resilience across cash reserves, asset accumulation, and goal-based planning roadmaps.
+        </p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/health-check/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-jade-soft)">🩺</span>
+            <span class="card-tag">Household Health</span>
+          </div>
+          <h3 class="card-title">Family Financial Health Check</h3>
+          <p class="card-desc">Evaluate your household's overall financial resilience across 7 core pillars, including emergency runway and debt ratios.</p>
+          <span class="card-action">Start health check →</span>
+        </a>
+
+        <a href="/plan/children/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-mint)">🎒</span>
+            <span class="card-tag">Family Roadmap</span>
+          </div>
+          <h3 class="card-title">Children's Education Planner</h3>
+          <p class="card-desc">Plan for college education and future milestones with transparent compounding math and earmarked asset tracking.</p>
+          <span class="card-action">Open children's planner →</span>
+        </a>
+
+        <a href="/tools/net-worth/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-sand)">📊</span>
+            <span class="card-tag">Balance Sheet</span>
+          </div>
+          <h3 class="card-title">Household Net Worth Tracker</h3>
+          <p class="card-desc">Take inventory of all family assets and liabilities to understand your liquid reserves and available resources.</p>
+          <span class="card-action">Calculate net worth →</span>
+        </a>
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/health-check/" class="btn-subtle">← Review 7-Pillars Health Check</a>
-      <a href="/tools/net-worth/" class="btn-subtle">Calculate Net Worth →</a>
-    </div>
+    {/* Centralized Regulatory & Educational Notice */}
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory & Educational Notice:</strong> {registrationNotice} {disclosures.simulationDisclaimer}
+        This tool provides an educational estimate of family financial protection needs based on user-entered household expenses, liabilities, and milestones. It is not an insurance policy quote, insurance recommendation, or underwriting decision. Ant Wealth Creation does not underwrite or issue insurance policies. Term insurance underwriting, policy eligibility, and premium pricing are determined solely by IRDAI-registered insurance companies based on individual medical underwriting and disclosures.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
+  @media (max-width: 600px) {
+    .page-container {
+      padding-top: 4px;
+    }
+  }
+
+  /* Educational Insight Section */
   .educational-insight-box {
-    margin: var(--space-12) 0;
+    margin-top: 56px;
+    padding: 36px 32px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .educational-insight-box {
+      padding: 24px 18px;
+      margin-top: 40px;
+    }
+  }
+
+  .insight-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .insight-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    background-color: var(--awc-mint);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    margin-bottom: var(--space-2);
   }
 
   .section-title {
-    font-size: var(--text-h2);
+    font-size: clamp(1.4rem, 2.5vw, 1.85rem);
     font-family: var(--font-family-heading);
     font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+    color: var(--awc-navy);
+    margin: 0 0 var(--space-2);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
   }
 
   .section-desc {
     font-size: var(--text-body);
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+    margin: 0;
+    max-width: 760px;
   }
 
   .insurance-pillars-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-5);
+    margin-top: var(--space-6);
   }
 
   @media (min-width: 768px) {
@@ -113,60 +209,212 @@ const crumbs = getBreadcrumbsForPath('/tools/life-insurance/');
   }
 
   .pillar-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
+    background-color: #FFFFFF;
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
     padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    box-shadow: 0 2px 6px rgba(23, 48, 71, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .pillar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(23, 48, 71, 0.08);
+  }
+
+  .pillar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .pillar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 20px;
   }
 
   .pillar-badge {
-    font-size: var(--text-caption);
+    font-size: 11px;
     font-weight: 700;
     color: var(--color-text-brand);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: var(--space-2);
+    letter-spacing: 0.06em;
   }
 
   .pillar-title {
-    font-size: var(--text-h4);
+    font-size: 1.15rem;
     font-family: var(--font-family-heading);
     font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+    color: var(--awc-navy);
+    margin: 0 0 var(--space-2);
+    line-height: 1.3;
   }
 
   .pillar-desc {
     font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
+    color: var(--color-text-muted);
+    line-height: 1.55;
     margin: 0;
+    flex-grow: 1;
   }
 
-  .nav-links-strip {
+  .insight-footnote {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    font-style: italic;
+    line-height: 1.5;
+    margin: var(--space-6) 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--awc-line);
+  }
+
+  /* Related Navigation Grid */
+  .related-nav {
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 1px solid var(--awc-line);
+  }
+
+  .related-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .related-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    margin-bottom: var(--space-1);
+  }
+
+  .related-title {
+    font-size: clamp(1.3rem, 2vw, 1.65rem);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--awc-navy);
+    margin: 0 0 var(--space-2);
+  }
+
+  .related-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 680px;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    background-color: #FFFFFF;
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: var(--space-5);
+    text-decoration: none;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(23, 48, 71, 0.04);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   }
 
-  .btn-subtle {
+  .related-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-interactive);
+    box-shadow: 0 6px 16px rgba(22, 135, 126, 0.12);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--awc-navy);
+    margin: 0 0 var(--space-2);
+  }
+
+  .card-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0 0 var(--space-4);
+    flex-grow: 1;
+  }
+
+  .card-action {
     font-size: var(--text-body-sm);
     font-weight: 600;
     color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap var(--transition-fast);
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  .related-card:hover .card-action {
+    gap: 8px;
+  }
+
+  /* Regulatory Note */
+  .regulatory-disclosure-note {
+    margin-top: 48px;
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 12px;
+  }
+
+  .regulatory-disclosure-note p {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>

@@ -1,60 +1,69 @@
 ---
+/**
+ * Section heading (Concept C): eyebrow + H2 on the left, short supporting copy on the right.
+ * Set `dark` when placed on a navy surface.
+ */
 interface Props {
   eyebrow?: string;
   title: string;
   subtitle?: string;
-  centered?: boolean;
+  id?: string;
+  dark?: boolean;
 }
 
-const { eyebrow, title, subtitle, centered = false } = Astro.props;
+const { eyebrow, title, subtitle, id, dark = false } = Astro.props;
 ---
 
-<div class={`section-header ${centered ? 'text-center' : ''}`}>
-  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-  <h2 class="section-title">{title}</h2>
+<div class={`section-header ${dark ? 'section-header--dark' : ''}`}>
+  <div class="section-header__lead">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2 class="section-title" id={id}>{title}</h2>
+  </div>
   {subtitle && <p class="section-subtitle">{subtitle}</p>}
 </div>
 
 <style>
   .section-header {
-    margin-bottom: var(--space-10);
-    max-width: 820px;
-  }
-
-  .section-header.text-center {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  .eyebrow {
-    display: inline-block;
-    font-size: var(--text-caption);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    border: 1px solid var(--primitive-teal-100);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-pill);
-    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+    margin-bottom: var(--space-8);
   }
 
   .section-title {
     font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    line-height: 1.2;
-    margin-bottom: var(--space-3);
-    letter-spacing: -0.01em;
+    color: var(--awc-navy);
+    line-height: 1.06;
+    letter-spacing: -0.045em;
+    margin: var(--space-2) 0 0;
+    max-width: 20ch;
   }
 
   .section-subtitle {
-    font-size: var(--text-body-lg);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
     margin: 0;
+    max-width: 440px;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .section-header--dark .section-title {
+    color: var(--primitive-white);
+  }
+
+  .section-header--dark .section-subtitle {
+    color: var(--color-text-on-dark);
+  }
+
+  @media (max-width: 767px) {
+    .section-header {
+      display: block;
+      margin-bottom: var(--space-6);
+    }
+
+    .section-subtitle {
+      margin-top: var(--space-3);
+    }
   }
 </style>

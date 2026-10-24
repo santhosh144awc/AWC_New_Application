@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
-import PageIntro from '../../components/ui/PageIntro.astro';
 import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/learn/');
@@ -19,83 +18,266 @@ approvedArticles.sort((a, b) => {
   return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
 });
 
-// Distinct categories for quick reference
-const categories = Array.from(new Set(approvedArticles.map((a) => a.data.category)));
+// Dynamic featured starting point guide (first approved guide marked featured)
+const featuredArticle = approvedArticles.find((a) => a.data.featured);
+
+// Distinct sorted categories from approved articles only
+const categories = Array.from(new Set(approvedArticles.map((a) => a.data.category))).sort();
 ---
 
 <BaseLayout
   title="Financial Learning Library | Ant Wealth Creation"
   description="Practical, fluff-free financial guides designed for Indian families. Learn how compounding works, how to choose mutual funds, and how to protect what you build."
   canonicalUrl="https://antwealth.in/learn/"
+  currentPath="/learn/"
 >
   <div class="learn-page">
     <div class="container">
       <Breadcrumbs items={crumbs} />
 
-      <PageIntro
-        eyebrow="Financial Education & Insights"
-        title="Knowledge That Protects and Grows Family Wealth"
-        description="Clear, honest, and practical financial guides tailored for Indian families. No financial jargon, no product pitching—just timeless principles for disciplined compounding."
-      />
-
-      <!-- Categories Summary Bar -->
-      <div class="categories-bar" aria-label="Article categories">
-        <span class="categories-label">Browse Topics:</span>
-        <div class="categories-tags">
-          {categories.map((cat) => (
-            <span class="cat-pill">{cat}</span>
-          ))}
+      <!-- Editorial Hero Header -->
+      <header class="learn-hero">
+        <div class="hero-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <span class="badge-text">Family Financial Education • Plain Language</span>
         </div>
-      </div>
 
-      <!-- Articles Grid -->
-      <div class="articles-grid" role="feed" aria-label="Published learning guides">
-        {approvedArticles.map((article) => (
-          <article class={`article-card ${article.data.featured ? 'featured' : ''}`}>
-            <div class="card-meta">
-              <span class="card-category">{article.data.category}</span>
-              <span class="card-time">{article.data.readingTime}</span>
+        <h1 class="hero-title">Make your next money decision with more confidence.</h1>
+
+        <p class="hero-description">
+          Clear, honest, and practical financial guides tailored for Indian families.
+          No complicated financial jargon—just foundational principles for disciplined wealth creation and family protection.
+        </p>
+
+        <!-- Dynamic Value Highlights -->
+        <div class="hero-highlights">
+          <div class="highlight-item">
+            <span class="highlight-val">{approvedArticles.length}</span>
+            <span class="highlight-lbl">Published Guides</span>
+          </div>
+          <div class="highlight-divider" aria-hidden="true"></div>
+          <div class="highlight-item">
+            <span class="highlight-val">{categories.length}</span>
+            <span class="highlight-lbl">Topic Areas</span>
+          </div>
+          <div class="highlight-divider" aria-hidden="true"></div>
+          <div class="highlight-item">
+            <span class="highlight-val">Plain Language</span>
+            <span class="highlight-lbl">Educational Guides</span>
+          </div>
+        </div>
+
+        <!-- Quick Route Actions -->
+        <div class="hero-actions">
+          <a href="#guides-explorer" class="btn-primary-hero">
+            Explore All Guides ↓
+          </a>
+          <a href="/tools/" class="btn-secondary-hero">
+            Browse Interactive Planners &rarr;
+          </a>
+        </div>
+      </header>
+
+      <!-- Featured Starting Point (Single Dynamic Guide) -->
+      {featuredArticle && (
+        <section class="featured-section" aria-labelledby="featured-guide-heading">
+          <div class="featured-card">
+            <div class="featured-badge-row">
+              <span class="featured-pill">★ Featured Starting Point</span>
+              <span class="featured-meta">{featuredArticle.data.category} · {featuredArticle.data.readingTime}</span>
             </div>
 
-            <h2 class="card-title">
-              <a href={`/learn/${article.id}/`} class="card-title-link">
-                {article.data.title}
+            <h2 id="featured-guide-heading" class="featured-title">
+              <a href={`/learn/${featuredArticle.id}/`} class="featured-title-link">
+                {featuredArticle.data.title}
               </a>
             </h2>
 
-            <p class="card-summary">{article.data.description}</p>
+            <p class="featured-summary">{featuredArticle.data.description}</p>
 
-            <div class="card-footer">
-              <div class="card-tags">
-                {article.data.tags.slice(0, 3).map((tag) => (
-                  <span class="card-tag">#{tag}</span>
+            <div class="featured-footer">
+              <div class="featured-tags">
+                {featuredArticle.data.tags.slice(0, 3).map((tag) => (
+                  <span class="tag-chip">#{tag}</span>
                 ))}
               </div>
 
-              <a href={`/learn/${article.id}/`} class="read-more-link" aria-label={`Read full guide: ${article.data.title}`}>
-                Read Guide &rarr;
-              </a>
-            </div>
-
-            {article.data.calculatorCTA && (
-              <div class="card-tool-strip">
-                <span class="tool-strip-label">Related Tool:</span>
-                <a href={article.data.calculatorCTA.href} class="tool-strip-link">
-                  {article.data.calculatorCTA.buttonLabel}
+              <div class="featured-cta-group">
+                <a
+                  href={`/learn/${featuredArticle.id}/`}
+                  class="btn-read-featured"
+                  aria-label={`Read full featured guide: ${featuredArticle.data.title}`}
+                >
+                  Read Featured Guide &rarr;
                 </a>
+                {featuredArticle.data.calculatorCTA && (
+                  <a
+                    href={featuredArticle.data.calculatorCTA.href}
+                    class="btn-tool-featured"
+                  >
+                    {featuredArticle.data.calculatorCTA.buttonLabel} &rarr;
+                  </a>
+                )}
               </div>
-            )}
-          </article>
-        ))}
-      </div>
+            </div>
+          </div>
+        </section>
+      )}
 
-      <!-- Review Transparency Notice -->
+      <!-- Main Interactive Discovery Explorer Section -->
+      <section class="guides-explorer" id="guides-explorer" aria-labelledby="explorer-heading">
+        <div class="explorer-header">
+          <div class="explorer-title-wrap">
+            <h2 id="explorer-heading" class="explorer-title">Explore Family Finance Guides</h2>
+            <p class="explorer-subtitle">
+              Filter by topic or search practical money questions below.
+            </p>
+          </div>
+
+          <!-- Live Results Count -->
+          <div class="results-meta-row">
+            <p
+              class="results-count"
+              id="learn-results-count"
+              role="status"
+              aria-live="polite"
+            >
+              {approvedArticles.length} guides available
+            </p>
+            <button
+              type="button"
+              id="learn-clear-all"
+              class="btn-clear-filters"
+              hidden
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Controls Bar -->
+        <div class="discovery-controls" role="search" aria-label="Search and filter educational guides">
+          <!-- Text Search Box -->
+          <div class="search-box">
+            <label for="learn-search" class="sr-only">Search guides by topic, question, or keyword</label>
+            <div class="search-input-wrap">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input
+                id="learn-search"
+                type="search"
+                class="search-input"
+                placeholder="Search SIP, emergency funds, insurance, goals…"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button
+                type="button"
+                id="learn-search-clear"
+                class="search-clear-btn"
+                aria-label="Clear search input"
+                hidden
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Topic Filter Buttons -->
+          <div class="topic-filters" role="group" aria-label="Filter guides by topic">
+            <button
+              type="button"
+              class="topic-btn is-selected"
+              data-category="all"
+              aria-pressed="true"
+            >
+              All topics
+            </button>
+            {categories.map((cat) => (
+              <button
+                type="button"
+                class="topic-btn"
+                data-category={cat}
+                aria-pressed="false"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid" id="guides-grid" aria-label="Published learning guides">
+          {approvedArticles.map((article) => {
+            const searchIndex = `${article.data.title} ${article.data.description} ${article.data.category} ${article.data.tags.join(' ')}`.toLowerCase();
+            return (
+              <article
+                class={`article-card ${article.data.featured ? 'is-featured-item' : ''}`}
+                data-category={article.data.category}
+                data-search={searchIndex}
+              >
+                <div class="card-meta">
+                  <span class="card-category">{article.data.category}</span>
+                  <span class="card-time">{article.data.readingTime}</span>
+                </div>
+
+                <h3 class="card-title">
+                  <a href={`/learn/${article.id}/`} class="card-title-link">
+                    {article.data.title}
+                  </a>
+                </h3>
+
+                <p class="card-summary">{article.data.description}</p>
+
+                <div class="card-footer">
+                  <div class="card-tags">
+                    {article.data.tags.slice(0, 3).map((tag) => (
+                      <span class="card-tag">#{tag}</span>
+                    ))}
+                  </div>
+
+                  <a
+                    href={`/learn/${article.id}/`}
+                    class="read-more-link"
+                    aria-label={`Read full guide: ${article.data.title}`}
+                  >
+                    Read Guide &rarr;
+                  </a>
+                </div>
+
+                {article.data.calculatorCTA && (
+                  <div class="card-tool-strip">
+                    <span class="tool-strip-label">Related Tool:</span>
+                    <a href={article.data.calculatorCTA.href} class="tool-strip-link">
+                      {article.data.calculatorCTA.buttonLabel}
+                    </a>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+
+        <!-- Dedicated Empty State -->
+        <div id="learn-empty" class="learn-empty" hidden>
+          <div class="empty-icon" aria-hidden="true">📑</div>
+          <h3 class="empty-title">No guides match that search</h3>
+          <p class="empty-message">
+            Try a simpler keyword such as "SIP", "emergency", "education", or "insurance", or clear your filters to view all guides.
+          </p>
+          <button type="button" id="learn-empty-reset" class="btn-empty-reset">
+            Show all guides
+          </button>
+        </div>
+      </section>
+
+      <!-- Editorial Review Transparency Notice -->
       <aside class="review-notice" aria-labelledby="review-notice-title">
-        <div class="notice-icon" aria-hidden="true">&#9432;</div>
+        <div class="notice-icon" aria-hidden="true">ℹ</div>
         <div class="notice-content">
           <h3 id="review-notice-title" class="notice-title">Editorial Standards & Ongoing Review</h3>
           <p class="notice-text">
-            Ant Wealth Creation adheres to strict factual verification. Two advanced roadmap guides covering post-retirement cash flow distributions and home loan prepayment vs mutual fund investing are currently withheld under qualified professional review (GATE-A & GATE-C) to ensure 100% statutory alignment with the Income-tax Act, 2025.
+            Ant Wealth Creation adheres to strict factual verification. Only guides approved for public release appear here.
+            All educational articles are reviewed regularly to ensure objective, transparent, and compliant guidance for families.
           </p>
         </div>
       </aside>
@@ -103,103 +285,591 @@ const categories = Array.from(new Set(approvedArticles.map((a) => a.data.categor
   </div>
 </BaseLayout>
 
+<script>
+  // Pure in-memory live filter & search client script
+  const searchInput = document.getElementById('learn-search') as HTMLInputElement | null;
+  const searchClear = document.getElementById('learn-search-clear') as HTMLButtonElement | null;
+  const filterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.topic-btn'));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.article-card'));
+  const resultsCount = document.getElementById('learn-results-count');
+  const emptyState = document.getElementById('learn-empty');
+  const clearAllBtn = document.getElementById('learn-clear-all') as HTMLButtonElement | null;
+  const emptyResetBtn = document.getElementById('learn-empty-reset') as HTMLButtonElement | null;
+
+  let activeCategory = 'all';
+
+  function applyFilters(): void {
+    const rawQuery = (searchInput?.value || '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const cardCat = card.dataset.category || '';
+      const cardSearch = card.dataset.search || '';
+
+      const matchesCat = activeCategory === 'all' || cardCat.toLowerCase() === activeCategory.toLowerCase();
+      const matchesQ = !rawQuery || cardSearch.includes(rawQuery);
+
+      const isVisible = matchesCat && matchesQ;
+      card.hidden = !isVisible;
+      if (isVisible) {
+        visibleCount++;
+      }
+    });
+
+    // Update topic filter buttons
+    filterButtons.forEach((btn) => {
+      const isSelected = (btn.dataset.category || '').toLowerCase() === activeCategory.toLowerCase();
+      btn.setAttribute('aria-pressed', String(isSelected));
+      btn.classList.toggle('is-selected', isSelected);
+    });
+
+    // Update results count
+    if (resultsCount) {
+      resultsCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'guide' : 'guides'} available`;
+    }
+
+    // Toggle empty state
+    if (emptyState) {
+      emptyState.hidden = visibleCount > 0;
+    }
+
+    // Toggle clear search button
+    if (searchClear) {
+      searchClear.hidden = rawQuery.length === 0;
+    }
+
+    // Toggle global clear button
+    const hasActiveFilters = activeCategory !== 'all' || rawQuery.length > 0;
+    if (clearAllBtn) {
+      clearAllBtn.hidden = !hasActiveFilters;
+    }
+  }
+
+  // Bind category button clicks
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeCategory = btn.dataset.category || 'all';
+      applyFilters();
+    });
+  });
+
+  // Bind search input events
+  searchInput?.addEventListener('input', applyFilters);
+
+  searchClear?.addEventListener('click', () => {
+    if (searchInput) {
+      searchInput.value = '';
+      searchInput.focus();
+    }
+    applyFilters();
+  });
+
+  // Global reset handlers
+  function resetAll(): void {
+    activeCategory = 'all';
+    if (searchInput) {
+      searchInput.value = '';
+    }
+    applyFilters();
+  }
+
+  clearAllBtn?.addEventListener('click', resetAll);
+  emptyResetBtn?.addEventListener('click', resetAll);
+
+  // Initialize
+  applyFilters();
+</script>
+
 <style>
   .learn-page {
     padding: var(--space-6) 0 var(--space-16);
-    background-color: var(--color-surface-sunken);
+    background-color: var(--color-bg-canvas);
     overflow-x: hidden;
   }
 
   .container {
-    max-width: var(--container-width-desktop);
+    max-width: var(--container-max-width);
     margin: 0 auto;
     padding: 0 var(--space-4);
     box-sizing: border-box;
   }
 
-  .categories-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    margin: var(--space-6) 0 var(--space-8);
-    padding: var(--space-3) var(--space-4);
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    max-width: 100%;
+  /* ------------------------------------------------------------------ */
+  /* 1. Hero / Header                                                   */
+  /* ------------------------------------------------------------------ */
+  .learn-hero {
+    background: linear-gradient(135deg, var(--awc-navy) 0%, #102436 100%);
+    color: var(--color-text-inverse);
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-xl);
+    margin: var(--space-4) 0 var(--space-8);
+    box-shadow: var(--shadow-card);
     box-sizing: border-box;
   }
 
-  .categories-label {
-    font-size: var(--font-size-xs);
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 4px 12px;
+    background: rgba(207, 239, 227, 0.15);
+    border: 1px solid rgba(207, 239, 227, 0.35);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-caption);
     font-weight: 700;
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--awc-mint);
+    margin-bottom: var(--space-4);
+    letter-spacing: 0.03em;
   }
 
-  .categories-tags {
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--awc-gold);
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 4vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    margin: 0 0 var(--space-3);
+    max-width: 820px;
+  }
+
+  .hero-description {
+    font-size: clamp(1rem, 1.8vw, 1.125rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 var(--space-6);
+    max-width: 740px;
+  }
+
+  .hero-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+    max-width: 640px;
+  }
+
+  .highlight-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .highlight-val {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--awc-gold);
+    line-height: 1.1;
+  }
+
+  .highlight-lbl {
+    font-size: var(--text-caption);
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .highlight-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .btn-primary-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    background-color: var(--color-highlight);
+    color: var(--awc-navy);
+    font-size: var(--text-body-sm);
+    font-weight: 800;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn-primary-hero:hover {
+    background-color: #E2B64D;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-secondary-hero:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 2. Featured Starting Point                                         */
+  /* ------------------------------------------------------------------ */
+  .featured-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .featured-card {
+    background: #FFFFFF;
+    border: 2px solid var(--awc-mint);
+    border-left: 6px solid var(--color-border-interactive);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .featured-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .featured-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    background-color: var(--awc-jade-soft);
+    color: var(--color-text-brand);
+    font-size: var(--text-caption);
+    font-weight: 800;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
+  }
+
+  .featured-meta {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  .featured-title {
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    font-weight: 800;
+    line-height: 1.3;
+    margin: 0 0 var(--space-2);
+  }
+
+  .featured-title-link {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .featured-title-link:hover {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+
+  .featured-summary {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0 0 var(--space-4);
+    max-width: 880px;
+  }
+
+  .featured-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .featured-tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
 
-  .cat-pill {
-    display: inline-block;
-    padding: 2px 10px;
-    background-color: var(--color-surface-sunken);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-primary);
-    font-weight: 500;
+  .tag-chip {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-surface-alt);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
   }
 
+  .featured-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .btn-read-featured {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    background-color: var(--color-action);
+    color: #FFFFFF;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-read-featured:hover {
+    background-color: var(--color-action-hover);
+  }
+
+  .btn-tool-featured {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    background-color: var(--color-bg-surface-alt);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn-tool-featured:hover {
+    border-color: var(--color-border-interactive);
+    background-color: #FFFFFF;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 3. Explorer & Controls                                             */
+  /* ------------------------------------------------------------------ */
+  .guides-explorer {
+    margin-bottom: var(--space-10);
+  }
+
+  .explorer-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .explorer-title {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-1);
+    letter-spacing: -0.02em;
+  }
+
+  .explorer-subtitle {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .results-meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .results-count {
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .btn-clear-filters {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-brand);
+    background: none;
+    border: 1px solid var(--color-border-interactive);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .btn-clear-filters:hover {
+    background-color: var(--color-action);
+    color: #FFFFFF;
+  }
+
+  /* Discovery controls bar */
+  .discovery-controls {
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    pointer-events: none;
+    color: var(--color-text-muted);
+  }
+
+  .search-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 40px 0 42px;
+    background-color: var(--color-bg-canvas);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-primary);
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .search-input:focus {
+    outline: 2px solid var(--awc-gold);
+    outline-offset: 1px;
+    border-color: var(--color-border-interactive);
+    background-color: #FFFFFF;
+  }
+
+  .search-clear-btn {
+    position: absolute;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-border-medium);
+    border: none;
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .search-clear-btn:hover {
+    background: var(--color-text-muted);
+    color: #FFFFFF;
+  }
+
+  /* Topic filter buttons */
+  .topic-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .topic-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 16px;
+    background-color: var(--color-bg-canvas);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+  }
+
+  .topic-btn:hover {
+    background-color: #FFFFFF;
+    border-color: var(--color-border-interactive);
+  }
+
+  .topic-btn.is-selected {
+    background-color: var(--awc-navy);
+    color: #FFFFFF;
+    border-color: var(--awc-navy);
+  }
+
+  .topic-btn:focus-visible {
+    outline: 2px solid var(--awc-gold);
+    outline-offset: 2px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 4. Articles Grid                                                   */
+  /* ------------------------------------------------------------------ */
   .articles-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: var(--space-6);
   }
 
-  @media (min-width: 768px) {
-    .articles-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .articles-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
   .article-card {
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border);
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
+    box-shadow: var(--shadow-subtle);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    overflow: hidden;
-  }
-
-  @media (min-width: 768px) {
-    .article-card {
-      padding: var(--space-6);
-    }
+    box-sizing: border-box;
   }
 
   .article-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-primary-light);
-  }
-
-  .article-card.featured {
-    border-top: 4px solid var(--color-primary);
+    box-shadow: var(--shadow-card);
+    border-color: rgba(22, 135, 126, 0.35);
   }
 
   .card-meta {
@@ -210,139 +880,255 @@ const categories = Array.from(new Set(approvedArticles.map((a) => a.data.categor
   }
 
   .card-category {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-caption);
     font-weight: 700;
-    color: var(--color-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--color-text-brand);
+    background-color: var(--awc-jade-soft);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
   }
 
   .card-time {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    font-weight: 600;
   }
 
   .card-title {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    line-height: var(--line-height-tight);
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.35;
     margin: 0 0 var(--space-3);
     color: var(--color-text-primary);
-    word-break: break-word;
   }
 
   .card-title-link {
     color: inherit;
     text-decoration: none;
+    transition: color 0.15s ease;
   }
 
-  .card-title-link:hover, .card-title-link:focus-visible {
-    color: var(--color-primary);
+  .card-title-link:hover {
+    color: var(--color-text-brand);
     text-decoration: underline;
   }
 
   .card-summary {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-body-sm);
     color: var(--color-text-secondary);
-    line-height: var(--line-height-relaxed);
+    line-height: 1.5;
     margin: 0 0 var(--space-4);
     flex-grow: 1;
-    word-break: break-word;
   }
 
   .card-footer {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border-subtle);
+    margin-top: auto;
   }
 
   .card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: var(--space-1);
   }
 
   .card-tag {
-    font-size: 11px;
-    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
   }
 
   .read-more-link {
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    color: var(--color-primary);
+    font-size: var(--text-caption);
+    font-weight: 800;
+    color: var(--color-text-brand);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-2);
+    transition: color 0.15s ease;
     white-space: nowrap;
   }
 
   .read-more-link:hover {
+    color: var(--awc-navy);
     text-decoration: underline;
   }
 
   .card-tool-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin-top: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    background-color: var(--color-surface-sunken);
+    background-color: var(--color-bg-surface-alt);
     border-radius: var(--radius-sm);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    align-items: center;
-    justify-content: space-between;
-    font-size: var(--font-size-xs);
+    font-size: var(--text-caption);
   }
 
   .tool-strip-label {
+    font-weight: 700;
     color: var(--color-text-secondary);
-    font-weight: 500;
   }
 
   .tool-strip-link {
-    color: var(--color-primary);
-    font-weight: 700;
-    text-decoration: none;
-    word-break: break-word;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    transition: color 0.15s ease;
   }
 
   .tool-strip-link:hover {
-    text-decoration: underline;
+    color: var(--color-text-brand);
   }
 
-  .review-notice {
-    margin-top: var(--space-12);
-    padding: var(--space-5) var(--space-6);
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border);
-    border-left: 4px solid var(--color-accent);
+  /* ------------------------------------------------------------------ */
+  /* 5. Empty State                                                     */
+  /* ------------------------------------------------------------------ */
+  .learn-empty {
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-subtle);
+    margin-top: var(--space-4);
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-3);
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
+  }
+
+  .empty-message {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    margin: 0 auto var(--space-4);
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  .btn-empty-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    background-color: var(--awc-navy);
+    color: #FFFFFF;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
     border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-empty-reset:hover {
+    background-color: #102436;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 6. Editorial Review Notice                                         */
+  /* ------------------------------------------------------------------ */
+  .review-notice {
     display: flex;
     gap: var(--space-4);
-    align-items: flex-start;
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border-subtle);
+    border-left: 4px solid var(--color-border-interactive);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-top: var(--space-8);
+    box-sizing: border-box;
   }
 
   .notice-icon {
-    font-size: var(--font-size-xl);
-    color: var(--color-accent);
+    font-size: 1.25rem;
+    color: var(--color-text-brand);
     line-height: 1;
+    margin-top: 2px;
+  }
+
+  .notice-content {
+    flex: 1;
   }
 
   .notice-title {
-    font-size: var(--font-size-sm);
-    font-weight: 700;
+    font-size: var(--text-body-sm);
+    font-weight: 800;
     color: var(--color-text-primary);
     margin: 0 0 var(--space-1);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 
   .notice-text {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-caption);
     color: var(--color-text-secondary);
-    line-height: var(--line-height-relaxed);
+    line-height: 1.55;
     margin: 0;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 7. Responsive Breakpoints                                          */
+  /* ------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    .hero-highlights {
+      gap: var(--space-3);
+    }
+
+    .highlight-divider {
+      display: none;
+    }
+
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-card {
+      padding: var(--space-4);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .featured-cta-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .topic-filters {
+      gap: 6px;
+    }
+
+    .topic-btn {
+      font-size: 0.725rem;
+      padding: 0 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .article-card,
+    .btn-primary-hero,
+    .btn-read-featured {
+      transition: none !important;
+      transform: none !important;
+    }
   }
 </style>

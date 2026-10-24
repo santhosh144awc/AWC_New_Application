@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import RetirementAccumulationIsland from '../../features/calculators/RetirementAccumulationIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/plan/retirement/');
@@ -19,52 +19,131 @@ const crumbs = getBreadcrumbsForPath('/plan/retirement/');
     <PageIntro
       eyebrow="Milestone Roadmap"
       title="Retirement Wealth Accumulation Roadmap"
-      description="Retirement is not an end point; it is a 30-year financial phase that requires careful accumulation, inflation hedging, and risk mitigation. This roadmap models the required wealth corpus to sustain your family lifestyle."
-      statusBadge="GATE-A Blocked • Math Specification Review"
+      description="Retirement is a multi-decade financial phase requiring careful accumulation, inflation hedging, and risk mitigation. Model your family retirement corpus, progress against existing assets, and monthly SIP requirements."
+      statusBadge="Interactive Planner Active • 5-Step Accumulation Roadmap"
     />
 
-    <StatusNotice
-      featureName="Retirement Accumulation Calculation Engine"
-      gateNote="Under GATE-A (Retirement Tax Treatment), applying a flat 12.5% haircut to annual returns or retirement corpus is not approved as an accurate model of capital gains taxation. A dedicated retirement calculation specification accounting for asset types, realization schedules, and statutory exemptions must be completed before calculations are implemented."
-      expectedInputs={[
-        "Current age and planned retirement age (e.g. Current: 35, Retiring: 60)",
-        "Monthly family living expenses in today's money (₹)",
-        "Post-retirement life expectancy assumption (e.g. age 85 to 90)",
-        "Assumed annual inflation rate before and after retirement",
-        "Expected employment benefits (EPF, Gratuity, Superannuation, NPS)",
-        "Existing dedicated retirement savings (Mutual funds, PPF, NPS)",
-        "Assumed pre-retirement and post-retirement returns (illustrative assumptions)",
-      ]}
-      expectedOutputs={[
-        "Total required retirement corpus at retirement age",
-        "Estimated monthly living expenditure at retirement age (inflation-adjusted)",
-        "Expected value of existing employment benefits and investments",
-        "Net corpus shortfall requiring new investment",
-        "Illustrative Monthly SIP required (Fixed vs 10% Annual Step-Up options)",
-      ]}
-    />
+    <!-- Interactive Concept C Retirement Accumulation Island -->
+    <RetirementAccumulationIsland client:load />
 
+    <!-- Indian Retirement Realities -->
     <section class="retirement-dynamics-box" aria-labelledby="dynamics-heading">
-      <h2 id="dynamics-heading" class="section-title">The Three Realities of Modern Indian Retirement</h2>
+      <h2 id="dynamics-heading" class="section-title">Key Realities of Modern Indian Retirement Planning</h2>
+      <p class="section-desc">
+        Modern retirement in India differs fundamentally from previous generations. Three structural shifts require active planning:
+      </p>
 
       <div class="dynamics-grid">
         <div class="dynamic-card">
           <span class="dynamic-num">01</span>
-          <h3 class="dynamic-title">Rising Longevity Risk</h3>
-          <p class="dynamic-desc">With advances in healthcare, an Indian professional retiring at 58 or 60 will likely live to age 85 or 90. Your corpus must sustain cash flows for over 300 to 360 months without depletion.</p>
+          <h3 class="dynamic-title">Extended Longevity Planning</h3>
+          <p class="dynamic-desc">Planning models frequently evaluate 25 to 30+ year retirement horizons (such as to age 85 or 90) as illustrative scenarios to stress-test whether cash flows remain resilient without premature depletion.</p>
         </div>
 
         <div class="dynamic-card">
           <span class="dynamic-num">02</span>
-          <h3 class="dynamic-title">Healthcare Inflation Outpacing CPI</h3>
-          <p class="dynamic-desc">Medical and care costs often rise at 10%–14% annually in India—substantially higher than ordinary food and clothing inflation. Standard fixed-income deposits alone cannot protect purchasing power.</p>
+          <h3 class="dynamic-title">Healthcare Expenditure Growth</h3>
+          <p class="dynamic-desc">Medical, health, and care-related expenditures typically grow at rates exceeding headline consumer inflation. Families must budget dedicated health buffers rather than relying solely on standard fixed-income accruals.</p>
         </div>
 
         <div class="dynamic-card">
           <span class="dynamic-num">03</span>
-          <h3 class="dynamic-title">The Zero-Pension Reality</h3>
-          <p class="dynamic-desc">Unlike previous generations with defined-benefit government pensions, modern private sector professionals must build their own self-sustaining pension engine through disciplined equity and hybrid investing.</p>
+          <h3 class="dynamic-title">Private-Sector Self-Funded Retirement</h3>
+          <p class="dynamic-desc">In the absence of defined-benefit employer pensions, modern private-sector professionals must establish disciplined, diversified multi-asset portfolios to support sustainable post-retirement cash flows.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- 4-Stage Retirement Lifecycle -->
+    <section class="lifecycle-section" aria-labelledby="lifecycle-heading">
+      <h2 id="lifecycle-heading" class="section-title">The 4-Stage Retirement Accumulation Lifecycle</h2>
+      <p class="section-desc">
+        Building a resilient corpus is not a single sprint; it unfolds across four distinct career phases:
+      </p>
+
+      <div class="lifecycle-grid">
+        <div class="lifecycle-card">
+          <div class="lifecycle-badge">Stage 1 · Ages 25–35</div>
+          <h3 class="lifecycle-title">Foundation & Early Compounding</h3>
+          <p class="lifecycle-desc">
+            Focus is on establishing core emergency reserves, adequate pure term life cover, and starting early equity mutual fund SIPs. Time in the market is your greatest compounding asset.
+          </p>
+          <ul class="lifecycle-points">
+            <li>Build 6-month liquid emergency fund</li>
+            <li>Maintain high equity allocation (70%–80%)</li>
+            <li>Commit to annual SIP step-ups with salary increments</li>
+          </ul>
+        </div>
+
+        <div class="lifecycle-card">
+          <div class="lifecycle-badge">Stage 2 · Ages 35–48</div>
+          <h3 class="lifecycle-title">Peak Earning & Milestone Balancing</h3>
+          <p class="lifecycle-desc">
+            Income typically peaks, but competing goals like children's higher education and home loans emerge. Disciplined separation of retirement savings from other goal pots is essential.
+          </p>
+          <ul class="lifecycle-points">
+            <li>Ring-fence retirement savings from education funds</li>
+            <li>Rebalance annually across equity and fixed income</li>
+            <li>Review life and comprehensive health insurance coverage</li>
+          </ul>
+        </div>
+
+        <div class="lifecycle-card">
+          <div class="lifecycle-badge">Stage 3 · Ages 48–58</div>
+          <h3 class="lifecycle-title">Pre-Retirement Consolidation</h3>
+          <p class="lifecycle-desc">
+            As the retirement date approaches within 7 to 10 years, risk management takes center stage. Gradually de-risk a portion of the corpus to protect against severe market drawdowns.
+          </p>
+          <ul class="lifecycle-points">
+            <li>Begin systematic de-risking toward stable debt instruments</li>
+            <li>Audit EPF, PPF, NPS, and gratuity entitlements</li>
+            <li>Model realistic post-retirement living expense budgets</li>
+          </ul>
+        </div>
+
+        <div class="lifecycle-card">
+          <div class="lifecycle-badge">Stage 4 · Age 58+</div>
+          <h3 class="lifecycle-title">Transition to Distribution</h3>
+          <p class="lifecycle-desc">
+            Shift from wealth accumulation to structured decumulation using a multi-bucket framework that provides regular cash flow while maintaining long-term inflation resilience.
+          </p>
+          <ul class="lifecycle-points">
+            <li>Establish 24–36 month immediate liquid reserves</li>
+            <li>Implement conservative income & growth allocation</li>
+            <li>Set up tax-aware systematic withdrawal plan (SWP)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Connected Goal Planners -->
+    <section class="connected-goals-section" aria-labelledby="connected-heading">
+      <h2 id="connected-heading" class="section-title">Explore Active Milestone Planners</h2>
+      <p class="section-desc">
+        Plan other foundational milestones using our verified calculation engines:
+      </p>
+
+      <div class="goals-grid">
+        <a href="/plan/children/" class="goal-card">
+          <span class="goal-badge">Active Planner</span>
+          <h3 class="goal-card-title">Children's Future Planner</h3>
+          <p class="goal-card-desc">Model inflation-adjusted higher education and marriage milestones with disciplined SIP target calculators.</p>
+          <span class="goal-card-action">Launch Children's Planner →</span>
+        </a>
+
+        <a href="/plan/home-purchase/" class="goal-card">
+          <span class="goal-badge">Active Planner</span>
+          <h3 class="goal-card-title">Home Purchase Planner</h3>
+          <p class="goal-card-desc">Calculate realistic down payment savings, statutory purchase costs, and sustainable EMI boundaries.</p>
+          <span class="goal-card-action">Launch Home Planner →</span>
+        </a>
+
+        <a href="/plan/retirement-income/" class="goal-card">
+          <span class="goal-badge">Active Planner</span>
+          <h3 class="goal-card-title">3-Bucket Retirement Income</h3>
+          <p class="goal-card-desc">Examine how to structure your accumulated corpus across immediate liquidity, yield, and growth buckets.</p>
+          <span class="goal-card-action">Launch 3-Bucket Planner →</span>
+        </a>
       </div>
     </section>
 
@@ -80,7 +159,10 @@ const crumbs = getBreadcrumbsForPath('/plan/retirement/');
     padding-bottom: var(--space-16);
   }
 
-  .retirement-dynamics-box {
+  .retirement-dynamics-box,
+  .lifecycle-section,
+  .gate-governance-section,
+  .connected-goals-section {
     margin: var(--space-12) 0;
   }
 
@@ -89,7 +171,15 @@ const crumbs = getBreadcrumbsForPath('/plan/retirement/');
     font-family: var(--font-family-heading);
     font-weight: 700;
     color: var(--color-brand-primary);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-2);
+  }
+
+  .section-desc {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+    max-width: 720px;
   }
 
   .dynamics-grid {
@@ -134,6 +224,169 @@ const crumbs = getBreadcrumbsForPath('/plan/retirement/');
     color: var(--color-text-secondary);
     line-height: 1.55;
     margin: 0;
+  }
+
+  .lifecycle-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .lifecycle-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .lifecycle-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .lifecycle-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .lifecycle-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .lifecycle-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .lifecycle-points {
+    margin: var(--space-2) 0 0 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .gate-governance-box {
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    border-left: 4px solid var(--primitive-gold-500);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .gate-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-text-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .gate-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-4);
+  }
+
+  .gate-list {
+    margin: 0 0 var(--space-4) 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+
+  .gate-footer {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-text-accent);
+    margin: 0;
+  }
+
+  .goals-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .goals-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .goal-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .goal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-subtle);
+    border-color: var(--color-brand-primary);
+  }
+
+  .goal-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .goal-card-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .goal-card-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    flex: 1;
+    margin: 0;
+  }
+
+  .goal-card-action {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    margin-top: var(--space-2);
   }
 
   .nav-links-strip {

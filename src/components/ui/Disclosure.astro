@@ -1,0 +1,69 @@
+---
+/**
+ * Progressive-disclosure surface: native <details>, keyboard and screen-reader
+ * accessible with no JavaScript. Use for explanations that most visitors can skip.
+ */
+interface Props {
+  summary: string;
+  open?: boolean;
+  [attr: string]: unknown;
+}
+
+const { summary, open = false, ...rest } = Astro.props;
+---
+
+<details class="disclosure" open={open} {...rest}>
+  <summary class="disclosure__summary">
+    <span>{summary}</span>
+    <span class="disclosure__chevron" aria-hidden="true">+</span>
+  </summary>
+  <div class="disclosure__body"><slot /></div>
+</details>
+
+<style>
+  .disclosure {
+    border: 1px solid var(--awc-line);
+    border-radius: 17px;
+    background: var(--primitive-white);
+  }
+
+  .disclosure__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 48px;
+    padding: var(--space-3) var(--space-5);
+    font-weight: 800;
+    font-size: var(--text-body-sm);
+    color: var(--awc-navy);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .disclosure__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .disclosure__chevron {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--awc-mist);
+    transition: transform var(--transition-fast);
+  }
+
+  .disclosure[open] .disclosure__chevron {
+    transform: rotate(45deg);
+  }
+
+  .disclosure__body {
+    padding: 0 var(--space-5) var(--space-5);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+</style>

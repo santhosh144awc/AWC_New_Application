@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import LoanVsInvestmentIsland from '../../features/calculators/LoanVsInvestmentIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
@@ -19,30 +19,15 @@ const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
     <PageIntro
       eyebrow="Decision Framework"
       title="Prepay Loan vs Invest Decision Simulator"
-      description="Resolve the classic personal finance dilemma: Should you use surplus funds to pay off your home loan early, or invest them into equity markets?"
-      statusBadge="Arbitrage & Risk Math Pending"
+      description="Resolve the classic personal finance dilemma: Should you use surplus funds to pay off your home loan early, or invest them into equity markets? Compare guaranteed interest savings against compounding wealth."
+      statusBadge="Interactive Calculator Active • Arbitrage Analysis"
     />
 
-    <StatusNotice
-      featureName="Loan vs Investment Arbitrage Engine"
-      gateNote="Under GATE-B & GATE-C (Tax & Differential Compounding), comparing guaranteed post-tax loan interest savings against uncertain, market-linked investment returns requires strict mathematical clarity on post-tax hurdle rates (Section 24(b) deduction caps). In this shell, the strategic trade-off matrix is detailed without speculative output."
-      expectedInputs={[
-        "Available surplus monthly cash flow (e.g. ₹15,000 to ₹50,000) OR Lump sum surplus",
-        "Existing loan interest rate (e.g. 8.5% p.a.)",
-        "Remaining loan tenure",
-        "Expected long-term investment return rate (e.g. 11% to 12%)",
-        "Tax regime and applicable home loan interest deductions",
-      ]}
-      expectedOutputs={[
-        "Guaranteed interest saved via prepayment route",
-        "Potential wealth accumulated via investment route",
-        "Net difference in financial net worth after loan tenure",
-        "Risk-adjusted comparison highlighting liquidity trade-offs",
-      ]}
-    />
+    <!-- Interactive Concept C Loan vs Investment Trade-off Island -->
+    <LoanVsInvestmentIsland client:load />
 
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">The Strategic Trade-Off Matrix</h2>
+    <section class="educational-insight-box" aria-labelledby="matrix-heading">
+      <h2 id="matrix-heading" class="section-title">The Strategic Trade-Off Matrix</h2>
       <p class="section-desc">
         The choice between loan prepayment and investing involves more than just rate comparison—it balances peace of mind against long-term liquidity:
       </p>
@@ -52,21 +37,136 @@ const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
           <span class="decision-badge">Option A: Prepay Loan</span>
           <h3 class="decision-title">Guaranteed & Debt-Free Peace of Mind</h3>
           <ul class="decision-list">
-            <li>Guaranteed return equal to your effective loan interest rate.</li>
-            <li>Eliminates fixed EMI obligation, increasing family financial resilience.</li>
-            <li><strong>Trade-off:</strong> Cash is permanently locked in home equity with zero liquidity.</li>
+            <li><strong>Guaranteed Return:</strong> Every rupee prepaid yields an immediate, risk-free saving equal to your effective loan interest rate.</li>
+            <li><strong>Reduced Fixed Burden:</strong> Prepaying shortens tenure or lowers EMI, reducing recurring financial vulnerability.</li>
+            <li><strong>Emotional Freedom:</strong> Unencumbering your primary family home provides significant psychological security.</li>
+            <li><strong>Critical Trade-off:</strong> Cash is permanently locked into home equity. You cannot easily access home equity for health emergencies or opportunities without taking a new loan.</li>
           </ul>
         </div>
 
         <div class="decision-card optimal-choice">
           <span class="decision-badge">Option B: Invest Surplus</span>
-          <h3 class="decision-title">Long-Term Wealth & Liquidity</h3>
+          <h3 class="decision-title">Long-Term Wealth & Complete Liquidity</h3>
           <ul class="decision-list">
-            <li>Historical equity returns generally exceed home loan interest rates over 10+ years.</li>
-            <li>Maintains accessible liquid wealth for family emergencies and goals.</li>
-            <li><strong>Trade-off:</strong> Market volatility requires stomach for short-term fluctuations.</li>
+            <li><strong>Potential Compounding Arbitrage:</strong> Historically, diversified equity returns have outpaced mortgage rates over 10+ year horizons.</li>
+            <li><strong>Complete Liquidity:</strong> Mutual fund investments remain accessible to protect your family against emergencies or job transitions.</li>
+            <li><strong>Asset Diversification:</strong> Balances family wealth instead of concentrating the majority of net worth into real estate.</li>
+            <li><strong>Critical Trade-off:</strong> Returns are market-linked and volatile. Short-term declines can test psychological discipline.</li>
           </ul>
         </div>
+      </div>
+    </section>
+
+    <!-- 5 Core Decision Factors -->
+    <section class="framework-section" aria-labelledby="framework-heading">
+      <h2 id="framework-heading" class="section-title">5 Foundational Pillars for Making Your Decision</h2>
+      <p class="section-desc">
+        Before directing surplus cash flow toward either prepayment or investments, evaluate these five structural criteria:
+      </p>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">🛡️</div>
+          <h3 class="pillar-title">1. Emergency Liquidity First</h3>
+          <p class="pillar-desc">
+            Never prepay a home loan using your core emergency buffer. Ensure your family has at least 6 months of mandatory living expenses plus EMIs safely parked in liquid instruments before considering extra principal prepayments.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">⏱️</div>
+          <h3 class="pillar-title">2. Loan Tenure & Life Stage</h3>
+          <p class="pillar-desc">
+            Interest comprises the highest portion of EMI in the first 5 to 7 years of a loan. Prepayment has its greatest mathematical impact early in the tenure. In later years, continuing to invest often provides superior compounding.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">⚖️</div>
+          <h3 class="pillar-title">3. Hurdle Rate Comparison</h3>
+          <p class="pillar-desc">
+            The effective cost of borrowing is your hurdle rate. If your home loan is at 8.5% p.a., your investment portfolio must reliably generate higher post-tax returns over the same horizon to justify investing surplus capital.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">📜</div>
+          <h3 class="pillar-title">4. Tax Deduction Landscape</h3>
+          <p class="pillar-desc">
+            Under the Old Tax Regime, Section 24(b) permits interest deductions up to ₹2 Lakhs for self-occupied homes, reducing effective borrowing cost. Under the New Tax Regime (Section 115BAC), this deduction is absent, elevating effective cost.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">🧠</div>
+          <h3 class="pillar-title">5. Psychological Risk Tolerance</h3>
+          <p class="pillar-desc">
+            Numbers alone do not tell the whole story. If debt causes anxiety, prepaying provides guaranteed emotional relief. If market fluctuations cause panic selling, equity investments may not realize their long-term potential.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon" aria-hidden="true">🔄</div>
+          <h3 class="pillar-title">The Balanced Hybrid Strategy</h3>
+          <p class="pillar-desc">
+            You do not have to pick only one path. Many resilient households split surplus cash flow 50/50: directing one half toward annual principal prepayment and the other half into long-term SIP compounding.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Decision Factors: Prepayment vs Investing -->
+    <section class="tax-considerations-section" aria-labelledby="considerations-heading">
+      <div class="considerations-box">
+        <h2 id="considerations-heading" class="considerations-title">Key Decision Factors: Prepayment vs Investing</h2>
+        <p class="considerations-desc">
+          When comparing loan prepayment with long-term investment, keep the following core financial dynamics in mind:
+        </p>
+        <ul class="considerations-list">
+          <li><strong>Guaranteed vs Expected Returns:</strong> Loan prepayment delivers guaranteed, risk-free savings equal to the loan interest rate. Equity investments offer potentially higher returns over 10+ year horizons but carry market volatility.</li>
+          <li><strong>Liquidity & Flexibility:</strong> Money prepaid into a loan reduces debt but cannot be easily re-borrowed in emergencies. Mutual fund investments remain liquid and accessible.</li>
+          <li><strong>Tax Implications:</strong> Home loan interest deduction under Section 24(b) (Old Regime) reduces the effective cost of borrowing. Similarly, long-term capital gains on equities are subject to Section 112A taxation.</li>
+        </ul>
+        <p class="considerations-footer">
+          This calculator provides educational mathematical comparisons. Consult a qualified financial advisor to tailor strategy to your family's exact cash flow and tax status.
+        </p>
+      </div>
+    </section>
+
+    <!-- Connected Working Tools -->
+    <section class="connected-tools-section" aria-labelledby="tools-heading">
+      <h2 id="tools-heading" class="section-title">Explore Our Live Financial Calculators</h2>
+      <p class="section-desc">
+        Explore our other operational debt and investment calculators:
+      </p>
+
+      <div class="tools-grid">
+        <a href="/tools/home-loan-foreclosure/" class="tool-link-card">
+          <span class="tool-link-badge">Live Calculator</span>
+          <h3 class="tool-link-title">Home Loan Foreclosure vs SIP</h3>
+          <p class="tool-link-desc">
+            Simulate how making systematic extra principal payments shortens your tenure and saves substantial interest.
+          </p>
+          <span class="tool-link-action">Launch Prepayment Calculator →</span>
+        </a>
+
+        <a href="/tools/loan-sip-recovery/" class="tool-link-card">
+          <span class="tool-link-badge">Live Calculator</span>
+          <h3 class="tool-link-title">Loan Interest Recovery SIP</h3>
+          <p class="tool-link-desc">
+            Model how running a parallel mutual fund SIP alongside your home loan can build a corpus to offset borrowing costs.
+          </p>
+          <span class="tool-link-action">Launch Recovery Calculator →</span>
+        </a>
+
+        <a href="/health-check/" class="tool-link-card">
+          <span class="tool-link-badge">Live Diagnostic</span>
+          <h3 class="tool-link-title">7-Pillar Financial Health Check</h3>
+          <p class="tool-link-desc">
+            Assess your family's overall debt burden, liquidity buffers, and financial solvency in 2 minutes.
+          </p>
+          <span class="tool-link-action">Start Health Check →</span>
+        </a>
       </div>
     </section>
 
@@ -82,7 +182,10 @@ const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
     padding-bottom: var(--space-16);
   }
 
-  .educational-insight-box {
+  .educational-insight-box,
+  .framework-section,
+  .tax-considerations-section,
+  .connected-tools-section {
     margin: var(--space-12) 0;
   }
 
@@ -108,7 +211,7 @@ const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
     gap: var(--space-6);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     .decision-grid {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -151,10 +254,163 @@ const crumbs = getBreadcrumbsForPath('/tools/loan-vs-invest/');
     padding-left: var(--space-5);
     display: flex;
     flex-direction: column;
+    gap: var(--space-3);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .pillars-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .pillars-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pillar-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .pillar-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+    margin-bottom: var(--space-1);
+  }
+
+  .pillar-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .pillar-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .considerations-box {
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    border-left: 4px solid var(--primitive-gold-500);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .considerations-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-text-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .considerations-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-4);
+  }
+
+  .considerations-list {
+    margin: 0 0 var(--space-4) 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
     gap: var(--space-2);
     font-size: var(--text-body-sm);
     color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+
+  .considerations-footer {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-text-accent);
+    margin: 0;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .tools-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tool-link-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .tool-link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-subtle);
+    border-color: var(--color-brand-primary);
+  }
+
+  .tool-link-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .tool-link-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .tool-link-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
     line-height: 1.5;
+    flex: 1;
+    margin: 0;
+  }
+
+  .tool-link-action {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-text-brand);
+    margin-top: var(--space-2);
   }
 
   .nav-links-strip {

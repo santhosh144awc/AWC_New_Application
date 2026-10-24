@@ -64,7 +64,12 @@ Implemented in **Phase 6** with 100% pure TypeScript functions, strict parameter
    - Effective annual compounding for integer year horizons:
      $$\text{FV} = P \times (1 + r_{\text{annual}})^t$$
    - Zero-rate limit: $\text{FV} = P$.
-4. **`targetCorpus.ts` (Reverse Annuity-Due Solver)**
+4. **`sipGrowth.ts` (Advanced SIP Growth & Multi-Lump-Sum Simulator)**
+   - Combines monthly beginning-of-month SIP with capped annual step-ups.
+   - Milestone one-time capital injections applied at the start of specified projection years ($m = (y - 1) \times 12 + 1$).
+   - Post-SIP holding period compounding when recurring installments stop.
+   - Zero-rate conservation of principal: $\text{FV} = \sum P_m + \sum L_m$.
+5. **`targetCorpus.ts` (Reverse Annuity-Due Solver)**
    - Inverts the Annuity-Due formula using the shared geometric monthly rate.
    - Zero-rate limit: $P_{\text{required}} = C / n$.
    - Supports offset for existing earmarked invested capital.
@@ -78,16 +83,52 @@ Implemented in **Phase 6** with 100% pure TypeScript functions, strict parameter
    - Grounded in the **REAL Financial Statement** specification.
    - Aggregates Liquid Reserves, Financial Assets, and Physical Assets.
    - Consolidates Secured and Unsecured Liabilities.
-   - Solvency Metrics: Total Net Worth, Productive Liquid Net Worth, and Debt-to-Asset Ratio.
+   - Solvency Metrics: Total Net Worth, Cash & Financial Assets After Liabilities (productive liquid balance), and Debt-to-Asset Ratio.
 7. **`homeLoanAmortization.ts` (Reducing-Balance Amortization)**
    - Retail loan convention: Nominal annual rate divided by 12 ($i = r_{\text{loan}}/12$).
    - Payments occur at the **end of each monthly period** after interest accrual.
    - Part-Prepayments: Evaluates both **Tenure Reduction** and **EMI Reduction** modes with full month-by-month schedules.
+8. **`loanPrepaymentVsInvestment.ts` (Home Loan Foreclosure vs Parallel Investment Simulator)**
+   - Objective month-by-month cash budget comparison between early debt prepayment and parallel surplus investing.
+   - Equal household budget ($\text{BaselineEMI} + \text{MonthlySurplus} + \text{OneTimeSurplus}_m$) across an identical loan horizon ($N$ months).
+   - End-of-month cash flow timing for both debt payments and investment deposits.
+   - Reinvests freed cash budget post-loan payoff through horizon; preserves payoff-month unspent budget.
+9. **`realFinancialStatement.ts` (REAL Financial Statement & Family Net Worth Engine)**
+   - Implements 4-stage balance sheet diagnostic separating cash-flow velocity from balance-sheet stock.
+   - Computes take-home income, essential vs discretionary outflows, monthly surplus/deficit, and savings rate.
+   - Calculates accessible emergency safety reserves (strictly excluding locked retirement and physical property) and emergency runway in months.
+   - Categorizes assets by purpose (productive vs personal consumption).
+   - Solves for Accounting Net Worth ($\text{Total Assets} - \text{Total Liabilities}$) and Productive-Asset-Adjusted Net Worth ($\text{Productive Assets} - \text{Total Liabilities}$).
+   - Computes Debt-to-Asset ratio with zero-asset safe handling.
+10. **`childrenFuturePlanner.ts` (Children's Future Multi-Milestone Planner Engine)**
+   - Multi-child, multi-milestone planning with independent inflation rates per milestone.
+   - Central existing investments pool with strict non-double-counting domain invariant ($\sum \text{allocated} \le \text{currentValue}$).
+   - Solves for both Fixed Level Monthly SIP and Annual Step-Up Monthly SIP (via monotonic bisection solver over `calculateSIP`).
+   - Produces year-by-year active milestone contribution schedule and single lump-sum present value equivalent today.
+   - Full in-memory isolation with zero persistence (GATE-D compliant).
+11. **`homePurchase.ts` (Family Home Purchase & Acquisition Cost Planning Engine)**
+   - Formulates base future property price appreciation ($0 \le T \le 35$ years) and true upfront acquisition/setup costs (~10%).
+   - Explicit separation of bank home loan principal (LTV % on base property) from required out-of-pocket cash before possession.
+   - Quoted nominal loan EMI evaluated against projected household take-home income at purchase time, benchmarked against user-configurable threshold (default 35%, 40% comparison reference).
+   - Earmarked assets timing convention (nominal funds available at purchase horizon).
+   - Solves for Fixed Monthly SIP (Annuity-Due) and Annual Step-Up Starting SIP (first increase month 13) to bridge cash deficit.
+   - Supports 0-year immediate purchase, no-loan (100% upfront self-funding), and investment start delays with full year-by-year funding progression schedules.
+
+12. **`lifeInsurance.ts` (Human Life Value & Family Protection Needs Planner Engine)**
+   - Needs-based Human Life Value (HLV) model separating routine family living expenses from debt obligations and future milestones.
+   - Routine family support present value modeled via growing annuity with numerical tolerance handling for $r \approx g$ limit cases ($|r - g| < 10^{-7}$).
+   - Outstanding liabilities consolidated: home loan, other debts, immediate transition/final cash reserves.
+   - Future family milestones individually compounded by inflation and discounted to present value.
+   - Offsets only user-earmarked liquid financial assets (never automatically subtracting primary residence or emergency reserves).
+   - Primary comparison: Net additional personal life cover gap floored at ₹0.
+   - Secondary alternate comparison: Group/employer cover gap toggle (default excluded; preserves durable personal cover visibility).
+   - 100% in-memory calculation; zero storage or network transmission of household figures.
 
 ### Scope Gates Status
 - **GATE-A (Retirement Accumulation & 3-Bucket Distribution)**: DEFERRED / SCOPE BLOCKED pending dedicated distribution specification.
 - **GATE-C (Income Tax Haircuts & Slabs)**: DEFERRED / SCOPE BLOCKED pending IT Act 2025 transitional review.
-- **Loan vs Invest Comparison, Loan Recovery Crossover, SWP Depletion, Life Insurance HLV, Seven-Pillar Health Score**: DEFERRED / SCOPE BLOCKED to future dedicated phases.
+- **Family Life Insurance Protection Needs Planner**: ACTIVE (Implemented in Phase 18 under `/tools/life-insurance/`).
+- **Loan vs Invest Comparison, Loan Recovery Crossover, SWP Depletion, Seven-Pillar Health Score**: DEFERRED / SCOPE BLOCKED to future dedicated phases.
 
 ---
 

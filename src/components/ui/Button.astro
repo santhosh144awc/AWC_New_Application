@@ -1,0 +1,128 @@
+---
+/**
+ * Shared button / link-button (Concept C).
+ * Renders <a> when `href` is supplied, otherwise <button type="button">.
+ * Jade is the action colour; `gold` is reserved for the single key action on dark surfaces.
+ */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'dark' | 'light' | 'gold' | 'ghost';
+  size?: 'md' | 'sm';
+  /** Decorative trailing glyph (hidden from assistive tech). */
+  icon?: string;
+  class?: string;
+  [attr: string]: unknown;
+}
+
+const { href, variant = 'primary', size = 'md', icon, class: extraClass, ...rest } = Astro.props;
+const classes = ['awc-btn', `awc-btn--${variant}`, size === 'sm' ? 'awc-btn--sm' : '', extraClass ?? '']
+  .filter(Boolean)
+  .join(' ');
+---
+
+{href ? (
+  <a href={href} class={classes} {...rest}>
+    <slot />
+    {icon && <span class="awc-btn__icon" aria-hidden="true">{icon}</span>}
+  </a>
+) : (
+  <button type="button" class={classes} {...rest}>
+    <slot />
+    {icon && <span class="awc-btn__icon" aria-hidden="true">{icon}</span>}
+  </button>
+)}
+
+<style is:global>
+  .awc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-size: var(--text-body-sm);
+    font-weight: 800;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+      background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .awc-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .awc-btn--sm {
+    min-height: 40px;
+    padding: 0.55rem 0.9rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+  }
+
+  .awc-btn--primary {
+    background-color: var(--color-action);
+    color: var(--primitive-white);
+    box-shadow: 0 8px 18px rgba(22, 135, 126, 0.2);
+  }
+
+  .awc-btn--primary:hover {
+    background-color: var(--color-action-hover);
+    color: var(--primitive-white);
+  }
+
+  .awc-btn--dark {
+    background-color: var(--awc-navy);
+    color: var(--primitive-white);
+  }
+
+  .awc-btn--dark:hover {
+    background-color: var(--primitive-navy-800);
+    color: var(--primitive-white);
+  }
+
+  .awc-btn--light {
+    background-color: var(--primitive-white);
+    color: var(--awc-navy);
+    border-color: var(--awc-line);
+  }
+
+  .awc-btn--light:hover {
+    border-color: var(--awc-jade);
+    color: var(--awc-navy);
+  }
+
+  .awc-btn--gold {
+    background-color: var(--awc-gold);
+    color: var(--awc-navy);
+  }
+
+  .awc-btn--gold:hover {
+    background-color: #f6d27d;
+    color: var(--awc-navy);
+  }
+
+  .awc-btn--ghost {
+    background-color: transparent;
+    color: var(--color-text-brand);
+    border-color: var(--awc-line);
+  }
+
+  .awc-btn--ghost:hover {
+    background-color: var(--awc-jade-soft);
+    color: var(--color-text-brand);
+  }
+
+  .awc-btn[disabled],
+  .awc-btn[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .awc-btn__icon {
+    font-weight: 800;
+  }
+</style>

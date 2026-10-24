@@ -9,7 +9,7 @@
  * Processing fees, statutory taxes, insurance premiums, and penalties are explicitly excluded.
  */
 
-import { assertFinite, assertPositive, assertPositiveInteger, assertPositiveOrZero, FinanceValidationError } from './errors';
+import { assertFinite, assertLoanInterestRatePercent, assertPositive, assertPositiveInteger, FinanceValidationError } from './errors';
 
 export type PrepaymentMode = 'REDUCE_TENURE' | 'REDUCE_EMI';
 
@@ -67,8 +67,7 @@ export interface HomeLoanAmortizationResult {
 export function calculateMonthlyEMI(principal: number, annualInterestRatePercent: number, tenureMonths: number): number {
   assertFinite(principal, 'principal');
   assertPositive(principal, 'principal');
-  assertFinite(annualInterestRatePercent, 'annualInterestRatePercent');
-  assertPositiveOrZero(annualInterestRatePercent, 'annualInterestRatePercent');
+  assertLoanInterestRatePercent('annualInterestRatePercent', annualInterestRatePercent);
   assertPositiveInteger(tenureMonths, 'tenureMonths');
 
   if (annualInterestRatePercent === 0) {
@@ -95,11 +94,7 @@ export function calculateHomeLoanAmortization(inputs: HomeLoanAmortizationInputs
 
   assertFinite(principal, 'principal');
   assertPositive(principal, 'principal');
-  assertFinite(annualInterestRatePercent, 'annualInterestRatePercent');
-  assertPositiveOrZero(annualInterestRatePercent, 'annualInterestRatePercent');
-  if (annualInterestRatePercent > 100) {
-    throw new FinanceValidationError('annualInterestRatePercent', annualInterestRatePercent, 'Loan interest rate cannot exceed 100%');
-  }
+  assertLoanInterestRatePercent('annualInterestRatePercent', annualInterestRatePercent);
   assertPositiveInteger(tenureMonths, 'tenureMonths');
 
   // Validate prepayments

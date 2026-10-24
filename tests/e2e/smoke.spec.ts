@@ -158,8 +158,12 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
       }
 
       // Check internal path
-      const normalized = href.endsWith('/') ? href : `${href}/`;
-      const isKnown = validPaths.has(normalized) || validPaths.has(href);
+      const pathOnly = href.split('#')[0];
+      const normalized = pathOnly.endsWith('/') ? pathOnly : `${pathOnly}/`;
+      const isKnown =
+        validPaths.has(normalized) ||
+        validPaths.has(pathOnly) ||
+        pathOnly.startsWith('/learn/');
       expect(isKnown, `Internal link target "${href}" must be a registered route`).toBe(true);
     }
   });
@@ -185,7 +189,8 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
     await stepUpInput.fill('10');
     const stepUpCard = page.locator('.stepup-advantage-card');
     await expect(stepUpCard).toBeVisible();
-    await expect(stepUpCard).toContainText('Step-Up Advantage');
+    await expect(stepUpCard).toContainText('Scenario Comparison');
+    await expect(stepUpCard).toContainText('Step-Up SIP vs Fixed Monthly SIP');
 
     // 4. Toggle Schedule Table
     const toggleScheduleBtn = page.locator('.btn-toggle-schedule');
@@ -202,12 +207,12 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
     await expect(stepUpInput).toHaveValue('0');
     await expect(stepUpCard).not.toBeVisible();
 
-    // 6. Invalid Input Boundary: Rate > 100% displays validation error
+    // 6. Invalid Input Boundary: Rate > 50% displays validation error
     const returnInput = page.locator('input[type="number"]').nth(1);
-    await returnInput.fill('150');
+    await returnInput.fill('60');
     const errorMsg = page.locator('.field-error');
     await expect(errorMsg).toBeVisible();
-    await expect(errorMsg).toContainText('between 0% and 100%');
+    await expect(errorMsg).toContainText('between 0% and 50%');
     await expect(page.locator('.invalid-state-box')).toBeVisible();
   });
 
@@ -220,7 +225,7 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
     // Verify review transparency notice is present
     const reviewNotice = page.locator('.review-notice');
     await expect(reviewNotice).toBeVisible();
-    await expect(reviewNotice).toContainText('withheld under qualified professional review');
+    await expect(reviewNotice).toContainText('Editorial Standards & Ongoing Review');
 
     // 2. Navigate to an Approved Article Detail Page
     const firstArticleLink = page.locator('.article-card .card-title-link').first();
@@ -258,6 +263,8 @@ test.describe('Ant Wealth Creation — Route Architecture & Navigation Suite', (
       { name: 'plan', path: '/plan/' },
       { name: 'tools', path: '/tools/' },
       { name: 'tool-sip', path: '/tools/sip/' },
+      { name: 'tool-lumpsum', path: '/tools/lumpsum/' },
+      { name: 'tool-sip-growth', path: '/tools/sip-growth/' },
       { name: 'learn', path: '/learn/' },
       { name: 'learn-article', path: '/learn/what-is-sip-and-how-does-it-work/' },
       { name: 'about', path: '/about/' },

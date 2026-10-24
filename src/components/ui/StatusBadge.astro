@@ -1,0 +1,54 @@
+---
+/**
+ * Truthful availability marker. `blocked` and `preview` are never styled like
+ * `active`, so a gated tool cannot read as interactive.
+ */
+interface Props {
+  status: 'active' | 'preview' | 'blocked';
+  label: string;
+}
+
+const { status, label } = Astro.props;
+const marks = { active: '●', preview: '◐', blocked: '⊘' } as const;
+---
+
+<span class={`status-badge status-badge--${status}`} data-status={status}>
+  <span class="status-badge__mark" aria-hidden="true">{marks[status]}</span>
+  <span class="status-badge__label">{label}</span>
+</span>
+
+<style>
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    max-width: 100%;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+
+  .status-badge__mark {
+    font-size: 0.6rem;
+  }
+
+  .status-badge--active {
+    background: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+  }
+
+  .status-badge--preview {
+    background: var(--awc-sand);
+    color: var(--awc-sand-ink);
+  }
+
+  .status-badge--blocked {
+    background: #fff4d8;
+    color: var(--awc-sand-ink);
+    box-shadow: inset 0 0 0 1px var(--awc-gold);
+  }
+</style>

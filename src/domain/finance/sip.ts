@@ -17,7 +17,7 @@ export interface SIPInput {
   readonly monthlyInstallment?: number;
   /** Total investment horizon in months (integer >= 1) */
   readonly tenureMonths: number;
-  /** Assumed effective annual rate of return as percentage (-100 < r <= 1000) */
+  /** Assumed effective annual rate of return as percentage (0 <= r <= 100) */
   readonly annualReturnPercent?: number;
   readonly annualReturnRatePercent?: number;
   /** Optional annual step-up percentage (e.g. 10 for 10% increase per year, >= 0) */

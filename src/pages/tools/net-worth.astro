@@ -2,10 +2,16 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import NetWorthCalculatorIsland from '../../features/calculators/NetWorthCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/tools/net-worth/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+
+const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
+  ? 'Ant Wealth Creation is an AMFI-registered mutual fund distributor.'
+  : `Ant Wealth Creation provides ${regulatory.registrationStatusText}.`;
 ---
 
 <BaseLayout
@@ -17,86 +23,154 @@ const crumbs = getBreadcrumbsForPath('/tools/net-worth/');
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Financial Diagnostics"
+      eyebrow="Money Lab · Solvency Diagnostic"
       title="Family Net Worth & Balance Sheet Calculator"
-      description="Consolidate everything you own against everything you owe to calculate your true family net worth and track your real financial progress."
-      statusBadge="Asset Classification Logic Pending"
+      description="Add what the household owns and owes to see an instant net worth snapshot."
     />
 
-    <StatusNotice
-      featureName="Balance Sheet Aggregation & Net Worth Engine"
-      gateNote="Under GATE-D (Financial Data Isolation & Classification), net worth calculations require distinguishing productive liquid wealth (mutual funds, stocks, PF) from illiquid consumption assets (primary residence, vehicles, personal jewellery) without persisting sensitive user data. This shell establishes the asset/liability framework."
-      expectedInputs={[
-        "Cash & liquid emergency reserves (savings accounts, short-term FDs)",
-        "Invested financial assets (equity mutual funds, stocks, PPF, EPF, NPS)",
-        "Real estate & physical assets (market value of properties, gold/jewellery)",
-        "Outstanding liabilities (home mortgage, vehicle loans, education loans, credit card balances)",
-      ]}
-      expectedOutputs={[
-        "Gross family assets breakdown (Liquid vs Semi-Liquid vs Illiquid)",
-        "Total family liabilities and debt ratio (Debt-to-Asset ratio)",
-        "True net worth (Total Assets minus Total Liabilities)",
-        "Productive liquid net worth ratio (excluding primary home)",
-      ]}
-    />
+    <!-- Interactive Concept C Net Worth Calculator Island -->
+    <NetWorthCalculatorIsland client:load />
 
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">Productive vs Non-Productive Net Worth</h2>
-      <p class="section-desc">
-        Not all net worth is created equal. A high paper net worth trapped in a self-occupied home does not fund monthly groceries or retirement:
-      </p>
+    <!-- Collapsed by default educational details -->
+    <details class="worth-details">
+      <summary class="worth-details-summary">
+        <span class="summary-icon">💡</span>
+        <span class="summary-text">How Net Worth is Evaluated: Accounting vs Financial Assets</span>
+        <span class="toggle-indicator">▼</span>
+      </summary>
+      <div class="details-content">
+        <div class="worth-types-grid">
+          <div class="worth-card">
+            <span class="worth-badge">Excludes Physical Assets</span>
+            <h3 class="worth-title">Cash &amp; Financial Assets After Liabilities</h3>
+            <p class="worth-desc">
+              Aggregates cash reserves, fixed deposits, mutual funds, direct equities, and retirement accounts minus all debt obligations. Access and liquidity differ significantly across holdings: while bank balances and liquid funds can be accessed immediately, instruments such as EPF, PPF, and NPS involve mandatory lock-ins, withdrawal conditions, or settlement timelines and must not be assumed to be immediately available emergency cash.
+            </p>
+          </div>
 
-      <div class="worth-types-grid">
-        <div class="worth-card">
-          <span class="worth-badge">Productive Net Worth</span>
-          <h3 class="worth-title">Financial & Income-Generating Assets</h3>
-          <p class="worth-desc">Mutual funds, equities, provident funds, and cash generate dividends, interest, or compound capital growth that buys your financial freedom.</p>
+          <div class="worth-card">
+            <span class="worth-badge">Accounting Net Worth</span>
+            <h3 class="worth-title">Total Balance Sheet (Including Property)</h3>
+            <p class="worth-desc">
+              Your primary residence, personal vehicle, and household goods contribute to overall accounting balance sheet net worth and personal utility, but cannot easily be drawn upon to meet monthly living expenses.
+            </p>
+          </div>
         </div>
+      </div>
+    </details>
 
-        <div class="worth-card">
-          <span class="worth-badge">Consumption Net Worth</span>
-          <h3 class="worth-title">Self-Occupied & Depreciating Assets</h3>
-          <p class="worth-desc">Your primary residence, personal vehicle, and household goods provide utility and comfort, but incur maintenance costs rather than providing cash flow.</p>
-        </div>
+    <!-- Reciprocal Navigation Strip -->
+    <section class="related-tools-section" aria-labelledby="related-tools-title">
+      <div class="section-header-compact">
+        <span class="eyebrow">Explore Next</span>
+        <h2 id="related-tools-title" class="related-heading">Connect your net worth to broader planning</h2>
+        <p class="related-sub">Choose a deeper assessment or explore specific investment simulators.</p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/health-check/real-statement/" class="related-card highlight-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-teal-100, #CFEFE3)">▥</span>
+            <span class="card-tag">Comprehensive Diagnostic</span>
+          </div>
+          <h3 class="card-title">REAL Financial Statement</h3>
+          <p class="card-desc">Need a more complete household review? Open the guided 4-stage review covering monthly cash flow, emergency runway, and asset allocation.</p>
+          <span class="card-action">Open REAL Statement →</span>
+        </a>
+
+        <a href="/tools/sip/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-gold-50, #FDF7E7)">↗</span>
+            <span class="card-tag">Wealth Building</span>
+          </div>
+          <h3 class="card-title">SIP Wealth Simulator</h3>
+          <p class="card-desc">Explore how monthly compounding and annual step-ups help grow your productive financial assets over time.</p>
+          <span class="card-action">Simulate SIP →</span>
+        </a>
+
+        <a href="/tools/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-slate-50, #F1F5F9)">▤</span>
+            <span class="card-tag">All Calculators</span>
+          </div>
+          <h3 class="card-title">Tools Directory</h3>
+          <p class="card-desc">Browse our complete directory of goal calculators, debt simulators, and solvency diagnostics.</p>
+          <span class="card-action">Browse all tools →</span>
+        </a>
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/health-check/real-statement/" class="btn-subtle">← Explore REAL Financial Statement</a>
-      <a href="/tools/" class="btn-subtle">Back to All Tools →</a>
-    </div>
+    <!-- Transparent Regulatory Disclosure -->
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Net Worth Calculator provides an illustrative mathematical aggregation of user-entered assets and liabilities and does not constitute a formal net worth certificate, audit, credit rating, or investment recommendation.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
-  .educational-insight-box {
-    margin: var(--space-12) 0;
+  /* Collapsible Educational Details */
+  .worth-details {
+    background-color: var(--color-bg-surface, #ffffff);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 12px);
+    margin: var(--space-6) 0 var(--space-8) 0;
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
   }
 
-  .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+  .worth-details-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-brand-primary, #173047);
+    user-select: none;
+    list-style: none;
   }
 
-  .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+  .worth-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .summary-icon {
+    font-size: 1.1rem;
+  }
+
+  .summary-text {
+    flex: 1;
+  }
+
+  .toggle-indicator {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #64748b);
+    transition: transform var(--transition-fast, 150ms ease);
+  }
+
+  .worth-details[open] .toggle-indicator {
+    transform: rotate(180deg);
+  }
+
+  .details-content {
+    padding: 0 var(--space-5) var(--space-5) var(--space-5);
+    border-top: 1px solid var(--color-border-subtle, #f1f5f9);
+    margin-top: var(--space-2);
   }
 
   .worth-types-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
   }
 
   @media (min-width: 640px) {
@@ -106,60 +180,171 @@ const crumbs = getBreadcrumbsForPath('/tools/net-worth/');
   }
 
   .worth-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    background-color: var(--awc-paper);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-md, 8px);
+    padding: var(--space-4);
   }
 
   .worth-badge {
-    font-size: var(--text-caption);
+    font-size: 0.72rem;
     font-weight: 700;
-    color: var(--color-text-brand);
+    color: var(--color-brand-accent, #16877E);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     display: block;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
   }
 
   .worth-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
+    font-size: 1rem;
+    font-family: var(--font-family-heading, inherit);
     font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-2) 0;
   }
 
   .worth-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
+    font-size: 0.82rem;
+    color: var(--color-text-secondary, #475569);
     line-height: 1.5;
     margin: 0;
   }
 
-  .nav-links-strip {
+  /* Related Tools Section */
+  .related-tools-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border-subtle, #e2e8f0);
+  }
+
+  .section-header-compact {
+    margin-bottom: var(--space-6);
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-accent, #16877E);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .related-heading {
+    font-size: var(--text-h3, 1.3rem);
+    font-family: var(--font-family-heading, inherit);
+    font-weight: 700;
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-1) 0;
+  }
+
+  .related-sub {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    background-color: var(--color-bg-surface, #ffffff);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 12px);
+    padding: var(--space-5);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition-fast, 150ms ease);
+    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
+  }
+
+  .related-card:hover {
+    border-color: var(--color-brand-accent, #16877E);
+    box-shadow: 0 4px 12px rgba(22, 135, 126, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .highlight-card {
+    border-color: var(--primitive-teal-200, #99f6e4);
+    background: linear-gradient(180deg, #ffffff 0%, var(--primitive-teal-50, #f0fdfa) 100%);
+  }
+
+  .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+    margin-bottom: var(--space-3);
   }
 
-  .btn-subtle {
-    font-size: var(--text-body-sm);
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm, 6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .card-tag {
+    font-size: 0.72rem;
     font-weight: 600;
-    color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    color: var(--color-brand-primary, #173047);
+    background-color: var(--awc-paper);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-pill, 9999px);
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  .card-title {
+    font-size: 1.05rem;
+    font-family: var(--font-family-heading, inherit);
+    font-weight: 700;
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary, #64748b);
+    line-height: 1.45;
+    margin: 0 0 var(--space-4) 0;
+    flex: 1;
+  }
+
+  .card-action {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-brand-accent, #16877E);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Regulatory Note */
+  .regulatory-disclosure-note {
+    margin-top: var(--space-10);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--awc-sand);
+    border-left: 3px solid var(--awc-gold);
+    border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  }
+
+  .regulatory-disclosure-note p {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #475569);
+    line-height: 1.5;
+    margin: 0;
   }
 </style>

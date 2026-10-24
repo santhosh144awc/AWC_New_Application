@@ -2,39 +2,45 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import RealFinancialStatementWizard from '../../features/statement/RealFinancialStatementWizard';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/health-check/real-statement/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+
+const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
+  ? 'Ant Wealth Creation is an AMFI-registered mutual fund distributor.'
+  : `Ant Wealth Creation provides ${regulatory.registrationStatusText}.`;
 
 const statementStages = [
   {
-    step: 'Tab 1',
+    step: 'Stage 1',
     title: 'Monthly Household Cash Flow',
     focus: 'Inflows vs Outflows',
     description: 'Map take-home salaries, business earnings, and investment income against household essentials, children education, insurance premiums, and lifestyle costs.',
     liveFeedback: 'Computes Discretionary Surplus (₹) and Family Savings Rate (%).',
   },
   {
-    step: 'Tab 2',
+    step: 'Stage 2',
     title: 'Liquid & Safety Assets',
     focus: 'Emergency Liquidity',
-    description: 'Itemize savings bank accounts, fixed deposits, liquid funds, PPF, EPF, NPS debt, and sovereign gold bonds.',
+    description: 'Itemize savings bank accounts, fixed deposits, liquid funds, PPF, EPF, NPS debt, and sovereign gold bonds with explicit emergency accessibility classification.',
     liveFeedback: 'Computes Emergency Fund Runway (Months of living expenses covered).',
   },
   {
-    step: 'Tab 3',
+    step: 'Stage 3',
     title: 'Growth Capital & Property',
     focus: 'Asset Allocation',
     description: 'Separate long-term wealth creators (Equity mutual funds, direct stocks) from physical assets. Crucially separates your primary residence from productive real estate and commercial land.',
-    liveFeedback: 'Computes Equity-to-Debt Asset Allocation ratio.',
+    liveFeedback: 'Computes Productive Wealth vs Personal Consumption Assets.',
   },
   {
-    step: 'Tab 4',
+    step: 'Stage 4',
     title: 'Liabilities & Productive Net Worth',
     focus: 'True Balance Sheet',
-    description: 'Aggregate home loans, vehicle loans, education loans, and credit card balances. Calculates Actual Productive Net Worth by subtracting personal residence and private vehicles from total assets.',
-    liveFeedback: 'Computes Solvency Ratio, Debt-to-Asset Ratio, and Productive Net Worth.',
+    description: 'Aggregate home loans, vehicle loans, education loans, and credit card balances. Calculates Productive-Asset-Adjusted Net Worth by evaluating financial capital after all debts.',
+    liveFeedback: 'Computes Debt-to-Asset Ratio, Accounting Net Worth, and Productive Net Worth.',
   },
 ];
 ---
@@ -48,94 +54,169 @@ const statementStages = [
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Comprehensive Balance Sheet"
+      eyebrow="Comprehensive Household Diagnostic"
       title="REAL Financial Statement & Household Balance Sheet"
       description="Most families believe their net worth is high because their primary home has appreciated. The REAL Financial Statement separates your personal consumption assets from the productive investments that will actually fund your life milestones."
-      statusBadge="Multi-Stage Architecture Under Development"
     />
 
-    <StatusNotice
-      featureName="REAL Financial Statement Engine"
-      gateNote="Under GATE-D (Privacy & Local Storage Governance), real financial inputs are not persisted in browser storage during this foundation phase. The 4-stage conversational wizard is currently being structured with zero third-party transmission, in-memory isolation, and explicit user-controlled session export."
-      expectedInputs={[
-        "Monthly household gross & net income streams",
-        "Mandatory vs discretionary living expenses",
-        "Liquid bank balances & fixed deposits",
-        "Retirement debt assets (EPF, PPF, NPS)",
-        "Equity mutual fund & stock portfolios",
-        "Primary home market value vs remaining loan principal",
-        "Outstanding personal, vehicle, or education loans",
-      ]}
-      expectedOutputs={[
-        "Monthly Family Savings Surplus Rate (%)",
-        "Liquid Emergency Runway (Months covered)",
-        "Total Accounting Net Worth vs Actual Productive Net Worth",
-        "Debt-to-Income & Solvency Ratios",
-        "Visual 5-Asset Allocation Breakdown (Liquid, Debt, Equity, Gold, Real Estate)",
-      ]}
-    />
+    <!-- Interactive Concept C 4-Stage Statement Wizard -->
+    <RealFinancialStatementWizard client:load />
 
-    <section class="statement-stages-section" aria-labelledby="stages-heading">
-      <h2 id="stages-heading" class="section-title">The 4-Stage Progressive Structure</h2>
-      <p class="section-desc">
-        To prevent document fatigue, the new application organizes the statement into 4 focused conversational stages:
-      </p>
+    <!-- Collapsed by default methodology and definitions -->
+    <details class="statement-details">
+      <summary class="statement-details-summary">
+        <span class="summary-icon">📖</span>
+        <span class="summary-text">How the 4-Stage Statement Works: Methodology &amp; Metric Definitions</span>
+        <span class="toggle-indicator">▼</span>
+      </summary>
+      <div class="details-content">
+        <p class="details-intro">
+          To prevent document fatigue, the statement organizes your household balance sheet into four conversational stages:
+        </p>
 
-      <div class="stages-grid">
-        {statementStages.map((st) => (
-          <div class="stage-card">
-            <div class="stage-badge-row">
-              <span class="stage-badge">{st.step}</span>
-              <span class="stage-focus">{st.focus}</span>
+        <div class="stages-grid">
+          {statementStages.map((st) => (
+            <div class="stage-card">
+              <div class="stage-badge-row">
+                <span class="stage-badge">{st.step}</span>
+                <span class="stage-focus">{st.focus}</span>
+              </div>
+              <h3 class="stage-title">{st.title}</h3>
+              <p class="stage-desc">{st.description}</p>
+              <div class="stage-feedback-box">
+                <span class="feedback-label">Calculated Metrics</span>
+                <p class="feedback-text">{st.liveFeedback}</p>
+              </div>
             </div>
-            <h3 class="stage-title">{st.title}</h3>
-            <p class="stage-desc">{st.description}</p>
-            <div class="stage-feedback-box">
-              <span class="feedback-label">Calculated Metrics:</span>
-              <p class="feedback-text">{st.liveFeedback}</p>
-            </div>
+          ))}
+        </div>
+
+        <div class="methodology-note">
+          <p>
+            <strong>Core Principle:</strong> A primary residence provides shelter and utility, but does not fund monthly living costs. Productive Net Worth measures what you own in financial markets and yielding investments minus all debts.
+          </p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Reciprocal Navigation & Next Steps -->
+    <section class="related-tools-section" aria-labelledby="related-tools-title">
+      <div class="section-header-compact">
+        <span class="eyebrow">Explore Next</span>
+        <h2 id="related-tools-title" class="related-heading">Connected Diagnostics &amp; Planners</h2>
+        <p class="related-sub">Move between quick balance sheets, milestone roadmaps, and full health checks.</p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/tools/net-worth/" class="related-card highlight-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-teal-100, #CFEFE3)">▤</span>
+            <span class="card-tag">Quick Diagnostic</span>
           </div>
-        ))}
+          <h3 class="card-title">Quick Net Worth Snapshot</h3>
+          <p class="card-desc">Want a shorter asset-and-debt snapshot? Open the Quick Net Worth balance sheet to consolidate figures in two minutes.</p>
+          <span class="card-action">Open Quick Net Worth →</span>
+        </a>
+
+        <a href="/health-check/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-gold-50, #FDF7E7)">◉</span>
+            <span class="card-tag">Foundational Health</span>
+          </div>
+          <h3 class="card-title">7-Pillar Health Check</h3>
+          <p class="card-desc">Evaluate emergency reserves, debt limits, and family defense pillars through a 2-minute qualitative checkup.</p>
+          <span class="card-action">Take health check →</span>
+        </a>
+
+        <a href="/plan/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--primitive-slate-50, #F1F5F9)">◎</span>
+            <span class="card-tag">Milestone Planners</span>
+          </div>
+          <h3 class="card-title">Milestone Goal Planners</h3>
+          <p class="card-desc">Put your monthly surplus to work with inflation-adjusted funding roadmaps for education, home, and retirement.</p>
+          <span class="card-action">Explore goal planners →</span>
+        </a>
       </div>
     </section>
 
-    <!-- Navigation & Next Steps -->
-    <div class="statement-nav-strip">
-      <a href="/health-check/" class="btn-back">← Back to 7-Pillar Health Check</a>
-      <a href="/plan/" class="btn-forward">Explore Milestone Goal Planners →</a>
-    </div>
+    <!-- Transparent Regulatory Disclosure -->
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The REAL Financial Statement generates diagnostic aggregations based on user-supplied values. It is not an audit, formal net worth certification, tax computation, or personalized investment recommendation.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
-  .statement-stages-section {
-    margin: var(--space-12) 0;
+  /* Collapsible Methodology Details */
+  .statement-details {
+    background-color: var(--color-bg-surface, #ffffff);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 12px);
+    margin: var(--space-8) 0;
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
   }
 
-  .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+  .statement-details-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-brand-primary, #173047);
+    user-select: none;
+    list-style: none;
   }
 
-  .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+  .statement-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .summary-icon {
+    font-size: 1.1rem;
+  }
+
+  .summary-text {
+    flex: 1;
+  }
+
+  .toggle-indicator {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #64748b);
+    transition: transform var(--transition-fast, 150ms ease);
+  }
+
+  .statement-details[open] .toggle-indicator {
+    transform: rotate(180deg);
+  }
+
+  .details-content {
+    padding: 0 var(--space-5) var(--space-5) var(--space-5);
+    border-top: 1px solid var(--color-border-subtle, #f1f5f9);
+    margin-top: var(--space-2);
+  }
+
+  .details-intro {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: var(--space-3) 0 var(--space-4) 0;
+    line-height: 1.5;
   }
 
   .stages-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
 
   @media (min-width: 640px) {
@@ -145,11 +226,10 @@ const statementStages = [
   }
 
   .stage-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    background-color: var(--awc-paper);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-md, 8px);
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
   }
@@ -158,103 +238,218 @@ const statementStages = [
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-3);
-  }
-
-  .stage-badge {
-    font-size: var(--text-caption);
-    font-weight: 800;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    padding: 0.2rem 0.55rem;
-    border-radius: var(--radius-sm);
-  }
-
-  .stage-focus {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--color-text-accent);
-    background-color: var(--primitive-gold-50);
-    border: 1px solid var(--primitive-gold-100);
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-pill);
-  }
-
-  .stage-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
     margin-bottom: var(--space-2);
   }
 
+  .stage-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-brand-accent, #16877E);
+    background-color: var(--primitive-teal-50, #f0fdfa);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm, 4px);
+    border: 1px solid var(--primitive-teal-200, #99f6e4);
+  }
+
+  .stage-focus {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-brand-primary, #173047);
+    background-color: var(--primitive-gold-50, #FDF7E7);
+    border: 1px solid var(--primitive-gold-100, #FCEBC2);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-pill, 9999px);
+  }
+
+  .stage-title {
+    font-size: 0.98rem;
+    font-family: var(--font-family-heading, inherit);
+    font-weight: 700;
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-2) 0;
+  }
+
   .stage-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-4);
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #64748b);
+    line-height: 1.45;
+    margin-bottom: var(--space-3);
     flex-grow: 1;
   }
 
   .stage-feedback-box {
-    background-color: var(--primitive-slate-50);
-    border-radius: var(--radius-sm);
-    padding: var(--space-3);
-    font-size: 0.8rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-sm, 6px);
+    padding: var(--space-2) var(--space-3);
   }
 
   .feedback-label {
     display: block;
     font-weight: 700;
-    color: var(--color-text-brand);
-    font-size: 0.72rem;
+    color: var(--color-brand-accent, #16877E);
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 2px;
   }
 
   .feedback-text {
-    color: var(--color-text-secondary);
-    line-height: 1.45;
+    font-size: 0.78rem;
+    color: var(--color-brand-primary, #173047);
+    line-height: 1.4;
     margin: 0;
   }
 
-  .statement-nav-strip {
+  .methodology-note {
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--primitive-teal-50, #f0fdfa);
+    border-left: 3px solid var(--color-brand-accent, #16877E);
+    border-radius: 0 var(--radius-sm, 6px) var(--radius-sm, 6px) 0;
+  }
+
+  .methodology-note p {
+    font-size: 0.8rem;
+    color: var(--color-brand-primary, #173047);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* Related Tools Section */
+  .related-tools-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border-subtle, #e2e8f0);
+  }
+
+  .section-header-compact {
+    margin-bottom: var(--space-6);
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-accent, #16877E);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .related-heading {
+    font-size: var(--text-h3, 1.3rem);
+    font-family: var(--font-family-heading, inherit);
+    font-weight: 700;
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-1) 0;
+  }
+
+  .related-sub {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    background-color: var(--color-bg-surface, #ffffff);
+    border: 1px solid var(--color-border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 12px);
+    padding: var(--space-5);
+    text-decoration: none;
+    color: inherit;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    transition: all var(--transition-fast, 150ms ease);
+    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
+  }
+
+  .related-card:hover {
+    border-color: var(--color-brand-accent, #16877E);
+    box-shadow: 0 4px 12px rgba(22, 135, 126, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .highlight-card {
+    border-color: var(--primitive-teal-200, #99f6e4);
+    background: linear-gradient(180deg, #ffffff 0%, var(--primitive-teal-50, #f0fdfa) 100%);
+  }
+
+  .card-top {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--space-4);
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+    margin-bottom: var(--space-3);
   }
 
-  .btn-back, .btn-forward {
-    font-size: var(--text-body-sm);
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm, 6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .card-tag {
+    font-size: 0.72rem;
     font-weight: 600;
-    text-decoration: none;
-    padding: 0.65rem 1.25rem;
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    color: var(--color-brand-primary, #173047);
+    background-color: var(--awc-paper);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-pill, 9999px);
   }
 
-  .btn-back {
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border-medium);
+  .card-title {
+    font-size: 1.05rem;
+    font-family: var(--font-family-heading, inherit);
+    font-weight: 700;
+    color: var(--color-brand-primary, #173047);
+    margin: 0 0 var(--space-2) 0;
   }
 
-  .btn-back:hover {
-    color: var(--color-brand-primary);
-    border-color: var(--color-brand-primary);
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary, #64748b);
+    line-height: 1.45;
+    margin: 0 0 var(--space-4) 0;
+    flex: 1;
   }
 
-  .btn-forward {
-    background-color: var(--color-brand-primary);
-    color: var(--primitive-white);
+  .card-action {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-brand-accent, #16877E);
+    display: inline-flex;
+    align-items: center;
   }
 
-  .btn-forward:hover {
-    background-color: var(--primitive-navy-800);
+  /* Regulatory Note */
+  .regulatory-disclosure-note {
+    margin-top: var(--space-10);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--awc-sand);
+    border-left: 3px solid var(--awc-gold);
+    border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  }
+
+  .regulatory-disclosure-note p {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #475569);
+    line-height: 1.5;
+    margin: 0;
   }
 </style>

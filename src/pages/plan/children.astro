@@ -2,112 +2,210 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import ChildrenFuturePlannerIsland from '../../features/calculators/ChildrenFuturePlannerIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/plan/children/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
+  ? 'Ant Wealth Creation is an AMFI-registered mutual fund distributor.'
+  : `Ant Wealth Creation provides ${regulatory.registrationStatusText}.`;
 ---
 
 <BaseLayout
-  title="Children's Higher Education & Marriage Planner — Ant Wealth Creation"
-  description="Plan your children's college education and life milestones with real inflation modeling (8%–10%), asset earmarking, and systematic step-up SIPs."
+  title="Children's Higher Education & Life Milestones Planner — Ant Wealth Creation"
+  description="Plan your children's college education and life milestones with multi-goal inflation modeling (6%–10%), asset earmarking, and systematic step-up SIPs."
   currentPath="/plan/children/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Milestone Roadmap"
-      title="Children's Higher Education & Life Milestones"
-      description="Higher education costs in India and overseas compound significantly faster than ordinary CPI inflation. This roadmap helps families calculate the inflation-adjusted corpus required and model systematic funding pathways."
-      statusBadge="Goal Planner Shell Active • Math In Development"
+      eyebrow="Family Goal Roadmap · Children's Future"
+      title="Children's Higher Education & Life Milestones Planner"
+      description="Plan for college education and future milestones with transparent compounding math. Model inflation-adjusted future targets (6%–10%), allocate existing family investments without double-counting, and contrast fixed monthly SIPs with salary-linked step-up contributions under the same household budget."
+      statusBadge="Interactive Planning Tool Live"
     />
 
-    <StatusNotice
-      featureName="Children's Future Calculation Engine"
-      gateNote="The multi-milestone education compounding engine is currently in development for Phase 6. We present the planning framework, inflation dynamics, and required inputs below without mock or guessed calculation outputs."
-      expectedInputs={[
-        "Child's current age (1 to 20 years)",
-        "Milestone target age (e.g., Undergraduate at 18, Postgraduate at 22, Marriage at 26)",
-        "Estimated cost in today's money (₹)",
-        "Expected education inflation rate (typically 8%–10%)",
-        "Existing earmarked assets (PPF, Sukanya Samriddhi, mutual funds, fixed deposits)",
-        "Annual step-up SIP capacity (e.g., 5%–10% annual increase alongside salary increments)",
-      ]}
-      expectedOutputs={[
-        "Future target required corpus adjusted for inflation across each milestone",
-        "Projected growth of existing earmarked savings",
-        "Net funding shortfall requiring new investment",
-        "Constant Monthly SIP vs 10% Annual Step-Up SIP comparison",
-      ]}
-    />
+    {/* Interactive React Planner Island */}
+    <ChildrenFuturePlannerIsland client:load />
 
-    <section class="education-inflation-insight" aria-labelledby="inflation-heading">
-      <h2 id="inflation-heading" class="section-title">The Real Impact of Education Inflation</h2>
-      <p class="section-desc">
-        A professional 4-year degree costing ₹25 Lakhs today will not cost ₹25 Lakhs when your 4-year-old turns 18. Here is how compounding cost realities work over a 14-year horizon:
-      </p>
+    {/* Educational Compounding Insight */}
+    <section class="education-inflation-insight" id="education-inflation-guide" aria-labelledby="inflation-heading">
+      <div class="insight-header">
+        <span class="insight-eyebrow">Compounding Reality</span>
+        <h2 id="inflation-heading" class="section-title">The Compounding Impact of Annual Cost Escalation</h2>
+        <p class="section-desc">
+          Explore how different assumed annual cost increases can change the future amount needed for a family goal. A goal costing ₹25 Lakhs today requires substantially higher capital when your 4-year-old turns 18. Below is how compounding cost escalation works across different hypothetical annual rate assumptions over an illustrative 14-year accumulation horizon:
+        </p>
+      </div>
 
       <div class="inflation-comparison-grid">
         <div class="inflation-card">
-          <span class="inflation-rate">6% Inflation</span>
-          <p class="inflation-type">General Consumer Price Index (CPI)</p>
+          <span class="inflation-rate">6% Annual Escalation</span>
+          <p class="inflation-type">Lower Illustrative Assumption</p>
           <div class="inflation-future-cost">₹56.5 Lakhs</div>
-          <p class="inflation-note">Often underestimates specialized tuition, books, and campus living costs.</p>
-        </div>
-
-        <div class="inflation-card featured-inflation">
-          <span class="inflation-rate">8% Inflation</span>
-          <p class="inflation-type">Realistic Domestic Higher Education</p>
-          <div class="inflation-future-cost">₹73.4 Lakhs</div>
-          <p class="inflation-note">Recommended baseline benchmark for Indian engineering, medicine, and management degrees.</p>
+          <p class="inflation-note">
+            Hypothetical model: ₹25 Lakhs × (1.06)<sup>14</sup>. Demonstrates how a lower annual cost-increase rate compounds over 14 years. Not a forecast or cost guarantee.
+          </p>
         </div>
 
         <div class="inflation-card">
-          <span class="inflation-rate">10% Inflation</span>
-          <p class="inflation-type">Global Degrees & Currency Depreciation</p>
-          <div class="inflation-future-cost">₹94.9 Lakhs</div>
-          <p class="inflation-note">Accounts for domestic tuition surges plus foreign exchange rupee depreciation.</p>
+          <span class="inflation-rate">8% Annual Escalation</span>
+          <p class="inflation-type">Middle Illustrative Assumption</p>
+          <div class="inflation-future-cost">₹73.4 Lakhs</div>
+          <p class="inflation-note">
+            Hypothetical model: ₹25 Lakhs × (1.08)<sup>14</sup>. Demonstrates a moderate compounding rate over 14 years. Actual cost increases vary widely by institution and program.
+          </p>
         </div>
+
+        <div class="inflation-card">
+          <span class="inflation-rate">10% Annual Escalation</span>
+          <p class="inflation-type">Higher Illustrative Assumption</p>
+          <div class="inflation-future-cost">₹94.9 Lakhs</div>
+          <p class="inflation-note">
+            Hypothetical model: ₹25 Lakhs × (1.10)<sup>14</sup>. Demonstrates a higher compounding scenario. Currency exchange-rate movements and institution-specific fees are not modelled.
+          </p>
+        </div>
+      </div>
+      <p class="inflation-footnote">
+        * Note: All examples above are hypothetical mathematical illustrations over 14 years ($C \times (1 + r)^{14}$) to demonstrate the mathematical effect of compounding. They are not official forecasts, predictions, or guarantees of future costs. Currency exchange-rate movements and institution-specific fees are not modelled.
+      </p>
+    </section>
+
+    {/* Canonical Related Navigation */}
+    <section class="related-nav" aria-labelledby="related-nav-heading">
+      <div class="related-header">
+        <span class="related-eyebrow">Next Steps & Decision Tools</span>
+        <h2 id="related-nav-heading" class="related-title">Explore Related Family Planning Roadmaps</h2>
+        <p class="related-desc">
+          Compare children's education milestones with other household goals or explore systematic investment compounding tools.
+        </p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/plan/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-jade-soft)">🗺️</span>
+            <span class="card-tag">Family Roadmaps</span>
+          </div>
+          <h3 class="card-title">Family Goal Roadmap Hub</h3>
+          <p class="card-desc">Coordinate multi-goal family priorities including emergency reserves, home purchase down payments, and long-term security.</p>
+          <span class="card-action">View all goal roadmaps →</span>
+        </a>
+
+        <a href="/tools/sip-growth/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-mint)">📈</span>
+            <span class="card-tag">Growth Lab</span>
+          </div>
+          <h3 class="card-title">Advanced SIP Growth Simulator</h3>
+          <p class="card-desc">Model multi-stage wealth accumulation with annual step-ups, milestone lump-sum infusions, and post-SIP holding horizons.</p>
+          <span class="card-action">Open growth simulator →</span>
+        </a>
+
+        <a href="/tools/sip/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-sand)">🪙</span>
+            <span class="card-tag">Monthly Investing</span>
+          </div>
+          <h3 class="card-title">Monthly SIP Calculator</h3>
+          <p class="card-desc">Calculate simple regular monthly mutual fund compounding without multi-goal allocation complexity.</p>
+          <span class="card-action">Open SIP calculator →</span>
+        </a>
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/plan/" class="btn-subtle">← Back to All Goal Roadmaps</a>
-      <a href="/tools/sip/" class="btn-subtle">Explore SIP Compounding Simulator →</a>
-    </div>
+    {/* Transparent Regulatory Disclosure */}
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer}
+        This simulation models compounding costs and systematic SIP requirements under user-entered assumptions for educational purposes. Taxes on redemption (such as long-term capital gains tax under current legislation), currency exchange rate swings for overseas tuition, and university-specific fees are not modelled in this simulation. This tool does not constitute investment advice or a product recommendation.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
-    padding-bottom: var(--space-16);
+    padding-top: var(--space-4, 16px);
+    padding-bottom: var(--space-16, 64px);
   }
 
+  @media (max-width: 640px) {
+    .page-container {
+      padding-top: 8px;
+    }
+    :global(.page-intro) {
+      margin-bottom: 12px !important;
+      gap: 8px !important;
+    }
+    :global(.page-intro .intro-title) {
+      font-size: 1.55rem !important;
+      line-height: 1.2 !important;
+      margin: 4px 0 6px !important;
+    }
+    :global(.page-intro .intro-desc) {
+      font-size: 0.86rem !important;
+      line-height: 1.42 !important;
+      margin-bottom: 8px !important;
+    }
+    :global(.page-intro .intro-status-wrap) {
+      margin-top: 4px !important;
+    }
+  }
+
+  /* Educational Compounding Insight (Concept C) */
   .education-inflation-insight {
-    margin: var(--space-12) 0;
+    margin: 56px 0 48px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
+    padding: 36px 32px;
+  }
+
+  @media (max-width: 600px) {
+    .education-inflation-insight {
+      padding: 24px 18px;
+    }
+  }
+
+  .insight-header {
+    margin-bottom: 28px;
+  }
+
+  .insight-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    margin-bottom: 6px;
   }
 
   .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+    margin: 0 0 8px;
   }
 
   .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
+    font-size: 14.5px;
+    color: var(--color-text-muted);
     line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+    margin: 0;
+    max-width: 760px;
   }
 
   .inflation-comparison-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: 20px;
+    margin-bottom: 16px;
   }
 
   @media (min-width: 768px) {
@@ -117,74 +215,203 @@ const crumbs = getBreadcrumbsForPath('/plan/children/');
   }
 
   .inflation-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    background-color: #ffffff;
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(23, 48, 71, 0.03);
   }
 
   .featured-inflation {
-    border-color: var(--primitive-teal-500);
+    border-color: var(--color-border-interactive);
     border-width: 2px;
-    background-color: var(--primitive-teal-50);
+    background-color: #ffffff;
+    box-shadow: 0 8px 24px rgba(22, 135, 126, 0.08);
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: -11px;
+    right: 18px;
+    background-color: var(--color-action);
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 10px;
+    border-radius: 10px;
   }
 
   .inflation-rate {
-    font-size: var(--text-caption);
+    font-size: 11px;
     font-weight: 800;
     color: var(--color-text-brand);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-1);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
   }
 
   .inflation-type {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-4);
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--awc-navy);
+    margin: 0 0 12px;
   }
 
   .inflation-future-cost {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
   }
 
   .inflation-note {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
+    font-size: 12px;
+    color: var(--color-text-muted);
     line-height: 1.5;
     margin: 0;
   }
 
-  .nav-links-strip {
+  .inflation-footnote {
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin: 16px 0 0;
+    line-height: 1.4;
+  }
+
+  /* Canonical Related Navigation */
+  .related-nav {
+    margin-top: 56px;
+  }
+
+  .related-header {
+    margin-bottom: 24px;
+  }
+
+  .related-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-brand);
+    margin-bottom: 6px;
+  }
+
+  .related-title {
+    font-size: clamp(20px, 2.5vw, 24px);
+    font-weight: 850;
+    letter-spacing: -0.02em;
+    color: var(--awc-navy);
+    margin: 0 0 6px;
+  }
+
+  .related-desc {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    background-color: #ffffff;
+    border: 1px solid var(--awc-line);
+    border-radius: 18px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(23, 48, 71, 0.03);
+  }
+
+  .related-card:hover {
+    border-color: var(--color-border-interactive);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(23, 48, 71, 0.08);
+  }
+
+  .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+    margin-bottom: 14px;
   }
 
-  .btn-subtle {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
+  .card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .card-tag {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0 0 18px;
+    flex-grow: 1;
+  }
+
+  .card-action {
+    font-size: 13px;
+    font-weight: 750;
     color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  /* Regulatory Note */
+  .regulatory-disclosure-note {
+    margin-top: 48px;
+    padding: 20px 24px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 14px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>

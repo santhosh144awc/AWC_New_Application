@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import RetirementDistributionIsland from '../../features/calculators/RetirementDistributionIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 
 const crumbs = getBreadcrumbsForPath('/plan/retirement-income/');
@@ -13,31 +13,31 @@ const buckets = [
     name: 'Immediate Liquidity',
     timeline: 'Years 1 to 3',
     assetClass: 'Liquid & Overnight Funds / Bank Sweep',
-    objective: '100% Market-Crash Immunity',
-    description: 'Holds 36 months of predictable family living expenses in ultra-safe liquid instruments. You never have to sell equities during an economic downturn to pay groceries or medical bills.',
+    objective: 'Short-Term Cash-Flow Liquidity',
+    description: 'Holds approximately 24 to 36 months of near-term living expenses in liquid and money market instruments to avoid having to liquidate volatile investments during sudden market drawdowns.',
   },
   {
     num: 'Bucket 2',
     name: 'Income & Replenishment',
     timeline: 'Years 4 to 7',
-    assetClass: 'Conservative Hybrid & Arbitrage Funds',
-    objective: 'Low Volatility & Stability',
-    description: 'Generates stable accrual and periodic returns. Acts as a safety buffer that systematically replenishes Bucket 1 every 2 to 3 years without triggering heavy capital losses.',
+    assetClass: 'Conservative Hybrid & Low-Volatility Debt',
+    objective: 'Capital Preservation & Yield',
+    description: 'Focuses on fixed-income accruals and conservative hybrid assets to periodically replenish Bucket 1 liquidity while managing drawdown risk.',
   },
   {
     num: 'Bucket 3',
     name: 'Long-Term Growth',
     timeline: 'Years 8 and Beyond',
     assetClass: 'Diversified Equity Mutual Funds',
-    objective: 'Long-Term Inflation Beating',
-    description: 'Invested in high-quality diversified equity funds to outpace 6%–8% living inflation over a 15–25 year horizon, ensuring your purchasing power does not degrade over a 30-year retirement.',
+    objective: 'Long-Term Growth Focus',
+    description: 'Invested in diversified equity mutual funds with the objective of seeking inflation-hedged capital growth over horizons of 8+ years, recognizing that market returns fluctuate.',
   },
 ];
 ---
 
 <BaseLayout
   title="Retirement Distribution & Three-Bucket Cash Flow — Ant Wealth Creation"
-  description="Structure your retirement corpus across three strategic buckets (Liquidity, Safety, Growth) to generate steady, inflation-protected monthly cash flow for life."
+  description="Examine the conceptual three-bucket decumulation framework (Liquidity, Safety, Growth) designed to manage sequence-of-returns risk during retirement."
   currentPath="/plan/retirement-income/"
 >
   <div class="container page-container">
@@ -46,32 +46,18 @@ const buckets = [
     <PageIntro
       eyebrow="Milestone Roadmap"
       title="Retirement Distribution & Three-Bucket Cash Flow"
-      description="Accumulating a retirement corpus is only half the battle. Distributing it safely without running out of money requires an asset allocation that balances today's cash flow needs with tomorrow's inflation protection."
-      statusBadge="Distribution Strategy Shell Active"
+      description="Distributing a retirement corpus across multi-decade horizons requires balancing near-term liquidity with long-term inflation resilience. Model your initial capital allocations across Liquidity, Safety, and Long-Term Growth."
+      statusBadge="Interactive Planner Active • 3-Bucket Cash Flow"
     />
 
-    <StatusNotice
-      featureName="Three-Bucket Decumulation Simulator"
-      gateNote="Under GATE-A, post-retirement cash flow simulation is blocked pending completion of the unified retirement calculation specification. In this shell, we present the structural 3-bucket architecture and required simulation parameters."
-      expectedInputs={[
-        "Total accumulated retirement corpus available today (₹)",
-        "Desired starting monthly pension / cash flow required (₹)",
-        "Expected annual inflation rate during retirement (e.g. 6%–7%)",
-        "Assumed return rates across Bucket 1 (Liquid), Bucket 2 (Conservative), and Bucket 3 (Equity)",
-        "Desired safety buffer duration (e.g., 3 years vs 5 years in Bucket 1)",
-      ]}
-      expectedOutputs={[
-        "Initial capital allocation required across Bucket 1, Bucket 2, and Bucket 3",
-        "Annual inflation-adjusted monthly pension payout forecast",
-        "Estimated longevity of the corpus across 25, 30, and 35 year horizons",
-        "Periodic rebalancing triggers and replenishment roadmap",
-      ]}
-    />
+    <!-- Interactive Concept C Three-Bucket Decumulation Island -->
+    <RetirementDistributionIsland client:load />
 
+    <!-- The 3 Buckets Architecture -->
     <section class="buckets-architecture-section" aria-labelledby="buckets-heading">
       <h2 id="buckets-heading" class="section-title">The Three-Bucket Architecture Explained</h2>
       <p class="section-desc">
-        How Indian retirees avoid the devastating risk of selling market-linked investments during a crash:
+        An educational overview of how multi-bucket asset allocation helps manage sequence-of-returns risk:
       </p>
 
       <div class="buckets-grid">
@@ -98,6 +84,67 @@ const buckets = [
       </div>
     </section>
 
+    <!-- Sequence of Returns Risk -->
+    <section class="sequence-risk-section" aria-labelledby="risk-heading">
+      <h2 id="risk-heading" class="section-title">Understanding Sequence-of-Returns Risk</h2>
+      <p class="section-desc">
+        Why the order of investment returns matters far more in the withdrawal phase than during accumulation:
+      </p>
+
+      <div class="risk-grid">
+        <div class="risk-card">
+          <div class="risk-badge warning">The Accumulation Phase</div>
+          <h3 class="risk-card-title">Market Dips Are Buying Opportunities</h3>
+          <p class="risk-card-desc">
+            When you are investing monthly (via SIP), market downturns allow you to acquire more mutual fund units at lower NAVs (rupee-cost averaging). Drawdowns during your working years actually enhance long-term compounding.
+          </p>
+        </div>
+
+        <div class="risk-card danger-card">
+          <div class="risk-badge critical">The Decumulation Phase</div>
+          <h3 class="risk-card-title">Early Drawdowns Cause Permanent Capital Impairment</h3>
+          <p class="risk-card-desc">
+            If market declines occur in the first 3 to 5 years of retirement and you are forced to sell equities to fund daily living expenses, you permanently liquidate units at depressed prices. Those liquidated units cannot recover when markets rebound, sharply accelerating portfolio depletion.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Replenishment Protocol -->
+    <section class="replenishment-section" aria-labelledby="replenishment-heading">
+      <h2 id="replenishment-heading" class="section-title">The Systematic Replenishment Protocol</h2>
+      <p class="section-desc">
+        How the buckets interact over multi-year cycles without panic or guesswork:
+      </p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-index">Step 1</span>
+          <h3 class="step-title">Monthly Outflows From Bucket 1</h3>
+          <p class="step-desc">
+            All regular household monthly expenses are drawn strictly from Bucket 1 (Liquid / Bank sweep). Living expenses never rely on equity market levels of the week or month.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-index">Step 2</span>
+          <h3 class="step-title">Annual Refill From Bucket 2</h3>
+          <p class="step-desc">
+            Once a year, income accrued in Bucket 2 (Conservative fixed income) is transferred to replenish Bucket 1 back to its target 24–36 month living reserve.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-index">Step 3</span>
+          <h3 class="step-title">Opportunistic Harvest From Bucket 3</h3>
+          <p class="step-desc">
+            During strong equity market bull cycles when Bucket 3 has grown above its target asset allocation, excess profits are systematically trimmed and shifted down to Bucket 2. During bear markets, Bucket 3 is left undisturbed to recover.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
     <div class="nav-links-strip">
       <a href="/plan/retirement/" class="btn-subtle">← Back to Retirement Accumulation</a>
       <a href="/tools/swp/" class="btn-subtle">Explore SWP Longevity Simulator →</a>
@@ -110,7 +157,10 @@ const buckets = [
     padding-bottom: var(--space-16);
   }
 
-  .buckets-architecture-section {
+  .buckets-architecture-section,
+  .sequence-risk-section,
+  .replenishment-section,
+  .gate-detail-section {
     margin: var(--space-12) 0;
   }
 
@@ -198,20 +248,169 @@ const buckets = [
     color: var(--color-text-brand);
     font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
   }
 
   .meta-val {
-    color: var(--color-text-primary);
-    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
   }
 
   .bucket-desc {
     font-size: var(--text-body-sm);
     color: var(--color-text-secondary);
     line-height: 1.55;
-    margin-top: var(--space-3);
-    flex-grow: 1;
+    margin-top: var(--space-2);
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .risk-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .risk-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .danger-card {
+    border-color: var(--primitive-rose-600);
+    background-color: var(--primitive-rose-100);
+  }
+
+  .risk-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .risk-badge.warning {
+    color: var(--color-text-accent);
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+  }
+
+  .risk-badge.critical {
+    color: var(--primitive-rose-700);
+    background-color: var(--primitive-rose-100);
+    border: 1px solid var(--primitive-rose-600);
+  }
+
+  .risk-card-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .risk-card-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .steps-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .step-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .step-index {
+    font-size: var(--text-caption);
+    font-weight: 800;
+    color: var(--color-text-brand);
+    background-color: var(--primitive-teal-50);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .step-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  .step-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .gate-box {
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    border-left: 4px solid var(--primitive-gold-500);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .gate-box-title {
+    font-size: var(--text-h4);
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-text-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .gate-box-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-4);
+  }
+
+  .gate-box-list {
+    margin: 0 0 var(--space-4) 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+
+  .gate-box-footer {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-text-accent);
+    margin: 0;
   }
 
   .nav-links-strip {

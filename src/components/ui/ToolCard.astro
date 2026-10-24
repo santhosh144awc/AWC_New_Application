@@ -1,0 +1,175 @@
+---
+/**
+ * Tool card for the situation-based directory (Concept C).
+ * Title, destination and status always come from the resolved registry entry.
+ * Class hooks: .tool-card [data-status] · .tool-badge · .btn-tool (kept stable for E2E).
+ */
+import type { ResolvedTool } from '../../config/toolDirectory';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  tool: ResolvedTool;
+}
+
+const { tool } = Astro.props;
+const live = tool.status === 'active';
+---
+
+<li
+  class={`tool-card tool-card--${tool.tint}`}
+  data-tool-card
+  data-tool-id={tool.id}
+  data-status={tool.status}
+  data-intents={tool.intents.join(' ')}
+  data-search={tool.searchText}
+>
+  <div class="tool-card__top">
+    <span class="tool-card__icon" aria-hidden="true">{tool.icon}</span>
+    <span class="tool-badge">
+      <StatusBadge status={tool.status} label={tool.statusLabel} />
+    </span>
+  </div>
+
+  <h3 class="tool-card__title">{tool.title}</h3>
+  <p class="tool-card__question">{tool.question}</p>
+  <p class="tool-card__summary">{tool.summary}</p>
+
+  <a href={tool.href} class="btn-tool" data-live={live ? 'true' : 'false'}>
+    <span>{tool.actionLabel}</span>
+    <span aria-hidden="true">{live ? '→' : '↗'}</span>
+    <span class="sr-only">: {tool.title}</span>
+  </a>
+</li>
+
+<style>
+  .tool-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    list-style: none;
+    padding: var(--space-5);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    background: var(--primitive-white);
+    overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .tool-card::after {
+    content: '';
+    position: absolute;
+    right: -40px;
+    top: -42px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--tint, var(--awc-mint));
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .tool-card--mint { --tint: var(--awc-mint); }
+  .tool-card--mist { --tint: var(--awc-mist); }
+  .tool-card--sand { --tint: var(--awc-sand); }
+
+  .tool-card[hidden] {
+    display: none;
+  }
+
+  .tool-card > *:not(.btn-tool) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-card:hover,
+  .tool-card:focus-within {
+    transform: translateY(-2px);
+    border-color: var(--awc-jade);
+    box-shadow: var(--shadow-card);
+  }
+
+  .tool-card[data-status='blocked'],
+  .tool-card[data-status='preview'] {
+    border-style: dashed;
+  }
+
+  .tool-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .tool-card__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--tint, var(--awc-mint));
+    color: var(--awc-navy);
+    font-size: 1.4rem;
+  }
+
+  .tool-card__title {
+    margin-top: var(--space-3);
+    font-size: 1.1rem;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+  }
+
+  .tool-card__question {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--awc-jade-deep);
+    line-height: 1.4;
+  }
+
+  .tool-card__summary {
+    flex-grow: 1;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .btn-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--awc-line);
+    font-size: var(--text-body-sm);
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    text-decoration: none;
+  }
+
+  .btn-tool:hover {
+    color: var(--awc-navy);
+    text-decoration: underline;
+  }
+
+  /* Whole-card click target without nesting interactive elements */
+  .btn-tool::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .btn-tool:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .btn-tool:focus-visible::before {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: -3px;
+    border-radius: 22px;
+  }
+</style>

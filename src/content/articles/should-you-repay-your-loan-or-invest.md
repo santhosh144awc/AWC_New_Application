@@ -5,7 +5,7 @@ publishDate: "2026-08-28"
 category: "Loans"
 tags: ["Loans", "Home Loan", "SIP", "Investment Strategy", "Debt Prepayment"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "5 min read"
 featured: true
 publicationStatus: NEEDS_PROFESSIONAL_REVIEW

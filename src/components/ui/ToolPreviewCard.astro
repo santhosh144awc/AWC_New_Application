@@ -5,21 +5,37 @@ interface Props {
   realQuestion: string;
   description: string;
   statusBadge?: string;
+  href?: string;
+  isActive?: boolean;
 }
 
-const { title, category, realQuestion, description, statusBadge = "Engine Under Spec Review" } = Astro.props;
+const {
+  title,
+  category,
+  realQuestion,
+  description,
+  statusBadge = "Engine Under Spec Review",
+  href,
+  isActive = false,
+} = Astro.props;
 ---
 
-<div class="tool-preview-card">
+<div class={`tool-preview-card ${isActive ? 'tool-card-active' : ''}`}>
   <div class="tool-meta-row">
     <span class="tool-category">{category}</span>
-    <span class="tool-status">{statusBadge}</span>
+    <span class={`tool-status ${isActive ? 'status-active' : ''}`}>{statusBadge}</span>
   </div>
   <h3 class="tool-title">{title}</h3>
   <p class="tool-real-question">"{realQuestion}"</p>
   <p class="tool-desc">{description}</p>
   <div class="tool-action-row">
-    <span class="tool-note">Scheduled for verified domain porting</span>
+    {href ? (
+      <a href={href} class={`btn-tool-link ${isActive ? 'btn-tool-link-active' : ''}`}>
+        {isActive ? 'Launch Simulator →' : 'Explore Planning Preview →'}
+      </a>
+    ) : (
+      <span class="tool-note">Scheduled for verified domain porting</span>
+    )}
   </div>
 </div>
 
@@ -32,12 +48,16 @@ const { title, category, realQuestion, description, statusBadge = "Engine Under 
     box-shadow: var(--shadow-subtle);
     display: flex;
     flex-direction: column;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
   }
 
   .tool-preview-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-card);
+    border-color: var(--color-border-interactive);
+  }
+
+  .tool-card-active {
     border-color: var(--color-border-interactive);
   }
 
@@ -68,6 +88,12 @@ const { title, category, realQuestion, description, statusBadge = "Engine Under 
     white-space: nowrap;
   }
 
+  .status-active {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+  }
+
   .tool-title {
     font-size: var(--text-h4);
     font-family: var(--font-family-heading);
@@ -95,6 +121,26 @@ const { title, category, realQuestion, description, statusBadge = "Engine Under 
   .tool-action-row {
     border-top: 1px solid var(--primitive-slate-100);
     padding-top: var(--space-3);
+  }
+
+  .btn-tool-link {
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+  }
+
+  .btn-tool-link:hover {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+
+  .btn-tool-link-active {
+    color: var(--color-brand-primary);
+    font-weight: 800;
   }
 
   .tool-note {

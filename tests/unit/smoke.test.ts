@@ -30,9 +30,12 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
   });
 
   describe('Business Profile & Identity Governance (Section 2A & 2B)', () => {
-    it('enforces ARN status as PENDING_VERIFICATION and avoids unverified user-facing display', () => {
-      expect(BUSINESS_PROFILE.regulatory.arnStatus).toBe('PENDING_VERIFICATION');
-      expect(BUSINESS_PROFILE.regulatory.amfiRegistrationText).toContain('pending registry confirmation');
+    it('enforces ARN status as CONFIRMED based on official AMFI lookup evidence', () => {
+      expect(BUSINESS_PROFILE.regulatory.arnStatus).toBe('CONFIRMED');
+      expect(BUSINESS_PROFILE.regulatory.arn).toBe('ARN-266896');
+      expect(BUSINESS_PROFILE.regulatory.arnValidity).toBe('16 March 2029');
+      expect(BUSINESS_PROFILE.regulatory.amfiRegistrationText).toContain('ARN-266896');
+      expect(BUSINESS_PROFILE.regulatory.soleProprietorStatement).toContain('Ant Wealth Creation is a sole proprietorship operated by C. Santhosh Sathriyan');
     });
 
     it('specifies canonical domain consistently as https://antwealth.in', () => {
@@ -73,10 +76,10 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
       ]);
     });
 
-    it('registers all 24 distinct canonical application routes without duplicates', async () => {
+    it('registers all 25 distinct canonical application routes without duplicates', async () => {
       const { getAllRegisteredRoutes } = await import('../../src/config/routes');
       const allRoutes = getAllRegisteredRoutes();
-      expect(allRoutes.length).toBe(24);
+      expect(allRoutes.length).toBe(25);
 
       const paths = allRoutes.map(r => r.path);
       const uniquePaths = new Set(paths);

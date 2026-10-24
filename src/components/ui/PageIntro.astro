@@ -1,86 +1,133 @@
 ---
+/**
+ * Page title + intro (Concept C page hero panel).
+ * One H1 per page. The optional status line is the truthful availability marker;
+ * it is styled as a preview (sand) whenever the text mentions a preview or gate.
+ */
 interface Props {
   eyebrow?: string;
   title: string;
   description: string;
   statusBadge?: string;
+  /** Decorative glyph shown on the marigold tile (hidden from assistive tech). */
+  icon?: string;
 }
 
-const { eyebrow, title, description, statusBadge } = Astro.props;
+const { eyebrow, title, description, statusBadge, icon } = Astro.props;
+const isPreview = statusBadge ? /gate-|preview|specification|review/i.test(statusBadge) : false;
 ---
 
 <header class="page-intro">
-  {eyebrow && <span class="intro-eyebrow">{eyebrow}</span>}
-  <h1 class="intro-title">{title}</h1>
-  <p class="intro-desc">{description}</p>
-  {statusBadge && (
-    <div class="intro-status-wrap">
-      <span class="status-indicator-dot" aria-hidden="true"></span>
-      <span class="intro-status-badge">{statusBadge}</span>
-    </div>
-  )}
+  <div class="page-intro__text">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1 class="intro-title">{title}</h1>
+    <p class="intro-desc">{description}</p>
+    {statusBadge && (
+      <p class={`intro-status-wrap ${isPreview ? 'is-preview' : 'is-live'}`}>
+        <span class="status-indicator-dot" aria-hidden="true"></span>
+        <span class="intro-status-badge">{statusBadge}</span>
+      </p>
+    )}
+  </div>
+  {icon && <div class="page-intro__mark" aria-hidden="true">{icon}</div>}
 </header>
 
 <style>
   .page-intro {
-    padding: var(--space-8) 0 var(--space-10);
-    border-bottom: 1px solid var(--color-border-subtle);
-    margin-bottom: var(--space-10);
-    max-width: 860px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10) var(--space-10);
+    margin: var(--space-2) 0 var(--space-8);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, var(--awc-mist) 0%, var(--awc-paper) 62%, #dcf1e6 100%);
   }
 
-  .intro-eyebrow {
-    display: inline-block;
-    font-size: var(--text-caption);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    border: 1px solid var(--primitive-teal-100);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-pill);
-    margin-bottom: var(--space-3);
+  .page-intro__text {
+    max-width: 760px;
   }
 
   .intro-title {
     font-size: var(--text-h1);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-brand-primary);
-    line-height: 1.15;
-    margin-bottom: var(--space-4);
-    letter-spacing: -0.015em;
+    color: var(--awc-navy);
+    line-height: 1.06;
+    letter-spacing: -0.045em;
+    margin: var(--space-3) 0 var(--space-3);
   }
 
   .intro-desc {
     font-size: var(--text-body-lg);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
+    color: var(--color-text-muted);
+    line-height: 1.65;
     margin: 0;
+    max-width: 680px;
   }
 
   .intro-status-wrap {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    margin-top: var(--space-4);
-    padding: 0.3rem 0.75rem;
-    background-color: var(--primitive-gold-50);
-    border: 1px solid var(--primitive-gold-100);
+    margin: var(--space-4) 0 0;
+    padding: 0.3rem 0.8rem;
     border-radius: var(--radius-pill);
+    background-color: var(--awc-jade-soft);
+    border: 1px solid var(--awc-mint);
+  }
+
+  .intro-status-wrap.is-preview {
+    background-color: var(--awc-sand);
+    border-color: var(--primitive-gold-100);
   }
 
   .status-indicator-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--primitive-gold-500);
+    background-color: var(--awc-jade);
+  }
+
+  .is-preview .status-indicator-dot {
+    background-color: var(--awc-gold);
+    box-shadow: 0 0 0 1px var(--primitive-gold-600);
   }
 
   .intro-status-badge {
     font-size: var(--text-caption);
     font-weight: 700;
-    color: var(--color-text-accent);
+    color: var(--awc-jade-deep);
+  }
+
+  .is-preview .intro-status-badge {
+    color: var(--awc-sand-ink);
+  }
+
+  .page-intro__mark {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 30px;
+    background: var(--awc-gold);
+    color: var(--awc-navy);
+    font-size: 2.6rem;
+    transform: rotate(5deg);
+  }
+
+  @media (max-width: 767px) {
+    .page-intro {
+      padding: var(--space-6) var(--space-5);
+      border-radius: var(--radius-lg);
+    }
+
+    .intro-desc {
+      font-size: var(--text-body);
+    }
+
+    .page-intro__mark {
+      display: none;
+    }
   }
 </style>

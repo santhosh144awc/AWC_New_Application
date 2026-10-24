@@ -2,170 +2,322 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import StatusNotice from '../../components/ui/StatusNotice.astro';
+import SipGrowthCalculatorIsland from '../../features/calculators/SipGrowthCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/tools/sip-growth/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
+
+const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
+  ? 'Ant Wealth Creation is an AMFI-registered mutual fund distributor.'
+  : `Ant Wealth Creation provides ${regulatory.registrationStatusText}.`;
 ---
 
 <BaseLayout
-  title="SIP Target Corpus Goal Planner — Ant Wealth Creation"
-  description="Reverse calculate the required monthly SIP contribution needed to accumulate a target milestone wealth corpus."
+  title="Advanced SIP Growth & Step-Up Simulator — Ant Wealth Creation"
+  description="Model multi-stage wealth accumulation with disciplined monthly SIPs, annual contribution step-ups, milestone lump sums, and post-SIP compounding."
+  canonicalUrl="https://antwealth.in/tools/sip-growth/"
   currentPath="/tools/sip-growth/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Reverse Calculator"
-      title="SIP Target Corpus Goal Planner"
-      description="Reverse calculate the exact monthly investment required today to achieve your desired target capital corpus in the future."
-      statusBadge="Mathematical Specification Pending"
+      eyebrow="Money Lab · SIP Growth"
+      title="Explore how your investments could grow over time."
+      description="Compare regular monthly investing, annual step-ups, occasional top-ups, and prolonged compounding after recurring contributions stop. All results are mathematical illustrations based on assumed returns, not forecasts or guarantees."
     />
 
-    <StatusNotice
-      featureName="Target Corpus Reverse Calculation Engine"
-      gateNote="Under GATE-B (Rate Semantics & Annuity Formula Verification), the inverse annuity formula solving for PMT = FV * i / ((1+i)^n - 1) is awaiting mathematical verification against edge cases. This shell introduces the methodology without generating premature numerical schedules."
-      expectedInputs={[
-        "Target future wealth amount (e.g. ₹25 Lakhs, ₹1 Crore, ₹5 Crores)",
-        "Time horizon to reach goal in years (e.g. 3 to 25 years)",
-        "Expected annual rate of return (e.g. 8% to 14%)",
-        "Optional annual step-up rate assumption (e.g. 0% to 10%)",
-      ]}
-      expectedOutputs={[
-        "Required fixed monthly SIP amount",
-        "Alternative: Required initial SIP with 10% annual step-up",
-        "Total principal you will invest over the period",
-        "Total wealth created via compound market growth",
-      ]}
-    />
+    <!-- Interactive Concept C Advanced SIP Growth Simulator Island -->
+    <SipGrowthCalculatorIsland client:load />
 
+    <!-- Educational Deep-Dive Section (Concept C Design) -->
     <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">The Cost of Delaying Your Goal</h2>
-      <p class="section-desc">
-        Postponing your investment start date steeply increases the monthly burden required to accumulate the exact same target corpus:
+      <h2 id="insight-heading" class="insight-title">Why Advanced Life-Stage Simulation Matters</h2>
+      <p class="insight-desc">
+        Standard financial calculators often assume unchanged monthly installments. This simulator lets you model scenarios where contributions adjust over time and portfolios remain invested for additional holding periods:
       </p>
 
-      <div class="delay-comparison-grid">
-        <div class="delay-card optimal-delay">
-          <span class="delay-badge">Start Today (15 Year Horizon)</span>
-          <div class="delay-metric">Lower Monthly Burden</div>
-          <p class="delay-desc">Time does the heavy lifting of compounding, allowing you to invest less total cash to hit ₹1 Crore.</p>
+      <div class="simulation-cards-grid">
+        <div class="feature-card">
+          <div class="card-pill">01 · Scenario Simulation</div>
+          <h3 class="card-feature-title">Capped Step-Up Horizons</h3>
+          <p class="card-feature-text">
+            If you wish to test annual contribution increases, the model applies percentage step-ups starting in Year 2 (Month 13). Setting a step-up cap keeps contributions level at the selected installment for remaining SIP years.
+          </p>
         </div>
 
-        <div class="delay-card">
-          <span class="delay-badge">Wait 5 Years (10 Year Horizon)</span>
-          <div class="delay-metric">~2x Monthly Outflow</div>
-          <p class="delay-desc">Shortening the horizon requires more than double the monthly installment to reach the exact same ₹1 Crore target.</p>
+        <div class="feature-card">
+          <div class="card-pill">02 · Milestone Capital</div>
+          <h3 class="card-feature-title">Milestone Lump-Sum Infusions</h3>
+          <p class="card-feature-text">
+            Annual performance incentives, matured deposits, or occasional surpluses can be modeled at the beginning of specific projection years without altering your recurring monthly SIP debit.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="card-pill">03 · Extended Horizon</div>
+          <h3 class="card-feature-title">Post-SIP Wealth Compounding</h3>
+          <p class="card-feature-text">
+            The model allows you to evaluate portfolio compounding across additional holding years after recurring monthly contributions stop, continuing monthly compounding on the existing balance under your assumed return rate.
+          </p>
         </div>
       </div>
     </section>
 
-    <div class="nav-links-strip">
-      <a href="/tools/sip/" class="btn-subtle">← Standard SIP Simulator</a>
-      <a href="/plan/" class="btn-subtle">Explore Full Family Goal Roadmaps →</a>
-    </div>
+    <!-- Related Planners & Explorations (Concept C Design) -->
+    <section class="related-tools-section" aria-labelledby="related-tools-title">
+      <div class="section-header-compact">
+        <span class="eyebrow">Explore Next</span>
+        <h2 id="related-tools-title" class="related-heading">Connect your growth simulation to broader life plans</h2>
+        <p class="related-sub">Evaluate whether fixed monthly investing, one-time capital deployment, or targeted milestone planning best fits your household roadmap.</p>
+      </div>
+
+      <div class="related-grid">
+        <a href="/tools/sip/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-jade-soft)">📈</span>
+            <span class="card-tag">Monthly Investing</span>
+          </div>
+          <h3 class="card-title">Compare with Monthly SIP</h3>
+          <p class="card-desc">See disciplined monthly investing without the multi-lump-sum or post-SIP holding complexity.</p>
+          <span class="card-action">Open SIP calculator →</span>
+        </a>
+
+        <a href="/tools/lumpsum/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-sand)">💰</span>
+            <span class="card-tag">One-Time Capital</span>
+          </div>
+          <h3 class="card-title">One-Time Lump Sum</h3>
+          <p class="card-desc">Model compounding on a single initial deployment without monthly recurring contributions.</p>
+          <span class="card-action">Open lump-sum calculator →</span>
+        </a>
+
+        <a href="/plan/" class="related-card">
+          <div class="card-top">
+            <span class="card-icon" style="background: var(--awc-mint)">🎓</span>
+            <span class="card-tag">Family Milestones</span>
+          </div>
+          <h3 class="card-title">Plan a Family Goal</h3>
+          <p class="card-desc">Map multi-stage capital accumulation against children's education, home purchases, and family milestones.</p>
+          <span class="card-action">Plan milestones →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Transparent Regulatory Disclosure -->
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Advanced SIP Growth simulator generates mathematical illustrations based on user-selected assumptions (including annual step-ups, intermittent lump sums, and holding periods) and does not predict or guarantee fund performance, capital preservation, or future returns.
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
+  /* Educational Insight Section */
   .educational-insight-box {
-    margin: var(--space-12) 0;
+    margin-top: 48px;
+    padding: 32px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
   }
 
-  .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
+  .insight-title {
+    font-size: clamp(20px, 2.5vw, 24px);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+    margin: 0 0 8px;
   }
 
-  .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
+  .insight-desc {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
     line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
+    max-width: 65ch;
+    margin: 0 0 24px;
   }
 
-  .delay-comparison-grid {
+  .simulation-cards-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: 16px;
   }
 
-  @media (min-width: 640px) {
-    .delay-comparison-grid {
-      grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 768px) {
+    .simulation-cards-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .delay-card {
+  .feature-card {
     background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .optimal-delay {
-    border-color: var(--primitive-teal-500);
-    border-width: 2px;
-    background-color: var(--primitive-teal-50);
-  }
-
-  .delay-badge {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
+  .card-pill {
+    font-size: 11px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: var(--space-2);
+    color: var(--color-text-brand);
   }
 
-  .delay-metric {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
+  .card-feature-title {
+    font-size: 15px;
     font-weight: 800;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
-  }
-
-  .delay-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
+    color: var(--awc-navy);
     margin: 0;
   }
 
-  .nav-links-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
+  .card-feature-text {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    margin: 0;
   }
 
-  .btn-subtle {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
+  /* Related Tools Section */
+  .related-tools-section {
+    margin-top: 48px;
+    padding-top: 36px;
+    border-top: 1px solid var(--awc-line);
+  }
+
+  .section-header-compact {
+    margin-bottom: 24px;
+  }
+
+  .section-header-compact .eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .related-heading {
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 850;
+    letter-spacing: -0.04em;
+    color: var(--awc-navy);
+    margin: 4px 0 6px;
+  }
+
+  .related-sub {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
+    padding: 22px;
     text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
 
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  .related-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-border-interactive);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .card-tag {
+    font-size: 11px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-brand);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    margin: 0 0 16px;
+    flex-grow: 1;
+  }
+
+  .card-action {
+    font-size: 13px;
+    font-weight: 750;
+    color: var(--color-text-brand);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Regulatory Disclosure Note */
+  .regulatory-disclosure-note {
+    margin-top: 36px;
+    padding: 16px 20px;
+    background-color: var(--awc-sand);
+    border: 1px solid var(--awc-line);
+    border-left: 4px solid var(--color-border-interactive);
+    border-radius: 12px;
+  }
+
+  .regulatory-disclosure-note p {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>

@@ -19,7 +19,7 @@ interface Props {
 const {
   title = `${BUSINESS_PROFILE.firm.name} — ${BUSINESS_PROFILE.firm.tagline}`,
   description = 'Simple, transparent personal financial guidance for Indian families. Plan your children\'s education, home purchase, and dignified retirement.',
-  currentPath = '/',
+  currentPath = Astro.url.pathname,
   robots = 'noindex, nofollow',
 } = Astro.props;
 

@@ -6,7 +6,7 @@
  * liquid net worth, and debt-to-asset solvency metrics without subjective advice or scoring.
  */
 
-import { assertFinite, assertPositiveOrZero } from './errors';
+import { assertFinite, assertPositiveOrZero, FinanceValidationError } from './errors';
 
 export type AssetCategory = 'LIQUID' | 'FINANCIAL' | 'PHYSICAL';
 export type LiabilityCategory = 'SECURED' | 'UNSECURED';
@@ -64,8 +64,8 @@ export interface NetWorthResult {
   readonly totalNetWorth: number;
   /** Productive Liquid Net Worth = (Liquid + Financial Assets) - Total Liabilities */
   readonly productiveLiquidNetWorth: number;
-  /** Debt to Asset Ratio = Total Liabilities / Total Assets (0 if Total Assets is 0) */
-  readonly debtToAssetRatio: number;
+  /** Debt to Asset Ratio = Total Liabilities / Total Assets (null if Total Assets is 0) */
+  readonly debtToAssetRatio: number | null;
 }
 
 /**
@@ -81,6 +81,28 @@ export function calculateNetWorth(inputs: NetWorthInputs): NetWorthResult {
   let physical = 0;
   let secured = 0;
   let unsecured = 0;
+
+  // Enforce mutual exclusivity between category aggregates and itemized records to prevent accidental double counting
+  const hasCategories = Boolean(
+    inputs.categories &&
+    (inputs.categories.liquidAssets !== undefined ||
+      inputs.categories.financialAssets !== undefined ||
+      inputs.categories.physicalAssets !== undefined ||
+      inputs.categories.securedLiabilities !== undefined ||
+      inputs.categories.unsecuredLiabilities !== undefined)
+  );
+  const hasItemized = Boolean(
+    (inputs.assets && inputs.assets.length > 0) ||
+    (inputs.liabilities && inputs.liabilities.length > 0)
+  );
+
+  if (hasCategories && hasItemized) {
+    throw new FinanceValidationError(
+      'inputs',
+      inputs,
+      'Cannot provide both categories and itemized assets/liabilities simultaneously; specify either category totals or itemized records to prevent double counting.'
+    );
+  }
 
   // Process category inputs if provided
   if (inputs.categories) {
@@ -149,7 +171,7 @@ export function calculateNetWorth(inputs: NetWorthInputs): NetWorthResult {
   const totalLiabilities = secured + unsecured;
   const totalNetWorth = totalAssets - totalLiabilities;
   const productiveLiquidNetWorth = liquid + financial - totalLiabilities;
-  const debtToAssetRatio = totalAssets > 0 ? totalLiabilities / totalAssets : 0;
+  const debtToAssetRatio = totalAssets > 0 ? totalLiabilities / totalAssets : null;
 
   return {
     liquidAssets: liquid,

@@ -124,19 +124,86 @@ describe('homeLoanAmortization Domain Engine', () => {
     });
   });
 
-  describe('Input Validation & Error Handling', () => {
+  describe('Input Validation & Boundary Error Handling', () => {
     it('rejects negative or zero principal', () => {
       expect(() => calculateHomeLoanAmortization({ principal: 0, annualInterestRatePercent: 8.5, tenureMonths: 240 }))
         .toThrow(FinanceValidationError);
       expect(() => calculateHomeLoanAmortization({ principal: -50000, annualInterestRatePercent: 8.5, tenureMonths: 240 }))
         .toThrow(FinanceValidationError);
+      expect(() => calculateHomeLoanAmortization({ principal: NaN, annualInterestRatePercent: 8.5, tenureMonths: 240 }))
+        .toThrow(FinanceValidationError);
     });
 
-    it('rejects negative or extreme interest rate', () => {
-      expect(() => calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: -1, tenureMonths: 120 }))
-        .toThrow(FinanceValidationError);
-      expect(() => calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: 105, tenureMonths: 120 }))
-        .toThrow(FinanceValidationError);
+    it('rejects invalid tenure (0, negative, fractional, NaN, Infinity) identifying tenureMonths parameter', () => {
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: 8.5, tenureMonths: 0 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: 8.5, tenureMonths: 12.5 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: 8.5, tenureMonths: NaN });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+    });
+
+    it('handles loan interest rate boundaries: 0% and 100% succeed; below 0% and above 100% throw identifying parameter', () => {
+      // 0% interest boundary
+      const zeroRes = calculateHomeLoanAmortization({ principal: 120000, annualInterestRatePercent: 0, tenureMonths: 12 });
+      expect(zeroRes.initialMonthlyEMI).toBe(10000);
+      expect(zeroRes.totalInterestPaid).toBe(0);
+
+      // 100% interest boundary
+      const maxRes = calculateHomeLoanAmortization({ principal: 120000, annualInterestRatePercent: 100, tenureMonths: 12 });
+      expect(maxRes.initialMonthlyEMI).toBeGreaterThan(10000);
+
+      // Below 0%
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: -0.01, tenureMonths: 120 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInterestRatePercent');
+      }
+
+      // Above 100%
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: 100.01, tenureMonths: 120 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInterestRatePercent');
+      }
+
+      // NaN, Infinity
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: NaN, tenureMonths: 120 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInterestRatePercent');
+      }
+
+      try {
+        calculateHomeLoanAmortization({ principal: 100000, annualInterestRatePercent: Infinity, tenureMonths: 120 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualInterestRatePercent');
+      }
     });
 
     it('rejects prepayment month beyond tenure', () => {

@@ -23,7 +23,7 @@
  * - Loan + SIP recovery crossover: DEFERRED / SCOPE BLOCKED.
  * - SWP depletion & longevity: DEFERRED / SCOPE BLOCKED.
  * - Life insurance HLV: DEFERRED / SCOPE BLOCKED.
- * - Seven-Pillar scoring / health score: DEFERRED / SCOPE BLOCKED.
+ * - Seven-Pillar scoring / health check: ACTIVE (Phase 19).
  */
 
 export const FINANCE_DOMAIN_VERSION = '1.0.0-phase6';
@@ -39,3 +39,42 @@ export * from './targetCorpus';
 export * from './goalPlanner';
 export * from './netWorth';
 export * from './homeLoanAmortization';
+export * from './sipGrowth';
+export * from './loanPrepaymentVsInvestment';
+export * from './realFinancialStatement';
+export * from './childrenFuturePlanner';
+export * from './lifeInsurance';
+export * from './financialHealth';
+export * from './loanSipRecovery';
+export * from './retirementAccumulation';
+export {
+  calculateDistributionYears,
+  calculateBucketDurations,
+  calculateAnnualExpenses,
+  calculateInflationAdjustedExpense,
+  calculateAnnuityDuePV,
+  calculateBucket1InvestmentToday,
+  calculateBucket2InvestmentToday,
+  calculateBucket3InvestmentToday,
+  calculateTotalInvestmentRequired,
+  calculateAllocationPercentages,
+  calculateWeightedAverageReturn,
+  calculateOverallRealReturn,
+  calculateRetirementDistributionPlan,
+  type RetirementDistributionInput,
+  type RetirementDistributionAssumptions,
+  type BucketResult,
+  type RetirementDistributionResult,
+} from './retirementDistribution';
+export * from './swp';
+export * from './loanVsInvest';
+export {
+  calculateHomePurchasePlan,
+  validateHomePurchaseInput,
+  ILLUSTRATIVE_HOME_PURCHASE_EXAMPLE,
+  type EarmarkedAsset,
+  type AffordabilityStatus,
+  type HomePurchaseInput,
+  type YearlyFundingContribution,
+  type HomePurchaseResult,
+} from './homePurchase';

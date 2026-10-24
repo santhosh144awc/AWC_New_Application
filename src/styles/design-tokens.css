@@ -1,100 +1,134 @@
 /* ==========================================================================
-   Ant Wealth Creation — Design Tokens
-   Target: Designed against WCAG 2.2 AA Standards (Requires ongoing manual & automated testing)
+   Ant Wealth Creation — Design Tokens (Concept C · Jade & Marigold)
+   Source of truth: product-docs/design-review/prototype-c/PALETTE_GUIDE.md
+
+   Role discipline (from the palette guide):
+   - Atlantic navy  : hierarchy, hero, structural contrast, primary text
+   - Jade teal      : actions, selected states, progress, slider accents
+   - Marigold gold  : a small number of key highlights only
+   - Mint / mist / sand : soft surfaces that organise information
+
+   Contrast notes (WCAG 2.2 AA, measured by relative luminance):
+   - Jade #16877E on white = 4.37:1 → fine for graphics, borders, large UI,
+     NOT used behind small white text. Interactive fills that carry small
+     white text use --awc-jade-action (#137A71, 5.2:1) and hover --awc-jade-deep.
+   - Jade-deep #11665F on white = 6.8:1 → link / text-on-light colour.
+   - Navy #173047 on gold #F2C65D = 8.3:1 → text on gold highlights.
    ========================================================================== */
 
 :root {
-  /* 1. PRIMITIVE COLOR TOKENS */
-  --primitive-navy-950: #00111E;
-  --primitive-navy-900: #00182A;  /* Primary Deep Navy */
-  --primitive-navy-800: #0B253D;
-  --primitive-navy-700: #163654;
+  /* 0. CONCEPT C CORE PALETTE (exact guide values) */
+  --awc-navy:        #173047;   /* Atlantic navy */
+  --awc-jade:        #16877E;   /* Jade teal */
+  --awc-gold:        #F2C65D;   /* Marigold */
+  --awc-mint:        #CFEFE3;   /* Mint */
+  --awc-paper:       #F6F8F5;   /* Warm paper */
+  --awc-mist:        #E5F0F2;   /* Blue-green mist */
+  --awc-sand:        #F8EEE4;   /* Soft sand */
 
-  /* Teal Palette 
-     Note: #008B7A has measured contrast 4.22:1 on #FFFFFF and 4.04:1 on #F8FAFC (fails 4.5:1 for normal text; passes 3:1 for large text).
-     Note: #00AB96 has measured contrast 2.89:1 on #FFFFFF (suitable for non-text borders/accents).
-     #006356 has measured contrast 6.9:1 on #FFFFFF (passes 4.5:1 AA for normal text).
-  */
-  --primitive-teal-700: #006356;  /* High-contrast Teal text */
-  --primitive-teal-600: #008B7A;  /* Medium Teal (large text / borders / icons) */
-  --primitive-teal-500: #00AB96;  /* Growth Teal Accent (non-text UI / graphical) */
-  --primitive-teal-400: #1FD1BB;
-  --primitive-teal-100: #DDF7F4;
-  --primitive-teal-50:  #EFFFFD;
+  /* Supporting values taken from the prototype stylesheet */
+  --awc-jade-deep:   #11665F;   /* text / hover state on light surfaces */
+  --awc-jade-action: #137A71;   /* fills that carry small white text (AA) */
+  --awc-jade-soft:   #E1F3EE;
+  --awc-line:        #DDE6E4;
+  --awc-navy-night:  #132A40;   /* footer */
+  --awc-sand-ink:    #7A5A0C;   /* text on sand/gold-tint surfaces (6.4:1) */
 
-  /* Amber/Gold Palette
-     Note: #D97706 has measured contrast 3.19:1 on #FFFFFF (fails 4.5:1 normal text).
-     #B45309 has measured contrast 5.1:1 on #FFFFFF (passes 4.5:1 AA for normal text).
-     #92400E has measured contrast 7.1:1 on #FFFFFF (passes 7:1 AAA for normal text).
-  */
-  --primitive-gold-700: #92400E;  /* High-contrast Amber text (7.1:1 on white) */
-  --primitive-gold-600: #B45309;  /* Amber text / badge border (5.1:1 on white) */
-  --primitive-gold-500: #D97706;  /* Amber Accent (non-text / backgrounds) */
-  --primitive-gold-400: #F59E0B;
-  --primitive-gold-100: #FEF3C7;
-  --primitive-gold-50:  #FFFBEB;
+  /* 1. PRIMITIVE COLOR TOKENS (legacy names, re-mapped to Concept C) */
+  --primitive-navy-950: #0F2233;
+  --primitive-navy-900: #173047;
+  --primitive-navy-800: #1E3D57;
+  --primitive-navy-700: #2A4B5D;
 
-  /* Neutrals & Surfaces */
-  --primitive-slate-900: #0F172A;
-  --primitive-slate-800: #1E293B;
-  --primitive-slate-700: #334155;
-  --primitive-slate-600: #475569;
-  --primitive-slate-500: #64748B;
-  --primitive-slate-400: #94A3B8;
-  --primitive-slate-300: #CBD5E1;
-  --primitive-slate-200: #E2E8F0;
-  --primitive-slate-100: #F1F5F9;
-  --primitive-slate-50:  #F8FAFC;
+  --primitive-teal-700: #11665F;  /* text-on-light jade */
+  --primitive-teal-600: #16877E;  /* Jade teal (non-text / large) */
+  --primitive-teal-500: #16877E;
+  --primitive-teal-400: #6BC4B6;  /* jade tint legible on navy */
+  --primitive-teal-300: #8FD3C7;
+  --primitive-teal-200: #B5E3DA;
+  --primitive-teal-100: #CFEFE3;  /* Mint */
+  --primitive-teal-50:  #E4F4EE;
+
+  --primitive-gold-700: #7A5A0C;  /* text on light (6.4:1) */
+  --primitive-gold-600: #8A6509;
+  --primitive-gold-500: #F2C65D;  /* Marigold (backgrounds, markers) */
+  --primitive-gold-400: #F2C65D;
+  --primitive-gold-100: #FBEBC0;
+  --primitive-gold-50:  #FEF6DF;
+
+  /* Neutrals & surfaces (cool, navy-tinted) */
+  --primitive-slate-900: #173047;
+  --primitive-slate-800: #24414F;
+  --primitive-slate-700: #34505F;
+  --primitive-slate-600: #46606D;
+  --primitive-slate-500: #5B707C;
+  --primitive-slate-400: #8BA0AB;
+  --primitive-slate-300: #C9D6D3;
+  --primitive-slate-200: #DDE6E4;
+  --primitive-slate-100: #E5F0F2;
+  --primitive-slate-50:  #F6F8F5;
   --primitive-white:     #FFFFFF;
 
-  /* Status Colors */
-  --primitive-emerald-700: #047857; /* 4.6:1 on white */
-  --primitive-emerald-600: #059669; /* 3.8:1 on white, 5.2:1 on emerald-100 */
+  /* Semantic Neutral Aliases */
+  --primitive-neutral-900: #173047;
+  --primitive-neutral-300: #C9D6D3;
+  --primitive-neutral-200: #DDE6E4;
+  --primitive-neutral-100: #E5F0F2;
+  --primitive-neutral-50:  #F6F8F5;
+
+  /* Status Colors (unchanged semantics) */
+  --primitive-emerald-700: #047857;
+  --primitive-emerald-600: #059669;
   --primitive-emerald-100: #D1FAE5;
-  --primitive-rose-700:    #BE123C; /* 5.8:1 on white */
-  --primitive-rose-600:    #E11D48; /* 4.5:1 on white, 4.9:1 on rose-100 */
+  --primitive-rose-700:    #BE123C;
+  --primitive-rose-600:    #E11D48;
   --primitive-rose-100:    #FFE4E6;
-  --primitive-blue-700:    #1D4ED8; /* 6.5:1 on white */
-  --primitive-blue-600:    #2563EB; /* 4.6:1 on white */
+  --primitive-blue-700:    #1D4ED8;
+  --primitive-blue-600:    #2563EB;
   --primitive-blue-100:    #DBEAFE;
 
   /* 2. SEMANTIC COLOR TOKENS */
-  --color-bg-canvas:        var(--primitive-slate-50);
+  --color-bg-canvas:        var(--awc-paper);
   --color-bg-surface:       var(--primitive-white);
-  --color-bg-surface-alt:   var(--primitive-slate-100);
-  --color-bg-surface-dark:  var(--primitive-navy-900);
+  --color-bg-surface-alt:   var(--awc-mist);
+  --color-bg-surface-dark:  var(--awc-navy-night);
   --color-bg-surface-elev:  var(--primitive-white);
+  --color-bg-hero:          var(--awc-navy);
 
-  /* Typography Contrast Ratings (Calculated against #FFFFFF) */
-  --color-text-primary:     var(--primitive-navy-900);   /* #00182A: 15.6:1 (AAA) */
-  --color-text-secondary:   var(--primitive-slate-700);  /* #334155: 7.2:1 (AAA) */
-  --color-text-muted:       var(--primitive-slate-600);  /* #475569: 5.3:1 (AA pass for body) */
-  --color-text-subtle:      var(--primitive-slate-500);  /* #64748B: 4.6:1 (AA pass for secondary notes) */
+  --color-text-primary:     var(--awc-navy);
+  --color-text-secondary:   var(--primitive-slate-700);  /* ≈9:1 on white */
+  --color-text-muted:       var(--primitive-slate-600);  /* ≈6.2:1 on paper */
+  --color-text-subtle:      var(--primitive-slate-500);  /* ≈4.8:1 on paper */
   --color-text-inverse:     var(--primitive-white);
-  --color-text-brand:       var(--primitive-teal-700);   /* #006356: 6.9:1 (AA/AAA pass) */
-  --color-text-accent:      var(--primitive-gold-700);   /* #92400E: 7.1:1 (AAA pass) */
+  --color-text-on-dark:     #DDEBE7;
+  --color-text-brand:       var(--awc-jade-deep);        /* 6.8:1 on white */
+  --color-text-accent:      var(--primitive-gold-700);
 
   /* Borders & Dividers */
-  --color-border-subtle:    var(--primitive-slate-200);
+  --color-border-subtle:    var(--awc-line);
   --color-border-medium:    var(--primitive-slate-300);
-  --color-border-interactive: var(--primitive-teal-600);
-  --color-border-focus:     var(--primitive-navy-900);
+  --color-border-interactive: var(--awc-jade);
+  --color-border-focus:     var(--awc-jade-deep);
 
   /* Interactive & Accents */
-  --color-brand-primary:    var(--primitive-navy-900);
-  --color-brand-secondary:  var(--primitive-teal-600);
+  --color-brand-primary:    var(--awc-navy);        /* legacy: hierarchy / headings */
+  --color-brand-secondary:  var(--awc-jade);
   --color-brand-accent:     var(--primitive-gold-600);
-  --color-state-hover:      rgba(0, 99, 86, 0.08);
-  --color-state-active:     rgba(0, 99, 86, 0.16);
+  --color-action:           var(--awc-jade-action);
+  --color-action-hover:     var(--awc-jade-deep);
+  --color-highlight:        var(--awc-gold);
+  --color-focus-ring:       var(--awc-jade-deep);
+  --color-state-hover:      rgba(22, 135, 126, 0.08);
+  --color-state-active:     rgba(22, 135, 126, 0.16);
 
-  /* 3. TYPOGRAPHY TOKENS */
-  --font-family-heading:    'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-family-body:       'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-family-numeric:    'Inter', monospace;
+  /* 3. TYPOGRAPHY TOKENS — local/system fonts only (no external requests) */
+  --font-family-body:       Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading:    var(--font-family-body);
+  --font-family-numeric:    var(--font-family-body);
 
-  --text-display:    clamp(2.5rem, 5vw + 1rem, 3.75rem);
-  --text-h1:         clamp(2.0rem, 3.5vw + 0.75rem, 2.75rem);
-  --text-h2:         clamp(1.6rem, 2.5vw + 0.5rem, 2.125rem);
+  --text-display:    clamp(2.5rem, 5vw + 0.75rem, 4.25rem);
+  --text-h1:         clamp(2.0rem, 3.5vw + 0.75rem, 3.25rem);
+  --text-h2:         clamp(1.6rem, 2.5vw + 0.5rem, 2.5rem);
   --text-h3:         clamp(1.25rem, 1.5vw + 0.5rem, 1.5rem);
   --text-h4:         clamp(1.1rem, 1.0vw + 0.4rem, 1.25rem);
   --text-body-lg:    1.125rem;
@@ -115,17 +149,18 @@
   --space-16: 4.00rem;
   --space-20: 5.00rem;
 
-  --container-max-width:     1280px;
+  --container-max-width:     1200px;
   --container-compact-width: 1040px;
   --container-reading-width: 768px;
 
   /* 5. ELEVATION & RADII */
-  --shadow-subtle:   0 1px 3px rgba(0, 24, 42, 0.05), 0 1px 2px rgba(0, 24, 42, 0.03);
-  --shadow-card:     0 4px 12px rgba(0, 24, 42, 0.06), 0 1px 3px rgba(0, 24, 42, 0.04);
-  --shadow-elevated: 0 12px 28px rgba(0, 24, 42, 0.09), 0 4px 10px rgba(0, 24, 42, 0.05);
+  --shadow-subtle:   0 1px 3px rgba(23, 48, 71, 0.06), 0 1px 2px rgba(23, 48, 71, 0.04);
+  --shadow-card:     0 8px 24px rgba(23, 48, 71, 0.07);
+  --shadow-elevated: 0 18px 50px rgba(23, 48, 71, 0.10);
+  --shadow-modal:    0 24px 60px rgba(15, 34, 51, 0.28);
 
-  --radius-sm:   6px;
-  --radius-md:   10px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
   --radius-lg:   16px;
   --radius-xl:   24px;
   --radius-pill: 9999px;

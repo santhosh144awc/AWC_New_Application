@@ -5,7 +5,7 @@ publishDate: "2026-08-23"
 category: "Financial Planning"
 tags: ["Financial Freedom","Financial Independence","Wealth Creation","Net Worth"]
 author: "C. Santhosh Sathriyan, B.E., QPFP Certified"
-authorTitle: "AMFI-Registered Mutual Fund Distributor"
+authorTitle: "Mutual Fund Distributor"
 readingTime: "6 min read"
 featured: false
 publicationStatus: APPROVED
@@ -43,4 +43,4 @@ Financial freedom means having accumulated sufficient passive income and assets 
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor (AMFI registration confirmation pending).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*

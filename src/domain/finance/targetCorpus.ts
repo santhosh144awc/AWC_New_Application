@@ -7,7 +7,7 @@
  * 3. Optional offset for existing invested capital.
  */
 
-import { assertFiniteNonNegative, assertPositiveInteger, assertValidRatePercent, FinanceValidationError } from './errors';
+import { assertFiniteNonNegative, assertPositiveInteger, assertStandardInvestmentReturnPercent, FinanceValidationError } from './errors';
 import { effectiveAnnualToMonthlyRate } from './investmentRates';
 
 export interface TargetCorpusInput {
@@ -15,7 +15,7 @@ export interface TargetCorpusInput {
   readonly targetCorpus: number;
   /** Accumulation horizon in months (integer >= 1) */
   readonly tenureMonths: number;
-  /** Assumed effective annual rate of return as percentage (-100 < r <= 1000) */
+  /** Assumed effective annual rate of return as percentage (0 <= r <= 100) */
   readonly annualReturnPercent?: number;
   readonly annualReturnRatePercent?: number;
   /** Existing invested capital earmarked for this goal (optional, >= 0) */
@@ -51,7 +51,7 @@ export function calculateTargetCorpus(input: TargetCorpusInput): TargetCorpusRes
     throw new FinanceValidationError('targetCorpus', input.targetCorpus, 'Target corpus must be a positive finite number (> 0)');
   }
   assertPositiveInteger('tenureMonths', input.tenureMonths);
-  assertValidRatePercent('annualReturnPercent', annualReturnPercent as number);
+  assertStandardInvestmentReturnPercent('annualReturnPercent', annualReturnPercent as number);
   assertFiniteNonNegative('existingInvestedCapital', existingCapital);
 
   const effectiveMonthlyRate = effectiveAnnualToMonthlyRate(annualReturnPercent as number);

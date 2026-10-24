@@ -2,289 +2,777 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import Button from '../../components/ui/Button.astro';
+import StatusBadge from '../../components/ui/StatusBadge.astro';
+import Disclosure from '../../components/ui/Disclosure.astro';
+import GoalPlannerIsland from '../../features/calculators/GoalPlannerIsland';
 import { GOAL_ROUTES, getBreadcrumbsForPath } from '../../config/routes';
+import { JOURNEY_STAGES } from '../../config/journey';
 
 const crumbs = getBreadcrumbsForPath('/plan/');
+const total = JOURNEY_STAGES.length;
 
-const goalRoadmaps = [
-  {
-    route: GOAL_ROUTES[0], // /plan/children/
-    icon: '🎓',
-    primaryQuestion: 'How much will college tuition, hostel, and overseas master’s degrees cost in 10 to 18 years?',
-    approach: 'Calculates the future corpus needed under 8%–10% education inflation, integrates existing dedicated assets, and calculates the required monthly step-up SIP.',
-  },
-  {
-    route: GOAL_ROUTES[1], // /plan/home-purchase/
-    icon: '🏡',
-    primaryQuestion: 'How do you accumulate a 20% down payment plus 10% acquisition costs without exhausting family liquidity?',
-    approach: 'Models property acquisition costs, down payment target buffers, and ensures future EMI commitments stay safely below 35% of monthly income.',
-  },
-  {
-    route: GOAL_ROUTES[2], // /plan/retirement/
-    icon: '🌅',
-    primaryQuestion: 'What is the required corpus to retire with dignity and peace of mind across 30+ post-work years?',
-    approach: 'Accounts for post-retirement lifestyle expenses, longevity protection, and transitioning from accumulation to distribution.',
-  },
-  {
-    route: GOAL_ROUTES[3], // /plan/retirement-income/
-    icon: '🛡️',
-    primaryQuestion: 'How should your accumulated retirement corpus be divided to generate lifelong, inflation-protected cash flow?',
-    approach: 'Deploys the 3-Bucket decumulation model: Bucket 1 (Liquidity for years 1–3), Bucket 2 (Safety for years 4–7), and Bucket 3 (Growth for years 8+).',
-  },
-];
+const goalIcons: Record<string, string> = {
+  'goal-children': '🎓',
+  'goal-home': '⌂',
+  'goal-retirement': '⟳',
+  'goal-retirement-income': '⇄',
+};
+const interactiveGoalIds = ['goal-children', 'goal-home', 'goal-retirement', 'goal-retirement-income'];
 ---
 
 <BaseLayout
-  title="Milestone Goal Planning Hub — Ant Wealth Creation"
-  description="Goal-based financial planning roadmaps for Indian families. Plan children's education, home purchase, and lifelong retirement independence."
+  title="Your Financial Journey & Goal Planners — Ant Wealth Creation"
+  description="Explore six stages of family financial wellbeing at your own pace, then plan specific goals such as children's education, home purchase, or retirement."
   currentPath="/plan/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
     <PageIntro
-      eyebrow="Milestone Goal Architecture"
-      title="Plan What Matters Most to Your Family"
-      description="Financial planning begins with identifying what your money must accomplish. Explore our dedicated milestone roadmaps designed to help you quantify goals, adjust for inflation, and invest with discipline."
-      statusBadge="Milestone Planning Hub Active"
+      eyebrow="A practical path forward"
+      title="Your financial journey moves at your pace"
+      description="Six stages help you see what to focus on next. Explore them in any order — the path is guidance, not a rulebook. Nothing you select here is stored or sent."
+      statusBadge="Milestone Planning Hub • Interactive Planners Active"
+      icon="↗"
     />
 
-    <section class="roadmaps-grid-section" aria-labelledby="roadmaps-heading">
-      <h2 id="roadmaps-heading" class="sr-only">Dedicated Milestone Roadmaps</h2>
+    <!-- INTERACTIVE JOURNEY -->
+    <section class="journey" data-journey aria-labelledby="journey-heading">
+      <noscript>
+        <style is:inline>
+          .path { display: none !important; }
+          .stage[hidden] { display: grid !important; margin-top: 1.5rem; }
+        </style>
+      </noscript>
+      <h2 id="journey-heading" class="sr-only">Financial journey stages</h2>
 
-      <div class="roadmaps-grid">
-        {goalRoadmaps.map((item) => (
-          <div class="roadmap-card">
-            <div class="card-header">
-              <span class="card-icon" aria-hidden="true">{item.icon}</span>
-              <span class="card-horizon">{item.route.eyebrow}</span>
-            </div>
-
-            <h3 class="card-title">{item.route.label}</h3>
-            <p class="card-question">"{item.primaryQuestion}"</p>
-            <p class="card-approach">{item.approach}</p>
-
-            <div class="card-status-strip">
-              <span class="status-indicator">●</span>
-              <span class="status-text">{item.route.statusBadge}</span>
-            </div>
-
-            <div class="card-action">
-              <a href={item.route.path} class="btn-card">
-                Explore Roadmap Shell →
-              </a>
-            </div>
-          </div>
+      <div class="path" role="tablist" aria-label="Financial journey stages" data-path>
+        {JOURNEY_STAGES.map((stage, index) => (
+          <button
+            type="button"
+            role="tab"
+            class={`path__stage ${index === 0 ? 'is-active' : ''}`}
+            id={`stage-tab-${stage.id}`}
+            aria-controls={`stage-panel-${stage.id}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            data-stage-tab
+            data-stage-id={stage.id}
+          >
+            <span class="path__num" aria-hidden="true">{index + 1}</span>
+            <span class="path__text">
+              <span class="path__label">{stage.label}</span>
+              <span class="path__title">{stage.title}</span>
+            </span>
+            <span class="sr-only">Stage {index + 1} of {total}: {stage.title}</span>
+          </button>
         ))}
       </div>
+
+      <div class="stage-panels">
+        {JOURNEY_STAGES.map((stage, index) => (
+          <section
+            class="stage"
+            role="tabpanel"
+            id={`stage-panel-${stage.id}`}
+            aria-labelledby={`stage-tab-${stage.id}`}
+            tabindex="0"
+            hidden={index !== 0}
+            data-stage-panel
+            data-stage-id={stage.id}
+          >
+            <div class="stage__visual" aria-hidden="true">
+              <span class="eyebrow">Stage {index + 1} / {total}</span>
+              <span class="stage__big">{String(index + 1).padStart(2, '0')}</span>
+              <span class="stage__visual-title">{stage.label}</span>
+              <span class="stage__progress">
+                <span class="stage__progress-fill" style={`width:${((index + 1) / total) * 100}%`}></span>
+              </span>
+            </div>
+
+            <div class="stage__body">
+              <span class="eyebrow">What this stage is for</span>
+              <h3 class="stage__title" data-stage-title>{stage.title}</h3>
+              <p class="stage__purpose">{stage.purpose}</p>
+              <p class="stage__explain">{stage.explanation}</p>
+
+              <h4 class="stage__subhead">A few practical actions</h4>
+              <ul class="stage__actions" role="list">
+                {stage.actions.map((action) => (
+                  <li><span class="stage__check" aria-hidden="true">✓</span>{action}</li>
+                ))}
+              </ul>
+
+              <h4 class="stage__subhead">Tools and resources for this stage</h4>
+              <ul class="stage__links" role="list">
+                {stage.links.map((link) => (
+                  <li class={link.preview ? 'is-preview' : ''}>
+                    <a href={link.href}>{link.label} <span aria-hidden="true">→</span></a>
+                    {link.preview && <StatusBadge status="blocked" label={link.preview} />}
+                  </li>
+                ))}
+              </ul>
+
+              <div class="stage__nav">
+                {index < total - 1 ? (
+                  <Button variant="light" icon="↗" data-next-stage>Next stage</Button>
+                ) : (
+                  <Button variant="light" href="/tools/" icon="↗">Explore all tools</Button>
+                )}
+                <a class="stage__back" href="#journey-heading" data-back-to-path>Back to the path</a>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <p class="journey-note">
+        You can go straight to a goal or calculator at any time. Retirement and withdrawal topics are
+        shown as previews: their calculations are unavailable while they remain under review.
+      </p>
     </section>
 
-    <!-- Goal Planning Principles Strip -->
-    <section class="principles-box" aria-labelledby="principles-heading">
-      <h2 id="principles-heading" class="principles-title">The Three Rules of Goal-Based Planning</h2>
-      <div class="principles-grid">
-        <div class="principle-item">
-          <span class="principle-num">1</span>
-          <h3 class="principle-item-title">Match Time Horizons to Asset Classes</h3>
-          <p class="principle-item-desc">Never put money needed within 3 years into volatile equities. Conversely, never leave 10+ year milestone savings in low-yield bank deposits.</p>
+    <!-- GOAL PLANNERS -->
+    <section class="goals" id="goals" aria-labelledby="goals-heading">
+      <div class="goals__head">
+        <div>
+          <span class="eyebrow">Ready to plan a specific goal?</span>
+          <h2 id="goals-heading" class="goals__title">Choose a milestone</h2>
         </div>
-        <div class="principle-item">
-          <span class="principle-num">2</span>
-          <h3 class="principle-item-title">Always Use Realistic Future Inflation</h3>
-          <p class="principle-item-desc">Education inflation in India runs at 8%–10%, and healthcare inflation runs higher than CPI. We factor compounding cost realities into every milestone.</p>
-        </div>
-        <div class="principle-item">
-          <span class="principle-num">3</span>
-          <h3 class="principle-item-title">Protect Before You Project</h3>
-          <p class="principle-item-desc">A goal plan without pure term life insurance and comprehensive health cover is fragile. Real protection ensures goals are funded regardless of life events.</p>
-        </div>
+        <Button variant="ghost" href="#single-goal-planner" icon="↓">Jump to the single-goal estimator</Button>
       </div>
+
+      <div class="roadmaps-grid">
+        {GOAL_ROUTES.map((route) => {
+          const interactive = interactiveGoalIds.includes(route.id);
+          return (
+            <article class="roadmap-card" data-status={interactive ? 'active' : 'blocked'}>
+              <div class="card-header">
+                <span class="card-icon" aria-hidden="true">{goalIcons[route.id]}</span>
+                <span class="card-horizon">{route.eyebrow}</span>
+              </div>
+              <h3 class="card-title">{route.label}</h3>
+              <p class="card-desc">{route.description}</p>
+              <p class={`card-status-strip ${interactive ? 'status-strip-active' : 'status-strip-preview'}`}>
+                <span class="status-indicator" aria-hidden="true">{interactive ? '●' : '⊘'}</span>
+                <span class="status-text">{route.statusBadge}</span>
+              </p>
+              <a href={route.path} class="btn-card" data-live={interactive ? 'true' : 'false'}>
+                {interactive ? 'Launch Milestone Planner →' : 'Explore Planning Preview →'}
+                <span class="sr-only">: {route.label}</span>
+              </a>
+            </article>
+          );
+        })}
+      </div>
+
+      <Disclosure summary="How to use any planner: three useful inputs beat ten guesses">
+        <ul class="inputs-list" role="list">
+          <li><strong>A target.</strong> The amount or outcome you are aiming for.</li>
+          <li><strong>A time horizon.</strong> When the money may be needed.</li>
+          <li><strong>Your assumptions.</strong> Inflation, return and existing funds, each clearly labelled as an assumption.</li>
+        </ul>
+      </Disclosure>
+    </section>
+
+    <!-- SINGLE-GOAL ESTIMATOR (Concept C Interactive Workbench) -->
+    <section id="single-goal-planner" class="goal-calculator-section" aria-labelledby="goal-planner-heading">
+      <div class="section-lead">
+        <span class="eyebrow">Interactive Milestone Tool</span>
+        <h2 id="goal-planner-heading" class="section-title">Single-Goal Milestone Estimator</h2>
+        <p class="section-desc">
+          Estimate the future cost of one specific goal and the monthly SIP that could help fund the remaining gap under your chosen inflation and return assumptions.
+        </p>
+      </div>
+
+      <GoalPlannerIsland client:load />
     </section>
   </div>
 </BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-journey]');
+
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stage-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-stage-panel]'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const select = (index: number, opts: { focus?: boolean; reveal?: boolean; updateHash?: boolean } = {}) => {
+      const safe = Math.max(0, Math.min(tabs.length - 1, index));
+
+      tabs.forEach((tab, i) => {
+        const active = i === safe;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        tab.classList.toggle('is-active', active);
+        tab.classList.toggle('is-done', i < safe);
+      });
+
+      panels.forEach((panel, i) => {
+        panel.hidden = i !== safe;
+      });
+
+      if (opts.focus) tabs[safe].focus();
+
+      if (opts.updateHash !== false) {
+        // Hash only: never sent to a server, and no financial data is involved.
+        history.replaceState(null, '', `#stage-${tabs[safe].dataset.stageId}`);
+      }
+
+      if (opts.reveal) {
+        const panel = panels[safe];
+        const top = panel.getBoundingClientRect().top;
+        if (top > window.innerHeight * 0.65 || top < 80) {
+          panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+      }
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index, { reveal: true }));
+
+      tab.addEventListener('keydown', (event) => {
+        const keys: Record<string, number> = {
+          ArrowRight: index + 1,
+          ArrowDown: index + 1,
+          ArrowLeft: index - 1,
+          ArrowUp: index - 1,
+          Home: 0,
+          End: tabs.length - 1,
+        };
+        if (event.key in keys) {
+          event.preventDefault();
+          select(keys[event.key], { focus: true });
+        }
+      });
+    });
+
+    root.querySelectorAll<HTMLElement>('[data-next-stage]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const current = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
+        select(current + 1, { reveal: true });
+        panels[Math.min(current + 1, panels.length - 1)].focus({ preventScroll: true });
+      });
+    });
+
+    root.querySelectorAll<HTMLElement>('[data-back-to-path]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const current = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+        current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        current?.focus({ preventScroll: true });
+      });
+    });
+
+    const applyHash = () => {
+      const match = tabs.findIndex((tab) => location.hash === `#stage-${tab.dataset.stageId}`);
+      if (match > -1) select(match, { updateHash: false });
+      else select(0, { updateHash: false });
+    };
+
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+  }
+</script>
 
 <style>
   .page-container {
     padding-bottom: var(--space-16);
   }
 
-  .roadmaps-grid-section {
-    margin: var(--space-8) 0 var(--space-16);
+  /* ---------- Journey path ---------- */
+  .journey {
+    margin-bottom: var(--space-16);
+  }
+
+  .path {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .path__stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast),
+      transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  /* connector line to the next stage */
+  .path__stage:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 33px;
+    left: calc(100% + 1px);
+    width: calc(var(--space-4) - 2px);
+    height: 3px;
+    background: var(--awc-jade);
+    opacity: 0.4;
+  }
+
+  .path__stage:hover {
+    border-color: var(--awc-jade);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .path__stage.is-done::after {
+    opacity: 1;
+  }
+
+  .path__num {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--awc-mist);
+    color: var(--awc-jade-deep);
+    font-weight: 900;
+  }
+
+  .path__stage.is-done .path__num {
+    background: var(--awc-mint);
+  }
+
+  .path__label {
+    display: block;
+  }
+
+  .path__title {
+    display: none;
+  }
+
+  .path__stage.is-active {
+    background: var(--color-action);
+    border-color: var(--color-action);
+    color: var(--primitive-white);
+    box-shadow: 0 10px 22px rgba(19, 122, 113, 0.25);
+  }
+
+  .path__stage.is-active .path__num {
+    background: var(--awc-gold);
+    color: var(--awc-navy);
+  }
+
+  /* ---------- Stage detail ---------- */
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-6);
+    align-items: stretch;
+    scroll-margin-top: 96px;
+  }
+
+  .stage[hidden] {
+    display: none;
+  }
+
+  .stage__visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 280px;
+    padding: var(--space-8);
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--awc-jade-soft), var(--awc-mint));
+  }
+
+  .stage__big {
+    font-size: clamp(4rem, 8vw, 5.5rem);
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -0.08em;
+    color: var(--awc-jade-deep);
+  }
+
+  .stage__visual-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
+  }
+
+  .stage__progress {
+    display: block;
+    height: 8px;
+    border-radius: 8px;
+    background: rgba(23, 48, 71, 0.12);
+    overflow: hidden;
+  }
+
+  .stage__progress-fill {
+    display: block;
+    height: 100%;
+    border-radius: 8px;
+    background: var(--awc-jade);
+  }
+
+  .stage__body {
+    padding: var(--space-2) var(--space-2);
+  }
+
+  .stage__title {
+    margin: var(--space-2) 0 var(--space-3);
+    font-size: clamp(1.6rem, 2.2vw + 0.6rem, 2.1rem);
+    letter-spacing: -0.045em;
+    color: var(--awc-navy);
+  }
+
+  .stage__purpose {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-body-lg);
+    font-weight: 600;
+    color: var(--awc-navy);
+    line-height: 1.5;
+  }
+
+  .stage__explain {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .stage__subhead {
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+  }
+
+  .stage__actions {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stage__actions li {
+    display: flex;
+    gap: var(--space-3);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--awc-navy);
+  }
+
+  .stage__check {
+    color: #17694f;
+    font-weight: 900;
+  }
+
+  .stage__links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stage__links li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--awc-line);
+    border-radius: 12px;
+    background: var(--primitive-white);
+  }
+
+  .stage__links li.is-preview {
+    border-style: dashed;
+    background: var(--awc-sand);
+  }
+
+  .stage__links a {
+    font-size: var(--text-body-sm);
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    text-decoration: none;
+  }
+
+  .stage__links a:hover {
+    text-decoration: underline;
+  }
+
+  .stage__nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .stage__back {
+    font-size: var(--text-body-sm);
+    font-weight: 700;
+  }
+
+  .journey-note {
+    margin: var(--space-6) 0 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--awc-mint);
+    border-radius: 14px;
+    background: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  /* ---------- Goals ---------- */
+  .goals {
+    margin-bottom: var(--space-16);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--awc-line);
+  }
+
+  .goals__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-6);
+  }
+
+  .goals__title {
+    margin-top: var(--space-2);
+    font-size: var(--text-h2);
+    letter-spacing: -0.045em;
   }
 
   .roadmaps-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-
-  @media (min-width: 768px) {
-    .roadmaps-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
   }
 
   .roadmap-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
-    box-shadow: var(--shadow-subtle);
     display: flex;
     flex-direction: column;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    padding: var(--space-5);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    background: var(--primitive-white);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
   .roadmap-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: var(--awc-jade);
     box-shadow: var(--shadow-card);
-    border-color: var(--color-border-interactive);
+  }
+
+  .roadmap-card[data-status='blocked'] {
+    border-style: dashed;
+    background: #fdfcf8;
   }
 
   .card-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-4);
-  }
-
-  .card-icon {
-    font-size: 2rem;
-    line-height: 1;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--primitive-teal-50);
-    border: 1px solid var(--primitive-teal-100);
-    border-radius: var(--radius-md);
-  }
-
-  .card-horizon {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-accent);
-    background-color: var(--primitive-gold-50);
-    border: 1px solid var(--primitive-gold-100);
-    padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-pill);
-  }
-
-  .card-title {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .card-question {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-primary);
-    font-weight: 600;
-    line-height: 1.45;
+    gap: var(--space-2);
     margin-bottom: var(--space-3);
   }
 
-  .card-approach {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-6);
+  .card-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--awc-jade-soft);
+    font-size: 1.5rem;
+  }
+
+  .roadmap-card:nth-child(2) .card-icon { background: var(--awc-mint); }
+  .roadmap-card:nth-child(3) .card-icon { background: var(--awc-mist); }
+  .roadmap-card:nth-child(4) .card-icon { background: var(--awc-sand); }
+
+  .card-horizon {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    text-align: right;
+  }
+
+  .card-title {
+    margin-bottom: var(--space-2);
+    font-size: 1.1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .card-desc {
     flex-grow: 1;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
   }
 
   .card-status-strip {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-2);
-    font-size: 0.75rem;
-    color: var(--color-text-accent);
-    background-color: var(--primitive-slate-50);
-    padding: 0.35rem 0.75rem;
+    margin: var(--space-3) 0 var(--space-4);
+    padding: 0.4rem 0.65rem;
     border-radius: var(--radius-sm);
-    margin-bottom: var(--space-5);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.4;
   }
 
-  .status-indicator {
-    font-size: 0.6rem;
+  .status-strip-active {
+    background: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
   }
 
-  .card-action {
-    border-top: 1px solid var(--primitive-slate-100);
-    padding-top: var(--space-4);
+  .status-strip-preview {
+    background: var(--awc-sand);
+    color: var(--awc-sand-ink);
   }
 
   .btn-card {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+    border-radius: 14px;
     font-size: var(--text-body-sm);
-    font-weight: 700;
-    color: var(--primitive-white);
-    background-color: var(--color-brand-primary);
-    padding: 0.65rem 1.25rem;
-    border-radius: var(--radius-pill);
+    font-weight: 800;
+    text-align: center;
     text-decoration: none;
+    color: var(--primitive-white);
+    background: var(--color-action);
     transition: background-color var(--transition-fast);
   }
 
   .btn-card:hover {
-    background-color: var(--primitive-navy-800);
+    background: var(--color-action-hover);
+    color: var(--primitive-white);
   }
 
-  .principles-box {
-    background-color: var(--primitive-slate-50);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
+  .btn-card[data-live='false'] {
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    border: 1px solid var(--awc-line);
   }
 
-  .principles-title {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    text-align: center;
-    margin-bottom: var(--space-8);
+  .btn-card[data-live='false']:hover {
+    border-color: var(--awc-jade);
+    color: var(--awc-navy);
   }
 
-  .principles-grid {
+  .inputs-list {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  @media (min-width: 768px) {
-    .principles-grid {
-      grid-template-columns: repeat(3, 1fr);
+  /* ---------- Single-goal estimator ---------- */
+  .goal-calculator-section {
+    padding-top: var(--space-4);
+  }
+
+  .section-lead {
+    margin-bottom: var(--space-6);
+  }
+
+  .section-title {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-h2);
+    letter-spacing: -0.045em;
+  }
+
+  .section-desc {
+    max-width: 760px;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1099px) {
+    .roadmaps-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  .principle-item {
-    display: flex;
-    flex-direction: column;
+  @media (max-width: 899px) {
+    /* Connected vertical path on smaller screens */
+    .path {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      padding-left: 0;
+    }
+
+    .path__stage {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+    }
+
+    .path__stage:not(:last-child)::after {
+      top: calc(100% + 1px);
+      left: calc(var(--space-4) + 16px);
+      width: 3px;
+      height: calc(var(--space-4) - 2px);
+    }
+
+    .path__text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .path__title {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    .stage {
+      grid-template-columns: 1fr;
+    }
+
+    .stage__visual {
+      min-height: 190px;
+      padding: var(--space-6);
+    }
   }
 
-  .principle-num {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-text-brand);
-    margin-bottom: var(--space-2);
-  }
+  @media (max-width: 599px) {
+    .roadmaps-grid {
+      grid-template-columns: 1fr;
+    }
 
-  .principle-item-title {
-    font-size: var(--text-body);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .principle-item-desc {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    margin: 0;
+    .goals__head {
+      align-items: flex-start;
+    }
   }
 </style>

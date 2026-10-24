@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap');
+/* Fonts: local/system stack only — see --font-family-body in design-tokens.css */
 @import './design-tokens.css';
 
 /* ==========================================================================
@@ -9,6 +9,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 html {
@@ -32,8 +36,9 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-heading);
   color: var(--color-text-primary);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
 }
 
 h1 { font-size: var(--text-h1); }
@@ -70,10 +75,43 @@ button, input, select, textarea {
   font: inherit;
 }
 
-/* Accessible Focus Styling (WCAG 2.2 SC 2.4.11 / 2.4.12) */
+/* Accessible Focus Styling (WCAG 2.2 SC 2.4.11 / 2.4.12).
+   --color-focus-ring flips to marigold inside dark surfaces (.surface-dark). */
 :focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
+}
+
+.surface-dark {
+  --color-focus-ring: var(--awc-gold);
+}
+
+/* Shared eyebrow label: small uppercase marker with a short rule */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-text-brand);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 22px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--awc-jade);
+}
+
+.surface-dark .eyebrow {
+  color: var(--awc-gold);
+}
+
+.surface-dark .eyebrow::before {
+  background: var(--awc-gold);
 }
 
 /* Tabular Numerics for Financial Data */
@@ -81,6 +119,19 @@ button, input, select, textarea {
   font-family: var(--font-family-numeric);
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Accessible Screen-Reader-Only Utility (WCAG 2.2 conforming) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Accessible Skip to Content Link */

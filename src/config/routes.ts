@@ -36,9 +36,9 @@ export const TOP_NAV_ROUTES: NavRoute[] = [
   },
   {
     id: 'nav-plan',
-    label: 'Plan a Goal',
+    label: 'Journey & Goals',
     path: '/plan/',
-    description: 'Life milestone roadmaps for education, home, and retirement.',
+    description: 'Interactive financial journey and life-milestone planners for education, home, and retirement.',
     category: 'goal',
   },
   {
@@ -72,16 +72,16 @@ export const GOAL_ROUTES: NavRoute[] = [
     description: "Inflation-adjusted funding roadmap for your child's higher education and marriage.",
     category: 'goal',
     eyebrow: '10–18 Years Horizon',
-    statusBadge: 'Shell Active • Math In Development',
+    statusBadge: 'Interactive Planner Active • Multi-Goal Inflation',
   },
   {
     id: 'goal-home',
     label: 'Home Purchase',
     path: '/plan/home-purchase/',
-    description: 'Plan your down payment accumulation, 10% acquisition buffer, and safe EMI limits.',
+    description: 'Estimate upfront purchase funds, possible acquisition costs, and loan affordability using your assumptions. Tax treatment is excluded.',
     category: 'goal',
     eyebrow: '3–8 Years Horizon',
-    statusBadge: 'Shell Active • Tax Review Required',
+    statusBadge: 'Interactive Planner Active • Tax Relief Excluded',
   },
   {
     id: 'goal-retirement',
@@ -90,7 +90,7 @@ export const GOAL_ROUTES: NavRoute[] = [
     description: 'Systematic roadmap to accumulate an inflation-protected lifelong retirement corpus.',
     category: 'goal',
     eyebrow: '15–30 Years Horizon',
-    statusBadge: 'Shell Active • GATE-A Blocked',
+    statusBadge: 'Interactive Planner Active • 5-Step Accumulation Roadmap',
   },
   {
     id: 'goal-retirement-income',
@@ -99,7 +99,7 @@ export const GOAL_ROUTES: NavRoute[] = [
     description: 'Three-bucket post-retirement cash flow strategy (Liquidity, Safety, Growth).',
     category: 'goal',
     eyebrow: 'Post-Retirement Horizon',
-    statusBadge: 'Shell Active • Distribution Spec Blocked',
+    statusBadge: 'Interactive Planner Active • 3-Bucket Cash Flow',
   },
 ];
 
@@ -120,7 +120,7 @@ export const TOOL_ROUTES: NavRoute[] = [
     description: 'Model one-time investment compounding across varying multi-year horizons.',
     category: 'tool',
     eyebrow: 'Investments',
-    statusBadge: 'Shell Active • Engine In Development',
+    statusBadge: 'Interactive Calculator Active • Verified Math',
   },
   {
     id: 'tool-sip-growth',
@@ -129,16 +129,16 @@ export const TOOL_ROUTES: NavRoute[] = [
     description: 'Simulate multi-lump-sum inflows, capped step-ups, and extended holding periods.',
     category: 'tool',
     eyebrow: 'Advanced Investments',
-    statusBadge: 'Shell Active • Spec Review',
+    statusBadge: 'Interactive Calculator Active • Verified Math',
   },
   {
     id: 'tool-swp',
     label: 'SWP Longevity Simulator',
     path: '/tools/swp/',
-    description: '50-year monthly systematic withdrawal simulation with capital depletion alerts.',
+    description: 'Decumulation framework modeling monthly systematic withdrawals, capital depletion horizons, and sequence-of-returns risk.',
     category: 'tool',
     eyebrow: 'Cash Flow & Retirement',
-    statusBadge: 'Shell Active • Engine In Development',
+    statusBadge: 'Interactive Calculator Active • 50-Year Simulation',
   },
   {
     id: 'tool-home-foreclosure',
@@ -147,34 +147,34 @@ export const TOOL_ROUTES: NavRoute[] = [
     description: 'Compare reducing-balance loan prepayment against parallel mutual fund SIP growth.',
     category: 'tool',
     eyebrow: 'Debt Strategy',
-    statusBadge: 'Shell Active • Dual-Curve Math Review',
+    statusBadge: 'Interactive Calculator Active • Verified Math',
   },
   {
     id: 'tool-loan-recovery',
     label: 'Loan Interest Recovery SIP',
     path: '/tools/loan-sip-recovery/',
-    description: 'Calculate the parallel monthly SIP required to recover 100% of your loan borrowing interest.',
+    description: 'Model illustrative parallel monthly SIP scenarios designed to offset cumulative mortgage borrowing costs under assumed returns.',
     category: 'tool',
     eyebrow: 'Borrowing Strategy',
-    statusBadge: 'Shell Active • Engine In Development',
+    statusBadge: 'Interactive Calculator Active • Dual-Engine Model',
   },
   {
     id: 'tool-loan-vs-invest',
     label: 'Loan vs Investment Trade-off',
     path: '/tools/loan-vs-invest/',
-    description: 'Side-by-side trade-off analysis between mortgage prepayment and long-term equity investing.',
+    description: 'Side-by-side trade-off analysis between mortgage prepayment and long-term equity investing under compound interest modeling.',
     category: 'tool',
     eyebrow: 'Trade-off Analysis',
-    statusBadge: 'Shell Active • GATE-C Tax Review',
+    statusBadge: 'Interactive Calculator Active • Arbitrage Analysis',
   },
   {
     id: 'tool-life-insurance',
     label: 'Life Insurance Needs Audit',
     path: '/tools/life-insurance/',
-    description: '5-step Needs-Based Human Life Value (HLV) calculation to uncover true family protection gaps.',
+    description: '4-step Needs-Based Human Life Value (HLV) calculation to assess living expense support, liabilities, milestones, and net cover gaps.',
     category: 'tool',
     eyebrow: 'Family Defense',
-    statusBadge: 'Shell Active • HLV Engine Review',
+    statusBadge: 'Interactive Planner Active • Needs-Based Model',
   },
   {
     id: 'tool-net-worth',
@@ -183,7 +183,7 @@ export const TOOL_ROUTES: NavRoute[] = [
     description: 'Separate personal consumption assets from productive capital to evaluate true solvency.',
     category: 'tool',
     eyebrow: 'Solvency & Diagnostics',
-    statusBadge: 'Shell Active • In-Memory Only',
+    statusBadge: 'Interactive Diagnostic Active • Productive Balance Sheet',
   },
 ];
 
@@ -192,8 +192,9 @@ export const DIAGNOSTIC_ROUTES: NavRoute[] = [
     id: 'diag-health-check',
     label: '7-Pillar Health Check',
     path: '/health-check/',
-    description: '2-Minute product-neutral financial health assessment.',
+    description: '2-Minute product-neutral self-assessment evaluating resilience across 7 foundational pillars.',
     category: 'core',
+    statusBadge: 'Interactive Diagnostic Active • 7-Pillar Resilience',
   },
   {
     id: 'diag-real-statement',
@@ -201,7 +202,7 @@ export const DIAGNOSTIC_ROUTES: NavRoute[] = [
     path: '/health-check/real-statement/',
     description: 'In-depth diagnostic mapping income, expenses, assets, debts, and productive net worth.',
     category: 'core',
-    statusBadge: 'Shell Active • Zero Storage in Shell',
+    statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
   },
 ];
 
@@ -211,6 +212,13 @@ export const LEGAL_ROUTES: NavRoute[] = [
     label: 'Statutory Disclaimers',
     path: '/disclaimer/',
     description: 'AMFI registration notices, mutual fund market risk warnings, and non-RIA disclosure.',
+    category: 'legal',
+  },
+  {
+    id: 'legal-commission',
+    label: 'Commission Disclosure',
+    path: '/commission-disclosure/',
+    description: 'Mutual fund distributor commission disclosure, AMC trail structures, and Regular Plan transparency.',
     category: 'legal',
   },
   {

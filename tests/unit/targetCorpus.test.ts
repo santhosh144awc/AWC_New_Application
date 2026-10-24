@@ -81,7 +81,7 @@ describe('targetCorpus Domain Engine', () => {
     });
   });
 
-  describe('Input Validation & Error Handling', () => {
+  describe('Input Validation & Boundary Error Handling', () => {
     it('rejects target corpus <= 0 or non-finite', () => {
       expect(() => calculateTargetCorpus({ targetCorpus: 0, tenureMonths: 60, annualReturnRatePercent: 12 }))
         .toThrow(FinanceValidationError);
@@ -89,6 +89,69 @@ describe('targetCorpus Domain Engine', () => {
         .toThrow(FinanceValidationError);
       expect(() => calculateTargetCorpus({ targetCorpus: NaN, tenureMonths: 60, annualReturnRatePercent: 12 }))
         .toThrow(FinanceValidationError);
+    });
+
+    it('rejects invalid tenure (0, negative, fractional, NaN, Infinity) identifying tenureMonths parameter', () => {
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: 0, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: 12.5, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: NaN, annualReturnRatePercent: 12 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('tenureMonths');
+      }
+    });
+
+    it('handles return rate boundaries: 0% and 100% succeed; below 0% and above 100% throw identifying parameter', () => {
+      // 0% return boundary
+      const zeroRes = calculateTargetCorpus({ targetCorpus: 120000, tenureMonths: 12, annualReturnRatePercent: 0 });
+      expect(zeroRes.requiredMonthlySIP).toBe(10000);
+
+      // 100% return boundary
+      const maxRes = calculateTargetCorpus({ targetCorpus: 120000, tenureMonths: 12, annualReturnRatePercent: 100 });
+      expect(maxRes.requiredMonthlySIP).toBeLessThan(10000);
+
+      // Below 0%
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: 12, annualReturnRatePercent: -0.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+
+      // Above 100%
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: 12, annualReturnRatePercent: 100.01 });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
+
+      // NaN, Infinity
+      try {
+        calculateTargetCorpus({ targetCorpus: 100000, tenureMonths: 12, annualReturnRatePercent: NaN });
+        expect.unreachable('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(FinanceValidationError);
+        expect((err as FinanceValidationError).parameter).toBe('annualReturnPercent');
+      }
     });
 
     it('rejects negative existing savings', () => {

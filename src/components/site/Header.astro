@@ -7,68 +7,78 @@ interface Props {
 }
 
 const { currentPath = '/' } = Astro.props;
+const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+function isActive(path: string): boolean {
+  return path === '/' ? normalizedPath === '/' : normalizedPath.startsWith(path);
+}
+
+// First sentence of the approved firm tagline, e.g. "Make Better Money Decisions."
+const shortTagline = BUSINESS_PROFILE.firm.tagline.split('.')[0];
 ---
 
 <header class="site-header" role="banner">
   <div class="container header-container">
-    <a href="/" class="brand-link" aria-label="Ant Wealth Creation Home">
-      <img 
-        src="/assets/logo_with_tagline.webp" 
-        alt="Ant Wealth Creation Logo" 
-        width="210" 
-        height="50" 
-        class="brand-logo"
+    <a href="/" class="brand-link" aria-label={`${BUSINESS_PROFILE.firm.name} — home`}>
+      <img
+        src="/assets/logo_awc.png"
+        alt=""
+        width="44"
+        height="44"
+        class="brand-mark"
       />
+      <span class="brand-text">
+        <strong class="brand-name">{BUSINESS_PROFILE.firm.name}</strong>
+        <small class="brand-tagline">{shortTagline}</small>
+      </span>
     </a>
 
     <!-- Desktop Navigation -->
     <nav class="desktop-nav" aria-label="Main Navigation">
       <ul class="nav-list" role="list">
         {TOP_NAV_ROUTES.map((item) => {
-          const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
+          const active = isActive(item.path);
           return (
             <li class="nav-item">
-              <a 
-                href={item.path} 
-                class={`nav-link ${isActive ? 'active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
+              <a
+                href={item.path}
+                class={`nav-link ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
               >
                 {item.label}
               </a>
             </li>
           );
         })}
+        <!-- 7. Portfolio Login as final item on the extreme right -->
+        <li class="nav-item nav-item-portfolio">
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="portfolio-link nav-link-portfolio"
+          >
+            Portfolio Login
+            <span class="sr-only">(opens external investor portal in new window)</span>
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </li>
       </ul>
     </nav>
 
-    <!-- Header Actions -->
+    <!-- Header Actions (Mobile menu toggle on smaller screens) -->
     <div class="header-actions">
-      <a 
-        href={BUSINESS_PROFILE.contact.portfolioLoginUrl} 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        class="portfolio-link"
-      >
-        Portfolio Login
-        <span class="sr-only">(opens external investor portal in new window)</span>
-        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
-        </svg>
-      </a>
-
-      <a href="/health-check/" class="btn-primary-header">
-        Start Here →
-      </a>
-
-      <!-- Mobile Hamburger Toggle Button (Minimum 48x48px touch target) -->
-      <button 
+      <!-- Mobile menu toggle (minimum 48x48px touch target) -->
+      <button
         type="button"
         id="mobile-menu-toggle"
-        class="mobile-menu-toggle" 
-        aria-expanded="false" 
-        aria-controls="mobile-nav-drawer" 
+        class="mobile-menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav-drawer"
         aria-label="Toggle navigation menu"
       >
         <span class="hamburger-box" aria-hidden="true">
@@ -81,64 +91,67 @@ const { currentPath = '/' } = Astro.props;
   </div>
 
   <!-- Accessible Mobile Navigation Drawer -->
-  <div 
-    id="mobile-nav-backdrop" 
-    class="mobile-nav-backdrop" 
-    aria-hidden="true" 
-    hidden
-  ></div>
+  <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true" hidden></div>
 
-  <div 
-    id="mobile-nav-drawer" 
-    class="mobile-nav-drawer" 
-    role="dialog" 
-    aria-modal="true" 
+  <div
+    id="mobile-nav-drawer"
+    class="mobile-nav-drawer"
+    role="dialog"
+    aria-modal="true"
     aria-label="Mobile Navigation Menu"
     hidden
   >
     <div class="mobile-drawer-header">
-      <span class="drawer-title">Navigation</span>
-      <button 
-        type="button" 
-        id="mobile-drawer-close" 
-        class="mobile-drawer-close" 
+      <span class="drawer-title">Menu</span>
+      <button
+        type="button"
+        id="mobile-drawer-close"
+        class="mobile-drawer-close"
         aria-label="Close navigation menu"
       >
-        ✕
+        <span aria-hidden="true">✕</span>
       </button>
     </div>
 
-    <nav class="mobile-nav-list-wrapper">
+    <nav class="mobile-nav-list-wrapper" aria-label="Mobile navigation">
       <ul class="mobile-nav-list" role="list">
-        {TOP_NAV_ROUTES.map((item) => (
-          <li class="mobile-nav-item">
-            <a href={item.path} class="mobile-nav-link">
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {TOP_NAV_ROUTES.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <li class="mobile-nav-item">
+              <a
+                href={item.path}
+                class={`mobile-nav-link ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+        <!-- 7. Portfolio Login as 7th item in mobile navigation list -->
+        <li class="mobile-nav-item">
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-nav-link mobile-portfolio-link"
+          >
+            Portfolio Login ↗
+            <span class="sr-only">(opens external investor portal in new window)</span>
+          </a>
+        </li>
       </ul>
     </nav>
 
     <div class="mobile-drawer-actions">
-      <a href="/health-check/" class="btn-mobile-primary">
-        Start 2-Min Health Check →
-      </a>
-      <a 
-        href={BUSINESS_PROFILE.contact.portfolioLoginUrl} 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        class="mobile-portfolio-link"
-      >
-        Client Portfolio Login ↗
-      </a>
-      <a 
-        href={BUSINESS_PROFILE.contact.whatsappUrl} 
-        target="_blank" 
-        rel="noopener noreferrer" 
+      <a
+        href={BUSINESS_PROFILE.contact.whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         class="mobile-whatsapp-link"
       >
-        Chat with Santhosh on WhatsApp ↗
+        Chat with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
       </a>
     </div>
   </div>
@@ -151,7 +164,10 @@ const { currentPath = '/' } = Astro.props;
     const drawer = document.getElementById('mobile-nav-drawer');
     const backdrop = document.getElementById('mobile-nav-backdrop');
 
-    if (!toggleBtn || !drawer || !backdrop) return;
+    if (!toggleBtn || !drawer || !backdrop || toggleBtn.dataset.bound === 'true') return;
+    toggleBtn.dataset.bound = 'true';
+
+    const focusableSelector = 'a[href], button:not([disabled])';
 
     function openMenu() {
       drawer?.removeAttribute('hidden');
@@ -165,7 +181,7 @@ const { currentPath = '/' } = Astro.props;
       closeBtn?.focus();
     }
 
-    function closeMenu() {
+    function closeMenu(returnFocus = true) {
       drawer?.classList.remove('is-open');
       backdrop?.classList.remove('is-open');
       toggleBtn?.setAttribute('aria-expanded', 'false');
@@ -176,7 +192,7 @@ const { currentPath = '/' } = Astro.props;
           backdrop?.setAttribute('hidden', '');
         }
       }, 250);
-      toggleBtn?.focus();
+      if (returnFocus) toggleBtn?.focus();
     }
 
     toggleBtn.addEventListener('click', () => {
@@ -188,19 +204,35 @@ const { currentPath = '/' } = Astro.props;
       }
     });
 
-    closeBtn?.addEventListener('click', closeMenu);
-    backdrop.addEventListener('click', closeMenu);
+    closeBtn?.addEventListener('click', () => closeMenu());
+    backdrop.addEventListener('click', () => closeMenu());
 
-    const drawerLinks = drawer.querySelectorAll('a');
-    drawerLinks.forEach((link) => {
-      link.addEventListener('click', () => {
-        closeMenu();
-      });
+    drawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => closeMenu(false));
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && toggleBtn.getAttribute('aria-expanded') === 'true') {
+      if (toggleBtn.getAttribute('aria-expanded') !== 'true') return;
+
+      if (e.key === 'Escape') {
         closeMenu();
+        return;
+      }
+
+      // Keep keyboard focus inside the modal drawer while it is open.
+      if (e.key === 'Tab') {
+        const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(focusableSelector));
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     });
   }
@@ -211,74 +243,88 @@ const { currentPath = '/' } = Astro.props;
 
 <style>
   .site-header {
-    background-color: var(--color-bg-surface);
-    border-bottom: 1px solid var(--color-border-subtle);
     position: sticky;
     top: 0;
     z-index: 100;
+    background-color: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--awc-line);
   }
 
   .header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--space-4);
     height: 72px;
   }
 
   .brand-link {
     display: flex;
     align-items: center;
+    gap: 0.65rem;
     text-decoration: none;
     flex-shrink: 0;
+    color: var(--awc-navy);
+    border-radius: var(--radius-md);
   }
 
-  .brand-logo {
-    height: 42px;
-    width: auto;
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .brand-name {
+    font-size: 0.95rem;
+    font-weight: 850;
+    letter-spacing: -0.03em;
+  }
+
+  .brand-tagline {
+    margin-top: 3px;
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
   }
 
   .desktop-nav {
     display: none;
+    margin-left: auto;
   }
 
   .nav-list {
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
   .nav-link {
-    font-size: var(--text-body-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
     text-decoration: none;
-    padding: var(--space-2) var(--space-1);
-    position: relative;
-    transition: color var(--transition-fast);
+    white-space: nowrap;
+    border-radius: 12px;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
   }
 
-  .nav-link:hover, .nav-link.active {
-    color: var(--color-brand-primary);
-  }
-
-  .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--primitive-teal-600);
-    border-radius: var(--radius-pill);
-  }
-
-  .nav-link:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
+  .nav-link:hover,
+  .nav-link.active {
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
   }
 
   .header-actions {
@@ -288,50 +334,23 @@ const { currentPath = '/' } = Astro.props;
   }
 
   .portfolio-link {
-    font-size: var(--text-body-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    display: none;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    gap: 5px;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 12px;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
   }
 
   .portfolio-link:hover {
-    color: var(--color-brand-primary);
-    background-color: var(--primitive-slate-100);
-  }
-
-  .portfolio-link:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 2px;
-  }
-
-  .btn-primary-header {
-    background-color: var(--color-brand-primary);
-    color: var(--color-text-inverse);
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    padding: 0.55rem 1.15rem;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    display: none;
-    align-items: center;
-    transition: all var(--transition-fast);
-  }
-
-  .btn-primary-header:hover {
-    background-color: var(--primitive-navy-800);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .btn-primary-header:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 2px;
+    color: var(--awc-jade-deep);
+    background-color: var(--awc-jade-soft);
   }
 
   .mobile-menu-toggle {
@@ -340,23 +359,17 @@ const { currentPath = '/' } = Astro.props;
     justify-content: center;
     width: 48px;
     height: 48px;
-    background: transparent;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    color: var(--color-brand-primary);
     padding: 0;
     margin: 0;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
     transition: background-color var(--transition-fast);
   }
 
   .mobile-menu-toggle:hover {
-    background-color: var(--primitive-slate-100);
-  }
-
-  .mobile-menu-toggle:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 2px;
+    background-color: var(--awc-mist);
   }
 
   .hamburger-box {
@@ -371,18 +384,14 @@ const { currentPath = '/' } = Astro.props;
     display: block;
     width: 100%;
     height: 2px;
-    background-color: var(--color-brand-primary);
+    background-color: var(--awc-navy);
     border-radius: 2px;
-    transition: transform var(--transition-fast);
   }
 
   .mobile-nav-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 17, 30, 0.45);
+    inset: 0;
+    background-color: rgba(15, 34, 51, 0.5);
     backdrop-filter: blur(2px);
     z-index: 1000;
     opacity: 0;
@@ -393,25 +402,34 @@ const { currentPath = '/' } = Astro.props;
     opacity: 1;
   }
 
+  .mobile-nav-backdrop[hidden],
+  .mobile-nav-drawer[hidden] {
+    display: none !important;
+  }
+
   .mobile-nav-drawer {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
-    width: min(320px, 85vw);
-    background-color: var(--color-bg-surface);
-    box-shadow: var(--shadow-modal);
-    z-index: 1001;
+    width: min(320px, 88vw);
     display: flex;
     flex-direction: column;
     padding: var(--space-6);
+    background-color: var(--primitive-white);
+    box-shadow: var(--shadow-modal);
+    z-index: 1001;
     transform: translateX(100%);
-    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), visibility 250ms;
     overflow-y: auto;
   }
 
   .mobile-nav-drawer.is-open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .mobile-drawer-header {
@@ -419,99 +437,83 @@ const { currentPath = '/' } = Astro.props;
     align-items: center;
     justify-content: space-between;
     padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--color-border-subtle);
     margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--awc-line);
   }
 
   .drawer-title {
     font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--awc-navy);
   }
 
   .mobile-drawer-close {
+    display: grid;
+    place-items: center;
     width: 44px;
     height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 1px solid var(--color-border-subtle);
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
     border-radius: var(--radius-md);
-    font-size: 1.1rem;
+    font-size: 1rem;
+    color: var(--awc-navy);
     cursor: pointer;
-    color: var(--color-text-secondary);
-  }
-
-  .mobile-drawer-close:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
   }
 
   .mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
   }
 
   .mobile-nav-link {
     display: block;
-    padding: var(--space-3) var(--space-2);
+    padding: 0.8rem var(--space-3);
     font-size: var(--text-body);
-    font-weight: 600;
-    color: var(--color-text-primary);
+    font-weight: 800;
+    color: var(--awc-navy);
     text-decoration: none;
-    border-radius: var(--radius-sm);
+    border-radius: 12px;
     transition: background-color var(--transition-fast);
   }
 
-  .mobile-nav-link:hover {
-    background-color: var(--primitive-slate-100);
-    color: var(--color-text-brand);
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
   }
 
   .mobile-drawer-actions {
-    margin-top: auto;
-    padding-top: var(--space-6);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    border-top: 1px solid var(--color-border-subtle);
+    margin-top: auto;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--awc-line);
   }
 
-  .btn-mobile-primary {
-    background-color: var(--color-brand-primary);
-    color: var(--color-text-inverse);
+  .mobile-whatsapp-link {
+    padding: var(--space-2);
     text-align: center;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-  }
-
-  .mobile-portfolio-link, .mobile-whatsapp-link {
     font-size: var(--text-body-sm);
+    font-weight: 700;
     color: var(--color-text-brand);
     text-decoration: none;
-    text-align: center;
-    padding: var(--space-2);
-    font-weight: 600;
   }
 
-  @media (min-width: 900px) {
+  @media (max-width: 380px) {
+    .brand-tagline {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1000px) {
     .desktop-nav {
       display: block;
-    }
-
-    .portfolio-link {
-      display: inline-flex;
-    }
-
-    .btn-primary-header {
-      display: inline-flex;
     }
 
     .mobile-menu-toggle {

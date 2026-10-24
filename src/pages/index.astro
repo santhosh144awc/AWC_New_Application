@@ -1,611 +1,306 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { BUSINESS_PROFILE } from '../config/businessProfile';
+import Button from '../components/ui/Button.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
-import PillarCard from '../components/ui/PillarCard.astro';
-import GoalCard from '../components/ui/GoalCard.astro';
-import ToolPreviewCard from '../components/ui/ToolPreviewCard.astro';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+import { JOURNEY_STAGES } from '../config/journey';
+import { HEALTH_PILLARS } from '../domain/finance/financialHealth';
 
-const pillarsData = [
-  {
-    number: "01",
-    name: "Cash Flow & Surplus",
-    focus: "Foundation",
-    question: "Do you reliably generate a monthly savings surplus above 25% after household expenses?",
-    benchmark: "Healthy savings rate of 25%–35% of net monthly family income."
-  },
-  {
-    number: "02",
-    name: "Emergency Reserve",
-    focus: "Safety Net",
-    question: "If all household income stopped tomorrow, how many months could your family sustain essentials?",
-    benchmark: "6 to 9 months of essential living expenses parked in liquid instruments."
-  },
-  {
-    number: "03",
-    name: "Debt Comfort & Solvency",
-    focus: "Solvency",
-    question: "Are your monthly debt EMIs taking away the freedom to invest for your future goals?",
-    benchmark: "Total loan EMIs kept strictly below 35%–40% of net take-home salary."
-  },
-  {
-    number: "04",
-    name: "Pure Risk Protection",
-    focus: "Defense",
-    question: "Is your life cover purely protective (15x annual income), or tied to low-yielding endowment policies?",
-    benchmark: "12x–20x pure term life cover and independent family health insurance."
-  },
-  {
-    number: "05",
-    name: "Productive Investing",
-    focus: "Growth",
-    question: "Are your long-term savings beating real-world inflation, or losing purchasing power in savings accounts?",
-    benchmark: "Disciplined equity allocation for 7+ year horizons to beat 6%–8% inflation."
-  },
-  {
-    number: "06",
-    name: "Goal Horizons",
-    focus: "Direction",
-    question: "Do you have specific target dates and earmarked asset allocations for your life milestones?",
-    benchmark: "Distinct earmarked portfolios matching the time horizon of each milestone."
-  },
-  {
-    number: "07",
-    name: "Retirement Freedom",
-    focus: "Independence",
-    question: "Will your retirement corpus generate inflation-protected monthly cash flow for 30+ years?",
-    benchmark: "25x–30x annual post-retirement expenses, structured for longevity."
-  }
+const pillarIcons = ['◉', '◈', '⇣', '⬡', '↗', '◎', '⟳'];
+
+// Approved guides only (same rule as /learn/); never link to withheld articles.
+const approved = await getCollection('articles', ({ data }) => data.publicationStatus === 'APPROVED');
+approved.sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
+const guides = approved.slice(0, 3);
+
+const orbitNodes = [
+  { cls: 'one', icon: '◉', label: 'Cash flow', sub: 'Today', href: '/health-check/real-statement/' },
+  { cls: 'two', icon: '⬡', label: 'Protection', sub: 'Safety', href: '/tools/life-insurance/' },
+  { cls: 'three', icon: '◎', label: 'Goals', sub: 'Tomorrow', href: '/plan/' },
+  { cls: 'four', icon: '↗', label: 'Investing', sub: 'Growth', href: '/tools/sip/' },
+  { cls: 'five', icon: '◈', label: 'Resilience', sub: 'Reserve', href: '/health-check/' },
 ];
 
-const goalsData = [
-  {
-    title: "Children's Higher Education",
-    horizon: "10–18 Years Ahead",
-    iconText: "🎓",
-    coreQuestion: "How much will college tuition, hostel, and overseas degrees cost when inflation runs at 8%–10%?",
-    planningInsight: "Build an equity mutual fund SIP early. Protect the goal with adequate pure term cover so education is secured regardless of life uncertainties."
-  },
-  {
-    title: "Family Home Purchase",
-    horizon: "3–8 Years Ahead",
-    iconText: "🏡",
-    coreQuestion: "How do you accumulate a 25% down payment without exhausting your family emergency fund?",
-    planningInsight: "Use conservative hybrid and debt allocation for the down payment buffer, ensuring future EMIs stay comfortably under 35% of monthly income."
-  },
-  {
-    title: "Disciplined Wealth Accumulation",
-    horizon: "7–15+ Years Ahead",
-    iconText: "🌱",
-    coreQuestion: "How does patient monthly compounding across market cycles create generational peace of mind?",
-    planningInsight: "Maintain annual step-up SIPs that grow alongside your salary, resisting market noise and staying invested through volatility."
-  },
-  {
-    title: "Dignified Retirement Freedom",
-    horizon: "15–30 Years Ahead",
-    iconText: "🌅",
-    coreQuestion: "How much corpus is required to maintain your current lifestyle through 30 years without working?",
-    planningInsight: "Transition from accumulation to a 3-bucket distribution strategy (Liquidity, Safety, Growth) to ensure your money outlives you."
-  }
+const goalTiles = [
+  { icon: '🎓', title: 'Children’s future', text: 'Separate milestones, future costs and existing savings.', href: '/plan/children/', cta: 'Plan this goal →' },
+  { icon: '⌂', title: 'Buy a home', text: 'Explore upfront cash, purchase costs and EMI comfort.', href: '/plan/home-purchase/', cta: 'Plan this goal →' },
+  { icon: '↗', title: 'Grow investments', text: 'Try a monthly investment and a yearly step-up scenario.', href: '/tools/sip/', cta: 'Try an SIP →' },
+  { icon: '⟳', title: 'Retirement', text: 'Explore retirement targets, living costs and accumulation scenarios.', href: '/plan/retirement/', cta: 'Plan retirement →' },
 ];
 
-const toolsData = [
-  {
-    title: "SIP Wealth Simulator",
-    category: "Investments",
-    realQuestion: "How much wealth could a disciplined monthly SIP generate over 10 or 15 years?",
-    description: "Models compound growth, compares nominal versus inflation-adjusted purchasing power, and illustrates annual step-up benefits."
-  },
-  {
-    title: "Home Loan Foreclosure vs SIP",
-    category: "Debt Strategy",
-    realQuestion: "Should you prepay your home loan early or build a parallel mutual fund SIP?",
-    description: "Amortizes loan balances and illustrates the mathematical crossover point where a parallel SIP can clear debt years ahead of schedule."
-  },
-  {
-    title: "Loan Interest Recovery SIP",
-    category: "Borrowing",
-    realQuestion: "Can a small parallel monthly SIP recover 100% of the interest paid on your loan?",
-    description: "Calculates the exact parallel investment required alongside your EMI so compound growth offsets your total interest burden."
-  },
-  {
-    title: "Productive Net Worth Balance Sheet",
-    category: "Diagnostic",
-    realQuestion: "What is your real productive net worth after removing personal cars and your home?",
-    description: "Separates lifestyle consumption assets from productive income-generating capital to assess your true financial freedom."
-  }
-];
-
-const journeyStages = [
-  {
-    step: "01",
-    title: "Starting Out",
-    timeline: "First Earnings",
-    focus: "Disciplined Cash Flow",
-    description: "Establishing sound budgeting, creating a 25%+ monthly surplus, and avoiding consumer debt traps."
-  },
-  {
-    step: "02",
-    title: "Building Stability",
-    timeline: "Years 1–3",
-    focus: "Emergency Safety Net",
-    description: "Accumulating 6 months of essential household expenses in liquid funds and eliminating high-interest liabilities."
-  },
-  {
-    step: "03",
-    title: "Protecting Family",
-    timeline: "Years 2–5",
-    focus: "Pure Risk Defense",
-    description: "Securing pure term life cover (15x annual income) and standalone comprehensive health insurance."
-  },
-  {
-    step: "04",
-    title: "Growing Wealth",
-    timeline: "Years 4–10",
-    focus: "Long-Term Compounding",
-    description: "Building automated mutual fund SIPs aligned to your risk tolerance, with annual step-ups as income increases."
-  },
-  {
-    step: "05",
-    title: "Achieving Milestones",
-    timeline: "Years 8–18",
-    focus: "Goal Realization",
-    description: "Systematically funding children's higher education and home equity without compromising retirement reserves."
-  },
-  {
-    step: "06",
-    title: "Financial Independence",
-    timeline: "Retirement & Beyond",
-    focus: "Sustainable Cash Flow",
-    description: "Deploying a multi-bucket distribution strategy to generate steady, inflation-protected monthly income for life."
-  }
-];
-
-const learnArticles = [
-  {
-    category: "Milestones",
-    readTime: "5 min read",
-    title: "How Much Should You Save for a Future Goal? Time, Inflation & Compounding",
-    summary: "Discover how real-world education and lifestyle inflation affect future costs, and how time horizon changes the monthly SIP required.",
-    takeaway: "Education inflation in India often runs at 8%–10%, requiring earlier starts and disciplined equity allocation."
-  },
-  {
-    category: "Loans & Debt",
-    readTime: "5 min read",
-    title: "Should You Prepay Your Home Loan or Invest? The Mathematical Trade-offs",
-    summary: "Understand the key considerations between prepaying home loan principal early versus building a parallel mutual fund wealth fund.",
-    takeaway: "Balancing psychological peace with long-term compound wealth often yields the most resilient outcome."
-  },
-  {
-    category: "Family Safety",
-    readTime: "5 min read",
-    title: "How Much Emergency Fund Does an Indian Family Truly Need?",
-    summary: "A practical guide to calculating your essential monthly expenses, where to park emergency funds, and why liquidity comes before returns.",
-    takeaway: "Park 6–9 months of true essentials in liquid funds and sweep deposits—never in locked or volatile instruments."
-  },
-  {
-    category: "Children's Future",
-    readTime: "6 min read",
-    title: "Planning for Child Higher Education in India: An Inflation-Adjusted Roadmap",
-    summary: "A step-by-step framework to calculate inflation-adjusted college costs in India and abroad, and how to build the corpus systematically.",
-    takeaway: "Starting when your child is in primary school can cut the required monthly investment by more than half."
-  }
-];
-
-const coreValues = [
-  {
-    number: "01",
-    title: "Client First Always",
-    description: "Your family's financial security and milestone clarity are the sole priority behind every consultation and review."
-  },
-  {
-    number: "02",
-    title: "Goals Before Products",
-    description: "We always identify what your money must achieve before ever discussing a mutual fund scheme or investment vehicle."
-  },
-  {
-    number: "03",
-    title: "Plain Language, Zero Jargon",
-    description: "No confusing technical terms. Every concept is explained in clear, relatable terms so you feel empowered and confident."
-  },
-  {
-    number: "04",
-    title: "Patient Wealth Compounding",
-    description: "We prioritize disciplined habits, asset allocation, and milestone security over short-term market speculation or chasing hot trends."
-  },
-  {
-    number: "05",
-    title: "Absolute Respect for Privacy",
-    description: "Zero forced phone number gates, zero spam callbacks, and zero commercial data sharing. Your numbers stay entirely confidential."
-  }
-];
 ---
 
-<BaseLayout 
-  title="Ant Wealth Creation — Make Better Money Decisions. Build a Better Future."
-  description="Goal-oriented financial guidance for Indian families. Evaluate your financial health across 7 pillars, plan life milestones, and invest with clarity from AMFI-Registered MFD C. Santhosh Sathriyan."
+<BaseLayout
+  title="Ant Wealth Creation — Know Where You Stand. Choose Your Next Move."
+  description="A practical place to understand your family's money, plan life's milestones and learn what each financial choice could mean. Plain-language tools with no forced lead collection."
+  currentPath="/"
 >
-  <!-- 1. HERO SECTION -->
-  <section class="hero-section" aria-labelledby="hero-title">
-    <div class="container hero-container">
-      <div class="hero-content">
-        <div class="credibility-badge">
-          <span class="badge-dot" aria-hidden="true"></span>
-          <span>Independent AMFI-Registered MFD • Markets Since {BUSINESS_PROFILE.firm.experienceSince} • QPFP Discipline</span>
-        </div>
-
-        <h1 id="hero-title" class="hero-title">
-          Make Better Money Decisions. Build a Better Future.
+  <!-- 1. HERO -->
+  <section class="hero surface-dark" aria-labelledby="hero-title">
+    <div class="container hero__grid">
+      <div class="hero__copy">
+        <span class="eyebrow">FAMILY FINANCE, MADE CLEARER</span>
+        <h1 id="hero-title" class="hero__title">
+          Know where you stand. <span class="hero__accent">Choose your next move.</span>
         </h1>
-
-        <p class="hero-lead">
-          Goal-oriented financial guidance for Indian families. Evaluate your family’s resilience across 7 vital pillars, plan key milestones with zero salesperson callbacks, and invest in mutual funds with complete fee transparency.
+        <p class="hero__lead">
+          A practical place to understand your finances and find useful next steps for your family.
         </p>
 
-        <div class="hero-actions">
-          <a href="#financial-health" class="btn-primary-hero">
-            Explore 7 Pillars of Health ↓
-          </a>
-          <a href="#goals" class="btn-secondary-hero">
-            Plan Life Milestones ↓
-          </a>
-          <a href="#tools" class="btn-ghost-hero">
-            Tools Preview ↓
-          </a>
+        <div class="hero__actions">
+          <Button variant="gold" href="/health-check/">Start your health check →</Button>
+          <Button variant="light" href="/tools/">View all tools →</Button>
         </div>
 
-        <div class="hero-trust-strip">
-          <div class="trust-item">
-            <span class="trust-check">✓</span>
-            <span>Zero forced phone number capture</span>
+        <ul class="hero__meta" role="list">
+          <li><span class="tiny-dot" aria-hidden="true"></span>No forced lead collection</li>
+          <li><span class="tiny-dot" aria-hidden="true"></span>Plain-language guidance</li>
+          <li><span class="tiny-dot" aria-hidden="true"></span>Your inputs stay in your browser</li>
+        </ul>
+      </div>
+
+      <div class="hero__art">
+        <p class="hero__sticker">One family. Many milestones.</p>
+        <nav class="money-map" aria-label="Your money map: where to start">
+          <div class="money-map__center">
+            <span class="money-map__house" aria-hidden="true">⌂</span>
+            <strong>Your money map</strong>
+            <small>Understand · Plan · Adjust</small>
           </div>
-          <div class="trust-item">
-            <span class="trust-check">✓</span>
-            <span>AMFI commission transparency</span>
-          </div>
-          <div class="trust-item">
-            <span class="trust-check">✓</span>
-            <span>QPFP Certified financial discipline</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-visual">
-        <div class="hero-image-wrapper">
-          <img 
-            src="/assets/homeScreenimage.webp" 
-            alt="The Family Money Map — Guiding everyday Indian families through life milestones to financial freedom" 
-            width="560" 
-            height="380"
-            class="hero-img"
-            loading="eager"
-            fetchpriority="high"
-          />
-          <div class="hero-image-caption">
-            <span class="caption-tag">The Family Money Map</span>
-            <span class="caption-text">Connecting today's cash flow with tomorrow's life milestones</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. THE EVERYDAY PROBLEM SECTION -->
-  <section id="everyday-problem" class="section section-problem" aria-labelledby="problem-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Relatable Family Finance"
-        title="The Questions Indian Families Face Every Single Day"
-        subtitle="Most families do not need complex derivative products or aggressive trading calls. They need clear, calm answers to practical life questions."
-        centered={true}
-      />
-
-      <div class="questions-grid">
-        <div class="question-card">
-          <div class="question-icon">🎓</div>
-          <h3 class="question-title">"Will college costs overwhelm our savings?"</h3>
-          <p class="question-desc">With real education inflation running between 8% and 10%, relying on traditional savings accounts or low-yield insurance policies can leave a massive funding shortfall right when your child turns 18.</p>
-        </div>
-
-        <div class="question-card">
-          <div class="question-icon">🏡</div>
-          <h3 class="question-title">"Should we prepay our home loan or invest?"</h3>
-          <p class="question-desc">Every extra rupee diverted toward loan prepayment provides immediate psychological peace, but completely sacrificing equity SIPs can leave you house-rich and liquid-cash poor.</p>
-        </div>
-
-        <div class="question-card">
-          <div class="question-icon">🛡️</div>
-          <h3 class="question-title">"Is our family truly protected if the worst happens?"</h3>
-          <p class="question-desc">Many families hold multiple low-cover endowment policies paying ₹5 Lakhs to ₹10 Lakhs, mistakenly believing they are protected. A true safety net requires 15x annual income in pure term cover.</p>
-        </div>
-
-        <div class="question-card">
-          <div class="question-icon">🌅</div>
-          <h3 class="question-title">"How much will we actually need to retire with dignity?"</h3>
-          <p class="question-desc">Healthcare costs, longer life expectancies, and ongoing living expenses require an inflation-protected corpus that continues compounding throughout 25 to 35 years of retirement.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. SEVEN PILLARS OF FINANCIAL HEALTH -->
-  <section id="financial-health" class="section section-pillars" aria-labelledby="pillars-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Diagnostic Framework"
-        title="Evaluate Your Family Across the 7 Pillars of Financial Health"
-        subtitle="Before investing in any scheme or committing to major debts, assess where your foundation is solid and where dangerous vulnerabilities exist."
-      />
-
-      <div class="pillars-grid">
-        {pillarsData.map((pillar) => (
-          <PillarCard 
-            number={pillar.number}
-            name={pillar.name}
-            focus={pillar.focus}
-            question={pillar.question}
-            benchmark={pillar.benchmark}
-          />
-        ))}
-      </div>
-
-      <div class="pillars-diagnostic-banner">
-        <div class="diagnostic-banner-text">
-          <h3 class="diagnostic-title">Self-Assessment Tooling Under Staging Verification</h3>
-          <p class="diagnostic-desc">
-            Our 2-minute diagnostic assessment computes your family's weighted financial health score across these 7 pillars with zero lead-wall friction. The calculation engine is currently undergoing domain specification review and will be released in an upcoming phase.
-          </p>
-        </div>
-        <div class="diagnostic-banner-action">
-          <a href="/health-check/" class="btn-diagnostic">
-            Explore 7-Pillars Diagnostic Framework →
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. FINANCIAL WELLBEING JOURNEY -->
-  <section id="journey" class="section section-journey" aria-labelledby="journey-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Step-by-Step Roadmap"
-        title="The 6 Stages of Family Financial Wellbeing"
-        subtitle="Financial security is not a single product transaction. It is an evolving journey from basic stability to generational independence."
-        centered={true}
-      />
-
-      <div class="journey-grid">
-        {journeyStages.map((stage) => (
-          <div class="journey-step-card">
-            <div class="step-badge">{stage.step}</div>
-            <div class="step-timeline">{stage.timeline}</div>
-            <h3 class="step-title">{stage.title}</h3>
-            <div class="step-focus">{stage.focus}</div>
-            <p class="step-desc">{stage.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. LIFE MILESTONES & GOAL PLANNING -->
-  <section id="goals" class="section section-goals" aria-labelledby="goals-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Goal-Based Planning"
-        title="Map Your Most Important Life Milestones"
-        subtitle="Every financial goal has its own time horizon, inflation rate, and required risk discipline. We build dedicated roadmaps for each milestone."
-      />
-
-      <div class="goals-grid">
-        {goalsData.map((goal) => (
-          <GoalCard 
-            title={goal.title}
-            horizon={goal.horizon}
-            iconText={goal.iconText}
-            coreQuestion={goal.coreQuestion}
-            planningInsight={goal.planningInsight}
-          />
-        ))}
-      </div>
-
-      <div class="section-cta-row">
-        <a href="/plan/" class="btn-section-cta">
-          Explore All Life Milestone Roadmaps →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. MATHEMATICAL TOOLS PREVIEW -->
-  <section id="tools" class="section section-tools" aria-labelledby="tools-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Calculation Engines"
-        title="Simulators Designed to Answer Practical Questions"
-        subtitle="A preview of our upcoming question-driven mathematical simulators. Every engine is being built with verified formulas and strict domain isolation."
-      />
-
-      <div class="tools-grid">
-        {toolsData.map((tool) => (
-          <ToolPreviewCard 
-            title={tool.title}
-            category={tool.category}
-            realQuestion={tool.realQuestion}
-            description={tool.description}
-          />
-        ))}
-      </div>
-
-      <div class="section-cta-row">
-        <a href="/tools/" class="btn-section-cta">
-          Browse All 9 Calculation Simulators →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. LEARNING CENTER HIGHLIGHTS -->
-  <section id="learn" class="section section-learn" aria-labelledby="learn-heading">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Financial Education"
-        title="Learn the Fundamentals of Money"
-        subtitle="Simple, jargon-free educational guides written to help everyday Indian families make informed, confident choices."
-        centered={true}
-      />
-
-      <div class="learn-grid">
-        {learnArticles.map((article) => (
-          <article class="learn-card">
-            <div class="learn-meta">
-              <span class="learn-category">{article.category}</span>
-              <span class="learn-read-time">{article.readTime}</span>
-            </div>
-            <h3 class="learn-title">{article.title}</h3>
-            <p class="learn-summary">{article.summary}</p>
-            <div class="learn-takeaway">
-              <span class="takeaway-label">Key Takeaway:</span>
-              <p class="takeaway-text">{article.takeaway}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div class="section-cta-row">
-        <a href="/learn/" class="btn-section-cta">
-          Read All Educational Guides →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. ABOUT & FOUNDER PROFILE -->
-  <section id="about" class="section section-about" aria-labelledby="about-heading">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-visual">
-          <div class="founder-card">
-            <img 
-              src={BUSINESS_PROFILE.founder.photoPath} 
-              alt={`${BUSINESS_PROFILE.founder.fullName}, Founder of Ant Wealth Creation`} 
-              width="320" 
-              height="320"
-              class="founder-photo"
-              loading="lazy"
-            />
-            <div class="founder-info-bar">
-              <h3 class="founder-name">{BUSINESS_PROFILE.founder.fullName}</h3>
-              <p class="founder-creds">{BUSINESS_PROFILE.founder.credentials}</p>
-              <p class="founder-exp">Active in Financial Markets Since {BUSINESS_PROFILE.firm.experienceSince}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="about-text-content">
-          <span class="eyebrow">About the Founder & Philosophy</span>
-          <h2 id="about-heading" class="about-title">
-            "My goal is simple — to help everyday families make better financial decisions and build lasting wealth with peace of mind."
-          </h2>
-
-          <div class="about-narrative">
-            <p>
-              {BUSINESS_PROFILE.founder.heritage}
-            </p>
-            <p>
-              {BUSINESS_PROFILE.founder.bio}
-            </p>
-            <p>
-              {BUSINESS_PROFILE.founder.foundingStory}
-            </p>
-          </div>
-
-          <div class="about-service-distinction">
-            <h4 class="distinction-title">Clear Regulatory Distinction of Services:</h4>
-            <p class="distinction-text">
-              Ant Wealth Creation is an AMFI-Registered Mutual Fund Distributor. We receive trailing commissions from Asset Management Companies (AMCs) for mutual fund distribution. We do not charge fees for investment advice or claim to be a SEBI-registered Investment Adviser (RIA). Our educational simulators and roadmaps are provided for personal financial simulation and planning clarity.
-            </p>
-          </div>
-
-          <div class="about-action-row">
-            <a href="/about/" class="btn-section-cta">
-              Read Full Founder Story & Practice Heritage →
+          {orbitNodes.map((node) => (
+            <a href={node.href} class={`orbit-node orbit-node--${node.cls}`}>
+              <span class="orbit-node__icon" aria-hidden="true">{node.icon}</span>
+              <b>{node.label}</b>
+              <small>{node.sub}</small>
             </a>
-          </div>
-        </div>
+          ))}
+        </nav>
       </div>
     </div>
   </section>
 
-  <!-- 9. HOW WE WORK / CORE PRINCIPLES -->
-  <section class="section section-values" aria-labelledby="values-heading">
+  <!-- 2. STARTING POINTS -->
+  <section class="section" aria-labelledby="start-heading">
     <div class="container">
-      <SectionHeader 
-        eyebrow="Operating Discipline"
-        title="Our Core Principles & Commitment to You"
-        subtitle="Built on patience, transparency, and lifelong partnership with families. We hold zero tolerance for aggressive sales pressure."
-        centered={true}
+      <SectionHeader
+        id="start-heading"
+        eyebrow="Choose a starting point"
+        title="One clear next step is enough."
+        subtitle="You do not need to solve everything today. Start with the question that matters most to you right now."
       />
 
-      <div class="values-grid">
-        {coreValues.map((val) => (
-          <div class="value-card">
-            <span class="value-number">{val.number}</span>
-            <h3 class="value-title">{val.title}</h3>
-            <p class="value-desc">{val.description}</p>
-          </div>
-        ))}
+      <div class="start-grid">
+        <a href="/health-check/" class="start-card start-card--mint">
+          <span class="start-card__top">
+            <span class="num-chip">01 · Understand</span>
+            <span class="big-icon" aria-hidden="true">◉</span>
+          </span>
+          <span class="start-card__text">
+            <h3>How healthy are our finances?</h3>
+            <p>A quick, ungated check across seven parts of family financial wellbeing.</p>
+          </span>
+          <span class="start-card__action"><span>Start the health check</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+
+        <a href="/plan/" class="start-card start-card--mist">
+          <span class="start-card__top">
+            <span class="num-chip">02 · Plan</span>
+            <span class="big-icon" aria-hidden="true">◎</span>
+          </span>
+          <span class="start-card__text">
+            <h3>We have a goal to plan for.</h3>
+            <p>Follow the six-stage journey, or go straight to education, a home or another milestone.</p>
+          </span>
+          <span class="start-card__action"><span>Open the journey &amp; goals</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+
+        <a href="/tools/" class="start-card start-card--sand">
+          <span class="start-card__top">
+            <span class="num-chip">03 · Explore</span>
+            <span class="big-icon" aria-hidden="true">⌘</span>
+          </span>
+          <span class="start-card__text">
+            <h3>I have a money question.</h3>
+            <p>Find a calculator by the situation you are trying to understand.</p>
+          </span>
+          <span class="start-card__action"><span>Find the right tool</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- 10. TRANSPARENT CONSULTATION EXPECTATIONS -->
-  <section class="section section-consult" aria-labelledby="consult-heading">
+  <!-- 3. JOURNEY STRIP -->
+  <section class="section section--navy surface-dark" aria-labelledby="journey-heading">
     <div class="container">
-      <div class="consult-card">
-        <SectionHeader 
-          eyebrow="Direct Guidance"
-          title="What Happens When You Speak with Santhosh?"
-          subtitle="A transparent 20-minute conversation structured to bring simplicity, calm, and direction to your family finances."
-          centered={true}
+      <SectionHeader
+        id="journey-heading"
+        dark
+        eyebrow="A journey, not a checklist"
+        title="Move one stage at a time."
+        subtitle="Choose a stage to see what it means and which tools can help you take the next small step."
+      />
+
+      <ol class="journey-strip" role="list">
+        {JOURNEY_STAGES.map((stage, index) => (
+          <li>
+            <a href={`/plan/#stage-${stage.id}`} class="journey-mini">
+              <span class="journey-mini__bubble" aria-hidden="true">{index + 1}</span>
+              <b>{stage.label}</b>
+              <small>{stage.title}</small>
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <div class="section__cta">
+        <Button variant="gold" href="/plan/" icon="→">Explore the full journey</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SEVEN PILLARS -->
+  <section class="section section--white" aria-labelledby="pillars-heading">
+    <div class="container pillars">
+      <div class="pillars__intro">
+        <span class="eyebrow">The bigger picture</span>
+        <h2 id="pillars-heading" class="pillars__title">Financial wellbeing has more than one number.</h2>
+        <p>
+          Income and net worth matter, but so do resilience, protection, goals and the confidence to make
+          choices. The health check looks at seven areas, one at a time.
+        </p>
+        <Button variant="primary" href="/health-check/" icon="→">Check the seven pillars</Button>
+      </div>
+
+      <ol class="pillars__grid" role="list">
+        {HEALTH_PILLARS.map((pillar, index) => (
+          <li class="pillar">
+            <span class="pillar__icon" aria-hidden="true">{pillarIcons[index]}</span>
+            <b>{pillar.shortTitle}</b>
+            <small>Pillar {index + 1}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. GOALS -->
+  <section class="section section--mist" aria-labelledby="goals-heading">
+    <div class="container">
+      <SectionHeader
+        id="goals-heading"
+        eyebrow="Goals that make it personal"
+        title="What are you planning for?"
+        subtitle="Start with a life milestone. Each planner helps you explore costs, timing and funding under assumptions you choose."
+      />
+
+      <ul class="goal-grid" role="list">
+        {goalTiles.map((tile) => (
+          <li>
+            <a href={tile.href} class="goal-tile">
+              <span class="goal-tile__symbol" aria-hidden="true">{tile.icon}</span>
+              <h3>{tile.title}</h3>
+              <p>{tile.text}</p>
+              <span class="goal-tile__cta">{tile.cta}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. LEARN -->
+  <section class="section section--white" aria-labelledby="learn-heading">
+    <div class="container">
+      <SectionHeader
+        id="learn-heading"
+        eyebrow="Learn without the jargon"
+        title="Good money decisions start with understanding."
+      />
+
+      <ul class="guide-grid" role="list">
+        {guides.map((guide, index) => (
+          <li>
+            <a href={`/learn/${guide.id}/`} class={`guide-card guide-card--${index}`}>
+              <span class="guide-card__meta">{guide.data.category} · {guide.data.readingTime}</span>
+              <h3>{guide.data.title}</h3>
+              <p>{guide.data.description}</p>
+              <span class="guide-card__cta">Read this guide →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="section__cta">
+        <Button variant="light" href="/learn/" icon="→">Browse all guides</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. ABOUT -->
+  <section class="section" aria-labelledby="about-heading">
+    <div class="container about">
+      <div class="about__photo">
+        <img
+          src={BUSINESS_PROFILE.founder.photoPath}
+          alt={`${BUSINESS_PROFILE.founder.fullName}, founder of ${BUSINESS_PROFILE.firm.name}`}
+          width="360"
+          height="450"
+          loading="lazy"
         />
+        <p class="about__stamp">Client-first.<br />Clear explanations.<br />No forced sales.</p>
+      </div>
 
-        <div class="consult-steps-grid">
-          <div class="consult-step">
-            <div class="consult-step-num">Step 1</div>
-            <h3 class="consult-step-title">We Understand Your Situation</h3>
-            <p class="consult-step-desc">We listen to your current monthly cash flows, existing savings, insurance policies, and family context in complete confidence.</p>
-          </div>
+      <div class="about__copy">
+        <span class="eyebrow">A little about the practice</span>
+        <h2 id="about-heading" class="about__title">
+          Financial planning should help you feel clearer — not more confused.
+        </h2>
+        <p>{BUSINESS_PROFILE.founder.bio}</p>
 
-          <div class="consult-step">
-            <div class="consult-step-num">Step 2</div>
-            <h3 class="consult-step-title">We Clarify Goals & Timelines</h3>
-            <p class="consult-step-desc">We identify what you want your money to accomplish—from children's college and home purchase to retirement freedom.</p>
-          </div>
+        <ul class="about__facts" role="list">
+          <li>{BUSINESS_PROFILE.founder.fullName}</li>
+          <li>{BUSINESS_PROFILE.founder.credentials}</li>
+          <li>Markets since {BUSINESS_PROFILE.firm.experienceSince}</li>
+        </ul>
 
-          <div class="consult-step">
-            <div class="consult-step-num">Step 3</div>
-            <h3 class="consult-step-title">We Explore Disciplined Pathways</h3>
-            <p class="consult-step-desc">We review practical asset allocations and actionable steps—with zero obligation or pressure to transfer existing investments.</p>
-          </div>
+        <p class="about__note">
+          {BUSINESS_PROFILE.regulatory.distributorRoleText}. {BUSINESS_PROFILE.regulatory.sebiRIAStatusNotice}
+          <a href="/disclaimer/">Read the full disclosures</a>.
+        </p>
+
+        <Button variant="primary" href="/about/" icon="→">Meet the practice</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. CONTACT -->
+  <section class="section section--tight" aria-labelledby="contact-heading">
+    <div class="container">
+      <div class="contact-band">
+        <div>
+          <span class="eyebrow">Prefer to talk it through?</span>
+          <h2 id="contact-heading" class="contact-band__title">
+            Start with a short, no-pressure conversation with {BUSINESS_PROFILE.founder.shortName}.
+          </h2>
+          <p><a href="/contact/">See what to expect from a consultation</a></p>
         </div>
-
-        <div class="consult-actions">
-          <a 
-            href={BUSINESS_PROFILE.contact.whatsappUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="btn-whatsapp"
+        <div class="contact-band__actions">
+          <Button
+            variant="primary"
+            href={BUSINESS_PROFILE.contact.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            icon="↗"
           >
-            Chat with Santhosh on WhatsApp ↗
-          </a>
-          <a 
-            href={`tel:${BUSINESS_PROFILE.contact.phone}`} 
-            class="btn-phone"
-          >
+            Chat on WhatsApp<span class="sr-only"> (opens in a new window)</span>
+          </Button>
+          <Button variant="light" href={`tel:${BUSINESS_PROFILE.contact.phone}`}>
             Call {BUSINESS_PROFILE.contact.phoneDisplay}
-          </a>
+          </Button>
         </div>
       </div>
     </div>
@@ -613,765 +308,895 @@ const coreValues = [
 </BaseLayout>
 
 <style>
-  /* ==========================================================================
-     HERO SECTION
-     ========================================================================== */
-  .hero-section {
-    padding: var(--space-12) 0 var(--space-16);
-    background: linear-gradient(180deg, #FFFFFF 0%, var(--primitive-slate-50) 100%);
-    border-bottom: 1px solid var(--color-border-subtle);
+  .section {
+    padding: var(--space-20) 0;
   }
 
-  .hero-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-10);
-    align-items: center;
+  .section--tight {
+    padding: var(--space-8) 0 var(--space-20);
   }
 
-  .credibility-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0.35rem 0.85rem;
-    background-color: var(--primitive-teal-50);
-    border: 1px solid var(--primitive-teal-100);
-    color: var(--color-text-brand);
-    font-size: var(--text-caption);
-    font-weight: 700;
-    border-radius: var(--radius-pill);
-    margin-bottom: var(--space-4);
-    letter-spacing: 0.02em;
+  .section--white {
+    background: var(--primitive-white);
   }
 
-  .badge-dot {
-    width: 8px;
-    height: 8px;
+  .section--mist {
+    background: #e7f2ef;
+  }
+
+  .section--navy {
+    background: var(--awc-navy);
+    color: var(--color-text-on-dark);
+  }
+
+  .section__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-8);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--awc-navy);
+    color: var(--color-text-on-dark);
+  }
+
+  .hero::before,
+  .hero::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    background-color: var(--primitive-teal-600);
   }
 
-  .hero-title {
-    font-size: var(--text-display);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-brand-primary);
-    line-height: 1.1;
-    margin-bottom: var(--space-4);
-    letter-spacing: -0.02em;
+  .hero::before {
+    top: -300px;
+    right: -120px;
+    width: 680px;
+    height: 680px;
   }
 
-  .hero-lead {
-    font-size: var(--text-body-lg);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 620px;
+  .hero::after {
+    top: -190px;
+    right: 30px;
+    width: 460px;
+    height: 460px;
   }
 
-  .hero-actions {
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.03fr 0.97fr;
+    gap: var(--space-12);
+    align-items: center;
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+  }
+
+  .hero__title {
+    margin: var(--space-5) 0 var(--space-5);
+    max-width: 650px;
+    font-size: clamp(2.6rem, 4.8vw, 4.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+    font-weight: 900;
+    color: var(--primitive-white);
+  }
+
+  .hero__accent {
+    color: var(--awc-gold);
+  }
+
+  .hero__lead {
+    max-width: 560px;
+    margin-bottom: var(--space-6);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #ddebe7;
+  }
+
+  .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-    margin-bottom: var(--space-8);
   }
 
-  .btn-primary-hero {
-    background-color: var(--color-brand-primary);
-    color: var(--primitive-white);
-    font-size: var(--text-body-sm);
-    font-weight: 700;
-    padding: 0.85rem 1.65rem;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .btn-primary-hero:hover {
-    background-color: var(--primitive-navy-800);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-card);
-  }
-
-  .btn-secondary-hero {
-    background-color: var(--primitive-teal-700);
-    color: var(--primitive-white);
-    font-size: var(--text-body-sm);
-    font-weight: 700;
-    padding: 0.85rem 1.65rem;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-
-  .btn-secondary-hero:hover {
-    background-color: var(--primitive-teal-600);
-    transform: translateY(-1px);
-  }
-
-  .btn-ghost-hero {
-    background-color: transparent;
-    color: var(--color-text-primary);
-    border: 1.5px solid var(--color-border-medium);
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    padding: 0.85rem 1.5rem;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-
-  .btn-ghost-hero:hover {
-    border-color: var(--color-brand-primary);
-    background-color: var(--primitive-slate-100);
-  }
-
-  .hero-trust-strip {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    font-size: var(--text-body-sm);
-    color: var(--color-text-muted);
-  }
-
-  .trust-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .trust-check {
-    color: var(--primitive-emerald-700);
-    font-weight: 800;
-  }
-
-  .hero-visual {
-    display: flex;
-    justify-content: center;
-  }
-
-  .hero-image-wrapper {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-elevated);
-    width: 100%;
-    max-width: 560px;
-  }
-
-  .hero-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-
-  .hero-image-caption {
-    padding: var(--space-4) var(--space-5);
-    background-color: var(--color-bg-surface);
-    border-top: 1px solid var(--primitive-slate-100);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .caption-tag {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .caption-text {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  /* ==========================================================================
-     GLOBAL SECTION STYLES
-     ========================================================================== */
-  .section {
-    padding: var(--space-16) 0;
-  }
-
-  .section-problem {
-    background-color: var(--primitive-slate-50);
-  }
-
-  .questions-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .question-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
-    transition: transform var(--transition-fast);
-  }
-
-  .question-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card);
-  }
-
-  .question-icon {
-    font-size: 1.75rem;
-    margin-bottom: var(--space-3);
-  }
-
-  .question-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .question-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  /* ==========================================================================
-     PILLARS SECTION
-     ========================================================================== */
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-10);
-  }
-
-  .pillars-diagnostic-banner {
-    background: linear-gradient(135deg, var(--primitive-navy-900) 0%, var(--primitive-navy-800) 100%);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
-    color: var(--primitive-white);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    box-shadow: var(--shadow-card);
-  }
-
-  .diagnostic-title {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    color: var(--primitive-white);
-    margin-bottom: var(--space-2);
-  }
-
-  .diagnostic-desc {
-    font-size: var(--text-body-sm);
-    color: var(--primitive-slate-300);
-    line-height: 1.6;
-    margin: 0;
-    max-width: 720px;
-  }
-
-  .btn-diagnostic {
-    display: inline-flex;
-    align-items: center;
-    background-color: var(--primitive-teal-500);
-    color: var(--primitive-white);
-    font-weight: 700;
-    font-size: var(--text-body-sm);
-    padding: 0.8rem 1.5rem;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    transition: background-color var(--transition-fast);
-  }
-
-  .btn-diagnostic:hover {
-    background-color: var(--primitive-teal-600);
-  }
-
-  /* ==========================================================================
-     JOURNEY SECTION
-     ========================================================================== */
-  .journey-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .journey-step-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    position: relative;
-    box-shadow: var(--shadow-subtle);
-    transition: transform var(--transition-fast);
-  }
-
-  .journey-step-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card);
-  }
-
-  .step-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--space-2);
-  }
-
-  .step-timeline {
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--color-text-accent);
-    margin-bottom: var(--space-1);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .step-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .step-focus {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    background-color: var(--primitive-slate-100);
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    display: inline-block;
-    margin-bottom: var(--space-3);
-  }
-
-  .step-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  /* ==========================================================================
-     GOALS & TOOLS GRIDS
-     ========================================================================== */
-  .goals-grid, .tools-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  /* ==========================================================================
-     LEARNING SECTION
-     ========================================================================== */
-  .section-learn {
-    background-color: var(--primitive-slate-50);
-  }
-
-  .learn-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .learn-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .learn-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-3);
-  }
-
-  .learn-category {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .learn-read-time {
-    font-size: var(--text-caption);
-    color: var(--color-text-muted);
-  }
-
-  .learn-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
-    line-height: 1.3;
-  }
-
-  .learn-summary {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-4);
-    flex-grow: 1;
-  }
-
-  .learn-takeaway {
-    background-color: var(--primitive-slate-50);
-    border-left: 3px solid var(--primitive-teal-500);
-    padding: var(--space-3);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  }
-
-  .takeaway-label {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-brand);
-    margin-bottom: 2px;
-  }
-
-  .takeaway-text {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-    line-height: 1.4;
-    margin: 0;
-  }
-
-  /* ==========================================================================
-     ABOUT SECTION
-     ========================================================================== */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-10);
-    align-items: center;
-  }
-
-  .founder-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    max-width: 380px;
-    margin: 0 auto;
-  }
-
-  .founder-photo {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-
-  .founder-info-bar {
-    padding: var(--space-5);
-    background-color: var(--color-bg-surface);
-    border-top: 1px solid var(--color-border-subtle);
-  }
-
-  .founder-name {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    color: var(--color-brand-primary);
-    margin-bottom: 2px;
-  }
-
-  .founder-creds {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
-    margin-bottom: 4px;
-  }
-
-  .founder-exp {
-    font-size: var(--text-caption);
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .about-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    line-height: 1.25;
-    margin-bottom: var(--space-6);
-  }
-
-  .about-narrative p {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
-    line-height: 1.65;
-    margin-bottom: var(--space-4);
-  }
-
-  .about-service-distinction {
-    margin-top: var(--space-6);
-    padding: var(--space-5);
-    background-color: var(--primitive-teal-50);
-    border: 1px solid var(--primitive-teal-100);
-    border-radius: var(--radius-lg);
-  }
-
-  .distinction-title {
-    font-size: var(--text-body-sm);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    margin-bottom: var(--space-2);
-  }
-
-  .distinction-text {
-    font-size: 0.85rem;
-    line-height: 1.55;
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-
-  .section-cta-row {
-    margin-top: var(--space-10);
-    text-align: center;
-  }
-
-  .about-action-row {
-    margin-top: var(--space-6);
-  }
-
-  .btn-section-cta {
-    display: inline-flex;
-    align-items: center;
-    font-size: var(--text-body-sm);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--primitive-teal-200);
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-    box-shadow: var(--shadow-subtle);
-    transition: all var(--transition-fast);
-  }
-
-  .btn-section-cta:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-500);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-card);
-  }
-
-  /* ==========================================================================
-     CORE VALUES SECTION
-     ========================================================================== */
-  .section-values {
-    background-color: var(--primitive-slate-50);
-  }
-
-  .values-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .value-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .value-number {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-text-brand);
-    display: block;
-    margin-bottom: var(--space-2);
-  }
-
-  .value-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .value-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  /* ==========================================================================
-     CONSULTATION SECTION
-     ========================================================================== */
-  .consult-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-10) var(--space-6);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .consult-steps-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
-  }
-
-  .consult-step {
-    padding: var(--space-5);
-    background-color: var(--primitive-slate-50);
-    border-radius: var(--radius-md);
-    text-align: center;
-  }
-
-  .consult-step-num {
-    font-size: var(--text-caption);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-brand);
-    margin-bottom: var(--space-2);
-  }
-
-  .consult-step-title {
-    font-size: var(--text-body);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .consult-step-desc {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  .consult-actions {
+  .hero__meta {
     display: flex;
     flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #b7cbc6;
+  }
+
+  .hero__meta li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .tiny-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--awc-gold);
+  }
+
+  /* Money map */
+  .hero__art {
+    position: relative;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    min-height: 420px;
+  }
+
+  .hero__sticker {
+    position: absolute;
+    top: 6%;
+    left: 4%;
+    z-index: 4;
+    margin: 0;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: var(--awc-sand);
+    color: var(--awc-navy);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transform: rotate(-6deg);
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  .money-map {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 450px);
+    aspect-ratio: 1;
+    border: 1px dashed rgba(218, 229, 255, 0.32);
+    border-radius: 50%;
+  }
+
+  .money-map::before,
+  .money-map::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(218, 229, 255, 0.17);
+    border-radius: 50%;
+    inset: 10%;
+  }
+
+  .money-map::after {
+    inset: 22%;
+  }
+
+  .money-map__center {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: var(--awc-gold);
+    color: var(--awc-navy);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+  }
+
+  .money-map__house {
+    font-size: 2.6rem;
+    line-height: 1;
+  }
+
+  .money-map__center strong {
+    margin-top: 5px;
+    font-size: 0.95rem;
+  }
+
+  .money-map__center small {
+    max-width: 120px;
+    margin-top: 2px;
+    font-size: 0.65rem;
+  }
+
+  .orbit-node {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 104px;
+    min-height: 94px;
+    padding: 12px 10px;
+    border-radius: 20px;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 15px 36px rgba(0, 0, 0, 0.22);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .orbit-node:hover {
+    color: var(--awc-navy);
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.3);
+  }
+
+  .orbit-node__icon {
+    margin-bottom: 4px;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .orbit-node b {
+    font-size: 0.72rem;
+  }
+
+  .orbit-node small {
+    font-size: 0.62rem;
+    color: var(--color-text-muted);
+  }
+
+  .orbit-node--one { top: 3%; left: 39%; }
+  .orbit-node--two { top: 31%; right: -2%; background: var(--awc-sand); }
+  .orbit-node--three { bottom: 7%; right: 12%; background: var(--awc-mint); }
+  .orbit-node--four { bottom: 8%; left: 5%; background: var(--awc-mist); }
+  .orbit-node--five { top: 30%; left: -3%; background: var(--awc-mist); }
+
+  /* ---------- Starting points ---------- */
+  .start-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-4);
   }
 
-  .btn-whatsapp {
-    background-color: #075E54;
-    color: var(--primitive-white);
-    font-weight: 700;
-    font-size: var(--text-body-sm);
-    padding: 0.85rem 1.75rem;
-    border-radius: var(--radius-pill);
+  .start-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 228px;
+    padding: var(--space-6);
+    border-radius: 26px;
+    color: var(--awc-navy);
     text-decoration: none;
-    transition: background-color var(--transition-fast);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   }
 
-  .btn-whatsapp:hover {
-    background-color: #128C7E;
+  .start-card:hover {
+    color: var(--awc-navy);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
   }
 
-  .btn-phone {
-    background-color: var(--color-brand-primary);
-    color: var(--primitive-white);
-    font-weight: 700;
-    font-size: var(--text-body-sm);
-    padding: 0.85rem 1.75rem;
+  .start-card--mint { background: var(--awc-mint); }
+  .start-card--mist { background: var(--awc-mist); }
+  .start-card--sand { background: var(--awc-sand); }
+
+  .start-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .num-chip {
+    padding: 0.4rem 0.65rem;
     border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.75);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .big-icon {
+    display: grid;
+    place-items: center;
+    width: 53px;
+    height: 53px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 1.6rem;
+  }
+
+  .start-card__text h3 {
+    max-width: 260px;
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: 1.6rem;
+    line-height: 1.1;
+    letter-spacing: -0.045em;
+  }
+
+  .start-card__text p {
+    max-width: 300px;
+    margin: 0;
+    font-size: var(--text-body-sm);
+    color: var(--primitive-slate-700);
+  }
+
+  .start-card__action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-5);
+    font-size: var(--text-body-sm);
+    font-weight: 900;
+  }
+
+  .arrow {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  /* ---------- Journey strip ---------- */
+  .journey-strip {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin: var(--space-10) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .journey-strip::before {
+    content: '';
+    position: absolute;
+    top: 29px;
+    left: 8%;
+    right: 8%;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--awc-gold), var(--awc-jade));
+  }
+
+  .journey-mini {
+    position: relative;
+    display: block;
+    padding: 0 var(--space-2);
+    color: var(--primitive-white);
+    text-align: center;
     text-decoration: none;
-    transition: background-color var(--transition-fast);
   }
 
-  .btn-phone:hover {
-    background-color: var(--primitive-navy-800);
+  .journey-mini:hover {
+    color: var(--primitive-white);
   }
 
-  /* ==========================================================================
-     RESPONSIVE BREAKPOINTS
-     ========================================================================== */
-  @media (min-width: 640px) {
-    .questions-grid, .goals-grid, .tools-grid, .learn-grid {
-      grid-template-columns: repeat(2, 1fr);
+  .journey-mini__bubble {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--space-3);
+    border: 4px solid var(--awc-navy);
+    border-radius: 50%;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    font-weight: 900;
+    box-shadow: 0 0 0 6px var(--awc-navy);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .journey-mini:hover .journey-mini__bubble,
+  .journey-mini:focus-visible .journey-mini__bubble {
+    transform: scale(1.08);
+    background: var(--awc-gold);
+  }
+
+  .journey-mini b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+  }
+
+  .journey-mini small {
+    display: block;
+    margin: 0 auto;
+    max-width: 150px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: #c5d7d2;
+  }
+
+  /* ---------- Pillars ---------- */
+  .pillars {
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .pillars__title {
+    margin: var(--space-3) 0;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.05em;
+  }
+
+  .pillars__intro p {
+    max-width: 420px;
+    margin-bottom: var(--space-5);
+    color: var(--color-text-muted);
+    line-height: 1.75;
+  }
+
+  .pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 130px;
+    padding: var(--space-4);
+    border: 1px solid var(--awc-line);
+    border-radius: 19px;
+    background: var(--primitive-white);
+  }
+
+  .pillar:nth-child(2),
+  .pillar:nth-child(6) { background: var(--awc-mist); }
+  .pillar:nth-child(3),
+  .pillar:nth-child(7) { background: var(--awc-sand); }
+  .pillar:nth-child(5) { background: var(--awc-mint); }
+
+  .pillar__icon {
+    font-size: 1.5rem;
+  }
+
+  .pillar b {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    color: var(--awc-navy);
+  }
+
+  .pillar small {
+    font-size: 0.68rem;
+    color: var(--color-text-muted);
+  }
+
+  /* ---------- Goals ---------- */
+  .goal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .goal-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    min-height: 220px;
+    padding: var(--space-5);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .goal-tile:hover {
+    color: var(--awc-navy);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .goal-tile__symbol {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: var(--space-4);
+    border-radius: 17px;
+    background: var(--awc-jade-soft);
+    font-size: 1.7rem;
+  }
+
+  .goal-grid li:nth-child(2) .goal-tile__symbol { background: var(--awc-mint); }
+  .goal-grid li:nth-child(3) .goal-tile__symbol { background: var(--awc-sand); }
+  .goal-grid li:nth-child(4) .goal-tile__symbol { background: var(--awc-mist); }
+
+  .goal-tile h3 {
+    margin-bottom: var(--space-2);
+    font-size: 1.2rem;
+    letter-spacing: -0.035em;
+  }
+
+  .goal-tile p {
+    margin-bottom: auto;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .goal-tile__cta {
+    margin-top: var(--space-4);
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: var(--awc-jade-deep);
+  }
+
+  /* ---------- Guides ---------- */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .guide-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--space-5);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    text-decoration: none;
+    border-top: 6px solid var(--awc-jade-soft);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .guide-card--1 { border-top-color: var(--awc-mint); }
+  .guide-card--2 { border-top-color: var(--awc-sand); }
+
+  .guide-card:hover {
+    color: var(--awc-navy);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .guide-card__meta {
+    margin-bottom: var(--space-3);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .guide-card h3 {
+    margin-bottom: var(--space-2);
+    font-size: 1.15rem;
+    line-height: 1.2;
+    letter-spacing: -0.035em;
+  }
+
+  .guide-card p {
+    margin-bottom: var(--space-4);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+
+  .guide-card__cta {
+    margin-top: auto;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: var(--awc-jade-deep);
+  }
+
+  /* ---------- About ---------- */
+  .about {
+    display: grid;
+    grid-template-columns: 0.75fr 1.25fr;
+    gap: var(--space-16);
+    align-items: center;
+  }
+
+  .about__photo {
+    position: relative;
+    max-width: 360px;
+  }
+
+  .about__photo img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 28px;
+    background: var(--awc-mint);
+  }
+
+  .about__stamp {
+    position: absolute;
+    right: -22px;
+    bottom: 25px;
+    max-width: 160px;
+    margin: 0;
+    padding: var(--space-4);
+    border-radius: 17px;
+    background: var(--awc-gold);
+    color: var(--awc-navy);
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1.4;
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .about__title {
+    margin: var(--space-3) 0 var(--space-4);
+    font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+    line-height: 1.06;
+    letter-spacing: -0.05em;
+  }
+
+  .about__copy p {
+    max-width: 620px;
+    color: var(--color-text-muted);
+    line-height: 1.75;
+  }
+
+  .about__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-5) 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .about__facts li {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--awc-line);
+    border-radius: 12px;
+    background: var(--primitive-white);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--awc-navy);
+  }
+
+  .about__note {
+    margin-bottom: var(--space-5);
+    padding: 0.8rem 1rem;
+    border-left: 4px solid var(--awc-gold);
+    border-radius: 0 12px 12px 0;
+    background: var(--awc-sand);
+    font-size: 0.8rem;
+    color: var(--awc-sand-ink) !important;
+  }
+
+  .about__note a {
+    color: var(--awc-sand-ink);
+    font-weight: 800;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10);
+    border-radius: 28px;
+    background: var(--awc-mint);
+  }
+
+  .contact-band__title {
+    max-width: 560px;
+    margin: var(--space-3) 0 var(--space-3);
+    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+
+  .contact-band p {
+    margin: 0;
+    font-size: var(--text-body-sm);
+  }
+
+  .contact-band__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1099px) {
+    .hero__grid {
+      gap: var(--space-6);
     }
 
-    .hero-actions {
+    .money-map {
+      width: 370px;
+    }
+
+    .money-map__center {
+      width: 150px;
+      height: 150px;
+    }
+
+    .orbit-node {
+      width: 90px;
+      min-height: 82px;
+    }
+
+    .goal-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 899px) {
+    .section {
+      padding: var(--space-16) 0;
+    }
+
+    .hero__grid {
+      grid-template-columns: 1fr;
+      padding-top: var(--space-12);
+      padding-bottom: var(--space-12);
+    }
+
+    .hero__art {
+      min-height: 360px;
+    }
+
+    .start-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .start-card {
+      min-height: 190px;
+    }
+
+    .journey-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: var(--space-8);
+    }
+
+    .journey-strip::before {
+      display: none;
+    }
+
+    .pillars {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .guide-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .about__photo {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .contact-band {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--space-6);
+    }
+
+    .contact-band__actions {
+      width: 100%;
+    }
+
+    .contact-band__actions :global(.awc-btn) {
+      width: 100%;
+    }
+  }
+
+  /* Small screens: the orbit becomes a calm, readable map (no overlap) */
+  @media (max-width: 639px) {
+    .hero__art {
+      min-height: 0;
+      flex-direction: column;
+    }
+
+    .hero__sticker {
+      position: static;
+      align-self: flex-start;
+      margin-bottom: var(--space-4);
+      transform: rotate(-2deg);
+    }
+
+    .money-map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-3);
+      width: 100%;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .money-map::before,
+    .money-map::after {
+      display: none;
+    }
+
+    .money-map__center {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: auto;
+      padding: var(--space-4);
+      border-radius: 22px;
       flex-direction: row;
+      gap: var(--space-3);
+      text-align: left;
     }
 
-    .hero-trust-strip {
-      flex-direction: row;
-      gap: var(--space-4);
+    .money-map__house {
+      font-size: 2rem;
+    }
+
+    .orbit-node {
+      position: static;
+      width: auto;
+      min-height: 84px;
+    }
+
+    .hero__actions :global(.awc-btn) {
+      width: 100%;
+    }
+
+    .goal-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .goal-tile {
+      min-height: 200px;
+      padding: var(--space-4);
+    }
+
+    .journey-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pillars__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .about__stamp {
+      right: -8px;
     }
   }
 
-  @media (min-width: 960px) {
-    .hero-container {
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: var(--space-12);
-    }
-
-    .pillars-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .journey-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .values-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .about-grid {
-      grid-template-columns: 0.8fr 1.2fr;
-    }
-
-    .pillars-diagnostic-banner {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .consult-steps-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .pillars-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .journey-grid {
-      grid-template-columns: repeat(6, 1fr);
-    }
-
-    .values-grid {
-      grid-template-columns: repeat(5, 1fr);
+  @media (max-width: 400px) {
+    .goal-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
