@@ -18,11 +18,12 @@
 import React, { useState, useId } from 'react';
 import {
   calculateComprehensivePersonalFinanceStatement,
-  DEFAULT_INCOME_ITEMS,
-  DEFAULT_ITEMIZED_EXPENSES,
-  DEFAULT_ONGOING_INVESTMENTS,
-  DEFAULT_ASSET_ITEMS,
-  DEFAULT_LIABILITY_ITEMS,
+  createBlankPredefinedStatement,
+  SAMPLE_INCOME_ITEMS,
+  SAMPLE_ITEMIZED_EXPENSES,
+  SAMPLE_ONGOING_INVESTMENTS,
+  SAMPLE_ASSET_ITEMS,
+  SAMPLE_LIABILITY_ITEMS,
   type ComprehensiveStatementInputs,
   type PersonalFinanceStatementResult,
   type ExpenseFrequency,
@@ -50,39 +51,42 @@ const STAGES = [
 export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const baseId = useId();
 
+  // Helper to get fresh blank predefined rows
+  const getInitialBlankState = () => createBlankPredefinedStatement();
+  const initialBlank = getInitialBlankState();
+
   // Active Stage
   const [currentStage, setCurrentStage] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
 
-  // Metadata State
-  const [clientName, setClientName] = useState<string>('Ramesh & Priya Sundaram');
-  const [spouseName, setSpouseName] = useState<string>('Priya');
-  const [childrenNames, setChildrenNames] = useState<string>('Ananya, Aarav');
+  // Metadata State — Initialized blank by default
+  const [clientName, setClientName] = useState<string>('');
+  const [spouseName, setSpouseName] = useState<string>('');
+  const [childrenNames, setChildrenNames] = useState<string>('');
   const [statementDate, setStatementDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [preparedBy, setPreparedBy] = useState<string>('C. Santhosh Sathriyan');
-  const [discussionNotes, setDiscussionNotes] = useState<string>(
-    'Priority focus on building 6-month liquid contingency reserve and deploying unallocated monthly surplus into long-term equity SIPs.'
-  );
+  const [discussionNotes, setDiscussionNotes] = useState<string>('');
 
-  // Stage 1 State: Income
-  const [incomes, setIncomes] = useState<IncomeLineItem[]>(DEFAULT_INCOME_ITEMS);
+  // Stage 1 State: Income — Initialized with all 7 predefined rows (amounts = 0)
+  const [incomes, setIncomes] = useState<IncomeLineItem[]>(initialBlank.incomes);
 
-  // Stage 2 State: Expenses
+  // Stage 2 State: Expenses — Initialized with all 29 predefined rows (amounts = 0)
   const [householdExpenseMode, setHouseholdExpenseMode] = useState<HouseholdExpenseMode>('ITEMIZED_MODE');
-  const [singleMonthlyHouseholdExpense, setSingleMonthlyHouseholdExpense] = useState<string>('95000');
-  const [expenses, setExpenses] = useState<ExpenseLineItem[]>(DEFAULT_ITEMIZED_EXPENSES);
+  const [singleMonthlyHouseholdExpense, setSingleMonthlyHouseholdExpense] = useState<string>('0');
+  const [expenses, setExpenses] = useState<ExpenseLineItem[]>(initialBlank.expenses);
 
-  // Stage 3 State: Savings & Ongoing Investments
-  const [ongoingInvestments, setOngoingInvestments] = useState<OngoingInvestmentItem[]>(DEFAULT_ONGOING_INVESTMENTS);
+  // Stage 3 State: Savings & Ongoing Investments — Initialized with all 3 predefined rows
+  const [ongoingInvestments, setOngoingInvestments] = useState<OngoingInvestmentItem[]>(initialBlank.ongoingInvestments);
   const [assumedReturnRatePercent, setAssumedReturnRatePercent] = useState<string>('10');
 
-  // Stage 4 State: Assets
-  const [assets, setAssets] = useState<AssetLineItem[]>(DEFAULT_ASSET_ITEMS);
+  // Stage 4 State: Assets — Initialized with all 23 predefined rows across 6 classes
+  const [assets, setAssets] = useState<AssetLineItem[]>(initialBlank.assets);
 
-  // Stage 5 State: Liabilities
-  const [liabilities, setLiabilities] = useState<LiabilityLineItem[]>(DEFAULT_LIABILITY_ITEMS);
+  // Stage 5 State: Liabilities — Initialized with all 6 predefined rows
+  const [liabilities, setLiabilities] = useState<LiabilityLineItem[]>(initialBlank.liabilities);
 
   // UI Flow States
   const [showResetModal, setShowResetModal] = useState<boolean>(false);
+  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
@@ -138,35 +142,48 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     if (currentStage > 1) setCurrentStage((prev) => (prev - 1) as any);
   };
 
-  // In-memory Start Over / Reset
+  // Complete and verifiable Reset Statement handler
   const handleConfirmReset = () => {
-    setIncomes([]);
-    setExpenses([]);
-    setOngoingInvestments([]);
-    setAssets([]);
-    setLiabilities([]);
-    setSingleMonthlyHouseholdExpense('0');
+    const blank = createBlankPredefinedStatement();
+    setClientName('');
+    setSpouseName('');
+    setChildrenNames('');
+    setStatementDate(new Date().toISOString().split('T')[0]);
+    setPreparedBy('C. Santhosh Sathriyan');
     setDiscussionNotes('');
+    setIncomes(blank.incomes);
+    setExpenses(blank.expenses);
+    setOngoingInvestments(blank.ongoingInvestments);
+    setAssets(blank.assets);
+    setLiabilities(blank.liabilities);
+    setHouseholdExpenseMode('ITEMIZED_MODE');
+    setSingleMonthlyHouseholdExpense('0');
+    setAssumedReturnRatePercent('10');
+    setPdfError(null);
     setShowResetModal(false);
+    setShowPreviewModal(false);
     setCurrentStage(1);
   };
 
+  // Explicit Load Sample Data action (Urban Family sample)
   const handleLoadSample = () => {
     setClientName('Ramesh & Priya Sundaram');
     setSpouseName('Priya');
     setChildrenNames('Ananya, Aarav');
     setStatementDate(new Date().toISOString().split('T')[0]);
     setPreparedBy('C. Santhosh Sathriyan');
-    setIncomes(DEFAULT_INCOME_ITEMS);
+    setIncomes(SAMPLE_INCOME_ITEMS.map((item) => ({ ...item })));
     setHouseholdExpenseMode('ITEMIZED_MODE');
     setSingleMonthlyHouseholdExpense('95000');
-    setExpenses(DEFAULT_ITEMIZED_EXPENSES);
-    setOngoingInvestments(DEFAULT_ONGOING_INVESTMENTS);
-    setAssets(DEFAULT_ASSET_ITEMS);
-    setLiabilities(DEFAULT_LIABILITY_ITEMS);
+    setExpenses(SAMPLE_ITEMIZED_EXPENSES.map((item) => ({ ...item })));
+    setOngoingInvestments(SAMPLE_ONGOING_INVESTMENTS.map((item) => ({ ...item })));
+    setAssets(SAMPLE_ASSET_ITEMS.map((item) => ({ ...item })));
+    setLiabilities(SAMPLE_LIABILITY_ITEMS.map((item) => ({ ...item })));
+    setAssumedReturnRatePercent('10');
     setDiscussionNotes(
       'Priority focus on building 6-month liquid contingency reserve and deploying unallocated monthly surplus into long-term equity SIPs.'
     );
+    setPdfError(null);
     setCurrentStage(1);
   };
 
@@ -1557,6 +1574,15 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               <div className="pfs-pdf-action-right">
                 <button
                   type="button"
+                  className="pfs-btn-secondary"
+                  onClick={() => setShowPreviewModal(true)}
+                  id="btn-preview-statement"
+                  title="Inspect statement breakdown before downloading PDF"
+                >
+                  Preview Statement
+                </button>
+                <button
+                  type="button"
                   className="pfs-btn-download-pdf"
                   onClick={handleDownloadPdf}
                   disabled={pdfGenerating}
@@ -1575,6 +1601,145 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           </section>
         )}
       </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* STATEMENT PREVIEW MODAL                                        */}
+      {/* ------------------------------------------------------------- */}
+      {showPreviewModal && (
+        <div className="pfs-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="preview-modal-title">
+          <div className="pfs-modal-box pfs-preview-modal-box">
+            <div className="pfs-preview-modal-header">
+              <div>
+                <span className="pfs-pane-kicker">Statement Summary Preview</span>
+                <h3 id="preview-modal-title" className="pfs-modal-title">
+                  {clientName.trim() || 'Untitled Statement'}
+                </h3>
+                <p className="pfs-preview-meta-line">
+                  Prepared by {preparedBy} • Date: {statementDate}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="pfs-btn-close-modal"
+                onClick={() => setShowPreviewModal(false)}
+                aria-label="Close Preview"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="pfs-preview-modal-body">
+              <div className="pfs-preview-table-container">
+                <table className="pfs-table pfs-preview-table">
+                  <thead>
+                    <tr>
+                      <th>Schedule / Metric</th>
+                      <th className="text-right">Annual Value</th>
+                      <th className="text-right">Monthly Equiv.</th>
+                      <th>Notes &amp; Ratios</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>1. Net Annual Inflows</strong></td>
+                      <td className="text-right font-bold text-teal">{formatINR(result.incomeStage.totalNetAnnualIncome)}</td>
+                      <td className="text-right tabular-nums">{formatINR(result.incomeStage.totalNetMonthlyIncome)}</td>
+                      <td>Gross: {formatINR(result.incomeStage.totalGrossAnnualIncome)}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>2. Annual Living Costs</strong></td>
+                      <td className="text-right font-bold">{formatINR(result.expenseStage.totalAnnualExpenses)}</td>
+                      <td className="text-right tabular-nums">{formatINR(result.expenseStage.totalMonthlyExpenses)}</td>
+                      <td>Mode: {householdExpenseMode === 'TOTAL_MODE' ? 'Consolidated' : 'Itemized'}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>3. Annual Household Savings</strong></td>
+                      <td className={`text-right font-bold ${result.savingsStage.annualSavings < 0 ? 'text-negative' : 'text-teal'}`}>
+                        {formatINR(result.savingsStage.annualSavings)}
+                      </td>
+                      <td className="text-right tabular-nums">{formatINR(result.savingsStage.monthlySavings)}</td>
+                      <td>Savings Rate: {result.savingsRatePercent !== null ? formatPercentage(result.savingsRatePercent) : 'N/A'}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>4. Committed Ongoing Investments</strong></td>
+                      <td className="text-right font-bold">{formatINR(result.savingsStage.totalOngoingInvestmentsAnnual)}</td>
+                      <td className="text-right tabular-nums">{formatINR(result.savingsStage.totalOngoingInvestmentsMonthly)}</td>
+                      <td>MF SIPs, RDs, PPF</td>
+                    </tr>
+                    <tr>
+                      <td><strong>5. Surplus for Fresh Investment</strong></td>
+                      <td className={`text-right font-bold ${result.savingsStage.annualSurplusForFreshInvestments < 0 ? 'text-negative' : 'text-teal'}`}>
+                        {formatINR(result.savingsStage.annualSurplusForFreshInvestments)}
+                      </td>
+                      <td className="text-right tabular-nums">{formatINR(result.savingsStage.monthlySurplusForFreshInvestments)}</td>
+                      <td>{result.savingsStage.annualSurplusForFreshInvestments >= 0 ? 'Surplus Available' : 'Cash Flow Deficit'}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>6. Total Household Assets</strong></td>
+                      <td className="text-right font-bold">{formatINR(result.totalAssets)}</td>
+                      <td className="text-right tabular-nums">-</td>
+                      <td>Productive: {formatINR(result.assetStage.totalProductiveAssets)} ({formatPercentage(result.productiveAssetsRatioPercent || 0)})</td>
+                    </tr>
+                    <tr>
+                      <td><strong>7. Personal Consumption Assets</strong></td>
+                      <td className="text-right font-bold">{formatINR(result.totalPersonalAssets)}</td>
+                      <td className="text-right tabular-nums">-</td>
+                      <td>Primary House, Car, Jewellery</td>
+                    </tr>
+                    <tr>
+                      <td><strong>8. Total Liabilities</strong></td>
+                      <td className="text-right font-bold">{formatINR(result.totalLiabilities)}</td>
+                      <td className="text-right tabular-nums">-</td>
+                      <td>Debt/Asset: {result.debtToAssetRatioPercent !== null ? formatPercentage(result.debtToAssetRatioPercent) : '0%'}</td>
+                    </tr>
+                    <tr className="highlight-preview-row">
+                      <td><strong>Actual Net Worth (Excl. Personal)</strong></td>
+                      <td className="text-right font-bold text-gold">{formatINR(result.netWorthExcludingPersonalAssets)}</td>
+                      <td className="text-right tabular-nums">-</td>
+                      <td><strong>Productive Wealth Capital</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Notional Net Worth (Incl. Personal)</strong></td>
+                      <td className="text-right font-bold text-navy">{formatINR(result.netWorthIncludingPersonalAssets)}</td>
+                      <td className="text-right tabular-nums">-</td>
+                      <td>Accounting Balance Sheet Net Worth</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {discussionNotes && discussionNotes.trim() !== '' && (
+                <div className="pfs-preview-notes">
+                  <strong>Discussion Notes:</strong> {discussionNotes}
+                </div>
+              )}
+            </div>
+
+            <div className="pfs-modal-actions pfs-preview-actions">
+              <button
+                type="button"
+                className="pfs-btn-secondary"
+                onClick={() => setShowPreviewModal(false)}
+                id="btn-close-preview"
+              >
+                Close Preview
+              </button>
+              <button
+                type="button"
+                className="pfs-btn-download-pdf"
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  handleDownloadPdf();
+                }}
+                disabled={pdfGenerating}
+                id="btn-preview-download-pdf"
+              >
+                Download PDF Statement
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ------------------------------------------------------------- */}
       {/* RESET CONFIRMATION MODAL                                      */}
@@ -2655,6 +2820,142 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: flex;
           justify-content: flex-end;
           gap: 10px;
+        }
+
+        /* PREVIEW MODAL SPECIFIC */
+        .pfs-preview-modal-box {
+          max-width: 840px;
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          padding: 20px 24px;
+        }
+        .pfs-preview-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          border-bottom: 1px solid #EEF2F6;
+          padding-bottom: 12px;
+          margin-bottom: 12px;
+        }
+        .pfs-preview-meta-line {
+          font-size: 0.8rem;
+          color: #64748B;
+          margin: 4px 0 0 0;
+        }
+        .pfs-btn-close-modal {
+          background: transparent;
+          border: none;
+          font-size: 1.25rem;
+          color: #94A3B8;
+          cursor: pointer;
+          padding: 4px 8px;
+          line-height: 1;
+        }
+        .pfs-btn-close-modal:hover {
+          color: #00182A;
+        }
+        .pfs-preview-modal-body {
+          overflow-y: auto;
+          flex: 1;
+          margin-bottom: 16px;
+        }
+        .pfs-preview-table-container {
+          margin-bottom: 12px;
+        }
+        .pfs-preview-table th {
+          background: #00182A;
+          color: #FFFFFF;
+          font-size: 0.8rem;
+          padding: 8px 10px;
+        }
+        .pfs-preview-table td {
+          padding: 7px 10px;
+          font-size: 0.82rem;
+        }
+        .highlight-preview-row td {
+          background: #FEF9C3;
+          border-top: 1px solid #FDE047;
+          border-bottom: 1px solid #FDE047;
+        }
+        .pfs-preview-notes {
+          background: #F8FAFC;
+          border: 1px solid #E2E8F0;
+          border-radius: 6px;
+          padding: 10px 12px;
+          font-size: 0.82rem;
+          color: #334155;
+          line-height: 1.5;
+        }
+        .pfs-preview-actions {
+          border-top: 1px solid #EEF2F6;
+          padding-top: 12px;
+        }
+
+        /* MOBILE RESPONSIVE OPTIMIZATIONS (<= 640px & 390px viewport) */
+        @media (max-width: 640px) {
+          .pfs-app-wrapper {
+            gap: 12px;
+          }
+          .pfs-live-bar {
+            padding: 10px;
+          }
+          .pfs-live-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+          }
+          .pfs-metric-card {
+            padding: 6px 8px;
+          }
+          .pfs-metric-value {
+            font-size: 0.98rem;
+          }
+          .pfs-meta-section {
+            padding: 12px;
+          }
+          .pfs-meta-header {
+            margin-bottom: 10px;
+          }
+          .pfs-meta-actions {
+            width: 100%;
+          }
+          .pfs-meta-actions button {
+            flex: 1;
+            text-align: center;
+          }
+          .pfs-stage-canvas {
+            padding: 12px;
+          }
+          .pfs-pane-title {
+            font-size: 1.15rem;
+          }
+          .pfs-pane-desc {
+            font-size: 0.8rem;
+          }
+          .pfs-table th, .pfs-table td {
+            padding: 6px 4px;
+            font-size: 0.78rem;
+          }
+          .pfs-table-input, .pfs-table-select {
+            padding: 4px 6px;
+            font-size: 0.78rem;
+          }
+          .pfs-pdf-action-card {
+            padding: 12px;
+          }
+          .pfs-pdf-action-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+          }
+          .pfs-pdf-action-right button {
+            width: 100%;
+          }
+          .pfs-preview-modal-box {
+            padding: 14px;
+            max-height: 94vh;
+          }
         }
       `}</style>
     </div>

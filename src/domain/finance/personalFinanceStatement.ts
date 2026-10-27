@@ -790,156 +790,216 @@ export function calculateComprehensivePersonalFinanceStatement(
     productiveAssetsRatioPercent,
   };
 }
-
 // -------------------------------------------------------------
-// CANONICAL DEFAULT FIXTURES (Aligned with ProTool_04 Excel Workbook)
+// PREDEFINED STANDARD ROW SCHEMAS (Empty / Blank by Default)
+// Exactly aligns with rows in ProTool_04_-_REAL_Statement.xlsx
 // -------------------------------------------------------------
-export const DEFAULT_INCOME_ITEMS: IncomeLineItem[] = [
-  {
-    id: 'inc-sal-self',
-    label: 'Salary Income (Self)',
-    category: 'SALARY_SELF',
-    inputPeriod: 'MONTHLY',
-    enteredGrossAmount: 150000,
-    annualDeductions: 180000, // TDS / Taxes
-  },
-  {
-    id: 'inc-sal-spouse',
-    label: 'Salary Income (Spouse)',
-    category: 'SALARY_SPOUSE',
-    inputPeriod: 'MONTHLY',
-    enteredGrossAmount: 80000,
-    annualDeductions: 60000,
-  },
-  {
-    id: 'inc-bonus-self',
-    label: 'Annual Bonus (Self)',
-    category: 'BONUS_SELF',
-    inputPeriod: 'ANNUAL',
-    enteredGrossAmount: 200000,
-    annualDeductions: 40000,
-  },
-  {
-    id: 'inc-bonus-spouse',
-    label: 'Annual Bonus (Spouse)',
-    category: 'BONUS_SPOUSE',
-    inputPeriod: 'ANNUAL',
-    enteredGrossAmount: 100000,
-    annualDeductions: 20000,
-  },
-  {
-    id: 'inc-business',
-    label: 'Business / Professional Income',
-    category: 'BUSINESS',
-    inputPeriod: 'ANNUAL',
-    enteredGrossAmount: 0,
-    annualDeductions: 0,
-  },
-  {
-    id: 'inc-rental',
-    label: 'Rental Income',
-    category: 'RENTAL',
-    inputPeriod: 'MONTHLY',
-    enteredGrossAmount: 25000,
-    annualDeductions: 30000,
-  },
-  {
-    id: 'inc-investment',
-    label: 'Investment Income (Dividends/Interest)',
-    category: 'INVESTMENT',
-    inputPeriod: 'ANNUAL',
-    enteredGrossAmount: 50000,
-    annualDeductions: 5000,
-  },
+export const PREDEFINED_INCOME_ITEMS: IncomeLineItem[] = [
+  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
 ];
 
-export const DEFAULT_ITEMIZED_EXPENSES: ExpenseLineItem[] = [
-  // Household
+export const PREDEFINED_EXPENSE_ITEMS: ExpenseLineItem[] = [
+  // Household Essentials (Rows 17-26 in Excel)
+  { id: 'exp-hh-rent', label: 'House Rent', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-maint', label: 'House - Society, Maintenance, Repair', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-food', label: 'Food, Grocery & Toiletaries', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-fuel', label: 'Vehicle - Fuel, Maintenance / Travels', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-med', label: 'Medicines / Doctor / Healthcare', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-util', label: 'Electricity / Water / AMCs', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-help', label: 'Domestic Help / Car Driver', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-comm', label: 'Mobile / Telephone / Internet', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-subs', label: 'TV Cable / Newspapers / Subscriptions', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-hh-other', label: 'Others if any', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 0 },
+  // Lifestyle Expenses (Rows 29-38 in Excel)
+  { id: 'exp-life-clothes', label: 'Clothes & Accessories', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-life-shop', label: 'Shopping, Gifts, Electronics, Gadgets', category: 'LIFESTYLE', frequency: 'QUARTERLY', enteredAmount: 0 },
+  { id: 'exp-life-dine', label: 'Dining / Movies / Sports', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-life-care', label: 'Personal Care - Saloon, Spa, Gym', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-life-vac', label: 'Travel & Annual Vacations', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-life-coach', label: 'Fitness Coach / Financial Advisor / CA', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-life-club', label: 'Hobbies / Club Memberships', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-life-course', label: 'Professional courses / education', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-life-charity', label: 'Charity / Donations', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-life-other', label: 'Others if any', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  // Dependent Expenses (Rows 41-43 in Excel)
+  { id: 'exp-dep-school', label: "Children's Schooling/ College / Tutions", category: 'DEPENDENT', frequency: 'QUARTERLY', enteredAmount: 0 },
+  { id: 'exp-dep-parents', label: 'Contribution to Parents', category: 'DEPENDENT', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-dep-relatives', label: 'Others - Siblings, Relatives if any', category: 'DEPENDENT', frequency: 'ANNUAL', enteredAmount: 0 },
+  // Insurance Premiums (Rows 46-48 in Excel)
+  { id: 'exp-ins-life', label: 'Life Insurance (Term / Pure)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-ins-health', label: 'Health Insurance (Mediclaim, PA, CI)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-ins-gen', label: 'General Insurance (Motor & Others)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 0 },
+  // Loan EMIs (Rows 51-53 in Excel)
+  { id: 'exp-emi-home', label: 'Home Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-emi-car', label: 'Vehicle Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-emi-other', label: 'Other Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 0 },
+];
+
+export const PREDEFINED_ONGOING_INVESTMENTS: OngoingInvestmentItem[] = [
+  { id: 'inv-sip-mf', label: 'Ongoing Investments (MF SIPs)', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'inv-sip-rd', label: 'Ongoing Investments (Policies, RDs)', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'inv-sip-other', label: 'Ongoing Investments (Others)', frequency: 'ANNUAL', enteredAmount: 0 },
+];
+
+export const PREDEFINED_ASSET_ITEMS: AssetLineItem[] = [
+  // Liquid Assets (Rows 74-76 in Excel)
+  { id: 'ast-liq-sb', label: 'Savings Bank', assetClass: 'LIQUID', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-liq-funds', label: 'Liquid Funds', assetClass: 'LIQUID', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-liq-cash', label: 'Cash in Hand', assetClass: 'LIQUID', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+
+  // Debt Assets (Rows 79-86 in Excel)
+  { id: 'ast-debt-fd', label: 'Fixed Deposits', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-ppf', label: 'PPF (Public Provident Fund)', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-epf', label: 'EPF / SA / Gratuity (Current Value)', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-nsc', label: 'NSC / POMIS / KVP / RDs etc', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-nps', label: 'NPS (Debt Portion)', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-funds', label: 'Debt Mutual Funds', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-ins-sv', label: 'Insurance Policies - Surrender Value', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-debt-bonds', label: 'Bonds/Debentures/CDs', assetClass: 'DEBT', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+
+  // Equity Assets (Rows 89-92 in Excel)
+  { id: 'ast-eq-direct', label: 'Direct Equity / PMS / AIF', assetClass: 'EQUITY', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-eq-mf', label: 'Equity Mutual Funds', assetClass: 'EQUITY', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-eq-nps', label: 'NPS (Equity Portion)', assetClass: 'EQUITY', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-eq-ulip', label: 'Unit-linked Insurance SV (ULIPs)', assetClass: 'EQUITY', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+
+  // Gold Assets (Rows 95-96 in Excel)
+  { id: 'ast-gold-etf', label: 'ETFs/ Mutual Funds', assetClass: 'GOLD', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-gold-bars', label: 'Gold Bars / Coins etc', assetClass: 'GOLD', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+
+  // Real Estate Assets (Rows 99-101 in Excel)
+  { id: 'ast-re-apt', label: 'Apartment / House (as Investment)', assetClass: 'REAL_ESTATE', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-re-land', label: 'Plot / Land / Holiday Home', assetClass: 'REAL_ESTATE', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-re-funds', label: 'Real Estate Funds / REITs', assetClass: 'REAL_ESTATE', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+
+  // Personal Assets (Rows 104-106 in Excel)
+  { id: 'ast-pers-home', label: 'Primary House', assetClass: 'PERSONAL', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-pers-vehicles', label: 'Vehicles', assetClass: 'PERSONAL', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'ast-pers-jewel', label: 'Jewellery etc', assetClass: 'PERSONAL', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+];
+
+export const PREDEFINED_LIABILITY_ITEMS: LiabilityLineItem[] = [
+  // Liabilities (Rows 113-118 in Excel)
+  { id: 'lia-home', label: 'Home Loan - Outstanding', type: 'HOME_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-vehicle', label: 'Vehicle Loan - Outstanding', type: 'VEHICLE_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-personal', label: 'Personal Loan', type: 'PERSONAL_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-education', label: 'Education Loan', type: 'EDUCATION_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-other', label: 'Other Loans (Gold Loan etc)', type: 'OTHER_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-credit-card', label: 'Credit Card', type: 'CREDIT_CARD', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+];
+
+// Helper to deep-clone predefined blank schemas
+export function createBlankPredefinedStatement(): {
+  incomes: IncomeLineItem[];
+  expenses: ExpenseLineItem[];
+  ongoingInvestments: OngoingInvestmentItem[];
+  assets: AssetLineItem[];
+  liabilities: LiabilityLineItem[];
+} {
+  return {
+    incomes: PREDEFINED_INCOME_ITEMS.map((item) => ({ ...item })),
+    expenses: PREDEFINED_EXPENSE_ITEMS.map((item) => ({ ...item })),
+    ongoingInvestments: PREDEFINED_ONGOING_INVESTMENTS.map((item) => ({ ...item })),
+    assets: PREDEFINED_ASSET_ITEMS.map((item) => ({ ...item })),
+    liabilities: PREDEFINED_LIABILITY_ITEMS.map((item) => ({ ...item })),
+  };
+}
+
+// -------------------------------------------------------------
+// CANONICAL SAMPLE FIXTURES (Explicitly Loaded by User Action Only)
+// -------------------------------------------------------------
+export const SAMPLE_INCOME_ITEMS: IncomeLineItem[] = [
+  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', inputPeriod: 'MONTHLY', enteredGrossAmount: 150000, annualDeductions: 180000 },
+  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', inputPeriod: 'MONTHLY', enteredGrossAmount: 80000, annualDeductions: 60000 },
+  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', inputPeriod: 'ANNUAL', enteredGrossAmount: 200000, annualDeductions: 40000 },
+  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', inputPeriod: 'ANNUAL', enteredGrossAmount: 100000, annualDeductions: 20000 },
+  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', inputPeriod: 'MONTHLY', enteredGrossAmount: 25000, annualDeductions: 30000 },
+  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', inputPeriod: 'ANNUAL', enteredGrossAmount: 50000, annualDeductions: 5000 },
+];
+
+export const SAMPLE_ITEMIZED_EXPENSES: ExpenseLineItem[] = [
   { id: 'exp-hh-rent', label: 'House Rent', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 35000 },
-  { id: 'exp-hh-maint', label: 'Society Maintenance, Repair & Upkeep', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 4000 },
-  { id: 'exp-hh-food', label: 'Food, Grocery & Toiletries', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 28000 },
-  { id: 'exp-hh-fuel', label: 'Vehicle Fuel, Maintenance & Local Travel', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 8000 },
-  { id: 'exp-hh-med', label: 'Medicines, Doctor & Routine Healthcare', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 4000 },
-  { id: 'exp-hh-util', label: 'Electricity, Gas & Water Utilities', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 5500 },
-  { id: 'exp-hh-help', label: 'Domestic Help & Housekeeping', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 6500 },
-  { id: 'exp-hh-comm', label: 'Mobile, Telephone & Broadband Internet', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 2500 },
-  { id: 'exp-hh-subs', label: 'OTT, TV Subscriptions & Newspapers', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 1500 },
-  { id: 'exp-hh-other', label: 'Other Household Miscellaneous', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 2000 },
-  // Lifestyle
+  { id: 'exp-hh-maint', label: 'House - Society, Maintenance, Repair', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 4000 },
+  { id: 'exp-hh-food', label: 'Food, Grocery & Toiletaries', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 28000 },
+  { id: 'exp-hh-fuel', label: 'Vehicle - Fuel, Maintenance / Travels', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 8000 },
+  { id: 'exp-hh-med', label: 'Medicines / Doctor / Healthcare', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 4000 },
+  { id: 'exp-hh-util', label: 'Electricity / Water / AMCs', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 5500 },
+  { id: 'exp-hh-help', label: 'Domestic Help / Car Driver', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 6500 },
+  { id: 'exp-hh-comm', label: 'Mobile / Telephone / Internet', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 2500 },
+  { id: 'exp-hh-subs', label: 'TV Cable / Newspapers / Subscriptions', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 1500 },
+  { id: 'exp-hh-other', label: 'Others if any', category: 'HOUSEHOLD', frequency: 'MONTHLY', enteredAmount: 2000 },
   { id: 'exp-life-clothes', label: 'Clothes & Accessories', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 6000 },
-  { id: 'exp-life-shop', label: 'Shopping, Gifts & Electronics', category: 'LIFESTYLE', frequency: 'QUARTERLY', enteredAmount: 15000 },
-  { id: 'exp-life-dine', label: 'Dining Out, Movies & Entertainment', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 8000 },
-  { id: 'exp-life-care', label: 'Personal Care, Salon, Spa & Gym', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 3500 },
-  { id: 'exp-life-vac', label: 'Travel & Annual Family Vacations', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 120000 },
-  { id: 'exp-life-coach', label: 'Fitness / Professional Advisory Fees', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 15000 },
-  { id: 'exp-life-club', label: 'Hobbies & Club Memberships', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 10000 },
-  { id: 'exp-life-course', label: 'Professional Courses & Skill Development', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 25000 },
-  { id: 'exp-life-charity', label: 'Charity & Social Contributions', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 12000 },
-  // Dependents
-  { id: 'exp-dep-school', label: "Children's Schooling, College & Tuition Fees", category: 'DEPENDENT', frequency: 'QUARTERLY', enteredAmount: 45000 },
-  { id: 'exp-dep-parents', label: 'Monthly Financial Contribution to Parents', category: 'DEPENDENT', frequency: 'MONTHLY', enteredAmount: 15000 },
-  { id: 'exp-dep-relatives', label: 'Support for Extended Family', category: 'DEPENDENT', frequency: 'ANNUAL', enteredAmount: 20000 },
-  // Insurance Premiums
-  { id: 'exp-ins-life', label: 'Life Insurance (Pure Term Plans)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 32000 },
-  { id: 'exp-ins-health', label: 'Health Insurance (Family Floater + Super Top-up)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 28000 },
-  { id: 'exp-ins-gen', label: 'General Insurance (Motor & Home Shield)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 18000 },
-  // Loan EMIs
-  { id: 'exp-emi-home', label: 'Home Loan Monthly EMI', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 42000 },
-  { id: 'exp-emi-car', label: 'Vehicle Loan Monthly EMI', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 14000 },
-  { id: 'exp-emi-other', label: 'Other Personal / Education Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 0 },
+  { id: 'exp-life-shop', label: 'Shopping, Gifts, Electronics, Gadgets', category: 'LIFESTYLE', frequency: 'QUARTERLY', enteredAmount: 15000 },
+  { id: 'exp-life-dine', label: 'Dining / Movies / Sports', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 8000 },
+  { id: 'exp-life-care', label: 'Personal Care - Saloon, Spa, Gym', category: 'LIFESTYLE', frequency: 'MONTHLY', enteredAmount: 3500 },
+  { id: 'exp-life-vac', label: 'Travel & Annual Vacations', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 120000 },
+  { id: 'exp-life-coach', label: 'Fitness Coach / Financial Advisor / CA', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 15000 },
+  { id: 'exp-life-club', label: 'Hobbies / Club Memberships', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 10000 },
+  { id: 'exp-life-course', label: 'Professional courses / education', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 25000 },
+  { id: 'exp-life-charity', label: 'Charity / Donations', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 12000 },
+  { id: 'exp-life-other', label: 'Others if any', category: 'LIFESTYLE', frequency: 'ANNUAL', enteredAmount: 0 },
+  { id: 'exp-dep-school', label: "Children's Schooling/ College / Tutions", category: 'DEPENDENT', frequency: 'QUARTERLY', enteredAmount: 45000 },
+  { id: 'exp-dep-parents', label: 'Contribution to Parents', category: 'DEPENDENT', frequency: 'MONTHLY', enteredAmount: 15000 },
+  { id: 'exp-dep-relatives', label: 'Others - Siblings, Relatives if any', category: 'DEPENDENT', frequency: 'ANNUAL', enteredAmount: 20000 },
+  { id: 'exp-ins-life', label: 'Life Insurance (Term / Pure)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 32000 },
+  { id: 'exp-ins-health', label: 'Health Insurance (Mediclaim, PA, CI)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 28000 },
+  { id: 'exp-ins-gen', label: 'General Insurance (Motor & Others)', category: 'INSURANCE', frequency: 'ANNUAL', enteredAmount: 18000 },
+  { id: 'exp-emi-home', label: 'Home Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 42000 },
+  { id: 'exp-emi-car', label: 'Vehicle Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 14000 },
+  { id: 'exp-emi-other', label: 'Other Loan EMIs', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 0 },
 ];
 
-export const DEFAULT_ONGOING_INVESTMENTS: OngoingInvestmentItem[] = [
-  { id: 'inv-sip-equity', label: 'Equity Mutual Fund Systematic Investment Plans (SIPs)', frequency: 'MONTHLY', enteredAmount: 35000 },
-  { id: 'inv-sip-rd', label: 'Recurring Deposits & Post Office RDs', frequency: 'MONTHLY', enteredAmount: 5000 },
-  { id: 'inv-sip-ppf', label: 'PPF Annual Contribution', frequency: 'ANNUAL', enteredAmount: 150000 },
-  { id: 'inv-sip-nps', label: 'NPS Voluntary Contribution', frequency: 'ANNUAL', enteredAmount: 50000 },
+export const SAMPLE_ONGOING_INVESTMENTS: OngoingInvestmentItem[] = [
+  { id: 'inv-sip-mf', label: 'Ongoing Investments (MF SIPs)', frequency: 'MONTHLY', enteredAmount: 35000 },
+  { id: 'inv-sip-rd', label: 'Ongoing Investments (Policies, RDs)', frequency: 'MONTHLY', enteredAmount: 5000 },
+  { id: 'inv-sip-other', label: 'Ongoing Investments (Others)', frequency: 'ANNUAL', enteredAmount: 200000 },
 ];
 
-export const DEFAULT_ASSET_ITEMS: AssetLineItem[] = [
-  // Liquid Assets
-  { id: 'ast-liq-sb', label: 'Savings Bank Accounts', assetClass: 'LIQUID', selfAmount: 250000, spouseAmount: 180000, childrenAmount: 0, purposeGoal: 'Daily Cash Flow & Buffer' },
-  { id: 'ast-liq-mf', label: 'Liquid Mutual Funds / Overnight Funds', assetClass: 'LIQUID', selfAmount: 400000, spouseAmount: 200000, childrenAmount: 0, purposeGoal: 'Emergency Reserve (6 Months)' },
-  { id: 'ast-liq-cash', label: 'Cash in Hand', assetClass: 'LIQUID', selfAmount: 30000, spouseAmount: 20000, childrenAmount: 0, purposeGoal: 'Household Contingency' },
-
-  // Debt Assets
-  { id: 'ast-debt-fd', label: 'Bank & Corporate Fixed Deposits', assetClass: 'DEBT', selfAmount: 500000, spouseAmount: 300000, childrenAmount: 0, purposeGoal: 'Near-term Capital Preservation' },
-  { id: 'ast-debt-ppf', label: 'Public Provident Fund (PPF)', assetClass: 'DEBT', selfAmount: 850000, spouseAmount: 620000, childrenAmount: 0, purposeGoal: 'Long-term Debt Compounding' },
-  { id: 'ast-debt-epf', label: 'EPF / Voluntary PF / Gratuity Current Value', assetClass: 'DEBT', selfAmount: 1450000, spouseAmount: 780000, childrenAmount: 0, purposeGoal: 'Retirement Anchor' },
-  { id: 'ast-debt-nsc', label: 'NSC / Post Office MIS / KVP / RDs', assetClass: 'DEBT', selfAmount: 150000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Fixed Income Safety' },
-  { id: 'ast-debt-nps', label: 'NPS (Debt Portion - Tier I)', assetClass: 'DEBT', selfAmount: 280000, spouseAmount: 140000, childrenAmount: 0, purposeGoal: 'Retirement Annuity Foundation' },
-  { id: 'ast-debt-funds', label: 'Debt Mutual Funds (Short Duration / Corporate Bond)', assetClass: 'DEBT', selfAmount: 350000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Tax-deferred Debt Reserves' },
-  { id: 'ast-debt-ins-sv', label: 'Insurance Policies (Traditional Surrender Value)', assetClass: 'DEBT', selfAmount: 180000, spouseAmount: 120000, childrenAmount: 0, purposeGoal: 'Guaranteed Return Endowment' },
-  { id: 'ast-debt-bonds', label: 'Sovereign / Corporate Bonds & Debentures', assetClass: 'DEBT', selfAmount: 200000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Fixed Yield' },
-
-  // Equity Assets
-  { id: 'ast-eq-mf', label: 'Equity Mutual Funds (Flexi Cap, Large & Mid Cap)', assetClass: 'EQUITY', selfAmount: 1850000, spouseAmount: 1100000, childrenAmount: 250000, purposeGoal: "Children Education & Long-term Growth" },
-  { id: 'ast-eq-direct', label: 'Direct Stocks & Demat Holdings', assetClass: 'EQUITY', selfAmount: 650000, spouseAmount: 250000, childrenAmount: 0, purposeGoal: 'Long-term Wealth Creation' },
-  { id: 'ast-eq-nps', label: 'NPS (Equity Portion - Tier I)', assetClass: 'EQUITY', selfAmount: 420000, spouseAmount: 210000, childrenAmount: 0, purposeGoal: 'Retirement Wealth Compounding' },
-  { id: 'ast-eq-pms', label: 'PMS / AIF Holdings', assetClass: 'EQUITY', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Alternative Equity Growth' },
-  { id: 'ast-eq-ulip', label: 'Unit-Linked Insurance Plans (ULIP Surrender Value)', assetClass: 'EQUITY', selfAmount: 250000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Market-linked Endowment' },
-
-  // Gold Assets
-  { id: 'ast-gold-mf', label: 'Gold ETFs & Mutual Funds', assetClass: 'GOLD', selfAmount: 180000, spouseAmount: 120000, childrenAmount: 0, purposeGoal: 'Inflation & Currency Hedge' },
-  { id: 'ast-gold-sgb', label: 'Sovereign Gold Bonds (SGBs)', assetClass: 'GOLD', selfAmount: 350000, spouseAmount: 250000, childrenAmount: 0, purposeGoal: 'Sovereign Guaranteed Gold' },
-  { id: 'ast-gold-bars', label: 'Physical Gold Bars & Bullion Coins', assetClass: 'GOLD', selfAmount: 100000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Physical Gold Reserve' },
-
-  // Real Estate Assets (Investments)
-  { id: 'ast-re-apt', label: 'Apartment / House Held for Rental Investment', assetClass: 'REAL_ESTATE', selfAmount: 4500000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Rental Cash Flow & Capital Appreciation' },
-  { id: 'ast-re-land', label: 'Plot / Land / Commercial Space', assetClass: 'REAL_ESTATE', selfAmount: 2500000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Long-term Real Asset Growth' },
-  { id: 'ast-re-reit', label: 'Real Estate Investment Trusts (REITs)', assetClass: 'REAL_ESTATE', selfAmount: 150000, spouseAmount: 50000, childrenAmount: 0, purposeGoal: 'Liquid Commercial Real Estate' },
-
-  // Personal Assets (Notional / Consumption)
-  { id: 'ast-pers-home', label: 'Primary Self-Occupied Residence', assetClass: 'PERSONAL', selfAmount: 6500000, spouseAmount: 2500000, childrenAmount: 0, purposeGoal: 'Family Shelter & Security' },
-  { id: 'ast-pers-car', label: 'Personal Vehicles (Car & Two-Wheelers)', assetClass: 'PERSONAL', selfAmount: 750000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Family Utility & Mobility' },
-  { id: 'ast-pers-jewel', label: 'Personal Jewellery & Heirloom Ornaments', assetClass: 'PERSONAL', selfAmount: 200000, spouseAmount: 1200000, childrenAmount: 300000, purposeGoal: 'Family Cultural & Personal Ornaments' },
+export const SAMPLE_ASSET_ITEMS: AssetLineItem[] = [
+  { id: 'ast-liq-sb', label: 'Savings Bank', assetClass: 'LIQUID', selfAmount: 250000, spouseAmount: 180000, childrenAmount: 0, purposeGoal: 'Daily buffer' },
+  { id: 'ast-liq-funds', label: 'Liquid Funds', assetClass: 'LIQUID', selfAmount: 400000, spouseAmount: 200000, childrenAmount: 0, purposeGoal: 'Emergency reserve' },
+  { id: 'ast-liq-cash', label: 'Cash in Hand', assetClass: 'LIQUID', selfAmount: 30000, spouseAmount: 20000, childrenAmount: 0, purposeGoal: 'Contingency' },
+  { id: 'ast-debt-fd', label: 'Fixed Deposits', assetClass: 'DEBT', selfAmount: 500000, spouseAmount: 300000, childrenAmount: 0, purposeGoal: 'Capital safety' },
+  { id: 'ast-debt-ppf', label: 'PPF (Public Provident Fund)', assetClass: 'DEBT', selfAmount: 850000, spouseAmount: 620000, childrenAmount: 0, purposeGoal: 'Retirement' },
+  { id: 'ast-debt-epf', label: 'EPF / SA / Gratuity (Current Value)', assetClass: 'DEBT', selfAmount: 1450000, spouseAmount: 780000, childrenAmount: 0, purposeGoal: 'Retirement' },
+  { id: 'ast-debt-nsc', label: 'NSC / POMIS / KVP / RDs etc', assetClass: 'DEBT', selfAmount: 150000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Yield' },
+  { id: 'ast-debt-nps', label: 'NPS (Debt Portion)', assetClass: 'DEBT', selfAmount: 280000, spouseAmount: 140000, childrenAmount: 0, purposeGoal: 'Pension' },
+  { id: 'ast-debt-funds', label: 'Debt Mutual Funds', assetClass: 'DEBT', selfAmount: 350000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Medium term' },
+  { id: 'ast-debt-ins-sv', label: 'Insurance Policies - Surrender Value', assetClass: 'DEBT', selfAmount: 180000, spouseAmount: 120000, childrenAmount: 0, purposeGoal: 'Traditional life cover' },
+  { id: 'ast-debt-bonds', label: 'Bonds/Debentures/CDs', assetClass: 'DEBT', selfAmount: 200000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Fixed coupon' },
+  { id: 'ast-eq-direct', label: 'Direct Equity / PMS / AIF', assetClass: 'EQUITY', selfAmount: 650000, spouseAmount: 250000, childrenAmount: 0, purposeGoal: 'Long-term growth' },
+  { id: 'ast-eq-mf', label: 'Equity Mutual Funds', assetClass: 'EQUITY', selfAmount: 1850000, spouseAmount: 1100000, childrenAmount: 250000, purposeGoal: "Children education" },
+  { id: 'ast-eq-nps', label: 'NPS (Equity Portion)', assetClass: 'EQUITY', selfAmount: 420000, spouseAmount: 210000, childrenAmount: 0, purposeGoal: 'Retirement' },
+  { id: 'ast-eq-ulip', label: 'Unit-linked Insurance SV (ULIPs)', assetClass: 'EQUITY', selfAmount: 250000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Market linked' },
+  { id: 'ast-gold-etf', label: 'ETFs/ Mutual Funds', assetClass: 'GOLD', selfAmount: 180000, spouseAmount: 120000, childrenAmount: 0, purposeGoal: 'Hedge' },
+  { id: 'ast-gold-bars', label: 'Gold Bars / Coins etc', assetClass: 'GOLD', selfAmount: 100000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Hedge' },
+  { id: 'ast-re-apt', label: 'Apartment / House (as Investment)', assetClass: 'REAL_ESTATE', selfAmount: 4500000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Rental yield' },
+  { id: 'ast-re-land', label: 'Plot / Land / Holiday Home', assetClass: 'REAL_ESTATE', selfAmount: 2500000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Land appreciation' },
+  { id: 'ast-re-funds', label: 'Real Estate Funds / REITs', assetClass: 'REAL_ESTATE', selfAmount: 150000, spouseAmount: 50000, childrenAmount: 0, purposeGoal: 'REIT income' },
+  { id: 'ast-pers-home', label: 'Primary House', assetClass: 'PERSONAL', selfAmount: 6500000, spouseAmount: 2500000, childrenAmount: 0, purposeGoal: 'Family residence' },
+  { id: 'ast-pers-vehicles', label: 'Vehicles', assetClass: 'PERSONAL', selfAmount: 750000, spouseAmount: 150000, childrenAmount: 0, purposeGoal: 'Mobility' },
+  { id: 'ast-pers-jewel', label: 'Jewellery etc', assetClass: 'PERSONAL', selfAmount: 200000, spouseAmount: 1200000, childrenAmount: 300000, purposeGoal: 'Heirloom ornaments' },
 ];
 
-export const DEFAULT_LIABILITY_ITEMS: LiabilityLineItem[] = [
-  { id: 'lia-home', label: 'Primary Home Loan (Outstanding Principal)', type: 'HOME_LOAN', selfAmount: 3200000, spouseAmount: 800000, childrenAmount: 0, purposeGoal: 'Primary Home Purchase' },
-  { id: 'lia-car', label: 'Vehicle Loan (Outstanding Principal)', type: 'VEHICLE_LOAN', selfAmount: 420000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Family Car Loan' },
-  { id: 'lia-pers', label: 'Personal Loan Outstanding', type: 'PERSONAL_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Emergency Expense' },
-  { id: 'lia-edu', label: 'Higher Education Loan Outstanding', type: 'EDUCATION_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Degree Financing' },
-  { id: 'lia-other', label: 'Other Loans (Gold Loan, Loan Against Property)', type: 'OTHER_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Secured Borrowing' },
-  { id: 'lia-cc', label: 'Credit Card Outstanding Balance (Billing Cycle)', type: 'CREDIT_CARD', selfAmount: 45000, spouseAmount: 25000, childrenAmount: 0, purposeGoal: 'Monthly Rolling Purchases' },
+export const SAMPLE_LIABILITY_ITEMS: LiabilityLineItem[] = [
+  { id: 'lia-home', label: 'Home Loan - Outstanding', type: 'HOME_LOAN', selfAmount: 3200000, spouseAmount: 800000, childrenAmount: 0, purposeGoal: 'Primary home' },
+  { id: 'lia-vehicle', label: 'Vehicle Loan - Outstanding', type: 'VEHICLE_LOAN', selfAmount: 420000, spouseAmount: 0, childrenAmount: 0, purposeGoal: 'Car loan' },
+  { id: 'lia-personal', label: 'Personal Loan', type: 'PERSONAL_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-education', label: 'Education Loan', type: 'EDUCATION_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-other', label: 'Other Loans (Gold Loan etc)', type: 'OTHER_LOAN', selfAmount: 0, spouseAmount: 0, childrenAmount: 0, purposeGoal: '' },
+  { id: 'lia-credit-card', label: 'Credit Card', type: 'CREDIT_CARD', selfAmount: 45000, spouseAmount: 25000, childrenAmount: 0, purposeGoal: 'Billing cycle' },
 ];
+
+// Deprecated alias for backward compatibility with existing tests
+export const DEFAULT_INCOME_ITEMS = SAMPLE_INCOME_ITEMS;
+export const DEFAULT_ITEMIZED_EXPENSES = SAMPLE_ITEMIZED_EXPENSES;
+export const DEFAULT_ONGOING_INVESTMENTS = SAMPLE_ONGOING_INVESTMENTS;
+export const DEFAULT_ASSET_ITEMS = SAMPLE_ASSET_ITEMS;
+export const DEFAULT_LIABILITY_ITEMS = SAMPLE_LIABILITY_ITEMS;

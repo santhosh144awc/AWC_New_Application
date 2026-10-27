@@ -69,6 +69,8 @@ test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verifi
   });
 
   test('4. Stage 3 Savings & Surplus: Surplus calculation and deficit detection', async ({ page }) => {
+    // Explicitly load sample data to test deficit warning and compounding projections
+    await page.click('#btn-load-sample');
     await page.click('#btn-nav-stage-3');
     await expect(page.locator('#pane-stage-3')).toBeVisible();
 
@@ -130,6 +132,10 @@ test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verifi
     await expect(nwDash.locator('.accounting-card')).toContainText('Net Worth (Including Personal Assets)');
     await expect(nwDash.locator('.productive-card')).toContainText('Actual Net Worth (Excluding Personal Assets)');
 
+    // Load sample data to supply client name and populated financials
+    await page.click('#btn-load-sample');
+    await page.click('#btn-nav-stage-6');
+
     // PDF Download trigger
     const downloadBtn = page.locator('#btn-download-pdf');
     await expect(downloadBtn).toBeVisible();
@@ -157,9 +163,10 @@ test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verifi
     await page.click('#btn-confirm-reset');
     await expect(modal).not.toBeVisible();
 
-    // Verifies stage resets to 1 and incomes are cleared
+    // Verifies stage resets to 1 and incomes are reset to blank predefined schema (7 rows)
     await expect(page.locator('#pane-stage-1')).toBeVisible();
     const rows = page.locator('#table-income tbody tr');
-    await expect(rows).toHaveCount(0);
+    await expect(rows).toHaveCount(7);
+    await expect(rows.first().locator('input[type="number"]').first()).toHaveValue('');
   });
 });

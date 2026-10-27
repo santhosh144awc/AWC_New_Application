@@ -13,6 +13,12 @@ import {
   DEFAULT_ONGOING_INVESTMENTS,
   DEFAULT_ASSET_ITEMS,
   DEFAULT_LIABILITY_ITEMS,
+  PREDEFINED_INCOME_ITEMS,
+  PREDEFINED_EXPENSE_ITEMS,
+  PREDEFINED_ONGOING_INVESTMENTS,
+  PREDEFINED_ASSET_ITEMS,
+  PREDEFINED_LIABILITY_ITEMS,
+  createBlankPredefinedStatement,
   type IncomeLineItem,
   type ExpenseLineItem,
   type AssetLineItem,
@@ -332,6 +338,55 @@ describe('Personal Finance Statement Domain Engine', () => {
       expect(res.debtToAssetRatioPercent).toBeNull();
       expect(res.liquidAssetsRunwayMonths).toBeNull();
       expect(res.productiveAssetsRatioPercent).toBeNull();
+    });
+
+    it('verifies audited workbook predefined row counts and createBlankPredefinedStatement structure', () => {
+      // Check exact row counts from ProTool_04_-_REAL_Statement.xlsx
+      expect(PREDEFINED_INCOME_ITEMS.length).toBe(7);
+      expect(PREDEFINED_EXPENSE_ITEMS.length).toBe(29);
+      expect(PREDEFINED_ONGOING_INVESTMENTS.length).toBe(3);
+      expect(PREDEFINED_ASSET_ITEMS.length).toBe(23);
+      expect(PREDEFINED_LIABILITY_ITEMS.length).toBe(6);
+
+      // Verify createBlankPredefinedStatement clones items with zero amounts
+      const blank = createBlankPredefinedStatement();
+      expect(blank.incomes.length).toBe(7);
+      expect(blank.expenses.length).toBe(29);
+      expect(blank.ongoingInvestments.length).toBe(3);
+      expect(blank.assets.length).toBe(23);
+      expect(blank.liabilities.length).toBe(6);
+
+      // All amounts in blank statement must be 0
+      blank.incomes.forEach((i: any) => expect(i.enteredGrossAmount).toBe(0));
+      blank.expenses.forEach((e: any) => expect(e.enteredAmount).toBe(0));
+      blank.ongoingInvestments.forEach((inv: any) => expect(inv.enteredAmount).toBe(0));
+      blank.assets.forEach((a: any) => {
+        expect(a.selfAmount).toBe(0);
+        expect(a.spouseAmount).toBe(0);
+        expect(a.childrenAmount).toBe(0);
+      });
+      blank.liabilities.forEach((l: any) => {
+        expect(l.selfAmount).toBe(0);
+        expect(l.spouseAmount).toBe(0);
+        expect(l.childrenAmount).toBe(0);
+      });
+
+      // Evaluating blank statement yields 0 net worth and null ratios without errors
+      const blankInputs: ComprehensiveStatementInputs = {
+        metadata: { clientName: 'Test Blank', statementDate: '2026-10-28', preparedBy: 'C. Santhosh Sathriyan' },
+        incomeItems: blank.incomes,
+        expenseInputs: { householdMode: 'ITEMIZED_MODE', singleMonthlyHouseholdExpense: 0, itemizedExpenses: blank.expenses },
+        ongoingInvestments: blank.ongoingInvestments,
+        assetItems: blank.assets,
+        liabilityItems: blank.liabilities,
+      };
+      const res = calculateComprehensivePersonalFinanceStatement(blankInputs);
+      expect(res.incomeStage.totalNetAnnualIncome).toBe(0);
+      expect(res.expenseStage.totalAnnualExpenses).toBe(0);
+      expect(res.totalAssets).toBe(0);
+      expect(res.totalLiabilities).toBe(0);
+      expect(res.netWorthIncludingPersonalAssets).toBe(0);
+      expect(res.netWorthExcludingPersonalAssets).toBe(0);
     });
   });
 
