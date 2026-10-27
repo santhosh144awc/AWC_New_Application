@@ -15,7 +15,7 @@
  * 4. 100% Client-side privacy & PDF Generation via generatePersonalFinanceStatementPdf
  */
 
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useRef } from 'react';
 import {
   calculateComprehensivePersonalFinanceStatement,
   createBlankPredefinedStatement,
@@ -134,12 +134,41 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const spouseLabel = spouseName.trim() ? `${spouseName.trim()} (Spouse)` : 'Spouse';
   const childrenLabel = parsedChildrenList.length > 0 ? parsedChildrenList.join(' & ') : 'Children';
 
+  // Stable ref for stage canvas to scroll to destination stage reliably
+  const stageCanvasRef = useRef<HTMLDivElement | null>(null);
+
+  // Automatically scroll to destination stage canvas whenever stage changes
+  React.useEffect(() => {
+    // Avoid scrolling on initial page mount
+    const timer = setTimeout(() => {
+      if (stageCanvasRef.current) {
+        const rect = stageCanvasRef.current.getBoundingClientRect();
+        const headerOffset = 90; // accounts for site header + margin
+        const targetY = window.pageYOffset + rect.top - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        });
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [currentStage]);
+
   // Navigation handlers
-  const handleNextStage = () => {
-    if (currentStage < 6) setCurrentStage((prev) => (prev + 1) as any);
+  const goToStage = (step: 1 | 2 | 3 | 4 | 5 | 6) => {
+    setCurrentStage(step);
   };
+
+  const handleNextStage = () => {
+    if (currentStage < 6) {
+      goToStage((currentStage + 1) as any);
+    }
+  };
+
   const handlePrevStage = () => {
-    if (currentStage > 1) setCurrentStage((prev) => (prev - 1) as any);
+    if (currentStage > 1) {
+      goToStage((currentStage - 1) as any);
+    }
   };
 
   // Complete and verifiable Reset Statement handler
@@ -471,19 +500,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               onChange={(e) => setStatementDate(e.target.value)}
             />
           </div>
-
-          <div className="pfs-field-group">
-            <label htmlFor={`${baseId}-preparedBy`} className="pfs-label">
-              Prepared By
-            </label>
-            <input
-              id={`${baseId}-preparedBy`}
-              type="text"
-              className="pfs-input"
-              value={preparedBy}
-              onChange={(e) => setPreparedBy(e.target.value)}
-            />
-          </div>
         </div>
       </section>
 
@@ -500,7 +516,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <button
                   type="button"
                   className={`pfs-step-btn ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-                  onClick={() => setCurrentStage(s.step as any)}
+                  onClick={() => goToStage(s.step as any)}
                   id={`btn-nav-stage-${s.step}`}
                   aria-current={isActive ? 'step' : undefined}
                 >
@@ -521,7 +537,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       {/* ------------------------------------------------------------- */}
       {/* STAGE CONTAINER                                               */}
       {/* ------------------------------------------------------------- */}
-      <div className="pfs-stage-canvas">
+      <div className="pfs-stage-canvas" ref={stageCanvasRef}>
         {/* =========================================================== */}
         {/* STAGE 1: INCOME                                             */}
         {/* =========================================================== */}
@@ -560,7 +576,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <tbody>
                   {incomes.map((row) => {
                     const grossAnnual = row.inputPeriod === 'MONTHLY' ? row.enteredGrossAmount * 12 : row.enteredGrossAmount;
-                    const monthly = row.inputPeriod === 'MONTHLY' ? row.enteredGrossAmount : Math.round(row.enteredGrossAmount / 12);
                     const netAnnual = Math.max(0, grossAnnual - row.annualDeductions);
 
                     return (
@@ -575,62 +590,44 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                           />
                         </td>
                         <td>
-                          <div className="pfs-segmented-control-sm">
-                            <button
-                              type="button"
-                              className={row.inputPeriod === 'MONTHLY' ? 'active' : ''}
-                              onClick={() => {
-                                updateIncomeRow(row.id, 'inputPeriod', 'MONTHLY');
-                                if (row.inputPeriod === 'ANNUAL' && row.enteredGrossAmount > 0) {
-                                  updateIncomeRow(row.id, 'enteredGrossAmount', Math.round(row.enteredGrossAmount / 12));
-                                }
-                              }}
-                            >
-                              Monthly
-                            </button>
-                            <button
-                              type="button"
-                              className={row.inputPeriod === 'ANNUAL' ? 'active' : ''}
-                              onClick={() => {
-                                updateIncomeRow(row.id, 'inputPeriod', 'ANNUAL');
-                                if (row.inputPeriod === 'MONTHLY' && row.enteredGrossAmount > 0) {
-                                  updateIncomeRow(row.id, 'enteredGrossAmount', row.enteredGrossAmount * 12);
-                                }
-                              }}
-                            >
-                              Annual
-                            </button>
-                          </div>
-                        </td>
-                        <td>
-                          {row.inputPeriod === 'MONTHLY' ? (
-                            <div>
-                              <input
-                                type="number"
-                                className="pfs-table-input text-right"
-                                value={row.enteredGrossAmount || ''}
-                                placeholder="0"
-                                onChange={(e) => updateIncomeRow(row.id, 'enteredGrossAmount', parseNum(e.target.value))}
-                              />
-                              <span className="pfs-input-hint">₹{grossAnnual.toLocaleString('en-IN')}/yr gross</span>
-                            </div>
-                          ) : (
-                            <div>
-                              <input
-                                type="number"
-                                className="pfs-table-input text-right"
-                                value={row.enteredGrossAmount || ''}
-                                placeholder="0"
-                                onChange={(e) => updateIncomeRow(row.id, 'enteredGrossAmount', parseNum(e.target.value))}
-                              />
-                              <span className="pfs-input-hint">~₹{monthly.toLocaleString('en-IN')}/mo</span>
-                            </div>
-                          )}
+                          <select
+                            className="pfs-table-select"
+                            value={row.inputPeriod}
+                            onChange={(e) => {
+                              const newPeriod = e.target.value as 'MONTHLY' | 'ANNUAL';
+                              setIncomes((prev) =>
+                                prev.map((item) => {
+                                  if (item.id !== row.id) return item;
+                                  let newAmount = item.enteredGrossAmount;
+                                  if (newPeriod === 'MONTHLY' && item.inputPeriod === 'ANNUAL' && item.enteredGrossAmount > 0) {
+                                    newAmount = Math.round(item.enteredGrossAmount / 12);
+                                  } else if (newPeriod === 'ANNUAL' && item.inputPeriod === 'MONTHLY' && item.enteredGrossAmount > 0) {
+                                    newAmount = item.enteredGrossAmount * 12;
+                                  }
+                                  return { ...item, inputPeriod: newPeriod, enteredGrossAmount: newAmount };
+                                })
+                              );
+                            }}
+                          >
+                            <option value="MONTHLY">Monthly</option>
+                            <option value="ANNUAL">Annual</option>
+                          </select>
                         </td>
                         <td>
                           <input
                             type="number"
-                            className="pfs-table-input text-right"
+                            className="pfs-table-input text-right pfs-input-gross"
+                            data-field="gross-amount"
+                            value={row.enteredGrossAmount || ''}
+                            placeholder="0"
+                            onChange={(e) => updateIncomeRow(row.id, 'enteredGrossAmount', parseNum(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="pfs-table-input text-right pfs-input-deductions"
+                            data-field="deductions-amount"
                             value={row.annualDeductions || ''}
                             placeholder="0"
                             onChange={(e) => updateIncomeRow(row.id, 'annualDeductions', parseNum(e.target.value))}
@@ -671,6 +668,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             </div>
 
             <div className="pfs-stage-footer-actions">
+              <span></span>
               <button
                 type="button"
                 className="pfs-btn-primary"
@@ -1903,7 +1901,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         @media (min-width: 1024px) {
           .pfs-meta-grid {
-            grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1.5fr;
+            grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr;
           }
         }
 
@@ -1912,25 +1910,30 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           background: #FFFFFF;
           border: 1px solid var(--color-border-subtle, #E2E8F0);
           border-radius: var(--radius-lg, 12px);
-          padding: var(--space-2, 8px);
+          padding: 6px;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .pfs-stepper-list {
           display: flex;
           list-style: none;
           margin: 0;
           padding: 0;
-          gap: var(--space-2, 8px);
+          gap: 6px;
           min-width: max-content;
+          flex-wrap: nowrap;
         }
         .pfs-stepper-item {
-          flex: 1;
+          flex: 1 1 0;
+          min-width: 0;
+          display: flex;
         }
         .pfs-step-btn {
           display: flex;
           align-items: center;
-          gap: var(--space-2, 8px);
-          padding: 8px 12px;
+          gap: 6px;
+          padding: 6px 8px;
+          min-height: 44px;
           background: transparent;
           border: 1px solid transparent;
           border-radius: var(--radius-md, 8px);
@@ -1939,6 +1942,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           text-align: left;
           width: 100%;
           transition: all 0.2s ease;
+          box-sizing: border-box;
+          white-space: nowrap;
         }
         .pfs-step-btn:hover {
           background: #F1F5F9;
@@ -1952,12 +1957,13 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
+          width: 22px;
+          height: 22px;
+          min-width: 22px;
           border-radius: 50%;
           background: #EEF2F6;
           color: #475569;
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           font-weight: 700;
         }
         .pfs-step-btn.active .pfs-step-badge {
@@ -1971,16 +1977,48 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-step-text {
           display: flex;
           flex-direction: column;
+          min-width: 0;
+          overflow: hidden;
         }
         .pfs-step-num {
-          font-size: 0.68rem;
+          font-size: 0.65rem;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.04em;
           opacity: 0.7;
+          line-height: 1.1;
         }
         .pfs-step-title {
-          font-size: 0.85rem;
+          font-size: 0.78rem;
           font-weight: 700;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.2;
+        }
+        @media (min-width: 1200px) {
+          .pfs-stepper-list {
+            min-width: 100%;
+            width: 100%;
+            display: flex;
+            align-items: stretch;
+            gap: 6px;
+          }
+          .pfs-stepper-item {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            align-items: stretch;
+          }
+          .pfs-step-btn {
+            padding: 8px 10px;
+            gap: 8px;
+            height: 48px;
+            min-height: 48px;
+            max-height: 48px;
+          }
+          .pfs-step-title {
+            font-size: 0.8rem;
+          }
         }
 
         /* STAGE CANVAS & PANES */
@@ -2100,21 +2138,30 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-table-input {
           width: 100%;
+          height: 36px;
           padding: 6px 8px;
           border: 1px solid #E2E8F0;
           border-radius: 4px;
           font-size: 0.85rem;
+          line-height: 1.4;
           font-family: inherit;
           background: #FFFFFF;
           box-sizing: border-box;
+          display: block;
+          margin: 0;
         }
         .pfs-table-select {
           width: 100%;
+          height: 36px;
           padding: 6px 8px;
           border: 1px solid #E2E8F0;
           border-radius: 4px;
           font-size: 0.82rem;
+          line-height: 1.4;
           background: #FFFFFF;
+          box-sizing: border-box;
+          display: block;
+          margin: 0;
         }
         .pfs-table-total-row td {
           background: #F8FAFC;
@@ -2955,6 +3002,16 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           .pfs-preview-modal-box {
             padding: 14px;
             max-height: 94vh;
+          }
+          .pfs-stage-footer-actions {
+            flex-direction: column-reverse;
+            gap: 12px;
+            align-items: stretch;
+          }
+          .pfs-stage-footer-actions button {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
           }
         }
       `}</style>
