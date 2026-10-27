@@ -4,6 +4,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
 import { BUSINESS_PROFILE } from '../config/businessProfile';
+import { JOURNEY_STAGES } from '../config/journey';
+import { HEALTH_PILLARS } from '../domain/finance/financialHealth';
+
+const pillarIcons = ['◉', '◈', '⇣', '⬡', '↗', '◎', '⟳'];
 
 // Approved guides only (same rule as /learn/); never link to withheld articles.
 const approved = await getCollection('articles', ({ data }) => data.publicationStatus === 'APPROVED');
@@ -79,7 +83,111 @@ const goalTiles = [
     </div>
   </section>
 
-  <!-- 2. GOALS -->
+  <!-- 2. STARTING POINTS -->
+  <section class="section" aria-labelledby="start-heading">
+    <div class="container">
+      <SectionHeader
+        id="start-heading"
+        eyebrow="Choose a starting point"
+        title="One clear next step is enough."
+        subtitle="You do not need to solve everything today. Start with the question that matters most to you right now."
+      />
+
+      <div class="start-grid">
+        <a href="/health-check/" class="start-card start-card--mint">
+          <span class="start-card__top">
+            <span class="num-chip">01 · Understand</span>
+            <span class="big-icon" aria-hidden="true">◉</span>
+          </span>
+          <span class="start-card__text">
+            <h3>How healthy are our finances?</h3>
+            <p>A quick, ungated check across seven parts of family financial wellbeing.</p>
+          </span>
+          <span class="start-card__action"><span>Start the health check</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+
+        <a href="/plan/" class="start-card start-card--mist">
+          <span class="start-card__top">
+            <span class="num-chip">02 · Plan</span>
+            <span class="big-icon" aria-hidden="true">◎</span>
+          </span>
+          <span class="start-card__text">
+            <h3>We have a goal to plan for.</h3>
+            <p>Follow the six-stage journey, or go straight to education, a home or another milestone.</p>
+          </span>
+          <span class="start-card__action"><span>Open the journey &amp; goals</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+
+        <a href="/tools/" class="start-card start-card--sand">
+          <span class="start-card__top">
+            <span class="num-chip">03 · Explore</span>
+            <span class="big-icon" aria-hidden="true">⌘</span>
+          </span>
+          <span class="start-card__text">
+            <h3>I have a money question.</h3>
+            <p>Find a calculator by the situation you are trying to understand.</p>
+          </span>
+          <span class="start-card__action"><span>Find the right tool</span><span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. JOURNEY STRIP -->
+  <section class="section section--navy surface-dark" aria-labelledby="journey-heading">
+    <div class="container">
+      <SectionHeader
+        id="journey-heading"
+        dark
+        eyebrow="A journey, not a checklist"
+        title="Move one stage at a time."
+        subtitle="Choose a stage to see what it means and which tools can help you take the next small step."
+      />
+
+      <ol class="journey-strip" role="list">
+        {JOURNEY_STAGES.map((stage, index) => (
+          <li>
+            <a href={`/plan/#stage-${stage.id}`} class="journey-mini">
+              <span class="journey-mini__bubble" aria-hidden="true">{index + 1}</span>
+              <b>{stage.label}</b>
+              <small>{stage.title}</small>
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <div class="section__cta">
+        <Button variant="gold" href="/plan/" icon="→">Explore the full journey</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SEVEN PILLARS -->
+  <section class="section section--white" aria-labelledby="pillars-heading">
+    <div class="container pillars">
+      <div class="pillars__intro">
+        <span class="eyebrow">The bigger picture</span>
+        <h2 id="pillars-heading" class="pillars__title">Financial wellbeing has more than one number.</h2>
+        <p>
+          Income and net worth matter, but so do resilience, protection, goals and the confidence to make
+          choices. The health check looks at seven areas, one at a time.
+        </p>
+        <Button variant="primary" href="/health-check/" icon="→">Check the seven pillars</Button>
+      </div>
+
+      <ol class="pillars__grid" role="list">
+        {HEALTH_PILLARS.map((pillar, index) => (
+          <li class="pillar">
+            <span class="pillar__icon" aria-hidden="true">{pillarIcons[index]}</span>
+            <b>{pillar.shortTitle}</b>
+            <small>Pillar {index + 1}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. GOALS -->
   <section class="section section--mist" aria-labelledby="goals-heading">
     <div class="container">
       <SectionHeader
@@ -104,7 +212,7 @@ const goalTiles = [
     </div>
   </section>
 
-  <!-- 3. LEARN -->
+  <!-- 6. LEARN -->
   <section class="section section--white" aria-labelledby="learn-heading">
     <div class="container">
       <SectionHeader
@@ -132,7 +240,7 @@ const goalTiles = [
     </div>
   </section>
 
-  <!-- 4. ABOUT -->
+  <!-- 7. ABOUT -->
   <section class="section" aria-labelledby="about-heading">
     <div class="container about">
       <div class="about__photo">
@@ -149,7 +257,7 @@ const goalTiles = [
       <div class="about__copy">
         <span class="eyebrow">A little about the practice</span>
         <h2 id="about-heading" class="about__title">
-          Financial planning for the decisions that matter to your family.
+          Financial planning should help you feel clearer — not more confused.
         </h2>
         <p>{BUSINESS_PROFILE.founder.bio}</p>
 
@@ -450,6 +558,228 @@ const goalTiles = [
   .orbit-node--four { bottom: 8%; left: 5%; background: var(--awc-mist); }
   .orbit-node--five { top: 30%; left: -3%; background: var(--awc-mist); }
 
+  /* ---------- Starting points ---------- */
+  .start-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .start-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 228px;
+    padding: var(--space-6);
+    border-radius: 26px;
+    color: var(--awc-navy);
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .start-card:hover {
+    color: var(--awc-navy);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .start-card--mint { background: var(--awc-mint); }
+  .start-card--mist { background: var(--awc-mist); }
+  .start-card--sand { background: var(--awc-sand); }
+
+  .start-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .num-chip {
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.75);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .big-icon {
+    display: grid;
+    place-items: center;
+    width: 53px;
+    height: 53px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 1.6rem;
+  }
+
+  .start-card__text h3 {
+    max-width: 260px;
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: 1.6rem;
+    line-height: 1.1;
+    letter-spacing: -0.045em;
+  }
+
+  .start-card__text p {
+    max-width: 300px;
+    margin: 0;
+    font-size: var(--text-body-sm);
+    color: var(--primitive-slate-700);
+  }
+
+  .start-card__action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-5);
+    font-size: var(--text-body-sm);
+    font-weight: 900;
+  }
+
+  .arrow {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  /* ---------- Journey strip ---------- */
+  .journey-strip {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin: var(--space-10) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .journey-strip::before {
+    content: '';
+    position: absolute;
+    top: 29px;
+    left: 8%;
+    right: 8%;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--awc-gold), var(--awc-jade));
+  }
+
+  .journey-mini {
+    position: relative;
+    display: block;
+    padding: 0 var(--space-2);
+    color: var(--primitive-white);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .journey-mini:hover {
+    color: var(--primitive-white);
+  }
+
+  .journey-mini__bubble {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--space-3);
+    border: 4px solid var(--awc-navy);
+    border-radius: 50%;
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    font-weight: 900;
+    box-shadow: 0 0 0 6px var(--awc-navy);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .journey-mini:hover .journey-mini__bubble,
+  .journey-mini:focus-visible .journey-mini__bubble {
+    transform: scale(1.08);
+    background: var(--awc-gold);
+  }
+
+  .journey-mini b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+  }
+
+  .journey-mini small {
+    display: block;
+    margin: 0 auto;
+    max-width: 150px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: #c5d7d2;
+  }
+
+  /* ---------- Pillars ---------- */
+  .pillars {
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .pillars__title {
+    margin: var(--space-3) 0;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.05em;
+  }
+
+  .pillars__intro p {
+    max-width: 420px;
+    margin-bottom: var(--space-5);
+    color: var(--color-text-muted);
+    line-height: 1.75;
+  }
+
+  .pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 130px;
+    padding: var(--space-4);
+    border: 1px solid var(--awc-line);
+    border-radius: 19px;
+    background: var(--primitive-white);
+  }
+
+  .pillar:nth-child(2),
+  .pillar:nth-child(6) { background: var(--awc-mist); }
+  .pillar:nth-child(3),
+  .pillar:nth-child(7) { background: var(--awc-sand); }
+  .pillar:nth-child(5) { background: var(--awc-mint); }
+
+  .pillar__icon {
+    font-size: 1.5rem;
+  }
+
+  .pillar b {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    color: var(--awc-navy);
+  }
+
+  .pillar small {
+    font-size: 0.68rem;
+    color: var(--color-text-muted);
+  }
+
   /* ---------- Goals ---------- */
   .goal-grid {
     display: grid;
@@ -736,6 +1066,28 @@ const goalTiles = [
       min-height: 360px;
     }
 
+    .start-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .start-card {
+      min-height: 190px;
+    }
+
+    .journey-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: var(--space-8);
+    }
+
+    .journey-strip::before {
+      display: none;
+    }
+
+    .pillars {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
     .guide-grid {
       grid-template-columns: 1fr;
     }
@@ -827,6 +1179,14 @@ const goalTiles = [
     .goal-tile {
       min-height: 200px;
       padding: var(--space-4);
+    }
+
+    .journey-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pillars__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .about__stamp {

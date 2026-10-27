@@ -72,7 +72,7 @@ test.describe('Phase 20 — Concept C Production Redesign Suite (Header, Home, P
   /* --------------------------------------------------------------------------
      2. Homepage Concept C Elements
      -------------------------------------------------------------------------- */
-  test('homepage renders Concept C hero, money map, goal cards, approved guides, and verified founder bio', async ({ page }) => {
+  test('homepage renders Concept C hero, money map, journey strip, 7 pillars, and verified founder bio', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 
@@ -85,9 +85,17 @@ test.describe('Phase 20 — Concept C Production Redesign Suite (Header, Home, P
     const orbitNodes = page.locator('.orbit-node');
     await expect(orbitNodes).toHaveCount(5);
 
-    // Goal planning tiles
-    const goalTiles = page.locator('.goal-tile');
-    await expect(goalTiles).toHaveCount(4);
+    // Starting points
+    const startCards = page.locator('.start-card');
+    await expect(startCards).toHaveCount(3);
+
+    // Journey strip
+    const journeyBubbles = page.locator('.journey-mini');
+    await expect(journeyBubbles).toHaveCount(6);
+
+    // 7 Pillars
+    const pillarCards = page.locator('.pillar');
+    await expect(pillarCards).toHaveCount(7);
 
     // Approved Guides
     const guideCards = page.locator('.guide-card');
