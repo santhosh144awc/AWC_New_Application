@@ -44,7 +44,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
     ],
     links: [
       { label: 'Family balance sheet', href: '/tools/net-worth/' },
-      { label: 'REAL financial statement', href: '/health-check/real-statement/' },
+      { label: 'Personal finance statement', href: '/health-check/real-statement/' },
       { label: 'Financial health check', href: '/health-check/' },
     ],
     icon: '◉',

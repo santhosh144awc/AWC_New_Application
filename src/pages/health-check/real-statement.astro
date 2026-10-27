@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
-import RealFinancialStatementWizard from '../../features/statement/RealFinancialStatementWizard';
+import PersonalFinanceStatementApp from '../../features/statement/PersonalFinanceStatementApp';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
@@ -16,38 +16,52 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
 const statementStages = [
   {
     step: 'Stage 1',
-    title: 'Monthly Household Cash Flow',
-    focus: 'Inflows vs Outflows',
-    description: 'Map take-home salaries, business earnings, and investment income against household essentials, children education, insurance premiums, and lifestyle costs.',
-    liveFeedback: 'Computes Discretionary Surplus (₹) and Family Savings Rate (%).',
+    title: 'Income & Household Inflows',
+    focus: 'Total Cash Inflow',
+    description: 'Map take-home salaries, business earnings, bonuses, rental income, and investment yield with explicit deduction tracking.',
+    liveFeedback: 'Computes Gross Annual Income, Deductions, and Net Annual / Monthly Equivalent.',
   },
   {
     step: 'Stage 2',
-    title: 'Liquid & Safety Assets',
-    focus: 'Emergency Liquidity',
-    description: 'Itemize savings bank accounts, fixed deposits, liquid funds, PPF, EPF, NPS debt, and sovereign gold bonds with explicit emergency accessibility classification.',
-    liveFeedback: 'Computes Emergency Fund Runway (Months of living expenses covered).',
+    title: 'Expenses & Living Costs',
+    focus: 'Mode A vs Mode B',
+    description: 'Enter consolidated monthly household spending or break down living costs line-by-line across essentials, lifestyle, dependent support, insurance premiums, and loan EMIs.',
+    liveFeedback: 'Computes Annual Living Costs and Monthly Cash Outflow Equivalent without double counting.',
   },
   {
     step: 'Stage 3',
-    title: 'Growth Capital & Property',
-    focus: 'Asset Allocation',
-    description: 'Separate long-term wealth creators (Equity mutual funds, direct stocks) from physical assets. Crucially separates your primary residence from productive real estate and commercial land.',
-    liveFeedback: 'Computes Productive Wealth vs Personal Consumption Assets.',
+    title: 'Savings & Ongoing Investments',
+    focus: 'Investible Surplus',
+    description: 'Bridge income against living costs to determine gross savings, subtract systematic commitments (mutual fund SIPs, PPF, RDs), and calculate fresh investible surplus.',
+    liveFeedback: 'Computes Annual Savings Rate (%) and surplus compounding projections at 5, 10, 15, and 20 years.',
   },
   {
     step: 'Stage 4',
-    title: 'Liabilities & Productive Net Worth',
+    title: 'Assets Portfolio (6 Classes)',
+    focus: 'Productive vs Personal',
+    description: 'Register Liquid, Debt, Equity, Gold, Real Estate (investments), and Personal Consumption assets with owner-wise attribution across self, spouse, and children.',
+    liveFeedback: 'Separates Productive Wealth Assets from Personal Residence & Consumption Assets.',
+  },
+  {
+    step: 'Stage 5',
+    title: 'Liabilities & Obligations',
+    focus: 'Debt Solvency',
+    description: 'Consolidate outstanding debt principals across home loans, vehicle financing, personal borrowings, education loans, and credit card balances.',
+    liveFeedback: 'Computes Total Debt Obligations and Debt-to-Asset Solvency Ratio.',
+  },
+  {
+    step: 'Stage 6',
+    title: 'Net Worth & Final Review',
     focus: 'True Balance Sheet',
-    description: 'Aggregate home loans, vehicle loans, education loans, and credit card balances. Calculates Productive-Asset-Adjusted Net Worth by evaluating financial capital after all debts.',
-    liveFeedback: 'Computes Debt-to-Asset Ratio, Accounting Net Worth, and Productive Net Worth.',
+    description: 'Review the dual net worth balance sheet (Accounting Net Worth vs Productive Net Worth), evaluate solvency ratios, add preparer notes, and generate a client-ready PDF.',
+    liveFeedback: 'Generates client-side 5-page Personal Finance Statement PDF with zero server upload.',
   },
 ];
 ---
 
 <BaseLayout
-  title="REAL Financial Statement & Balance Sheet — Ant Wealth Creation"
-  description="Comprehensive family cash flow, asset allocation, and productive net worth balance sheet. Evaluates true solvency without counting consumption assets."
+  title="Personal Finance Statement & Household Balance Sheet — Ant Wealth Creation"
+  description="Comprehensive 6-stage family cash flow, asset allocation, and productive net worth balance sheet. Reconciles income, living expenses, investments, debts, and generates client-ready PDF reports."
   currentPath="/health-check/real-statement/"
 >
   <div class="container page-container">
@@ -55,23 +69,23 @@ const statementStages = [
 
     <PageIntro
       eyebrow="Comprehensive Household Diagnostic"
-      title="REAL Financial Statement & Household Balance Sheet"
-      description="Most families believe their net worth is high because their primary home has appreciated. The REAL Financial Statement separates your personal consumption assets from the productive investments that will actually fund your life milestones."
+      title="Personal Finance Statement & Household Balance Sheet"
+      description="A structured 6-stage family financial review that maps cash flows, itemizes assets and debts across owners, separates productive investments from personal residence utility, and generates a client-ready statement."
     />
 
-    <!-- Interactive Concept C 4-Stage Statement Wizard -->
-    <RealFinancialStatementWizard client:load />
+    <!-- Interactive 6-Stage Personal Finance Statement Application -->
+    <PersonalFinanceStatementApp client:load />
 
     <!-- Collapsed by default methodology and definitions -->
     <details class="statement-details">
       <summary class="statement-details-summary">
         <span class="summary-icon">📖</span>
-        <span class="summary-text">How the 4-Stage Statement Works: Methodology &amp; Metric Definitions</span>
+        <span class="summary-text">How the 6-Stage Personal Finance Statement Works: Methodology &amp; Metric Definitions</span>
         <span class="toggle-indicator">▼</span>
       </summary>
       <div class="details-content">
         <p class="details-intro">
-          To prevent document fatigue, the statement organizes your household balance sheet into four conversational stages:
+          To provide a complete and rigorous diagnostic, the Personal Finance Statement organizes your household finances into six clear stages:
         </p>
 
         <div class="stages-grid">
@@ -93,7 +107,7 @@ const statementStages = [
 
         <div class="methodology-note">
           <p>
-            <strong>Core Principle:</strong> A primary residence provides shelter and utility, but does not fund monthly living costs. Productive Net Worth measures what you own in financial markets and yielding investments minus all debts.
+            <strong>Core Principle:</strong> A primary residence provides shelter and family utility, but does not generate cash flow to fund monthly expenses. The Personal Finance Statement calculates both Accounting Net Worth (total assets − total liabilities) and Actual Net Worth (excluding personal residence and vehicles) to measure the true capital available to fund life milestones.
           </p>
         </div>
       </div>
@@ -143,7 +157,7 @@ const statementStages = [
     <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
-        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The REAL Financial Statement generates diagnostic aggregations based on user-supplied values. It is not an audit, formal net worth certification, tax computation, or personalized investment recommendation.
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Personal Finance Statement generates diagnostic aggregations based on user-supplied values. It is not an audit, formal net worth certification, tax computation, or personalized investment recommendation.
       </p>
     </aside>
   </div>

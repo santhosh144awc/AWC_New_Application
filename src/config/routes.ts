@@ -198,9 +198,9 @@ export const DIAGNOSTIC_ROUTES: NavRoute[] = [
   },
   {
     id: 'diag-real-statement',
-    label: 'REAL Financial Statement',
+    label: 'Personal Finance Statement',
     path: '/health-check/real-statement/',
-    description: 'In-depth diagnostic mapping income, expenses, assets, debts, and productive net worth.',
+    description: 'In-depth 6-stage family diagnostic mapping income, expenses, assets, debts, and productive net worth with client-ready PDF.',
     category: 'core',
     statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
   },
