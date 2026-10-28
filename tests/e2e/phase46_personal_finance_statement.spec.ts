@@ -31,27 +31,25 @@ test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigati
     }
   });
 
-  test('2. Statement metadata: Date defaults to today and is editable; Prepared By is fixed and not an editable input field', async ({ page }) => {
+  test('2. Statement metadata: Date picker is absent, Prepared By is fixed and not an editable input field', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
     // 1. Prepared By input field must NOT exist
     const preparedByInput = page.locator('input[id*="preparedBy"]');
     await expect(preparedByInput).toHaveCount(0);
 
-    // 2. Statement date must default to current local date (YYYY-MM-DD)
-    const todayStr = new Date().toISOString().split('T')[0];
+    // 2. Statement date input field must NOT exist in production UI (auto-determined internally)
     const dateInput = page.locator('input[type="date"]');
-    await expect(dateInput).toBeVisible();
-    await expect(dateInput).toHaveValue(todayStr);
+    await expect(dateInput).toHaveCount(0);
 
-    // 3. Date can be edited
-    await dateInput.fill('2026-12-31');
-    await expect(dateInput).toHaveValue('2026-12-31');
+    // 3. Preparer info badge is displayed
+    const preparerInfo = page.locator('#pfs-preparer-info');
+    await expect(preparerInfo).toContainText('Prepared by: C. Santhosh Sathriyan');
 
-    // 4. Reset restores today date and keeps preparer fixed
+    // 4. Reset keeps preparer fixed
     await page.click('#btn-start-over');
     await page.click('#btn-confirm-reset');
-    await expect(dateInput).toHaveValue(todayStr);
+    await expect(preparerInfo).toContainText('Prepared by: C. Santhosh Sathriyan');
   });
 
   test('3. Income table: Monthly Gross and Annual Gross inputs are synchronized; Gross, Deductions, and Net Annual are vertically aligned', async ({ page }) => {
@@ -151,8 +149,9 @@ test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigati
   test('6. PDF generation preserves fixed preparer "C. Santhosh Sathriyan" and dynamic date in statement preview', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
-    // Load sample data
-    await page.click('#btn-load-sample');
+    // Enter client name
+    const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
+    await clientInput.fill('Ramesh & Priya Sundaram');
 
     // Go to Stage 6
     await page.click('#btn-nav-stage-6');

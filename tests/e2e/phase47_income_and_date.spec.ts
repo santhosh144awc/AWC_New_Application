@@ -121,40 +121,29 @@ test.describe('Phase 47 — Personal Finance Statement: Linked Monthly/Annual In
     await expect(netCell).toContainText('2,30,000');
   });
 
-  test('7. Statement Date: Defaults to local calendar date without UTC shift, displays DD-MM-YYYY format, and resets properly', async ({ page }) => {
+  test('7. Statement Date: Determined automatically from local calendar date, input is absent, and resets properly', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    const localIso = `${y}-${m}-${d}`;
-    const indianDateStr = `${d}-${m}-${y}`;
-
+    // Date picker input must not exist in production UI
     const dateInput = page.locator('input[type="date"]');
-    await expect(dateInput).toHaveValue(localIso);
+    await expect(dateInput).toHaveCount(0);
 
-    // Companion date badge displays DD-MM-YYYY
-    const badge = page.locator('.pfs-date-badge-indian');
-    await expect(badge).toBeVisible();
-    await expect(badge).toContainText(indianDateStr);
+    // Preparer info badge displays fixed preparer
+    const preparerBadge = page.locator('#pfs-preparer-info');
+    await expect(preparerBadge).toContainText('Prepared by: C. Santhosh Sathriyan');
 
-    // Edit date to a different value
-    await dateInput.fill('2026-11-15');
-    await expect(badge).toContainText('15-11-2026');
-
-    // Reset statement restores local calendar date
+    // Reset statement maintains fixed preparer
     await page.click('#btn-start-over');
     await page.click('#btn-confirm-reset');
-    await expect(dateInput).toHaveValue(localIso);
-    await expect(badge).toContainText(indianDateStr);
+    await expect(preparerBadge).toContainText('Prepared by: C. Santhosh Sathriyan');
   });
 
   test('8. Statement Preview & PDF Download: Display DD-MM-YYYY format and fixed preparer', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
-    // Load sample data
-    await page.click('#btn-load-sample');
+    // Fill client name
+    const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
+    await clientInput.fill('Ramesh & Priya Sundaram');
 
     // Verify statement date in preview modal
     await page.click('#btn-nav-stage-6');

@@ -135,17 +135,28 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const spouseLabel = spouseName.trim() ? `${spouseName.trim()} (Spouse)` : 'Spouse';
   const childrenLabel = parsedChildrenList.length > 0 ? parsedChildrenList.join(' & ') : 'Children';
 
-  // Stable ref for stage canvas to scroll to destination stage reliably
+  // Stable ref for stage canvas and sticky stepper to scroll to destination stage reliably
   const stageCanvasRef = useRef<HTMLDivElement | null>(null);
+  const stickyStepperRef = useRef<HTMLElement | null>(null);
+
+  // Track whether initial mount has occurred to avoid scrolling on first render
+  const isInitialMount = useRef<boolean>(true);
 
   // Automatically scroll to destination stage canvas whenever stage changes
   React.useEffect(() => {
-    // Avoid scrolling on initial page mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const timer = setTimeout(() => {
       if (stageCanvasRef.current) {
         const rect = stageCanvasRef.current.getBoundingClientRect();
-        const headerOffset = 90; // accounts for site header + margin
-        const targetY = window.pageYOffset + rect.top - headerOffset;
+        const headerEl = document.querySelector('.site-header') as HTMLElement | null;
+        const headerH = headerEl ? headerEl.offsetHeight : 72;
+        const stepperH = stickyStepperRef.current ? stickyStepperRef.current.offsetHeight : 60;
+        const totalTopOffset = headerH + stepperH + 16;
+        const targetY = window.pageYOffset + rect.top - totalTopOffset;
         window.scrollTo({
           top: Math.max(0, targetY),
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -381,7 +392,16 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
     try {
       setPdfGenerating(true);
-      const { blob, filename } = generatePersonalFinanceStatementPdf(result);
+      // Ensure the statement date is refreshed to the latest local calendar date at PDF generation time
+      const freshLocalDate = getTodayLocalDateString();
+      const statementWithFreshDate: PersonalFinanceStatementResult = {
+        ...result,
+        metadata: {
+          ...result.metadata,
+          statementDate: freshLocalDate,
+        },
+      };
+      const { blob, filename } = generatePersonalFinanceStatementPdf(statementWithFreshDate);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -400,56 +420,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   return (
     <div className="pfs-app-wrapper" id="personal-finance-statement-app">
       {/* ------------------------------------------------------------- */}
-      {/* TOP COMPACT LIVE SUMMARY BAR                                 */}
-      {/* ------------------------------------------------------------- */}
-      <section className="pfs-live-bar" aria-label="Live Statement Summary">
-        <div className="pfs-live-grid">
-          <div className="pfs-metric-card" id="metric-income">
-            <span className="pfs-metric-label">Annual Inflow</span>
-            <span className="pfs-metric-value">{formatINR(result.incomeStage.totalNetAnnualIncome)}</span>
-            <span className="pfs-metric-sub">Monthly: {formatINR(result.incomeStage.totalNetMonthlyIncome)}</span>
-          </div>
-
-          <div className="pfs-metric-card" id="metric-expenses">
-            <span className="pfs-metric-label">Annual Expenses</span>
-            <span className="pfs-metric-value">{formatINR(result.expenseStage.totalAnnualExpenses)}</span>
-            <span className="pfs-metric-sub">Monthly: {formatINR(result.expenseStage.totalMonthlyExpenses)}</span>
-          </div>
-
-          <div className="pfs-metric-card" id="metric-savings">
-            <span className="pfs-metric-label">Annual Savings</span>
-            <span className={`pfs-metric-value ${result.savingsStage.annualSavings < 0 ? 'text-negative' : 'text-teal'}`}>
-              {formatINR(result.savingsStage.annualSavings)}
-            </span>
-            <span className="pfs-metric-sub">
-              Savings Rate: {result.savingsRatePercent !== null ? formatPercentage(result.savingsRatePercent) : 'N/A'}
-            </span>
-          </div>
-
-          <div className="pfs-metric-card" id="metric-assets">
-            <span className="pfs-metric-label">Total Assets</span>
-            <span className="pfs-metric-value">{formatINR(result.totalAssets)}</span>
-            <span className="pfs-metric-sub">Personal: {formatINR(result.totalPersonalAssets)}</span>
-          </div>
-
-          <div className="pfs-metric-card" id="metric-liabilities">
-            <span className="pfs-metric-label">Total Liabilities</span>
-            <span className="pfs-metric-value">{formatINR(result.totalLiabilities)}</span>
-            <span className="pfs-metric-sub">
-              Debt/Asset: {result.debtToAssetRatioPercent !== null ? formatPercentage(result.debtToAssetRatioPercent) : 'N/A'}
-            </span>
-          </div>
-
-          <div className="pfs-metric-card highlight-card" id="metric-networth">
-            <span className="pfs-metric-label">Actual Net Worth</span>
-            <span className="pfs-metric-value highlight-value">{formatINR(result.netWorthExcludingPersonalAssets)}</span>
-            <span className="pfs-metric-sub">Notional: {formatINR(result.netWorthIncludingPersonalAssets)}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------- */}
-      {/* CLIENT METADATA & STATEMENT SETTINGS BAR                      */}
+      {/* 1. CLIENT METADATA & STATEMENT SETTINGS BAR                   */}
       {/* ------------------------------------------------------------- */}
       <section className="pfs-meta-section" aria-label="Statement Header Details">
         <div className="pfs-meta-header">
@@ -460,15 +431,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             </p>
           </div>
           <div className="pfs-meta-actions">
-            <button
-              type="button"
-              className="pfs-btn-secondary"
-              onClick={handleLoadSample}
-              id="btn-load-sample"
-              title="Populate statement with canonical Urban Family sample data"
-            >
-              Load Sample Data
-            </button>
             <button
               type="button"
               className="pfs-btn-outline-danger"
@@ -525,29 +487,25 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           </div>
 
           <div className="pfs-field-group">
-            <div className="pfs-date-header-row">
-              <label htmlFor={`${baseId}-statementDate`} className="pfs-label">
-                Statement Date
-              </label>
-              <span className="pfs-date-badge-indian" title="Indian Calendar Format">
-                {formatIndianDate(statementDate) || 'DD-MM-YYYY'}
+            <span className="pfs-label">Preparer</span>
+            <div className="pfs-preparer-badge" id="pfs-preparer-info">
+              <span className="pfs-preparer-icon">👤</span>
+              <span className="pfs-preparer-text">
+                Prepared by: <strong>C. Santhosh Sathriyan</strong>
               </span>
             </div>
-            <input
-              id={`${baseId}-statementDate`}
-              type="date"
-              className="pfs-input"
-              value={statementDate}
-              onChange={(e) => setStatementDate(e.target.value)}
-            />
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 6-STAGE WORKFLOW STEPPER NAVIGATION                           */}
+      {/* 2. 6-STAGE WORKFLOW STEPPER NAVIGATION (STICKY BELOW HEADER) */}
       {/* ------------------------------------------------------------- */}
-      <nav className="pfs-nav-stepper" aria-label="Statement Stage Navigation">
+      <nav
+        className="pfs-nav-stepper"
+        ref={stickyStepperRef}
+        aria-label="Statement Stage Navigation"
+      >
         <ol className="pfs-stepper-list">
           {STAGES.map((s) => {
             const isActive = currentStage === s.step;
@@ -574,6 +532,55 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           })}
         </ol>
       </nav>
+
+      {/* ------------------------------------------------------------- */}
+      {/* 3. LIVE FINANCIAL SUMMARY CARDS                              */}
+      {/* ------------------------------------------------------------- */}
+      <section className="pfs-live-bar" aria-label="Live Statement Summary">
+        <div className="pfs-live-grid">
+          <div className="pfs-metric-card" id="metric-income">
+            <span className="pfs-metric-label">Annual Inflow</span>
+            <span className="pfs-metric-value">{formatINR(result.incomeStage.totalNetAnnualIncome)}</span>
+            <span className="pfs-metric-sub">Monthly: {formatINR(result.incomeStage.totalNetMonthlyIncome)}</span>
+          </div>
+
+          <div className="pfs-metric-card" id="metric-expenses">
+            <span className="pfs-metric-label">Annual Expenses</span>
+            <span className="pfs-metric-value">{formatINR(result.expenseStage.totalAnnualExpenses)}</span>
+            <span className="pfs-metric-sub">Monthly: {formatINR(result.expenseStage.totalMonthlyExpenses)}</span>
+          </div>
+
+          <div className="pfs-metric-card" id="metric-savings">
+            <span className="pfs-metric-label">Annual Savings</span>
+            <span className={`pfs-metric-value ${result.savingsStage.annualSavings < 0 ? 'text-negative' : 'text-teal'}`}>
+              {formatINR(result.savingsStage.annualSavings)}
+            </span>
+            <span className="pfs-metric-sub">
+              Savings Rate: {result.savingsRatePercent !== null ? formatPercentage(result.savingsRatePercent) : 'N/A'}
+            </span>
+          </div>
+
+          <div className="pfs-metric-card" id="metric-assets">
+            <span className="pfs-metric-label">Total Assets</span>
+            <span className="pfs-metric-value">{formatINR(result.totalAssets)}</span>
+            <span className="pfs-metric-sub">Personal: {formatINR(result.totalPersonalAssets)}</span>
+          </div>
+
+          <div className="pfs-metric-card" id="metric-liabilities">
+            <span className="pfs-metric-label">Total Liabilities</span>
+            <span className="pfs-metric-value">{formatINR(result.totalLiabilities)}</span>
+            <span className="pfs-metric-sub">
+              Debt/Asset: {result.debtToAssetRatioPercent !== null ? formatPercentage(result.debtToAssetRatioPercent) : 'N/A'}
+            </span>
+          </div>
+
+          <div className="pfs-metric-card highlight-card" id="metric-networth">
+            <span className="pfs-metric-label">Actual Net Worth</span>
+            <span className="pfs-metric-value highlight-value">{formatINR(result.netWorthExcludingPersonalAssets)}</span>
+            <span className="pfs-metric-sub">Notional: {formatINR(result.netWorthIncludingPersonalAssets)}</span>
+          </div>
+        </div>
+      </section>
 
       {/* ------------------------------------------------------------- */}
       {/* STAGE CONTAINER                                               */}
@@ -1927,6 +1934,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: grid;
           grid-template-columns: 1fr;
           gap: var(--space-3, 12px);
+          align-items: flex-end;
         }
         @media (min-width: 640px) {
           .pfs-meta-grid {
@@ -1935,18 +1943,24 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         @media (min-width: 1024px) {
           .pfs-meta-grid {
-            grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr;
+            grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr;
           }
         }
 
-        /* STEPPER NAVIGATION */
+        /* STEPPER NAVIGATION (STICKY BELOW SITE HEADER) */
         .pfs-nav-stepper {
-          background: #FFFFFF;
+          position: sticky;
+          top: 72px; /* aligns directly below the 72px fixed/sticky site-header */
+          z-index: 40;
+          background: rgba(255, 255, 255, 0.96);
+          backdrop-filter: blur(12px);
           border: 1px solid var(--color-border-subtle, #E2E8F0);
           border-radius: var(--radius-lg, 12px);
           padding: 6px;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          box-shadow: 0 4px 14px rgba(0, 24, 42, 0.06);
+          margin-bottom: 0;
         }
         .pfs-stepper-list {
           display: flex;
@@ -2103,6 +2117,36 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: flex;
           flex-direction: column;
           gap: 4px;
+        }
+        .pfs-preparer-badge {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          height: 38px;
+          padding: 6px 12px;
+          background: #F8FAFC;
+          border: 1px solid #CBD5E1;
+          border-radius: 6px;
+          box-sizing: border-box;
+          color: #00182A;
+          font-size: 0.82rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .pfs-preparer-icon {
+          font-size: 0.9rem;
+          opacity: 0.7;
+          flex-shrink: 0;
+        }
+        .pfs-preparer-text {
+          color: #334155;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .pfs-preparer-text strong {
+          color: #00182A;
+          font-weight: 700;
         }
         .pfs-date-header-row {
           display: flex;

@@ -72,19 +72,17 @@ test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects V
     await expect(page.locator('.productive-card .pfs-nw-result-val')).toContainText('₹0');
   });
 
-  test('2. Load Sample Data explicitly populates fictional household without duplicating rows', async ({ page }) => {
-    // Click Load Sample Data
-    const loadSampleBtn = page.locator('#btn-load-sample');
-    await expect(loadSampleBtn).toBeVisible();
-    await loadSampleBtn.click();
-
-    // Verify metadata populated with fictional household
+  test('2. Manual input populates household data without duplicating rows', async ({ page }) => {
+    // Fill client name
     const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
-    await expect(clientInput).toHaveValue('Ramesh & Priya Sundaram');
+    await clientInput.fill('Ramesh & Priya Sundaram');
+
+    // Fill Stage 1 income
+    const firstRow = page.locator('#table-income tbody tr').nth(0);
+    await firstRow.locator('input[data-field="monthly-gross"]').fill('125000');
 
     // Verify metrics updated
     await expect(page.locator('#metric-income .pfs-metric-value')).not.toContainText('₹0');
-    await expect(page.locator('#metric-assets .pfs-metric-value')).not.toContainText('₹0');
 
     // Verify row count remained 7 (did not duplicate)
     const incomeRows = page.locator('#table-income tbody tr');
@@ -92,10 +90,14 @@ test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects V
   });
 
   test('3. Reset Statement: Confirmation dialog, cancellation retains data, confirmed reset returns to clean blank predefined schema', async ({ page }) => {
-    // 1. First load sample data
-    await page.click('#btn-load-sample');
+    // 1. First fill household info
     const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
-    await expect(clientInput).toHaveValue('Ramesh & Priya Sundaram');
+    await clientInput.click();
+    await clientInput.fill('Ramesh & Priya Sundaram');
+    await page.waitForTimeout(100);
+
+    const firstRow = page.locator('#table-income tbody tr').nth(0);
+    await firstRow.locator('input[data-field="monthly-gross"]').fill('125000');
 
     // Add a custom income row
     await page.click('#btn-add-income');
@@ -144,8 +146,10 @@ test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects V
   });
 
   test('4. PDF Export and Statement Preview: Preview modal opens, and real PDF file is downloaded', async ({ page }) => {
-    // 1. Populate fictional sample data
-    await page.click('#btn-load-sample');
+    // 1. Populate client data
+    const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
+    await clientInput.fill('Ramesh & Priya Sundaram');
+    await page.waitForTimeout(100);
 
     // 2. Navigate to Stage 6
     await page.click('#btn-nav-stage-6');
@@ -203,7 +207,7 @@ test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects V
 
     // Stepper navigation and actions remain accessible
     await expect(page.locator('#btn-nav-stage-1')).toBeVisible();
-    await expect(page.locator('#btn-load-sample')).toBeVisible();
+    await expect(page.locator('#btn-start-over')).toBeVisible();
     await expect(page.locator('#btn-start-over')).toBeVisible();
   });
 });
