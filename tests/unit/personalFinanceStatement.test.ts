@@ -105,10 +105,10 @@ describe('Personal Finance Statement Domain Engine', () => {
       { id: 'e1', label: 'Car EMI', category: 'LOAN_EMI', frequency: 'MONTHLY', enteredAmount: 10000 },
     ];
 
-    it('Mode B (Itemized) sums itemized household expenses without single sum interference', () => {
+    it('Option 2 (Category Breakdown) sums itemized expenses across all 5 categories without consolidated interference', () => {
       const res = calculateExpenseStage({
-        householdMode: 'ITEMIZED_MODE',
-        singleMonthlyHouseholdExpense: 999999, // Inactive
+        expenseEntryMode: 'CATEGORY_BREAKDOWN',
+        singleMonthlyExpense: 999999, // Inactive
         itemizedExpenses: itemized,
         totalNetAnnualIncome: 1200000,
       });
@@ -135,27 +135,31 @@ describe('Personal Finance Statement Domain Engine', () => {
       expect(res.expenseToIncomeRatio).toBeCloseTo((864000 / 1200000) * 100, 2);
     });
 
-    it('Mode A (Single Sum) strictly uses single monthly household expense and ignores itemized household items', () => {
+    it('Option 1 (Consolidated Total) represents all family expenses and excludes all itemized categories', () => {
       const res = calculateExpenseStage({
-        householdMode: 'TOTAL_MODE',
-        singleMonthlyHouseholdExpense: 40000, // 480,000 annual
+        expenseEntryMode: 'CONSOLIDATED_TOTAL',
+        singleMonthlyExpense: 60000, // 720,000 annual
         itemizedExpenses: itemized,
         totalNetAnnualIncome: 1200000,
       });
 
-      // Household = 40,000 * 12 = 480,000 (NOT 600k + 480k)
-      expect(res.householdSubtotalAnnual).toBe(480000);
-      expect(res.householdSubtotalMonthly).toBe(40000);
+      // Consolidated Total represents entire family expenditure (Annual = Monthly * 12)
+      expect(res.totalMonthlyExpenses).toBe(60000);
+      expect(res.totalAnnualExpenses).toBe(720000);
+      expect(res.householdSubtotalAnnual).toBe(720000);
+      expect(res.householdSubtotalMonthly).toBe(60000);
 
-      // Other categories remain active
-      expect(res.lifestyleSubtotalAnnual).toBe(60000);
-      expect(res.dependentSubtotalAnnual).toBe(60000);
-      expect(res.insuranceSubtotalAnnual).toBe(24000);
-      expect(res.loanEmiSubtotalAnnual).toBe(120000);
+      // All itemized categories are excluded
+      expect(res.lifestyleSubtotalAnnual).toBe(0);
+      expect(res.dependentSubtotalAnnual).toBe(0);
+      expect(res.insuranceSubtotalAnnual).toBe(0);
+      expect(res.loanEmiSubtotalAnnual).toBe(0);
 
-      // Total = 480k + 60k + 60k + 24k + 120k = 744,000
-      expect(res.totalAnnualExpenses).toBe(744000);
-      expect(res.totalMonthlyExpenses).toBe(62000);
+      // Items array contains only the consolidated total item
+      expect(res.items.length).toBe(1);
+      expect(res.items[0].id).toBe('exp-consolidated-total');
+      expect(res.items[0].annualAmount).toBe(720000);
+      expect(res.expenseToIncomeRatio).toBeCloseTo((720000 / 1200000) * 100, 2);
     });
   });
 

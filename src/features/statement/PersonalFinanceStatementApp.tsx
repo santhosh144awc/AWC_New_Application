@@ -27,6 +27,7 @@ import {
   type ComprehensiveStatementInputs,
   type PersonalFinanceStatementResult,
   type ExpenseFrequency,
+  type ExpenseEntryMode,
   type HouseholdExpenseMode,
   type AssetClass,
   type LiabilityType,
@@ -71,8 +72,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const [incomes, setIncomes] = useState<IncomeLineItem[]>(initialBlank.incomes);
 
   // Stage 2 State: Expenses — Initialized with all 29 predefined rows (amounts = 0)
-  const [householdExpenseMode, setHouseholdExpenseMode] = useState<HouseholdExpenseMode>('ITEMIZED_MODE');
-  const [singleMonthlyHouseholdExpense, setSingleMonthlyHouseholdExpense] = useState<string>('0');
+  const [expenseEntryMode, setExpenseEntryMode] = useState<ExpenseEntryMode>('CATEGORY_BREAKDOWN');
+  const [singleMonthlyExpense, setSingleMonthlyExpense] = useState<string>('0');
   const [expenses, setExpenses] = useState<ExpenseLineItem[]>(initialBlank.expenses);
 
   // Stage 3 State: Savings & Ongoing Investments — Initialized with all 3 predefined rows
@@ -117,8 +118,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     },
     incomeItems: incomes,
     expenseInputs: {
-      householdMode: householdExpenseMode,
-      singleMonthlyHouseholdExpense: parseNum(singleMonthlyHouseholdExpense),
+      expenseEntryMode,
+      singleMonthlyExpense: parseNum(singleMonthlyExpense),
       itemizedExpenses: expenses,
     },
     ongoingInvestments,
@@ -135,35 +136,53 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const spouseLabel = spouseName.trim() ? `${spouseName.trim()} (Spouse)` : 'Spouse';
   const childrenLabel = parsedChildrenList.length > 0 ? parsedChildrenList.join(' & ') : 'Children';
 
-  // Stable ref for stage canvas and sticky stepper to scroll to destination stage reliably
+  // Stable ref for stage canvas, active stage pane, and sticky stepper to scroll to destination stage reliably
   const stageCanvasRef = useRef<HTMLDivElement | null>(null);
   const stickyStepperRef = useRef<HTMLElement | null>(null);
 
   // Track whether initial mount has occurred to avoid scrolling on first render
   const isInitialMount = useRef<boolean>(true);
 
-  // Automatically scroll to destination stage canvas whenever stage changes
+  // Automatically scroll to destination stage heading whenever stage changes
   React.useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
 
-    const timer = setTimeout(() => {
-      if (stageCanvasRef.current) {
-        const rect = stageCanvasRef.current.getBoundingClientRect();
+    const performScroll = () => {
+      // Prioritize the active stage heading element directly so the heading and description are visible
+      const headingEl = document.querySelector(`#stage-${currentStage}-heading`) as HTMLElement | null;
+      const targetEl = headingEl || (stageCanvasRef.current as HTMLElement | null);
+      if (targetEl) {
         const headerEl = document.querySelector('.site-header') as HTMLElement | null;
         const headerH = headerEl ? headerEl.offsetHeight : 72;
-        const stepperH = stickyStepperRef.current ? stickyStepperRef.current.offsetHeight : 60;
+        const stepperH = stickyStepperRef.current ? stickyStepperRef.current.offsetHeight : 62;
+        // Total top offset: site header + sticky stepper + 16px buffer
         const totalTopOffset = headerH + stepperH + 16;
-        const targetY = window.pageYOffset + rect.top - totalTopOffset;
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-        });
+        
+        // Calculate absolute top position in the document
+        const elementTop = targetEl.getBoundingClientRect().top + window.pageYOffset;
+        const targetY = elementTop - totalTopOffset;
+
+        // Temporarily override html smooth scrolling to jump instantly and deterministically without smooth scroll lag
+        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, Math.max(0, targetY));
+        document.documentElement.style.scrollBehavior = originalScrollBehavior;
       }
-    }, 50);
-    return () => clearTimeout(timer);
+    };
+
+    // Staged timeout: fires at 50ms, 150ms, and 300ms to ensure scroll position is applied once the layout and animations have settled
+    const timer1 = setTimeout(performScroll, 50);
+    const timer2 = setTimeout(performScroll, 150);
+    const timer3 = setTimeout(performScroll, 300);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
   }, [currentStage]);
 
   // Navigation handlers
@@ -197,8 +216,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setOngoingInvestments(blank.ongoingInvestments);
     setAssets(blank.assets);
     setLiabilities(blank.liabilities);
-    setHouseholdExpenseMode('ITEMIZED_MODE');
-    setSingleMonthlyHouseholdExpense('0');
+    setExpenseEntryMode('CATEGORY_BREAKDOWN');
+    setSingleMonthlyExpense('0');
     setAssumedReturnRatePercent('10');
     setPdfError(null);
     setShowResetModal(false);
@@ -214,8 +233,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setStatementDate(getTodayLocalDateString());
     setPreparedBy('C. Santhosh Sathriyan');
     setIncomes(SAMPLE_INCOME_ITEMS.map((item) => ({ ...item })));
-    setHouseholdExpenseMode('ITEMIZED_MODE');
-    setSingleMonthlyHouseholdExpense('95000');
+    setExpenseEntryMode('CATEGORY_BREAKDOWN');
+    setSingleMonthlyExpense('95000');
     setExpenses(SAMPLE_ITEMIZED_EXPENSES.map((item) => ({ ...item })));
     setOngoingInvestments(SAMPLE_ONGOING_INVESTMENTS.map((item) => ({ ...item })));
     setAssets(SAMPLE_ASSET_ITEMS.map((item) => ({ ...item })));
@@ -733,116 +752,134 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <h3 id="stage-2-heading" className="pfs-pane-title">Household Living Costs &amp; Outflows</h3>
                 <p className="pfs-pane-desc">
                   Classify living costs across essentials, lifestyle, dependent support, insurance policies, and loan EMIs.
-                  Choose between a quick monthly consolidated total or an itemized line-item breakdown.
+                  Choose between entering a combined monthly total or a complete category breakdown.
                 </p>
               </div>
             </div>
 
-            {/* Mode A vs Mode B Mutual Exclusion Toggle */}
-            <div className="pfs-mode-selector-card" id="household-mode-selector">
-              <div className="pfs-mode-header">
-                <span className="pfs-mode-title">Household Essentials Entry Mode:</span>
-                <div className="pfs-segmented-control">
-                  <button
-                    type="button"
-                    className={householdExpenseMode === 'TOTAL_MODE' ? 'active' : ''}
-                    onClick={() => setHouseholdExpenseMode('TOTAL_MODE')}
-                    id="btn-mode-a"
-                  >
-                    Mode A: Enter Total Monthly Spending
-                  </button>
-                  <button
-                    type="button"
-                    className={householdExpenseMode === 'ITEMIZED_MODE' ? 'active' : ''}
-                    onClick={() => setHouseholdExpenseMode('ITEMIZED_MODE')}
-                    id="btn-mode-b"
-                  >
-                    Mode B: Break Down by Category
-                  </button>
-                </div>
+            {/* Unified Expense-Entry Choice Selector */}
+            <div className="pfs-mode-selector-card" id="expense-entry-selector">
+              <div className="pfs-expense-choice-grid">
+                <button
+                  type="button"
+                  className={`pfs-expense-choice-card ${expenseEntryMode === 'CONSOLIDATED_TOTAL' ? 'active' : ''}`}
+                  onClick={() => setExpenseEntryMode('CONSOLIDATED_TOTAL')}
+                  id="btn-consolidated-expenses"
+                >
+                  <div className="pfs-choice-radio-indicator">
+                    <span className="pfs-radio-circle"></span>
+                  </div>
+                  <div className="pfs-choice-content">
+                    <span className="pfs-choice-title">Enter total monthly expenses</span>
+                    <span className="pfs-choice-desc">Enter one combined monthly amount for all family expenses.</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`pfs-expense-choice-card ${expenseEntryMode === 'CATEGORY_BREAKDOWN' ? 'active' : ''}`}
+                  onClick={() => setExpenseEntryMode('CATEGORY_BREAKDOWN')}
+                  id="btn-category-expenses"
+                >
+                  <div className="pfs-choice-radio-indicator">
+                    <span className="pfs-radio-circle"></span>
+                  </div>
+                  <div className="pfs-choice-content">
+                    <span className="pfs-choice-title">Break down expenses by category</span>
+                    <span className="pfs-choice-desc">Enter individual expenses to see how spending is distributed.</span>
+                  </div>
+                </button>
               </div>
 
-              {householdExpenseMode === 'TOTAL_MODE' ? (
-                <div className="pfs-mode-body" id="mode-a-container">
+              {/* Option 1: Consolidated Total Panel */}
+              {expenseEntryMode === 'CONSOLIDATED_TOTAL' && (
+                <div className="pfs-mode-body" id="consolidated-expenses-container">
                   <div className="pfs-mode-input-row">
                     <div className="pfs-field-group">
-                      <label htmlFor={`${baseId}-mode-a-amount`} className="pfs-label font-bold">
-                        Total Monthly Household Essentials (₹ / Month)
+                      <label htmlFor={`${baseId}-consolidated-expense-amount`} className="pfs-label font-bold">
+                        Total Monthly Family Expenses (₹/month)
                       </label>
                       <input
-                        id={`${baseId}-mode-a-amount`}
+                        id="input-consolidated-monthly-expense"
                         type="number"
                         className="pfs-input text-lg font-bold"
-                        value={singleMonthlyHouseholdExpense}
-                        placeholder="e.g. 75000"
-                        onChange={(e) => setSingleMonthlyHouseholdExpense(e.target.value)}
+                        value={singleMonthlyExpense}
+                        placeholder="e.g. 60000"
+                        onChange={(e) => setSingleMonthlyExpense(e.target.value)}
                       />
                       <span className="pfs-input-hint">
-                        Includes groceries, rent, utilities, fuel, domestic help, and telecom. Multiplied by 12 ={' '}
-                        <strong>{formatINR(parseNum(singleMonthlyHouseholdExpense) * 12)} / year</strong>.
+                        Single combined amount includes all 5 categories (Household Essentials, Lifestyle, Dependents, Insurance, and Loan EMIs).
+                        Multiplied by 12 = <strong>{formatINR(parseNum(singleMonthlyExpense) * 12)} / year</strong>.
                       </span>
                     </div>
                   </div>
                   <div className="pfs-alert-info">
-                    <strong>Note:</strong> Mode A active. Individual household rows below are bypassed to prevent double-counting.
+                    <strong>Consolidated mode active:</strong> The amount entered above represents the combined family total. All 5 detailed category sections are bypassed and excluded from calculations.
                   </div>
                 </div>
-              ) : (
-                <div className="pfs-mode-body" id="mode-b-container">
+              )}
+
+              {/* Option 2 Helper Banner */}
+              {expenseEntryMode === 'CATEGORY_BREAKDOWN' && (
+                <div className="pfs-mode-body" id="category-breakdown-banner">
                   <div className="pfs-alert-info">
-                    <strong>Mode B active:</strong> Calculating household living costs directly from the itemized rows below.
+                    <strong>Category breakdown active:</strong> Calculating family living costs from the 5 itemized categories below (Household Essentials, Lifestyle, Dependents, Insurance, and Loan EMIs).
                   </div>
                 </div>
               )}
             </div>
 
-            {/* EXPENSE CATEGORIES */}
-            {(['HOUSEHOLD', 'LIFESTYLE', 'DEPENDENT', 'INSURANCE', 'LOAN_EMI'] as const).map((cat) => {
-              const catRows = expenses.filter((e) => e.category === cat);
-              const isHouseholdDisabled = cat === 'HOUSEHOLD' && householdExpenseMode === 'TOTAL_MODE';
+            {/* EXPENSE CATEGORIES — Only rendered when in CATEGORY_BREAKDOWN mode */}
+            {expenseEntryMode === 'CATEGORY_BREAKDOWN' &&
+              (['HOUSEHOLD', 'LIFESTYLE', 'DEPENDENT', 'INSURANCE', 'LOAN_EMI'] as const).map((cat) => {
+                const catRows = expenses.filter((e) => e.category === cat);
 
-              const catTitles: Record<string, { title: string; subtitle: string }> = {
-                HOUSEHOLD: {
-                  title: '1. Household Essentials',
-                  subtitle: 'Rent, groceries, society maintenance, domestic help, utilities, fuel, medicals.',
-                },
-                LIFESTYLE: {
-                  title: '2. Lifestyle & Personal Discretionary',
-                  subtitle: 'Dining, vacations, electronics, gym, club memberships, shopping, charity.',
-                },
-                DEPENDENT: {
-                  title: '3. Dependent & Family Support',
-                  subtitle: 'Children school & college fees, coaching, allowances, support for elderly parents.',
-                },
-                INSURANCE: {
-                  title: '4. Insurance Protection Premiums',
-                  subtitle: 'Term life cover, family health insurance floater, critical illness, vehicle motor policies.',
-                },
-                LOAN_EMI: {
-                  title: '5. Ongoing Loan EMIs & Servicing',
-                  subtitle: 'Home loan monthly EMI, car loan, personal loans, education loan servicing.',
-                },
-              };
+                const catTitles: Record<string, { title: string; subtitle: string }> = {
+                  HOUSEHOLD: {
+                    title: '1. Household Essentials',
+                    subtitle: 'Rent, groceries, society maintenance, domestic help, utilities, fuel, medicals.',
+                  },
+                  LIFESTYLE: {
+                    title: '2. Lifestyle & Personal Discretionary',
+                    subtitle: 'Dining, vacations, electronics, gym, club memberships, shopping, charity.',
+                  },
+                  DEPENDENT: {
+                    title: '3. Dependent & Family Support',
+                    subtitle: 'Children school & college fees, coaching, allowances, support for elderly parents.',
+                  },
+                  INSURANCE: {
+                    title: '4. Insurance Protection Premiums',
+                    subtitle: 'Term life cover, family health insurance floater, critical illness, vehicle motor policies.',
+                  },
+                  LOAN_EMI: {
+                    title: '5. Ongoing Loan EMIs & Servicing',
+                    subtitle: 'Home loan monthly EMI, car loan, personal loans, education loan servicing.',
+                  },
+                };
 
-              const catSubtotalAnnual = isHouseholdDisabled
-                ? parseNum(singleMonthlyHouseholdExpense) * 12
-                : catRows.reduce((sum, r) => {
-                    const mult = r.frequency === 'MONTHLY' ? 12 : r.frequency === 'QUARTERLY' ? 4 : r.frequency === 'HALF_YEARLY' ? 2 : 1;
-                    return sum + r.enteredAmount * mult;
-                  }, 0);
+                const catSubtotalAnnual = catRows.reduce((sum, r) => {
+                  const mult =
+                    r.frequency === 'MONTHLY'
+                      ? 12
+                      : r.frequency === 'QUARTERLY'
+                      ? 4
+                      : r.frequency === 'HALF_YEARLY'
+                      ? 2
+                      : 1;
+                  return sum + r.enteredAmount * mult;
+                }, 0);
 
-              return (
-                <div key={cat} className={`pfs-category-section ${isHouseholdDisabled ? 'category-bypassed' : ''}`}>
-                  <div className="pfs-cat-header">
-                    <div>
-                      <h4 className="pfs-cat-title">{catTitles[cat].title}</h4>
-                      <p className="pfs-cat-desc">{catTitles[cat].subtitle}</p>
-                    </div>
-                    <div className="pfs-cat-right">
-                      <span className="pfs-cat-subtotal">
-                        Subtotal: <strong>{formatINR(catSubtotalAnnual)}/yr</strong>
-                      </span>
-                      {!isHouseholdDisabled && (
+                return (
+                  <div key={cat} className="pfs-category-section" id={`cat-section-${cat.toLowerCase()}`}>
+                    <div className="pfs-cat-header">
+                      <div>
+                        <h4 className="pfs-cat-title">{catTitles[cat].title}</h4>
+                        <p className="pfs-cat-desc">{catTitles[cat].subtitle}</p>
+                      </div>
+                      <div className="pfs-cat-right">
+                        <span className="pfs-cat-subtotal">
+                          Subtotal: <strong>{formatINR(catSubtotalAnnual)}/yr</strong>
+                        </span>
                         <button
                           type="button"
                           className="pfs-btn-secondary-sm"
@@ -850,11 +887,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                         >
                           + Add Item
                         </button>
-                      )}
+                      </div>
                     </div>
-                  </div>
 
-                  {!isHouseholdDisabled && (
                     <div className="pfs-table-responsive">
                       <table className="pfs-table">
                         <thead>
@@ -868,7 +903,14 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                         </thead>
                         <tbody>
                           {catRows.map((row) => {
-                            const mult = row.frequency === 'MONTHLY' ? 12 : row.frequency === 'QUARTERLY' ? 4 : row.frequency === 'HALF_YEARLY' ? 2 : 1;
+                            const mult =
+                              row.frequency === 'MONTHLY'
+                                ? 12
+                                : row.frequency === 'QUARTERLY'
+                                ? 4
+                                : row.frequency === 'HALF_YEARLY'
+                                ? 2
+                                : 1;
                             const rowAnnual = row.enteredAmount * mult;
 
                             return (
@@ -921,10 +963,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                         </tbody>
                       </table>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  </div>
+                );
+              })}
 
             {/* Total Expenses Summary Row */}
             <div className="pfs-total-summary-card">
@@ -1175,6 +1216,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <p className="pfs-pane-desc">
                   Itemize assets across the six core financial classes with ownership attribution across {selfLabel}, {spouseLabel}, and {childrenLabel}.
                 </p>
+                <div className="pfs-asset-purpose-guidance" id="asset-purpose-guidance-banner">
+                  <span className="pfs-guidance-icon">ℹ</span>
+                  <span>Optional: note the intended purpose of this holding, such as an emergency fund, education or retirement.</span>
+                </div>
               </div>
             </div>
 
@@ -1248,13 +1293,27 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                           <th style={{ width: '15%' }}>{spouseLabel} (₹)</th>
                           <th style={{ width: '15%' }}>{childrenLabel} (₹)</th>
                           <th style={{ width: '15%' }} className="text-right">Total Value (₹)</th>
-                          <th style={{ width: '11%' }}>Purpose / Goal</th>
+                          <th style={{ width: '11%' }}>
+                            <span>Purpose / Goal</span>
+                            <span className="pfs-th-sub" title="Optional: note the intended purpose of this holding, such as an emergency fund, education or retirement.">
+                              Optional
+                            </span>
+                          </th>
                           <th style={{ width: '4%' }}></th>
                         </tr>
                       </thead>
                       <tbody>
                         {classRows.map((row) => {
                           const itemTotal = row.selfAmount + row.spouseAmount + row.childrenAmount;
+
+                          const purposePlaceholders: Record<AssetClass, string> = {
+                            LIQUID: 'e.g., Emergency fund',
+                            DEBT: "e.g., Child's education",
+                            EQUITY: 'e.g., Retirement',
+                            GOLD: 'e.g., Long-term goal',
+                            REAL_ESTATE: 'e.g., Home purchase or rental income',
+                            PERSONAL: 'e.g., Family use',
+                          };
 
                           return (
                             <tr key={row.id}>
@@ -1301,7 +1360,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                                   type="text"
                                   className="pfs-table-input"
                                   value={row.purposeGoal || ''}
-                                  placeholder="Goal"
+                                  placeholder={purposePlaceholders[row.assetClass] || 'e.g., Financial goal'}
                                   onChange={(e) => updateAssetRow(row.id, 'purposeGoal', e.target.value)}
                                 />
                               </td>
@@ -1689,7 +1748,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                       <td><strong>2. Annual Living Costs</strong></td>
                       <td className="text-right font-bold">{formatINR(result.expenseStage.totalAnnualExpenses)}</td>
                       <td className="text-right tabular-nums">{formatINR(result.expenseStage.totalMonthlyExpenses)}</td>
-                      <td>Mode: {householdExpenseMode === 'TOTAL_MODE' ? 'Consolidated' : 'Itemized'}</td>
+                      <td>Mode: {expenseEntryMode === 'CONSOLIDATED_TOTAL' ? 'Consolidated Total' : 'Category Breakdown'}</td>
                     </tr>
                     <tr>
                       <td><strong>3. Annual Household Savings</strong></td>
@@ -2476,35 +2535,112 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           border-radius: 4px;
         }
 
-        /* MODE A / B SELECTOR CARD */
+        /* EXPENSE ENTRY CHOICE SELECTOR CARD */
         .pfs-mode-selector-card {
           background: #F8FAFC;
           border: 1px solid #CBD5E1;
-          border-radius: 8px;
+          border-radius: 10px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
         }
-        .pfs-mode-header {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-2, 8px);
+        .pfs-expense-choice-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--space-3, 12px);
         }
-        @media (min-width: 640px) {
-          .pfs-mode-header {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
+        @media (min-width: 768px) {
+          .pfs-expense-choice-grid {
+            grid-template-columns: 1fr 1fr;
           }
         }
-        .pfs-mode-title {
+        .pfs-expense-choice-card {
+          display: flex;
+          align-items: flex-start;
+          gap: var(--space-3, 12px);
+          padding: var(--space-4, 16px);
+          background: #FFFFFF;
+          border: 2px solid #E2E8F0;
+          border-radius: 8px;
+          cursor: pointer;
+          text-align: left;
+          transition: all 0.2s ease-in-out;
+        }
+        .pfs-expense-choice-card:hover {
+          border-color: #94A3B8;
+          background: #F8FAFC;
+        }
+        .pfs-expense-choice-card.active {
+          border-color: #00182A;
+          background: #F0F9FF;
+          box-shadow: 0 2px 8px rgba(0, 24, 42, 0.08);
+        }
+        .pfs-choice-radio-indicator {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          margin-top: 2px;
+          flex-shrink: 0;
+        }
+        .pfs-radio-circle {
+          display: block;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          border: 2px solid #94A3B8;
+          box-sizing: border-box;
+          transition: all 0.2s ease;
+        }
+        .pfs-expense-choice-card.active .pfs-radio-circle {
+          border-color: #00182A;
+          border-width: 5px;
+          background: #FFFFFF;
+        }
+        .pfs-choice-content {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .pfs-choice-title {
           font-weight: 700;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           color: #00182A;
         }
+        .pfs-choice-desc {
+          font-size: 0.8rem;
+          color: #64748B;
+          line-height: 1.4;
+        }
         .pfs-mode-body {
-          margin-top: var(--space-3, 12px);
-          padding-top: var(--space-3, 12px);
+          margin-top: var(--space-4, 16px);
+          padding-top: var(--space-4, 16px);
           border-top: 1px solid #E2E8F0;
+        }
+
+        /* ASSET PURPOSE GUIDANCE */
+        .pfs-asset-purpose-guidance {
+          display: flex;
+          align-items: center;
+          gap: var(--space-2, 8px);
+          margin-top: var(--space-2, 8px);
+          padding: 8px 12px;
+          background: #F0F9FF;
+          border-left: 3px solid #0284C7;
+          border-radius: 4px;
+          font-size: 0.8rem;
+          color: #0369A1;
+        }
+        .pfs-guidance-icon {
+          font-weight: 700;
+          font-size: 0.9rem;
+        }
+        .pfs-th-sub {
+          display: block;
+          font-size: 0.65rem;
+          font-weight: normal;
+          color: #94A3B8;
+          text-transform: none;
         }
 
         /* BRIDGE CARD */

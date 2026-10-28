@@ -17,17 +17,17 @@ test.describe('Capture Visual Screenshots for Personal Finance Statement', () =>
         fullPage: false,
       });
 
-      // Stage 2: Expenses (Mode B Itemized)
+      // Stage 2: Expenses (Category Breakdown)
       await page.click('#btn-nav-stage-2');
       await page.screenshot({
-        path: `tests/e2e/screenshots/pfs_stage2_expenses_mode_b_${vp.name}.png`,
+        path: `tests/e2e/screenshots/pfs_stage2_expenses_category_${vp.name}.png`,
         fullPage: false,
       });
 
-      // Stage 2: Expenses (Mode A Total)
-      await page.click('#btn-mode-a');
+      // Stage 2: Expenses (Consolidated Total)
+      await page.click('#btn-consolidated-expenses');
       await page.screenshot({
-        path: `tests/e2e/screenshots/pfs_stage2_expenses_mode_a_${vp.name}.png`,
+        path: `tests/e2e/screenshots/pfs_stage2_expenses_consolidated_${vp.name}.png`,
         fullPage: false,
       });
 

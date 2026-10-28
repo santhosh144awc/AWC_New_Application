@@ -377,16 +377,30 @@ export function generatePersonalFinanceStatementPdf(
   doc.setTextColor(COLOR_NAVY[0], COLOR_NAVY[1], COLOR_NAVY[2]);
   doc.text('3. Expense Statement', marginX, curY);
 
+  const isConsolidatedMode = data.expenseStage.expenseEntryMode === 'CONSOLIDATED_TOTAL' || (data.expenseStage.householdMode as string) === 'TOTAL_MODE' || data.expenseStage.householdMode === 'CONSOLIDATED_TOTAL';
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(COLOR_MUTED[0], COLOR_MUTED[1], COLOR_MUTED[2]);
   doc.text(
-    `Household Mode: ${data.expenseStage.householdMode === 'TOTAL_MODE' ? 'Consolidated Total Mode' : 'Detailed Itemized Mode'}`,
+    `Expense Entry Mode: ${isConsolidatedMode ? 'Consolidated Total Mode' : 'Category Breakdown Mode'}`,
     pageWidth - marginX,
     curY,
     { align: 'right' }
   );
   curY += 4;
+
+  if (isConsolidatedMode) {
+    // Consolidated-total mode explanation banner in PDF
+    doc.setFontSize(8);
+    doc.setTextColor(COLOR_MUTED[0], COLOR_MUTED[1], COLOR_MUTED[2]);
+    doc.text(
+      'Note: Client elected Consolidated Total mode. Single combined amount covers all 5 family expense categories (Household, Lifestyle, Dependents, Insurance Premiums, Loan EMIs).',
+      marginX,
+      curY + 3
+    );
+    curY += 6;
+  }
 
   const expenseBody = data.expenseStage.items.map((item) => [
     item.label,

@@ -45,48 +45,50 @@ test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verifi
     await expect(page.locator('#pane-stage-2')).toBeVisible();
   });
 
-  test('3. Stage 2 Expenses: Mode A vs Mode B mutual exclusion without double-counting', async ({ page }) => {
+  test('3. Stage 2 Expenses: Mode selection without double-counting', async ({ page }) => {
     // Navigate to Stage 2
     await page.click('#btn-nav-stage-2');
     await expect(page.locator('#pane-stage-2')).toBeVisible();
 
-    // Initially in Mode B (itemized)
-    await expect(page.locator('#btn-mode-b')).toHaveClass(/active/);
+    // Initially in category breakdown
+    await expect(page.locator('#btn-category-expenses')).toHaveClass(/active/);
 
-    // Switch to Mode A (Total consolidated)
-    await page.click('#btn-mode-a');
-    await expect(page.locator('#btn-mode-a')).toHaveClass(/active/);
-    await expect(page.locator('#mode-a-container')).toBeVisible();
+    // Switch to Consolidated Total
+    await page.click('#btn-consolidated-expenses');
+    await expect(page.locator('#btn-consolidated-expenses')).toHaveClass(/active/);
+    await expect(page.locator('#consolidated-expenses-container')).toBeVisible();
 
     // Enter total monthly amount
-    const modeAInput = page.locator('#mode-a-container input[type="number"]');
-    await modeAInput.fill('80000');
+    const modeInput = page.locator('#input-consolidated-monthly-expense');
+    await modeInput.fill('80000');
 
-    // Live expense metric reflects 80,000 * 12 + lifestyle/dependent/insurance/EMI
     // Verify Continue button navigates to Stage 3
     await page.click('#btn-stage-2-next');
     await expect(page.locator('#pane-stage-3')).toBeVisible();
   });
 
   test('4. Stage 3 Savings & Surplus: Surplus calculation and deficit detection', async ({ page }) => {
-    // Explicitly load sample data to test deficit warning and compounding projections
-    await page.click('#btn-load-sample');
+    // Fill sample income and expenses manually to test deficit warning and compounding projections
+    await page.locator('#pane-stage-1 tbody input[type="number"]').first().fill('100000'); // 1.2M gross
+    await page.click('#btn-nav-stage-2');
+    await page.locator('#btn-consolidated-expenses').click();
+    await page.locator('#input-consolidated-monthly-expense').fill('90000'); // 1.08M expenses -> 120k savings
     await page.click('#btn-nav-stage-3');
     await expect(page.locator('#pane-stage-3')).toBeVisible();
+
+    // Add high ongoing investment to trigger deficit
+    const invInput = page.locator('#table-investments tbody input[type="number"]').first();
+    await invInput.fill('20000'); // 240k/yr > 120k savings -> -120k deficit
 
     // Check surplus card
     const surplusCard = page.locator('#surplus-card');
     await expect(surplusCard).toBeVisible();
 
-    // With default sample data: Inflow (₹30,75,000) - Expenses (₹27,46,000) = Savings (₹3,29,000)
-    // Ongoing investments = ₹6,80,000, so surplus is negative (-₹3,51,000)
-    // Cash flow deficit warning is displayed
+    // Deficit warning is displayed
     await expect(surplusCard).toHaveClass(/surplus-deficit/);
     await expect(surplusCard.locator('.pfs-alert-warning')).toContainText('Cash Flow Deficit Warning');
 
     // Now reduce ongoing investments so surplus becomes positive and projections render
-    // Change first investment amount to 1000
-    const invInput = page.locator('#table-investments tbody input[type="number"]').first();
     await invInput.fill('1000');
 
     // Change PPF annual contribution to 0
@@ -132,8 +134,8 @@ test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verifi
     await expect(nwDash.locator('.accounting-card')).toContainText('Net Worth (Including Personal Assets)');
     await expect(nwDash.locator('.productive-card')).toContainText('Actual Net Worth (Excluding Personal Assets)');
 
-    // Load sample data to supply client name and populated financials
-    await page.click('#btn-load-sample');
+    // Enter client name for PDF export
+    await page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]').fill('Ramesh & Priya Sundaram');
     await page.click('#btn-nav-stage-6');
 
     // PDF Download trigger

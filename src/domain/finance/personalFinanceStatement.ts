@@ -173,7 +173,9 @@ export type ExpenseCategory =
   | 'LOAN_EMI'
   | 'OTHER';
 
-export type HouseholdExpenseMode = 'TOTAL_MODE' | 'ITEMIZED_MODE';
+export type ExpenseEntryMode = 'CONSOLIDATED_TOTAL' | 'CATEGORY_BREAKDOWN';
+/** Backwards compatibility alias */
+export type HouseholdExpenseMode = ExpenseEntryMode | 'TOTAL_MODE' | 'ITEMIZED_MODE';
 
 export interface ExpenseLineItem {
   readonly id: string;
@@ -190,10 +192,15 @@ export interface CalculatedExpenseLineItem extends ExpenseLineItem {
 }
 
 export interface ExpenseStageInputs {
-  readonly householdMode: HouseholdExpenseMode;
-  /** Used only if householdMode === 'TOTAL_MODE' */
-  readonly singleMonthlyHouseholdExpense: number;
-  /** Itemized list. Household rows in this list only contribute if householdMode === 'ITEMIZED_MODE' */
+  /** Mode controlling the entire Expenses stage: 'CONSOLIDATED_TOTAL' or 'CATEGORY_BREAKDOWN' */
+  readonly expenseEntryMode?: ExpenseEntryMode;
+  /** Backwards compatibility field */
+  readonly householdMode?: HouseholdExpenseMode;
+  /** Single monthly family expense (covers all 5 categories when in CONSOLIDATED_TOTAL mode) */
+  readonly singleMonthlyExpense?: number;
+  /** Backwards compatibility field */
+  readonly singleMonthlyHouseholdExpense?: number;
+  /** Itemized list across all categories; used when in CATEGORY_BREAKDOWN mode */
   readonly itemizedExpenses: readonly ExpenseLineItem[];
   readonly totalNetAnnualIncome: number;
 }
@@ -207,7 +214,10 @@ export interface ExpenseCategorySubtotal {
 }
 
 export interface ExpenseStageResult {
-  readonly householdMode: HouseholdExpenseMode;
+  readonly expenseEntryMode: ExpenseEntryMode;
+  /** Backwards compatibility alias */
+  readonly householdMode: ExpenseEntryMode;
+  readonly singleMonthlyExpense: number;
   readonly items: readonly CalculatedExpenseLineItem[];
   readonly categorySubtotals: readonly ExpenseCategorySubtotal[];
   readonly householdSubtotalAnnual: number;
@@ -226,36 +236,94 @@ export interface ExpenseStageResult {
 }
 
 export function calculateExpenseStage(inputs: ExpenseStageInputs): ExpenseStageResult {
-  const { householdMode, singleMonthlyHouseholdExpense, itemizedExpenses, totalNetAnnualIncome } = inputs;
+  const {
+    expenseEntryMode,
+    householdMode,
+    singleMonthlyExpense,
+    singleMonthlyHouseholdExpense,
+    itemizedExpenses,
+    totalNetAnnualIncome,
+  } = inputs;
 
-  const validSingleExpense = Math.max(0, singleMonthlyHouseholdExpense || 0);
+  // Determine active entry mode
+  const activeMode: ExpenseEntryMode =
+    expenseEntryMode === 'CONSOLIDATED_TOTAL' || householdMode === 'TOTAL_MODE'
+      ? 'CONSOLIDATED_TOTAL'
+      : 'CATEGORY_BREAKDOWN';
 
-  // Compute calculated line items
+  const validSingleExpense = Math.max(
+    0,
+    singleMonthlyExpense !== undefined
+      ? singleMonthlyExpense
+      : singleMonthlyHouseholdExpense || 0
+  );
+
   const computedItems: CalculatedExpenseLineItem[] = [];
 
-  if (householdMode === 'TOTAL_MODE') {
-    // Add single household entry as an item
-    const singleAnnual = validSingleExpense * 12;
+  if (activeMode === 'CONSOLIDATED_TOTAL') {
+    // When consolidated total mode is selected, the single monthly amount represents
+    // ALL family expenses across all 5 categories (Household, Lifestyle, Dependent, Insurance, EMIs).
+    // Annual Expenses = Total Monthly Family Expenses * 12.
+    // Itemized category lines are completely excluded to prevent any double counting.
+    const consolidatedAnnual = validSingleExpense * 12;
     computedItems.push({
-      id: 'hh-total-single',
-      label: 'Consolidated Household Expenses (Monthly Total Mode)',
+      id: 'exp-consolidated-total',
+      label: 'Total Monthly Family Expenses (Consolidated)',
       category: 'HOUSEHOLD',
       frequency: 'MONTHLY',
       enteredAmount: validSingleExpense,
-      annualAmount: singleAnnual,
+      annualAmount: consolidatedAnnual,
       monthlyAmount: validSingleExpense,
-      percentOfTotalIncome: totalNetAnnualIncome > 0 ? (singleAnnual / totalNetAnnualIncome) * 100 : null,
+      percentOfTotalIncome:
+        totalNetAnnualIncome > 0 ? (consolidatedAnnual / totalNetAnnualIncome) * 100 : null,
     });
+
+    const totalAnnualExpenses = consolidatedAnnual;
+    const totalMonthlyExpenses = validSingleExpense;
+
+    const makeSubtotal = (
+      cat: ExpenseCategory,
+      lbl: string,
+      ann: number
+    ): ExpenseCategorySubtotal => ({
+      category: cat,
+      label: lbl,
+      annualAmount: ann,
+      monthlyAmount: ann / 12,
+      percentOfTotalIncome:
+        totalNetAnnualIncome > 0 ? (ann / totalNetAnnualIncome) * 100 : null,
+    });
+
+    const categorySubtotals: ExpenseCategorySubtotal[] = [
+      makeSubtotal('HOUSEHOLD', 'Combined Family Living Costs', totalAnnualExpenses),
+    ];
+
+    return {
+      expenseEntryMode: 'CONSOLIDATED_TOTAL',
+      householdMode: 'CONSOLIDATED_TOTAL',
+      singleMonthlyExpense: validSingleExpense,
+      items: computedItems,
+      categorySubtotals,
+      householdSubtotalAnnual: totalAnnualExpenses,
+      householdSubtotalMonthly: totalMonthlyExpenses,
+      lifestyleSubtotalAnnual: 0,
+      lifestyleSubtotalMonthly: 0,
+      dependentSubtotalAnnual: 0,
+      dependentSubtotalMonthly: 0,
+      insuranceSubtotalAnnual: 0,
+      insuranceSubtotalMonthly: 0,
+      loanEmiSubtotalAnnual: 0,
+      loanEmiSubtotalMonthly: 0,
+      totalAnnualExpenses,
+      totalMonthlyExpenses,
+      expenseToIncomeRatio:
+        totalNetAnnualIncome > 0 ? (totalAnnualExpenses / totalNetAnnualIncome) * 100 : null,
+    };
   }
 
-  // Iterate over itemized expenses
+  // Option 2: CATEGORY_BREAKDOWN
+  // Calculate annual equivalent of every itemized row using its frequency
   for (const item of itemizedExpenses) {
-    if (item.category === 'HOUSEHOLD' && householdMode === 'TOTAL_MODE') {
-      // Inactive: preserve in items with 0 active contribution or omit?
-      // To strictly prevent double-counting, we do not include it in active sums.
-      continue;
-    }
-
     const { annualAmount, monthlyAmount } = convertToAnnualAndMonthly(
       item.enteredAmount,
       item.frequency
@@ -265,7 +333,8 @@ export function calculateExpenseStage(inputs: ExpenseStageInputs): ExpenseStageR
       ...item,
       annualAmount,
       monthlyAmount,
-      percentOfTotalIncome: totalNetAnnualIncome > 0 ? (annualAmount / totalNetAnnualIncome) * 100 : null,
+      percentOfTotalIncome:
+        totalNetAnnualIncome > 0 ? (annualAmount / totalNetAnnualIncome) * 100 : null,
     });
   }
 
@@ -300,7 +369,8 @@ export function calculateExpenseStage(inputs: ExpenseStageInputs): ExpenseStageR
     }
   }
 
-  const totalAnnualExpenses = hhAnnual + lifestyleAnnual + depAnnual + insAnnual + emiAnnual + otherAnnual;
+  const totalAnnualExpenses =
+    hhAnnual + lifestyleAnnual + depAnnual + insAnnual + emiAnnual + otherAnnual;
   const totalMonthlyExpenses = totalAnnualExpenses / 12;
 
   const makeSubtotal = (
@@ -316,9 +386,9 @@ export function calculateExpenseStage(inputs: ExpenseStageInputs): ExpenseStageR
   });
 
   const categorySubtotals: ExpenseCategorySubtotal[] = [
-    makeSubtotal('HOUSEHOLD', 'Household Expenses', hhAnnual),
-    makeSubtotal('LIFESTYLE', 'Lifestyle Expenses', lifestyleAnnual),
-    makeSubtotal('DEPENDENT', 'Dependent Expenses', depAnnual),
+    makeSubtotal('HOUSEHOLD', 'Household Essentials', hhAnnual),
+    makeSubtotal('LIFESTYLE', 'Lifestyle & Discretionary', lifestyleAnnual),
+    makeSubtotal('DEPENDENT', 'Dependent & Family Support', depAnnual),
     makeSubtotal('INSURANCE', 'Insurance Premiums', insAnnual),
     makeSubtotal('LOAN_EMI', 'Loan EMIs', emiAnnual),
   ];
@@ -327,7 +397,9 @@ export function calculateExpenseStage(inputs: ExpenseStageInputs): ExpenseStageR
   }
 
   return {
-    householdMode,
+    expenseEntryMode: 'CATEGORY_BREAKDOWN',
+    householdMode: 'CATEGORY_BREAKDOWN',
+    singleMonthlyExpense: validSingleExpense,
     items: computedItems,
     categorySubtotals,
     householdSubtotalAnnual: hhAnnual,
@@ -706,9 +778,11 @@ export interface ComprehensiveStatementInputs {
   readonly metadata: ClientStatementMetadata;
   readonly incomeItems: readonly IncomeLineItem[];
   readonly expenseInputs: {
-    householdMode: HouseholdExpenseMode;
-    singleMonthlyHouseholdExpense: number;
-    itemizedExpenses: readonly ExpenseLineItem[];
+    readonly expenseEntryMode?: ExpenseEntryMode;
+    readonly householdMode?: HouseholdExpenseMode;
+    readonly singleMonthlyExpense?: number;
+    readonly singleMonthlyHouseholdExpense?: number;
+    readonly itemizedExpenses: readonly ExpenseLineItem[];
   };
   readonly ongoingInvestments: readonly OngoingInvestmentItem[];
   readonly assetItems: readonly AssetLineItem[];
@@ -746,7 +820,9 @@ export function calculateComprehensivePersonalFinanceStatement(
 
   // 2. Expense Stage
   const expenseStage = calculateExpenseStage({
+    expenseEntryMode: inputs.expenseInputs.expenseEntryMode,
     householdMode: inputs.expenseInputs.householdMode,
+    singleMonthlyExpense: inputs.expenseInputs.singleMonthlyExpense,
     singleMonthlyHouseholdExpense: inputs.expenseInputs.singleMonthlyHouseholdExpense,
     itemizedExpenses: inputs.expenseInputs.itemizedExpenses,
     totalNetAnnualIncome: incomeStage.totalNetAnnualIncome,
