@@ -136,13 +136,14 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const spouseLabel = spouseName.trim() ? `${spouseName.trim()} (Spouse)` : 'Spouse';
   const childrenLabel = parsedChildrenList.length > 0 ? parsedChildrenList.join(' & ') : 'Children';
 
-  // Stable ref for stage canvas to scroll to destination stage reliably
+  // Stable ref for stage navigation ribbon to scroll to destination workspace view reliably
   const stageCanvasRef = useRef<HTMLDivElement | null>(null);
+  const stageNavRef = useRef<HTMLElement | null>(null);
 
   // Track whether initial mount has occurred to avoid scrolling on first render
   const isInitialMount = useRef<boolean>(true);
 
-  // Automatically scroll to destination stage heading whenever stage changes
+  // Automatically scroll to destination stage navigation ribbon whenever stage changes
   React.useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -150,13 +151,15 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     }
 
     const performScroll = () => {
-      // Prioritize the active stage heading element directly so the heading and description are visible
-      const headingEl = document.querySelector(`#stage-${currentStage}-heading`) as HTMLElement | null;
-      const targetEl = headingEl || (stageCanvasRef.current as HTMLElement | null);
+      // Prioritize the six-stage progress ribbon container so the user gets the clear overview:
+      // Ribbon -> Live Financial Summary -> Selected Stage Heading -> Input Section
+      const ribbonEl = stageNavRef.current || (document.querySelector('.pfs-nav-stepper') as HTMLElement | null);
+      const targetEl = ribbonEl || (stageCanvasRef.current as HTMLElement | null);
       if (targetEl) {
         const headerEl = document.querySelector('.site-header') as HTMLElement | null;
         const headerH = headerEl ? headerEl.offsetHeight : 72;
-        // Total top offset: only the fixed/sticky site header + 16px buffer (the stage navigation ribbon is in normal document flow and NOT sticky)
+        // Total top offset: only the fixed/sticky site header + 16px buffer
+        // Note: the stage navigation ribbon is in normal document flow and NOT sticky
         const totalTopOffset = headerH + 16;
         
         // Calculate absolute top position in the document
@@ -520,6 +523,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       {/* ------------------------------------------------------------- */}
       <nav
         className="pfs-nav-stepper"
+        ref={stageNavRef}
         aria-label="Statement Stage Navigation"
       >
         <ol className="pfs-stepper-list">
@@ -1285,12 +1289,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                     <table className="pfs-table">
                       <thead>
                         <tr>
-                          <th style={{ width: '23%' }}>Holding Particulars</th>
+                          <th style={{ width: '21%' }}>Holding Particulars</th>
                           <th style={{ width: '13%' }}>{selfLabel} (₹)</th>
                           <th style={{ width: '13%' }}>{spouseLabel} (₹)</th>
                           <th style={{ width: '13%' }}>{childrenLabel} (₹)</th>
                           <th style={{ width: '14%' }} className="text-right">Total Value (₹)</th>
-                          <th style={{ width: '20%' }}>
+                          <th style={{ width: '22%' }}>
                             <span>Purpose / Goal</span>
                             <span className="pfs-th-sub" title="Optional: note the intended purpose of this holding, such as an emergency fund, education or retirement.">
                               Optional
@@ -2297,11 +2301,11 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           margin: 0;
         }
         .pfs-table-input-purpose {
-          min-width: 150px;
+          min-width: 165px;
           font-size: 0.82rem;
         }
         .pfs-table-input-purpose::placeholder {
-          font-size: 12px;
+          font-size: 11.5px;
           color: #94A3B8;
         }
         .pfs-table-select {

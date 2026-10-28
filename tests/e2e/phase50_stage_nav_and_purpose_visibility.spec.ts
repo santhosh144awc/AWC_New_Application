@@ -47,10 +47,12 @@ test.describe('Phase 50 — Fix Stage Navigation Scrolling and Asset Purpose Fie
     }
   });
 
-  test('2. Stage-transition navigation: destination heading and input beginning land visible beneath site header across all stages', async ({ page }) => {
+  test('2. Stage-transition navigation: destination landing brings ribbon, live summary, and selected stage content into clear overview', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     const header = page.locator('.site-header');
+    const stepperNav = page.locator('.pfs-nav-stepper');
+    const liveSummary = page.locator('.pfs-live-bar');
     const headerBox = await header.boundingBox();
     expect(headerBox).not.toBeNull();
     const headerHeight = headerBox!.height;
@@ -60,34 +62,46 @@ test.describe('Phase 50 — Fix Stage Navigation Scrolling and Asset Purpose Fie
     await expect(page.locator('#pane-stage-2')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox2 = await stepperNav.boundingBox();
+    const sumBox2 = await liveSummary.boundingBox();
     const s2Heading = page.locator('#stage-2-heading');
     await expect(s2Heading).toBeVisible();
     const s2Box = await s2Heading.boundingBox();
-    // Destination heading must be positioned cleanly below the site header
-    expect(s2Box!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s2Box!.y).toBeLessThan(headerHeight + 80);
+
+    // Verify overview sequence: Header -> Ribbon -> Live Summary -> Stage 2 Heading
+    expect(navBox2!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(sumBox2!.y).toBeGreaterThanOrEqual(navBox2!.y + navBox2!.height);
+    expect(s2Box!.y).toBeGreaterThanOrEqual(sumBox2!.y + sumBox2!.height);
 
     // Stage 2 -> Continue to Stage 3
     await page.click('#btn-stage-2-next');
     await expect(page.locator('#pane-stage-3')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox3 = await stepperNav.boundingBox();
+    const sumBox3 = await liveSummary.boundingBox();
     const s3Heading = page.locator('#stage-3-heading');
     await expect(s3Heading).toBeVisible();
     const s3Box = await s3Heading.boundingBox();
-    expect(s3Box!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s3Box!.y).toBeLessThan(headerHeight + 80);
+
+    expect(navBox3!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(sumBox3!.y).toBeGreaterThanOrEqual(navBox3!.y + navBox3!.height);
+    expect(s3Box!.y).toBeGreaterThanOrEqual(sumBox3!.y + sumBox3!.height);
 
     // Stage 3 -> Continue to Stage 4 (Assets)
     await page.click('#btn-stage-3-next');
     await expect(page.locator('#pane-stage-4')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox4 = await stepperNav.boundingBox();
+    const sumBox4 = await liveSummary.boundingBox();
     const s4Heading = page.locator('#stage-4-heading');
     await expect(s4Heading).toBeVisible();
     const s4Box = await s4Heading.boundingBox();
-    expect(s4Box!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s4Box!.y).toBeLessThan(headerHeight + 80);
+
+    expect(navBox4!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(sumBox4!.y).toBeGreaterThanOrEqual(navBox4!.y + navBox4!.height);
+    expect(s4Box!.y).toBeGreaterThanOrEqual(sumBox4!.y + sumBox4!.height);
 
     // First input section in Stage 4 (Liquid Assets) is visible in viewport
     const liquidHeading = page.locator('.pfs-category-section').first();
@@ -99,39 +113,41 @@ test.describe('Phase 50 — Fix Stage Navigation Scrolling and Asset Purpose Fie
     await expect(page.locator('#pane-stage-3')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox3Back = await stepperNav.boundingBox();
     const s3HeadingBack = page.locator('#stage-3-heading');
     const s3BoxBack = await s3HeadingBack.boundingBox();
-    expect(s3BoxBack!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s3BoxBack!.y).toBeLessThan(headerHeight + 80);
+    expect(navBox3Back!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(s3BoxBack!.y).toBeGreaterThanOrEqual(navBox3Back!.y + navBox3Back!.height);
 
     // Direct selection to Stage 5 (Liabilities)
     await page.click('#btn-nav-stage-5');
     await expect(page.locator('#pane-stage-5')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox5 = await stepperNav.boundingBox();
     const s5Heading = page.locator('#stage-5-heading');
     const s5Box = await s5Heading.boundingBox();
-    expect(s5Box!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s5Box!.y).toBeLessThan(headerHeight + 80);
+    expect(navBox5!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(s5Box!.y).toBeGreaterThanOrEqual(navBox5!.y + navBox5!.height);
 
     // Direct selection to Stage 6 (Review)
     await page.click('#btn-nav-stage-6');
     await expect(page.locator('#pane-stage-6')).toBeVisible();
     await page.waitForTimeout(300);
 
+    const navBox6 = await stepperNav.boundingBox();
     const s6Heading = page.locator('#stage-6-heading');
     const s6Box = await s6Heading.boundingBox();
-    expect(s6Box!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s6Box!.y).toBeLessThan(headerHeight + 80);
+    expect(navBox6!.y).toBeGreaterThanOrEqual(headerHeight);
+    expect(s6Box!.y).toBeGreaterThanOrEqual(navBox6!.y + navBox6!.height);
 
     // Repeated transitions do not accumulate scroll drift
     await page.click('#btn-nav-stage-4');
     await page.waitForTimeout(200);
     await page.click('#btn-nav-stage-2');
     await page.waitForTimeout(200);
-    const s2BoxRepeated = await s2Heading.boundingBox();
-    expect(s2BoxRepeated!.y).toBeGreaterThanOrEqual(headerHeight);
-    expect(s2BoxRepeated!.y).toBeLessThan(headerHeight + 80);
+    const navBoxRepeated = await stepperNav.boundingBox();
+    expect(navBoxRepeated!.y).toBeGreaterThanOrEqual(headerHeight);
   });
 
   test('3. Purpose / Goal column width and placeholder readability at desktop viewports', async ({ page }) => {

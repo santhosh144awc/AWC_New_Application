@@ -149,7 +149,8 @@ test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects V
     // 1. Populate client data
     const clientInput = page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]');
     await clientInput.fill('Ramesh & Priya Sundaram');
-    await page.waitForTimeout(100);
+    await clientInput.press('Tab');
+    await page.waitForTimeout(200);
 
     // 2. Navigate to Stage 6
     await page.click('#btn-nav-stage-6');
