@@ -42,6 +42,7 @@ export * from './homeLoanAmortization';
 export * from './sipGrowth';
 export * from './loanPrepaymentVsInvestment';
 export * from './realFinancialStatement';
+export * from './personalFinanceStatement';
 export * from './childrenFuturePlanner';
 export * from './lifeInsurance';
 export * from './financialHealth';
