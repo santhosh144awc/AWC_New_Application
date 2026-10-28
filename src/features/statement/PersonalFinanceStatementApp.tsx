@@ -136,9 +136,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const spouseLabel = spouseName.trim() ? `${spouseName.trim()} (Spouse)` : 'Spouse';
   const childrenLabel = parsedChildrenList.length > 0 ? parsedChildrenList.join(' & ') : 'Children';
 
-  // Stable ref for stage canvas, active stage pane, and sticky stepper to scroll to destination stage reliably
+  // Stable ref for stage canvas to scroll to destination stage reliably
   const stageCanvasRef = useRef<HTMLDivElement | null>(null);
-  const stickyStepperRef = useRef<HTMLElement | null>(null);
 
   // Track whether initial mount has occurred to avoid scrolling on first render
   const isInitialMount = useRef<boolean>(true);
@@ -157,9 +156,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       if (targetEl) {
         const headerEl = document.querySelector('.site-header') as HTMLElement | null;
         const headerH = headerEl ? headerEl.offsetHeight : 72;
-        const stepperH = stickyStepperRef.current ? stickyStepperRef.current.offsetHeight : 62;
-        // Total top offset: site header + sticky stepper + 16px buffer
-        const totalTopOffset = headerH + stepperH + 16;
+        // Total top offset: only the fixed/sticky site header + 16px buffer (the stage navigation ribbon is in normal document flow and NOT sticky)
+        const totalTopOffset = headerH + 16;
         
         // Calculate absolute top position in the document
         const elementTop = targetEl.getBoundingClientRect().top + window.pageYOffset;
@@ -368,7 +366,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         selfAmount: 0,
         spouseAmount: 0,
         childrenAmount: 0,
-        purposeGoal: 'Long-term Growth',
+        purposeGoal: '',
       },
     ]);
   };
@@ -393,7 +391,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         selfAmount: 0,
         spouseAmount: 0,
         childrenAmount: 0,
-        purposeGoal: 'Personal obligation',
+        purposeGoal: '',
       },
     ]);
   };
@@ -518,11 +516,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. 6-STAGE WORKFLOW STEPPER NAVIGATION (STICKY BELOW HEADER) */}
+      {/* 2. 6-STAGE WORKFLOW STEPPER NAVIGATION (NORMAL DOCUMENT FLOW) */}
       {/* ------------------------------------------------------------- */}
       <nav
         className="pfs-nav-stepper"
-        ref={stickyStepperRef}
         aria-label="Statement Stage Navigation"
       >
         <ol className="pfs-stepper-list">
@@ -1288,12 +1285,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                     <table className="pfs-table">
                       <thead>
                         <tr>
-                          <th style={{ width: '25%' }}>Holding Particulars</th>
-                          <th style={{ width: '15%' }}>{selfLabel} (₹)</th>
-                          <th style={{ width: '15%' }}>{spouseLabel} (₹)</th>
-                          <th style={{ width: '15%' }}>{childrenLabel} (₹)</th>
-                          <th style={{ width: '15%' }} className="text-right">Total Value (₹)</th>
-                          <th style={{ width: '11%' }}>
+                          <th style={{ width: '23%' }}>Holding Particulars</th>
+                          <th style={{ width: '13%' }}>{selfLabel} (₹)</th>
+                          <th style={{ width: '13%' }}>{spouseLabel} (₹)</th>
+                          <th style={{ width: '13%' }}>{childrenLabel} (₹)</th>
+                          <th style={{ width: '14%' }} className="text-right">Total Value (₹)</th>
+                          <th style={{ width: '20%' }}>
                             <span>Purpose / Goal</span>
                             <span className="pfs-th-sub" title="Optional: note the intended purpose of this holding, such as an emergency fund, education or retirement.">
                               Optional
@@ -1307,12 +1304,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                           const itemTotal = row.selfAmount + row.spouseAmount + row.childrenAmount;
 
                           const purposePlaceholders: Record<AssetClass, string> = {
-                            LIQUID: 'e.g., Emergency fund',
-                            DEBT: "e.g., Child's education",
-                            EQUITY: 'e.g., Retirement',
-                            GOLD: 'e.g., Long-term goal',
-                            REAL_ESTATE: 'e.g., Home purchase or rental income',
-                            PERSONAL: 'e.g., Family use',
+                            LIQUID: 'e.g. Emergency fund',
+                            DEBT: "e.g. Child's education",
+                            EQUITY: 'e.g. Retirement',
+                            GOLD: 'e.g. Long-term goal',
+                            REAL_ESTATE: 'e.g. Home purchase',
+                            PERSONAL: 'e.g. Family use',
                           };
 
                           return (
@@ -1358,9 +1355,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                               <td>
                                 <input
                                   type="text"
-                                  className="pfs-table-input"
+                                  className="pfs-table-input pfs-table-input-purpose"
                                   value={row.purposeGoal || ''}
-                                  placeholder={purposePlaceholders[row.assetClass] || 'e.g., Financial goal'}
+                                  placeholder={purposePlaceholders[row.assetClass] || 'e.g. Financial goal'}
                                   onChange={(e) => updateAssetRow(row.id, 'purposeGoal', e.target.value)}
                                 />
                               </td>
@@ -2006,19 +2003,16 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           }
         }
 
-        /* STEPPER NAVIGATION (STICKY BELOW SITE HEADER) */
+        /* STEPPER NAVIGATION (NORMAL DOCUMENT FLOW - NON-STICKY) */
         .pfs-nav-stepper {
-          position: sticky;
-          top: 72px; /* aligns directly below the 72px fixed/sticky site-header */
-          z-index: 40;
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(12px);
+          position: static;
+          background: #FFFFFF;
           border: 1px solid var(--color-border-subtle, #E2E8F0);
           border-radius: var(--radius-lg, 12px);
           padding: 6px;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          box-shadow: 0 4px 14px rgba(0, 24, 42, 0.06);
+          box-shadow: 0 1px 3px rgba(0, 24, 42, 0.04);
           margin-bottom: 0;
         }
         .pfs-stepper-list {
@@ -2301,6 +2295,14 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           box-sizing: border-box;
           display: block;
           margin: 0;
+        }
+        .pfs-table-input-purpose {
+          min-width: 150px;
+          font-size: 0.82rem;
+        }
+        .pfs-table-input-purpose::placeholder {
+          font-size: 12px;
+          color: #94A3B8;
         }
         .pfs-table-select {
           width: 100%;

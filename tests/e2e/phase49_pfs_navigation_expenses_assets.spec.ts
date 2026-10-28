@@ -6,7 +6,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     await page.waitForSelector('.pfs-meta-section');
   });
 
-  test('1. Stage-Transition Navigation: Smooth coordinated scroll to destination stage heading beneath sticky navigation', async ({ page }) => {
+  test('1. Stage-Transition Navigation: Smooth coordinated scroll to destination stage heading beneath site header', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     const header = page.locator('.site-header');
@@ -15,34 +15,24 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     expect(headerBox).not.toBeNull();
     const headerHeight = headerBox!.height;
 
-    // Scroll past client metadata so stepper enters sticky state
-    const absoluteStepperTop = await page.evaluate(() => {
-      const el = document.querySelector('.pfs-nav-stepper');
-      return el ? el.getBoundingClientRect().top + window.pageYOffset : 680;
-    });
-    await page.evaluate((targetY) => window.scrollTo(0, targetY), absoluteStepperTop - headerHeight + 250);
-    await page.waitForTimeout(150);
-
-    const scrolledNavBox = await stepperNav.boundingBox();
-    expect(scrolledNavBox).not.toBeNull();
-    // Stepper is sticky below header
-    expect(Math.abs(scrolledNavBox!.y - headerHeight)).toBeLessThanOrEqual(5);
+    // Verify stepper position style is static (non-sticky)
+    const positionStyle = await stepperNav.evaluate((el) => window.getComputedStyle(el).position);
+    expect(positionStyle).toBe('static');
 
     // Stage 1 -> Stage 2 via Continue button
     await page.click('#btn-stage-1-next');
     await expect(page.locator('#pane-stage-2')).toBeVisible();
     await page.waitForTimeout(300);
 
-    // Verify stage 2 is highlighted in sticky stepper
+    // Verify stage 2 is highlighted in stepper
     await expect(page.locator('#btn-nav-stage-2')).toHaveClass(/active/);
     await expect(page.locator('#btn-nav-stage-1')).toHaveClass(/completed/);
 
-    // Verify Stage 2 heading is visible and positioned cleanly below sticky stepper
+    // Verify Stage 2 heading is visible and positioned cleanly below site header
     const stage2Heading = page.locator('#stage-2-heading');
     await expect(stage2Heading).toBeVisible();
     const stage2HeadingBox = await stage2Heading.boundingBox();
-    const currentNavBox = await stepperNav.boundingBox();
-    expect(stage2HeadingBox!.y).toBeGreaterThan(currentNavBox!.y + currentNavBox!.height);
+    expect(stage2HeadingBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Stage 2 -> Stage 3 via Continue button
     await page.click('#btn-stage-2-next');
@@ -53,8 +43,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     const stage3Heading = page.locator('#stage-3-heading');
     await expect(stage3Heading).toBeVisible();
     const stage3HeadingBox = await stage3Heading.boundingBox();
-    const updatedNavBox3 = await stepperNav.boundingBox();
-    expect(stage3HeadingBox!.y).toBeGreaterThan(updatedNavBox3!.y + updatedNavBox3!.height);
+    expect(stage3HeadingBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Stage 3 -> Back to Stage 2 via Back button
     const backToS2Btn = page.locator('#pane-stage-3 .pfs-stage-footer-actions button').first();
@@ -66,8 +55,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     const stage2HeadingAgain = page.locator('#stage-2-heading');
     await expect(stage2HeadingAgain).toBeVisible();
     const stage2HeadingAgainBox = await stage2HeadingAgain.boundingBox();
-    const updatedNavBox2 = await stepperNav.boundingBox();
-    expect(stage2HeadingAgainBox!.y).toBeGreaterThan(updatedNavBox2!.y + updatedNavBox2!.height);
+    expect(stage2HeadingAgainBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Direct stepper selection to Stage 4 (Assets)
     await page.click('#btn-nav-stage-4');
@@ -78,8 +66,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     const stage4Heading = page.locator('#stage-4-heading');
     await expect(stage4Heading).toBeVisible();
     const stage4HeadingBox = await stage4Heading.boundingBox();
-    const updatedNavBox4 = await stepperNav.boundingBox();
-    expect(stage4HeadingBox!.y).toBeGreaterThan(updatedNavBox4!.y + updatedNavBox4!.height);
+    expect(stage4HeadingBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Direct stepper selection to Stage 5 (Liabilities)
     await page.click('#btn-nav-stage-5');
@@ -90,8 +77,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     const stage5Heading = page.locator('#stage-5-heading');
     await expect(stage5Heading).toBeVisible();
     const stage5HeadingBox = await stage5Heading.boundingBox();
-    const updatedNavBox5 = await stepperNav.boundingBox();
-    expect(stage5HeadingBox!.y).toBeGreaterThan(updatedNavBox5!.y + updatedNavBox5!.height);
+    expect(stage5HeadingBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Direct stepper selection to Stage 6 (Net Worth & Review)
     await page.click('#btn-nav-stage-6');
@@ -102,8 +88,7 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     const stage6Heading = page.locator('#stage-6-heading');
     await expect(stage6Heading).toBeVisible();
     const stage6HeadingBox = await stage6Heading.boundingBox();
-    const updatedNavBox6 = await stepperNav.boundingBox();
-    expect(stage6HeadingBox!.y).toBeGreaterThan(updatedNavBox6!.y + updatedNavBox6!.height);
+    expect(stage6HeadingBox!.y).toBeGreaterThanOrEqual(headerHeight);
   });
 
   test('2. Unified Expense Entry Choice: Labels, Mode A/B absence, and Option 1 (Consolidated Total) calculations', async ({ page }) => {
@@ -207,32 +192,32 @@ test.describe('Phase 49 — Personal Finance Statement: Stage Navigation, Unifie
     // Liquid Assets table
     const liquidFirstRowGoal = page.locator('.pfs-category-section').nth(0).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await liquidFirstRowGoal.inputValue()).toBe('');
-    expect(await liquidFirstRowGoal.getAttribute('placeholder')).toBe('e.g., Emergency fund');
+    expect(await liquidFirstRowGoal.getAttribute('placeholder')).toBe('e.g. Emergency fund');
 
     // Debt Assets table
     const debtFirstRowGoal = page.locator('.pfs-category-section').nth(1).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await debtFirstRowGoal.inputValue()).toBe('');
-    expect(await debtFirstRowGoal.getAttribute('placeholder')).toBe("e.g., Child's education");
+    expect(await debtFirstRowGoal.getAttribute('placeholder')).toBe("e.g. Child's education");
 
     // Equity Assets table
     const equityFirstRowGoal = page.locator('.pfs-category-section').nth(2).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await equityFirstRowGoal.inputValue()).toBe('');
-    expect(await equityFirstRowGoal.getAttribute('placeholder')).toBe('e.g., Retirement');
+    expect(await equityFirstRowGoal.getAttribute('placeholder')).toBe('e.g. Retirement');
 
     // Gold Assets table
     const goldFirstRowGoal = page.locator('.pfs-category-section').nth(3).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await goldFirstRowGoal.inputValue()).toBe('');
-    expect(await goldFirstRowGoal.getAttribute('placeholder')).toBe('e.g., Long-term goal');
+    expect(await goldFirstRowGoal.getAttribute('placeholder')).toBe('e.g. Long-term goal');
 
     // Real Estate Assets table
     const realEstateFirstRowGoal = page.locator('.pfs-category-section').nth(4).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await realEstateFirstRowGoal.inputValue()).toBe('');
-    expect(await realEstateFirstRowGoal.getAttribute('placeholder')).toBe('e.g., Home purchase or rental income');
+    expect(await realEstateFirstRowGoal.getAttribute('placeholder')).toBe('e.g. Home purchase');
 
     // Personal Assets table
     const personalFirstRowGoal = page.locator('.pfs-category-section').nth(5).locator('tbody tr').first().locator('input[type="text"]').nth(1);
     expect(await personalFirstRowGoal.inputValue()).toBe('');
-    expect(await personalFirstRowGoal.getAttribute('placeholder')).toBe('e.g., Family use');
+    expect(await personalFirstRowGoal.getAttribute('placeholder')).toBe('e.g. Family use');
 
     // Enter custom purpose into equity row and verify value updates without overwriting placeholder
     await equityFirstRowGoal.fill('Higher Studies 2032');

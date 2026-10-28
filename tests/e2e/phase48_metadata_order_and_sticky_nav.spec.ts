@@ -100,7 +100,7 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     await expect(page.locator('#pfs-preparer-info')).toContainText('Prepared by: C. Santhosh Sathriyan');
   });
 
-  test('4. Sticky Stepper Navigation: Stays sticky below site-header when scrolling, active indicator updates, stage titles remain visible', async ({ page }) => {
+  test('4. Stepper Navigation: Operates in normal document flow (non-sticky), scrolls away with document, active indicator updates, stage titles remain visible', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     const header = page.locator('.site-header');
@@ -109,24 +109,26 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     expect(headerBox).not.toBeNull();
     const headerHeight = headerBox!.height;
 
-    // Scroll down past the metadata section so stepper sticks
+    // Verify stepper position style is static (non-sticky)
+    const positionStyle = await stepperNav.evaluate((el) => window.getComputedStyle(el).position);
+    expect(positionStyle).toBe('static');
+
     const initialNavBox = await stepperNav.boundingBox();
     expect(initialNavBox).not.toBeNull();
-    // In viewport coordinates, initialNavBox.y is relative to current scroll.
-    // To scroll past the metadata section and make the stepper stick at top: 72px:
-    const absoluteStepperTop = await page.evaluate(() => {
-      const el = document.querySelector('.pfs-nav-stepper');
-      return el ? el.getBoundingClientRect().top + window.pageYOffset : 680;
-    });
-    const scrollTarget = absoluteStepperTop - headerHeight + 250;
-    await page.evaluate((targetY) => window.scrollTo(0, targetY), scrollTarget);
+
+    // Scroll down well past the stepper
+    await page.evaluate(() => window.scrollBy(0, 600));
     await page.waitForTimeout(150);
 
     const scrolledNavBox = await stepperNav.boundingBox();
     expect(scrolledNavBox).not.toBeNull();
 
-    // Stepper y should stick directly beneath the site header (top: 72px / 73px)
-    expect(Math.abs(scrolledNavBox!.y - headerHeight)).toBeLessThanOrEqual(5);
+    // Stepper must scroll away with the document and NOT stick to top/header
+    expect(scrolledNavBox!.y).toBeLessThan(initialNavBox!.y);
+
+    // Scroll back to top
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(150);
 
     // Stage 1 active indicator
     const stage1Btn = page.locator('#btn-nav-stage-1');
@@ -137,17 +139,16 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     await expect(page.locator('#pane-stage-2')).toBeVisible();
     await page.waitForTimeout(200);
 
-    // Stepper still visible and active updated to Stage 2
+    // Active updated to Stage 2
     const stage2Btn = page.locator('#btn-nav-stage-2');
     await expect(stage2Btn).toHaveClass(/active/);
     await expect(stage1Btn).toHaveClass(/completed/);
 
-    // Check Stage 2 pane title is visible and not obscured by sticky stepper
+    // Check Stage 2 pane title is visible and not obscured by site header
     const stage2Title = page.locator('#stage-2-heading');
     await expect(stage2Title).toBeVisible();
     const stage2TitleBox = await stage2Title.boundingBox();
-    const currentNavBox = await stepperNav.boundingBox();
-    expect(stage2TitleBox!.y).toBeGreaterThan(currentNavBox!.y + currentNavBox!.height);
+    expect(stage2TitleBox!.y).toBeGreaterThanOrEqual(headerHeight);
 
     // Direct click to Stage 6
     await page.click('#btn-nav-stage-6');
@@ -159,7 +160,7 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     const stage6Title = page.locator('#stage-6-heading');
     await expect(stage6Title).toBeVisible();
     const stage6TitleBox = await stage6Title.boundingBox();
-    expect(stage6TitleBox!.y).toBeGreaterThan(currentNavBox!.y + currentNavBox!.height);
+    expect(stage6TitleBox!.y).toBeGreaterThanOrEqual(headerHeight);
   });
 
   test('5. PDF Generation & Statement Preview: Correct Indian date, fixed preparer, and client-labelled filename', async ({ page }) => {
