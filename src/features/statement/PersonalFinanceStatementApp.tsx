@@ -38,6 +38,7 @@ import {
 } from '../../domain/finance/personalFinanceStatement';
 import { generatePersonalFinanceStatementPdf } from './PersonalFinanceStatementPdfGenerator';
 import { formatINR, formatPercentage } from '../../lib/formatters';
+import { formatIndianDate, getTodayLocalDateString } from '../../lib/dateUtils';
 
 const STAGES = [
   { step: 1, label: 'Income', icon: '₹' },
@@ -62,7 +63,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const [clientName, setClientName] = useState<string>('');
   const [spouseName, setSpouseName] = useState<string>('');
   const [childrenNames, setChildrenNames] = useState<string>('');
-  const [statementDate, setStatementDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [statementDate, setStatementDate] = useState<string>(getTodayLocalDateString());
   const [preparedBy, setPreparedBy] = useState<string>('C. Santhosh Sathriyan');
   const [discussionNotes, setDiscussionNotes] = useState<string>('');
 
@@ -177,7 +178,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setClientName('');
     setSpouseName('');
     setChildrenNames('');
-    setStatementDate(new Date().toISOString().split('T')[0]);
+    setStatementDate(getTodayLocalDateString());
     setPreparedBy('C. Santhosh Sathriyan');
     setDiscussionNotes('');
     setIncomes(blank.incomes);
@@ -199,7 +200,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setClientName('Ramesh & Priya Sundaram');
     setSpouseName('Priya');
     setChildrenNames('Ananya, Aarav');
-    setStatementDate(new Date().toISOString().split('T')[0]);
+    setStatementDate(getTodayLocalDateString());
     setPreparedBy('C. Santhosh Sathriyan');
     setIncomes(SAMPLE_INCOME_ITEMS.map((item) => ({ ...item })));
     setHouseholdExpenseMode('ITEMIZED_MODE');
@@ -216,12 +217,46 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setCurrentStage(1);
   };
 
-  // Income row mutations
-  const updateIncomeRow = (id: string, field: keyof IncomeLineItem, val: any) => {
+  // Income row mutations with live bidirectional Monthly/Annual synchronization
+  const updateIncomeField = (id: string, field: 'label' | 'monthly' | 'annual' | 'deductions', val: string | number) => {
     setIncomes((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, [field]: val } : item))
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        if (field === 'label') {
+          return { ...item, label: String(val) };
+        }
+        if (field === 'monthly') {
+          const monthly = parseNum(val);
+          const annual = monthly * 12;
+          return {
+            ...item,
+            grossMonthlyAmount: monthly,
+            grossAnnualAmount: annual,
+            enteredGrossAmount: annual,
+          };
+        }
+        if (field === 'annual') {
+          const annual = parseNum(val);
+          const monthly = Math.round(annual / 12);
+          return {
+            ...item,
+            grossMonthlyAmount: monthly,
+            grossAnnualAmount: annual,
+            enteredGrossAmount: annual,
+          };
+        }
+        if (field === 'deductions') {
+          const deductions = parseNum(val);
+          return {
+            ...item,
+            annualDeductions: deductions,
+          };
+        }
+        return item;
+      })
     );
   };
+
   const addIncomeRow = () => {
     const newId = `inc-custom-${Date.now()}`;
     setIncomes((prev) => [
@@ -230,7 +265,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         id: newId,
         label: 'Additional Income Source',
         category: 'OTHER',
-        inputPeriod: 'MONTHLY',
+        grossMonthlyAmount: 0,
+        grossAnnualAmount: 0,
         enteredGrossAmount: 0,
         annualDeductions: 0,
       },
@@ -489,9 +525,14 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           </div>
 
           <div className="pfs-field-group">
-            <label htmlFor={`${baseId}-statementDate`} className="pfs-label">
-              Statement Date
-            </label>
+            <div className="pfs-date-header-row">
+              <label htmlFor={`${baseId}-statementDate`} className="pfs-label">
+                Statement Date
+              </label>
+              <span className="pfs-date-badge-indian" title="Indian Calendar Format">
+                {formatIndianDate(statementDate) || 'DD-MM-YYYY'}
+              </span>
+            </div>
             <input
               id={`${baseId}-statementDate`}
               type="date"
@@ -565,18 +606,19 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               <table className="pfs-table" id="table-income">
                 <thead>
                   <tr>
-                    <th style={{ width: '28%' }}>Source Particulars</th>
-                    <th style={{ width: '16%' }}>Entry Period</th>
-                    <th style={{ width: '18%' }}>Gross Amount (₹)</th>
-                    <th style={{ width: '18%' }}>Deductions (₹/Yr)</th>
+                    <th style={{ width: '30%' }}>Source Particulars</th>
+                    <th style={{ width: '18%' }} className="text-right">Monthly Gross (₹)</th>
+                    <th style={{ width: '18%' }} className="text-right">Annual Gross (₹)</th>
+                    <th style={{ width: '18%' }} className="text-right">Annual Deductions (₹)</th>
                     <th style={{ width: '16%' }} className="text-right">Net Annual (₹)</th>
                     <th style={{ width: '4%' }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {incomes.map((row) => {
-                    const grossAnnual = row.inputPeriod === 'MONTHLY' ? row.enteredGrossAmount * 12 : row.enteredGrossAmount;
-                    const netAnnual = Math.max(0, grossAnnual - row.annualDeductions);
+                    const grossAnnual = row.grossAnnualAmount ?? (row.grossMonthlyAmount ? row.grossMonthlyAmount * 12 : (row.enteredGrossAmount || 0));
+                    const grossMonthly = row.grossMonthlyAmount ?? Math.round(grossAnnual / 12);
+                    const netAnnual = Math.max(0, grossAnnual - (row.annualDeductions || 0));
 
                     return (
                       <tr key={row.id}>
@@ -585,42 +627,28 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                             type="text"
                             className="pfs-table-input"
                             value={row.label}
-                            onChange={(e) => updateIncomeRow(row.id, 'label', e.target.value)}
+                            onChange={(e) => updateIncomeField(row.id, 'label', e.target.value)}
                             placeholder="Income source name"
                           />
                         </td>
                         <td>
-                          <select
-                            className="pfs-table-select"
-                            value={row.inputPeriod}
-                            onChange={(e) => {
-                              const newPeriod = e.target.value as 'MONTHLY' | 'ANNUAL';
-                              setIncomes((prev) =>
-                                prev.map((item) => {
-                                  if (item.id !== row.id) return item;
-                                  let newAmount = item.enteredGrossAmount;
-                                  if (newPeriod === 'MONTHLY' && item.inputPeriod === 'ANNUAL' && item.enteredGrossAmount > 0) {
-                                    newAmount = Math.round(item.enteredGrossAmount / 12);
-                                  } else if (newPeriod === 'ANNUAL' && item.inputPeriod === 'MONTHLY' && item.enteredGrossAmount > 0) {
-                                    newAmount = item.enteredGrossAmount * 12;
-                                  }
-                                  return { ...item, inputPeriod: newPeriod, enteredGrossAmount: newAmount };
-                                })
-                              );
-                            }}
-                          >
-                            <option value="MONTHLY">Monthly</option>
-                            <option value="ANNUAL">Annual</option>
-                          </select>
+                          <input
+                            type="number"
+                            className="pfs-table-input text-right pfs-input-monthly-gross"
+                            data-field="monthly-gross"
+                            value={grossMonthly || ''}
+                            placeholder="0"
+                            onChange={(e) => updateIncomeField(row.id, 'monthly', e.target.value)}
+                          />
                         </td>
                         <td>
                           <input
                             type="number"
-                            className="pfs-table-input text-right pfs-input-gross"
-                            data-field="gross-amount"
-                            value={row.enteredGrossAmount || ''}
+                            className="pfs-table-input text-right pfs-input-annual-gross"
+                            data-field="annual-gross"
+                            value={grossAnnual || ''}
                             placeholder="0"
-                            onChange={(e) => updateIncomeRow(row.id, 'enteredGrossAmount', parseNum(e.target.value))}
+                            onChange={(e) => updateIncomeField(row.id, 'annual', e.target.value)}
                           />
                         </td>
                         <td>
@@ -630,7 +658,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                             data-field="deductions-amount"
                             value={row.annualDeductions || ''}
                             placeholder="0"
-                            onChange={(e) => updateIncomeRow(row.id, 'annualDeductions', parseNum(e.target.value))}
+                            onChange={(e) => updateIncomeField(row.id, 'deductions', e.target.value)}
                           />
                         </td>
                         <td className="text-right font-bold tabular-nums">
@@ -652,11 +680,17 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 </tbody>
                 <tfoot>
                   <tr className="pfs-table-total-row">
-                    <td colSpan={2}>
+                    <td>
                       <strong>Total Household Cash Inflow</strong>
                     </td>
-                    <td colSpan={2} className="text-right">
-                      Monthly Equivalent: <strong>{formatINR(result.incomeStage.totalNetMonthlyIncome)}</strong>
+                    <td className="text-right font-bold tabular-nums">
+                      {formatINR(result.incomeStage.totalGrossAnnualIncome / 12)}
+                    </td>
+                    <td className="text-right font-bold tabular-nums">
+                      {formatINR(result.incomeStage.totalGrossAnnualIncome)}
+                    </td>
+                    <td className="text-right font-bold tabular-nums text-muted">
+                      {formatINR(result.incomeStage.totalAnnualDeductions)}
                     </td>
                     <td className="text-right font-bold highlight-cell">
                       {formatINR(result.incomeStage.totalNetAnnualIncome)}
@@ -1613,7 +1647,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   {clientName.trim() || 'Untitled Statement'}
                 </h3>
                 <p className="pfs-preview-meta-line">
-                  Prepared by {preparedBy} • Date: {statementDate}
+                  Prepared by {preparedBy} • Date: {formatIndianDate(statementDate)}
                 </p>
               </div>
               <button
@@ -2069,6 +2103,21 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: flex;
           flex-direction: column;
           gap: 4px;
+        }
+        .pfs-date-header-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .pfs-date-badge-indian {
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: #00182A;
+          background: #E6F7F5;
+          border: 1px solid #00AB96;
+          border-radius: 4px;
+          padding: 1px 6px;
+          letter-spacing: 0.02em;
         }
         .pfs-label {
           font-size: 0.78rem;

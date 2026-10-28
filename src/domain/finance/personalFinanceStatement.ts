@@ -71,9 +71,17 @@ export interface IncomeLineItem {
   readonly id: string;
   readonly label: string;
   readonly category: IncomeSourceCategory;
-  /** Primary entry basis: either monthly or annual */
-  readonly inputPeriod: 'MONTHLY' | 'ANNUAL';
-  readonly enteredGrossAmount: number;
+  /**
+   * Canonical annual gross amount.
+   * If grossAnnualAmount is specified, it takes canonical precedence.
+   * For backwards compatibility, enteredGrossAmount and inputPeriod may still exist.
+   */
+  readonly grossAnnualAmount?: number;
+  /** Corresponding monthly gross amount representation */
+  readonly grossMonthlyAmount?: number;
+  /** Legacy fields retained for backwards compatibility */
+  readonly inputPeriod?: 'MONTHLY' | 'ANNUAL';
+  readonly enteredGrossAmount?: number;
   /** Deductions (e.g. income tax / professional tax) */
   readonly annualDeductions: number;
 }
@@ -97,21 +105,29 @@ export interface IncomeStageResult {
 export function calculateIncomeStage(items: readonly IncomeLineItem[]): IncomeStageResult {
   // Pass 1: compute net annual for all rows
   const computedList = items.map((item) => {
-    assertFinite(item.enteredGrossAmount, `enteredGrossAmount for ${item.id}`);
-    assertPositiveOrZero(item.enteredGrossAmount, `enteredGrossAmount for ${item.id}`);
+    let grossAnnual = 0;
+    if (typeof item.grossAnnualAmount === 'number' && !isNaN(item.grossAnnualAmount)) {
+      grossAnnual = item.grossAnnualAmount;
+    } else if (typeof item.enteredGrossAmount === 'number' && !isNaN(item.enteredGrossAmount)) {
+      if (item.inputPeriod === 'MONTHLY') {
+        grossAnnual = item.enteredGrossAmount * 12;
+      } else {
+        grossAnnual = item.enteredGrossAmount;
+      }
+    } else if (typeof item.grossMonthlyAmount === 'number' && !isNaN(item.grossMonthlyAmount)) {
+      grossAnnual = item.grossMonthlyAmount * 12;
+    }
+
+    assertFinite(grossAnnual, `grossAnnualAmount for ${item.id}`);
+    assertPositiveOrZero(grossAnnual, `grossAnnualAmount for ${item.id}`);
+
+    const grossMonthly = typeof item.grossMonthlyAmount === 'number' && !isNaN(item.grossMonthlyAmount) && grossAnnual === item.grossMonthlyAmount * 12
+      ? item.grossMonthlyAmount
+      : grossAnnual / 12;
+
     const deductions = item.annualDeductions || 0;
     assertFinite(deductions, `annualDeductions for ${item.id}`);
     assertPositiveOrZero(deductions, `annualDeductions for ${item.id}`);
-
-    let grossAnnual = 0;
-    let grossMonthly = 0;
-    if (item.inputPeriod === 'MONTHLY') {
-      grossMonthly = item.enteredGrossAmount;
-      grossAnnual = item.enteredGrossAmount * 12;
-    } else {
-      grossAnnual = item.enteredGrossAmount;
-      grossMonthly = item.enteredGrossAmount / 12;
-    }
 
     const netAnnual = Math.max(0, grossAnnual - deductions);
     const netMonthly = netAnnual / 12;
@@ -795,13 +811,13 @@ export function calculateComprehensivePersonalFinanceStatement(
 // Exactly aligns with rows in ProTool_04_-_REAL_Statement.xlsx
 // -------------------------------------------------------------
 export const PREDEFINED_INCOME_ITEMS: IncomeLineItem[] = [
-  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', inputPeriod: 'MONTHLY', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
+  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'MONTHLY', annualDeductions: 0 },
+  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'MONTHLY', annualDeductions: 0 },
+  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'ANNUAL', annualDeductions: 0 },
+  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'ANNUAL', annualDeductions: 0 },
+  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'ANNUAL', annualDeductions: 0 },
+  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'MONTHLY', annualDeductions: 0 },
+  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', grossMonthlyAmount: 0, grossAnnualAmount: 0, enteredGrossAmount: 0, inputPeriod: 'ANNUAL', annualDeductions: 0 },
 ];
 
 export const PREDEFINED_EXPENSE_ITEMS: ExpenseLineItem[] = [
@@ -915,13 +931,13 @@ export function createBlankPredefinedStatement(): {
 // CANONICAL SAMPLE FIXTURES (Explicitly Loaded by User Action Only)
 // -------------------------------------------------------------
 export const SAMPLE_INCOME_ITEMS: IncomeLineItem[] = [
-  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', inputPeriod: 'MONTHLY', enteredGrossAmount: 150000, annualDeductions: 180000 },
-  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', inputPeriod: 'MONTHLY', enteredGrossAmount: 80000, annualDeductions: 60000 },
-  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', inputPeriod: 'ANNUAL', enteredGrossAmount: 200000, annualDeductions: 40000 },
-  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', inputPeriod: 'ANNUAL', enteredGrossAmount: 100000, annualDeductions: 20000 },
-  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', inputPeriod: 'ANNUAL', enteredGrossAmount: 0, annualDeductions: 0 },
-  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', inputPeriod: 'MONTHLY', enteredGrossAmount: 25000, annualDeductions: 30000 },
-  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', inputPeriod: 'ANNUAL', enteredGrossAmount: 50000, annualDeductions: 5000 },
+  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', grossMonthlyAmount: 150000, grossAnnualAmount: 1800000, annualDeductions: 180000 },
+  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', grossMonthlyAmount: 80000, grossAnnualAmount: 960000, annualDeductions: 60000 },
+  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', grossMonthlyAmount: Math.round(200000 / 12), grossAnnualAmount: 200000, annualDeductions: 40000 },
+  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', grossMonthlyAmount: Math.round(100000 / 12), grossAnnualAmount: 100000, annualDeductions: 20000 },
+  { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', grossMonthlyAmount: 0, grossAnnualAmount: 0, annualDeductions: 0 },
+  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', grossMonthlyAmount: 25000, grossAnnualAmount: 300000, annualDeductions: 30000 },
+  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', grossMonthlyAmount: Math.round(50000 / 12), grossAnnualAmount: 50000, annualDeductions: 5000 },
 ];
 
 export const SAMPLE_ITEMIZED_EXPENSES: ExpenseLineItem[] = [

@@ -22,6 +22,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { PersonalFinanceStatementResult } from '../../domain/finance/personalFinanceStatement';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
+import { formatIndianDate, getTodayLocalDateString } from '../../lib/dateUtils';
 
 // Brand Color Palette (RGB)
 const COLOR_NAVY = [0, 24, 42] as const; // #00182A
@@ -76,7 +77,8 @@ export function generatePersonalFinanceStatementPdf(
 
   const clientName = data.metadata.clientName.trim() || 'Valued Client';
   const spouseName = data.metadata.spouseName?.trim() || '';
-  const statementDate = data.metadata.statementDate || new Date().toISOString().split('T')[0];
+  const rawStatementDate = data.metadata.statementDate || getTodayLocalDateString();
+  const displayStatementDate = formatIndianDate(rawStatementDate);
   const preparedBy = data.metadata.preparedBy.trim() || BUSINESS_PROFILE.founder.fullName;
 
   // -------------------------------------------------------------
@@ -114,7 +116,7 @@ export function generatePersonalFinanceStatementPdf(
     doc.setFontSize(7.5);
     doc.setTextColor(COLOR_MUTED[0], COLOR_MUTED[1], COLOR_MUTED[2]);
     doc.text(
-      `Confidential Financial Planning Document • Prepared by ${preparedBy} • Date: ${statementDate}`,
+      `Confidential Financial Planning Document • Prepared by ${preparedBy} • Date: ${displayStatementDate}`,
       marginX,
       pageHeight - 8
     );
@@ -174,7 +176,7 @@ export function generatePersonalFinanceStatementPdf(
   doc.text('Statement Date:', marginX + 4, curY + 14);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(COLOR_NAVY[0], COLOR_NAVY[1], COLOR_NAVY[2]);
-  doc.text(statementDate, marginX + 45, curY + 14);
+  doc.text(displayStatementDate, marginX + 45, curY + 14);
 
   if (data.metadata.childrenNames && data.metadata.childrenNames.length > 0) {
     doc.setFont('helvetica', 'bold');
@@ -339,8 +341,7 @@ export function generatePersonalFinanceStatementPdf(
 
   const incomeBody = data.incomeStage.items.map((item) => [
     item.label,
-    item.inputPeriod,
-    formatRupees(item.enteredGrossAmount),
+    formatRupees(item.grossMonthlyAmount),
     formatRupees(item.grossAnnualAmount),
     formatRupees(item.annualDeductions),
     formatRupees(item.netAnnualAmount),
@@ -349,21 +350,21 @@ export function generatePersonalFinanceStatementPdf(
 
   autoTable(doc, {
     startY: curY,
-    head: [['Income Particulars', 'Basis', 'Entered Gross', 'Gross Annual', 'Deductions/Tax', 'Net Annual (Rs.)', '% Share']],
+    head: [['Income Particulars', 'Monthly Gross (Rs.)', 'Annual Gross (Rs.)', 'Annual Deductions (Rs.)', 'Net Annual (Rs.)', '% Share']],
     body: incomeBody,
     foot: [
-      ['Total Annual Income', '', '', formatRupees(data.incomeStage.totalGrossAnnualIncome), formatRupees(data.incomeStage.totalAnnualDeductions), formatRupees(data.incomeStage.totalNetAnnualIncome), '100.0%'],
+      ['Total Household Income', formatRupees(data.incomeStage.totalGrossAnnualIncome / 12), formatRupees(data.incomeStage.totalGrossAnnualIncome), formatRupees(data.incomeStage.totalAnnualDeductions), formatRupees(data.incomeStage.totalNetAnnualIncome), '100.0%'],
     ],
     theme: 'grid',
     headStyles: { fillColor: COLOR_NAVY as any, textColor: COLOR_WHITE as any, fontSize: 8 },
     footStyles: { fillColor: COLOR_LIGHT_BG as any, textColor: COLOR_NAVY as any, fontStyle: 'bold', fontSize: 8 },
     styles: { fontSize: 7, cellPadding: 2 },
     columnStyles: {
+      1: { halign: 'right' },
       2: { halign: 'right' },
       3: { halign: 'right' },
-      4: { halign: 'right' },
-      5: { halign: 'right', fontStyle: 'bold' },
-      6: { halign: 'center' },
+      4: { halign: 'right', fontStyle: 'bold' },
+      5: { halign: 'center' },
     },
     margin: { left: marginX, right: marginX },
   });
@@ -701,7 +702,7 @@ export function generatePersonalFinanceStatementPdf(
   }
 
   const safeClientName = clientName.replace(/[^a-zA-Z0-9_-]/g, '_');
-  const filename = `Personal-Finance-Statement-${safeClientName}-${statementDate}.pdf`;
+  const filename = `Personal-Finance-Statement-${safeClientName}-${displayStatementDate}.pdf`;
 
   const blob = doc.output('blob');
   return { blob, filename };

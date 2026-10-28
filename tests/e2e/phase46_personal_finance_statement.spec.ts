@@ -54,42 +54,43 @@ test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigati
     await expect(dateInput).toHaveValue(todayStr);
   });
 
-  test('3. Income table: Entry Period is a compact select dropdown; Gross, Deductions, and Net Annual are vertically aligned', async ({ page }) => {
+  test('3. Income table: Monthly Gross and Annual Gross inputs are synchronized; Gross, Deductions, and Net Annual are vertically aligned', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
-    // Verify Entry Period uses select dropdown
+    // Verify Entry Period dropdown does NOT exist
     const firstRow = page.locator('#table-income tbody tr').nth(0);
     const firstRowSelect = firstRow.locator('.pfs-table-select');
-    await expect(firstRowSelect).toBeVisible();
-    await expect(firstRowSelect).toHaveValue('MONTHLY');
+    await expect(firstRowSelect).toHaveCount(0);
 
-    // Test monthly vs annual conversion
-    const grossInput = firstRow.locator('input[data-field="gross-amount"]');
+    // Verify Monthly Gross and Annual Gross inputs exist
+    const monthlyGrossInput = firstRow.locator('input[data-field="monthly-gross"]');
+    const annualGrossInput = firstRow.locator('input[data-field="annual-gross"]');
     const deductionsInput = firstRow.locator('input[data-field="deductions-amount"]');
     const netAnnualCell = firstRow.locator('td').nth(4);
 
-    await grossInput.fill('100000'); // ₹1,00,000 / mo = ₹12,00,000 / yr
-    await deductionsInput.fill('100000'); // ₹1,00,000 / yr deductions
-    // Net annual = 12,00,000 - 1,00,000 = 11,00,000
-    await expect(netAnnualCell).toContainText('11,00,000');
+    await expect(monthlyGrossInput).toBeVisible();
+    await expect(annualGrossInput).toBeVisible();
 
-    // Switch to Annual via dropdown
-    await firstRowSelect.selectOption('ANNUAL');
-    // Entered gross amount converted to 12,00,000
-    await expect(grossInput).toHaveValue('1200000');
-    // Net annual remains 11,00,000
-    await expect(netAnnualCell).toContainText('11,00,000');
+    // Entering monthly 100000 calculates annual 1200000
+    await monthlyGrossInput.fill('100000');
+    await expect(annualGrossInput).toHaveValue('1200000');
 
-    // Check vertical alignment: Gross and Deductions inputs have matching height and top offset
-    const grossBox = await grossInput.boundingBox();
+    // Entering deductions 100000 gives net annual 1100000
+    await deductionsInput.fill('100000');
+    await firstRow.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(100);
+
+    // Check vertical alignment: Monthly Gross, Annual Gross, and Deductions inputs have matching height and y offset
+    const monthlyBox = await monthlyGrossInput.boundingBox();
+    const annualBox = await annualGrossInput.boundingBox();
     const deductionsBox = await deductionsInput.boundingBox();
-    const grossCellBox = await firstRow.locator('td').nth(2).boundingBox();
-    const deductionsCellBox = await firstRow.locator('td').nth(3).boundingBox();
-    console.log('CELL AND INPUT BOXES:', { grossBox, deductionsBox, grossCellBox, deductionsCellBox });
-    expect(grossBox).not.toBeNull();
+    expect(monthlyBox).not.toBeNull();
+    expect(annualBox).not.toBeNull();
     expect(deductionsBox).not.toBeNull();
-    expect(Math.abs(grossBox!.y - deductionsBox!.y)).toBeLessThanOrEqual(10);
-    expect(Math.abs(grossBox!.height - deductionsBox!.height)).toBeLessThanOrEqual(2);
+    expect(Math.abs(monthlyBox!.y - annualBox!.y)).toBeLessThanOrEqual(2);
+    expect(Math.abs(monthlyBox!.y - deductionsBox!.y)).toBeLessThanOrEqual(2);
+    expect(Math.abs(monthlyBox!.height - annualBox!.height)).toBeLessThanOrEqual(2);
+    expect(Math.abs(monthlyBox!.height - deductionsBox!.height)).toBeLessThanOrEqual(2);
   });
 
   test('4. Stage navigation and scroll positioning: Stage transition scrolls canvas into view beneath header', async ({ page }) => {
