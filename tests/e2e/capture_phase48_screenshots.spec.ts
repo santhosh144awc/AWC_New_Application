@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const screenshotDir = path.resolve(process.cwd(), 'public/test-screenshots/phase48');
+const screenshotDir = path.resolve(process.cwd(), 'test-results/test-screenshots/phase48');
 
 test.beforeAll(() => {
   if (!fs.existsSync(screenshotDir)) {

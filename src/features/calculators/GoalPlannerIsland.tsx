@@ -199,7 +199,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
         <div className="goal-controls-col">
           <div className="workbench-top-bar">
             <div>
-              <span className="workbench-eyebrow">Concept C · Milestone Workbench</span>
+              <span className="workbench-eyebrow">Milestone Workbench</span>
               <h3 className="workbench-title">Target Your Future Milestone</h3>
             </div>
             <div className="header-actions">
@@ -543,7 +543,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
         <div className="goal-results-col" id="goal-summary-results">
           <div className="results-top-row">
             <div>
-              <span className="results-eyebrow">Concept C · Solvency Projection</span>
+              <span className="results-eyebrow">Funding Plan Summary</span>
               <h4 className="results-headline">Funding Plan Summary</h4>
             </div>
             {result && (

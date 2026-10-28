@@ -2,7 +2,6 @@
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
 import {
   CONTACT_ROUTE,
-  DIAGNOSTIC_ROUTES,
   GOAL_ROUTES,
   LEGAL_ROUTES,
   TOOL_ROUTES,
@@ -10,7 +9,7 @@ import {
 } from '../../config/routes';
 
 const exploreRoutes = TOP_NAV_ROUTES.filter((r) => r.path !== '/');
-const realStatement = DIAGNOSTIC_ROUTES.find((r) => r.id === 'diag-real-statement');
+const realStatement = TOOL_ROUTES.find((r) => r.id === 'tool-personal-finance-statement');
 const goalLinks = [...GOAL_ROUTES, ...(realStatement ? [realStatement] : [])];
 ---
 

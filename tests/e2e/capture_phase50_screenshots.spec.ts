@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 test.describe('Phase 50 Visual Verification Screenshots', () => {
-  const screenshotDir = path.join(process.cwd(), 'public', 'test-screenshots', 'phase50');
+  const screenshotDir = path.join(process.cwd(), 'test-results', 'test-screenshots', 'phase50');
 
   test.beforeAll(async () => {
     if (!fs.existsSync(screenshotDir)) {

@@ -1,0 +1,6 @@
+
+[[redirects]]
+  from = "/health-check/real-statement/"
+  to = "/tools/personal-finance-statement/"
+  status = 301
+  force = true

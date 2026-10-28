@@ -59,7 +59,7 @@ describe('Concept C Phase 1 — Data & Filter Invariants', () => {
       const activeIds = [
         'diag-health-check',
         'tool-net-worth',
-        'diag-real-statement',
+        'tool-personal-finance-statement',
         'tool-sip',
         'tool-lumpsum',
         'tool-sip-growth',

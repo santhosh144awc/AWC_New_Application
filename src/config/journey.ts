@@ -43,8 +43,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
       'Notice one pressure point',
     ],
     links: [
-      { label: 'Family balance sheet', href: '/tools/net-worth/' },
-      { label: 'Personal finance statement', href: '/health-check/real-statement/' },
+      { label: 'Personal Finance Statement', href: '/tools/personal-finance-statement/' },
       { label: 'Financial health check', href: '/health-check/' },
     ],
     icon: '◉',

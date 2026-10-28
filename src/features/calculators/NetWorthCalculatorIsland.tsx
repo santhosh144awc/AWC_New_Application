@@ -299,7 +299,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
           <div className="results-box">
             <div className="results-header-row">
               <div>
-                <span className="results-eyebrow">Concept C · Solvency Workbench</span>
+                <span className="results-eyebrow">Household Solvency Diagnostic</span>
                 <h3 className="results-headline">Accounting Balance Sheet</h3>
               </div>
               {result && (
@@ -417,10 +417,10 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
               <span className="deep-dive-badge">Comprehensive Review</span>
               <h4 className="deep-dive-title">Need a more complete household review?</h4>
               <p className="deep-dive-desc">
-                The 4-stage <strong>REAL Financial Statement</strong> reviews monthly cash flow, checks emergency safety runway in months, and maps productive versus consumption assets in depth.
+                The guided <strong>Personal Finance Statement</strong> reviews monthly cash flow, checks emergency safety runway in months, and maps productive versus consumption assets in depth.
               </p>
-              <a href="/health-check/real-statement/" className="btn-deep-dive">
-                Open REAL Financial Statement →
+              <a href="/tools/personal-finance-statement/" className="btn-deep-dive">
+                Open Personal Finance Statement →
               </a>
             </div>
           </div>

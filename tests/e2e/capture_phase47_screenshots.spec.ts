@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 test('Capture Phase 47 visual screenshots', async ({ page }) => {
-  const screenshotsDir = path.resolve('public/test-screenshots/phase47');
+  const screenshotsDir = path.resolve('test-results/test-screenshots/phase47');
   if (!fs.existsSync(screenshotsDir)) {
     fs.mkdirSync(screenshotsDir, { recursive: true });
   }

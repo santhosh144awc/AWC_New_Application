@@ -1251,7 +1251,7 @@ export default function RealFinancialStatementWizard(): React.JSX.Element {
               <footer className="disclosure-box">
                 <h5 className="disclosure-title">Statutory &amp; Methodological Disclosure</h5>
                 <p className="disclosure-text">
-                  This REAL Financial Statement is generated solely from values and classifications provided by the user.
+                  This Personal Finance Statement is generated solely from values and classifications provided by the user.
                   It is not an audit, credit assessment, formal net worth certification, or personal financial recommendation.
                   Asset valuations are user estimates and may not reflect current liquidation value after transaction costs, capital gains taxes, or market fluctuations.
                   Mutual fund investments are subject to market risks; read all scheme-related documents carefully.

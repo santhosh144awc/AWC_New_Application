@@ -349,7 +349,7 @@ const PILLAR_RECOMMENDATIONS: Record<
     title: 'Build Emergency Reserve',
     description: 'A dedicated liquid cushion protects long-term assets from sudden life shocks.',
     action: 'Estimate your essential monthly expenses and build an emergency reserve that reflects your income stability and family responsibilities.',
-    route: '/health-check/real-statement/',
+    route: '/tools/personal-finance-statement/',
     routeLabel: 'Map Cash Flow & Reserves',
   },
   protection: {
@@ -363,8 +363,8 @@ const PILLAR_RECOMMENDATIONS: Record<
     title: 'Track Income & Cash Flow',
     description: 'A consistent monthly surplus is the primary foundation for all compounding and goal progress.',
     action: 'Track your income and essential expenses for one month and identify a realistic amount you can consistently save or invest.',
-    route: '/health-check/real-statement/',
-    routeLabel: 'Create REAL Financial Statement',
+    route: '/tools/personal-finance-statement/',
+    routeLabel: 'Create Personal Finance Statement',
   },
   goals: {
     title: 'Define Important Goals',

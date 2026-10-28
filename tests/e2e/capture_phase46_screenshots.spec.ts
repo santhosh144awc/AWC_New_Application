@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import * as path from 'path';
 
 test('Capture Phase 46 visual screenshots', async ({ page }) => {
-  const screenshotsDir = path.resolve('public/test-screenshots/phase46');
+  const screenshotsDir = path.resolve('test-results/test-screenshots/phase46');
 
   // 1. Stage 1 on desktop at 1440px
   await page.setViewportSize({ width: 1440, height: 900 });

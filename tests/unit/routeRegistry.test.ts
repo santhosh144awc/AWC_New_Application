@@ -5,7 +5,6 @@ import {
   TOP_NAV_ROUTES,
   GOAL_ROUTES,
   TOOL_ROUTES,
-  DIAGNOSTIC_ROUTES,
   getAllRegisteredRoutes,
 } from '../../src/config/routes';
 
@@ -37,7 +36,7 @@ describe('Phase 18.2 — Route Registry, Status Badge & Truthfulness Audit', () 
       'tool-home-foreclosure',
       'tool-life-insurance',
       'tool-net-worth',
-      'diag-real-statement',
+      'tool-personal-finance-statement',
     ];
 
     it('active routes are never labeled as development shells or pending review', () => {
@@ -77,12 +76,12 @@ describe('Phase 18.2 — Route Registry, Status Badge & Truthfulness Audit', () 
       expect(childrenGoal?.statusBadge).toContain('Interactive Planner Active');
     });
 
-    it('net worth and REAL statement are identified as active interactive diagnostics', () => {
+    it('net worth and personal finance statement are identified as active interactive diagnostics', () => {
       const netWorthTool = TOOL_ROUTES.find(r => r.id === 'tool-net-worth');
-      const realStmtDiag = DIAGNOSTIC_ROUTES.find(r => r.id === 'diag-real-statement');
+      const pfsTool = TOOL_ROUTES.find(r => r.id === 'tool-personal-finance-statement');
 
       expect(netWorthTool?.statusBadge).toContain('Interactive');
-      expect(realStmtDiag?.statusBadge).toContain('Interactive');
+      expect(pfsTool?.statusBadge).toContain('Interactive');
     });
   });
 

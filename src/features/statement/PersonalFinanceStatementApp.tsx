@@ -506,15 +506,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             />
           </div>
 
-          <div className="pfs-field-group">
-            <span className="pfs-label">Preparer</span>
-            <div className="pfs-preparer-badge" id="pfs-preparer-info">
-              <span className="pfs-preparer-icon">👤</span>
-              <span className="pfs-preparer-text">
-                Prepared by: <strong>C. Santhosh Sathriyan</strong>
-              </span>
-            </div>
-          </div>
+          
         </div>
       </section>
 

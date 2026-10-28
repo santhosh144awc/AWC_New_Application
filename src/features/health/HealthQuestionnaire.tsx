@@ -722,8 +722,8 @@ export default function HealthQuestionnaire(): React.JSX.Element {
                   </p>
                 </div>
                 <div className="secondary-action-btn-wrap">
-                  <a href="/health-check/real-statement/" className="btn-secondary-choice" id="link-real-statement">
-                    Start REAL Statement →
+                  <a href="/tools/personal-finance-statement/" className="btn-secondary-choice" id="link-real-statement">
+                    Start Personal Finance Statement →
                   </a>
                 </div>
               </div>

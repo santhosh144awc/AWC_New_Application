@@ -185,6 +185,15 @@ export const TOOL_ROUTES: NavRoute[] = [
     eyebrow: 'Solvency & Diagnostics',
     statusBadge: 'Interactive Diagnostic Active • Productive Balance Sheet',
   },
+  {
+    id: 'tool-personal-finance-statement',
+    label: 'Personal Finance Statement',
+    path: '/tools/personal-finance-statement/',
+    description: 'Household financial statement covering income, expenses, savings, assets, liabilities, and net worth with client-ready PDF.',
+    category: 'tool',
+    eyebrow: 'Household Diagnostic',
+    statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
+  },
 ];
 
 export const DIAGNOSTIC_ROUTES: NavRoute[] = [
@@ -195,14 +204,6 @@ export const DIAGNOSTIC_ROUTES: NavRoute[] = [
     description: '2-Minute product-neutral self-assessment evaluating resilience across 7 foundational pillars.',
     category: 'core',
     statusBadge: 'Interactive Diagnostic Active • 7-Pillar Resilience',
-  },
-  {
-    id: 'diag-real-statement',
-    label: 'Personal Finance Statement',
-    path: '/health-check/real-statement/',
-    description: 'In-depth 6-stage family diagnostic mapping income, expenses, assets, debts, and productive net worth with client-ready PDF.',
-    category: 'core',
-    statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
   },
 ];
 
@@ -253,7 +254,6 @@ export function getAllRegisteredRoutes(): NavRoute[] {
     ...TOP_NAV_ROUTES,
     ...GOAL_ROUTES.filter(r => !TOP_NAV_ROUTES.some(t => t.path === r.path)),
     ...TOOL_ROUTES.filter(r => !TOP_NAV_ROUTES.some(t => t.path === r.path)),
-    DIAGNOSTIC_ROUTES[1], // /health-check/real-statement/
     ...LEGAL_ROUTES,
     CONTACT_ROUTE,
   ];
