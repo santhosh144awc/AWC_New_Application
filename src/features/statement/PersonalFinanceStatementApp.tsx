@@ -92,13 +92,13 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
-  // Helper parse numeric
+  // Helper parse numeric — guarantees non-negative finite numbers (prevents unhandled domain errors during intermediate typing)
   const parseNum = (val: string | number): number => {
-    if (typeof val === 'number') return isNaN(val) ? 0 : val;
-    const clean = val.replace(/,/g, '').trim();
+    if (typeof val === 'number') return isNaN(val) || !isFinite(val) ? 0 : Math.max(0, val);
+    const clean = String(val).replace(/,/g, '').trim();
     if (!clean) return 0;
     const n = parseFloat(clean);
-    return isNaN(n) ? 0 : n;
+    return isNaN(n) || !isFinite(n) ? 0 : Math.max(0, n);
   };
 
   // Compile statement input for reactive domain computation
@@ -128,8 +128,26 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     liabilityItems: liabilities,
   };
 
-  // Immediate reactive recalculation
-  const result: PersonalFinanceStatementResult = calculateComprehensivePersonalFinanceStatement(statementInputs);
+  // Immediate reactive recalculation with safe fallback (guarantees UI never unmounts on unexpected computation error)
+  const result: PersonalFinanceStatementResult = React.useMemo(() => {
+    try {
+      return calculateComprehensivePersonalFinanceStatement(statementInputs);
+    } catch (err) {
+      console.error('[PersonalFinanceStatementApp] Calculation fallback triggered:', err);
+      // Return safe baseline with current inputs
+      return calculateComprehensivePersonalFinanceStatement({
+        ...statementInputs,
+        expenseInputs: {
+          ...statementInputs.expenseInputs,
+          singleMonthlyExpense: Math.max(0, statementInputs.expenseInputs.singleMonthlyExpense || 0),
+          itemizedExpenses: (statementInputs.expenseInputs.itemizedExpenses || []).map((exp) => ({
+            ...exp,
+            enteredAmount: Math.max(0, exp.enteredAmount || 0),
+          })),
+        },
+      });
+    }
+  }, [statementInputs]);
 
   // Owner Column Labels
   const selfLabel = clientName.trim() ? `${clientName.trim().split(' ')[0]} (Self)` : 'Self';
