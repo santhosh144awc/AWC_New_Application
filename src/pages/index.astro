@@ -6,6 +6,7 @@ import SectionHeader from '../components/ui/SectionHeader.astro';
 import { BUSINESS_PROFILE } from '../config/businessProfile';
 import { JOURNEY_STAGES } from '../config/journey';
 import { HEALTH_PILLARS } from '../domain/finance/financialHealth';
+import { CLIENT_TESTIMONIALS } from '../config/testimonials';
 
 const pillarIcons = ['◉', '◈', '⇣', '⬡', '↗', '◎', '⟳'];
 
@@ -277,7 +278,53 @@ const goalTiles = [
     </div>
   </section>
 
-  <!-- 8. CONTACT -->
+  <!-- 8. CLIENT TESTIMONIALS -->
+  <section class="section section--mist" aria-labelledby="testimonials-heading">
+    <div class="container">
+      <SectionHeader
+        id="testimonials-heading"
+        eyebrow="Real Client Experiences"
+        title="Trusted by families and professionals across India."
+        subtitle="Genuine reflections from working individuals, business owners, and families building their financial foundation with Ant Wealth Creation."
+      />
+
+      <div class="testimonials-grid" role="list">
+        {CLIENT_TESTIMONIALS.map((t) => (
+          <article class="testimonial-card" role="listitem">
+            <div class="testimonial-card__quote-mark" aria-hidden="true">&ldquo;</div>
+            <p class="testimonial-card__quote">{t.quote}</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">
+                {t.photoPath ? (
+                  <img
+                    src={t.photoPath}
+                    alt={t.name}
+                    class="testimonial-card__img"
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="testimonial-card__placeholder" aria-label={"Avatar for " + t.name}>
+                    <span class="testimonial-card__initials">{t.initials}</span>
+                  </div>
+                )}
+              </div>
+              <div class="testimonial-card__meta">
+                <span class="testimonial-card__name">{t.name}</span>
+                <span class="testimonial-card__role">
+                  {t.role}
+                  {t.companyOrOrg ? (" · " + t.companyOrOrg) : ''}
+                </span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CONTACT -->
   <section class="section section--tight" aria-labelledby="contact-heading">
     <div class="container">
       <div class="contact-band">
@@ -909,7 +956,113 @@ const goalTiles = [
     color: var(--awc-jade-deep);
   }
 
-  /* ---------- About ---------- */
+  /* ---------- Testimonials ---------- */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+
+  .testimonial-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-subtle);
+    position: relative;
+    transition: transform var(--transition-fast, 0.15s ease), box-shadow var(--transition-fast, 0.15s ease);
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .testimonial-card__quote-mark {
+    font-family: var(--font-family-heading);
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--awc-jade-action);
+    opacity: 0.25;
+    margin-bottom: -10px;
+    user-select: none;
+  }
+
+  .testimonial-card__quote {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.68;
+    margin: 0 0 var(--space-6) 0;
+    flex-grow: 1;
+  }
+
+  .testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .testimonial-card__avatar {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .testimonial-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .testimonial-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--awc-navy) 0%, var(--awc-jade-action) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--awc-mint);
+    border-radius: 50%;
+  }
+
+  .testimonial-card__initials {
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--primitive-white);
+    letter-spacing: 0.05em;
+  }
+
+  .testimonial-card__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .testimonial-card__name {
+    font-family: var(--font-family-heading);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--awc-navy);
+    line-height: 1.25;
+    margin-bottom: 2px;
+  }
+
+  .testimonial-card__role {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    line-height: 1.35;
+  }
+
+    /* ---------- About ---------- */
   .about {
     display: grid;
     grid-template-columns: 0.75fr 1.25fr;
@@ -1083,6 +1236,11 @@ const goalTiles = [
       display: none;
     }
 
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
     .pillars {
       grid-template-columns: 1fr;
       gap: var(--space-8);
@@ -1187,6 +1345,11 @@ const goalTiles = [
 
     .pillars__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
     }
 
     .about__stamp {
