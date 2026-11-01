@@ -84,6 +84,16 @@ button, input, select, textarea {
 
 .surface-dark {
   --color-focus-ring: var(--awc-gold);
+  color: var(--color-text-inverse, #FFFFFF);
+}
+
+.surface-dark h1,
+.surface-dark h2,
+.surface-dark h3,
+.surface-dark h4,
+.surface-dark h5,
+.surface-dark h6 {
+  color: var(--color-text-inverse, #FFFFFF);
 }
 
 /* Shared eyebrow label: small uppercase marker with a short rule */

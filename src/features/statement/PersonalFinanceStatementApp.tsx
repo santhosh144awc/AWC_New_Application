@@ -1683,7 +1683,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               <div className="pfs-pdf-action-right">
                 <button
                   type="button"
-                  className="pfs-btn-secondary"
+                  className="pfs-btn-preview-action"
                   onClick={() => setShowPreviewModal(true)}
                   id="btn-preview-statement"
                   title="Inspect statement breakdown before downloading PDF"
@@ -2430,9 +2430,13 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           padding: 12px 24px;
           border-radius: 8px;
           border: none;
-          font-size: 1rem;
+          font-size: 0.95rem;
           font-weight: 800;
           cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 48px;
           transition: background 0.2s ease, transform 0.1s ease;
           box-shadow: 0 4px 12px rgba(0, 171, 150, 0.25);
         }
@@ -2925,12 +2929,16 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           color: #64748B;
         }
         .productive-card .highlight-kicker {
-          color: #00AB96;
+          color: #2DD4BF;
         }
         .pfs-nw-title {
           font-size: 1.15rem;
           font-weight: 800;
           margin: 4px 0 8px 0;
+          color: var(--color-text-primary, #00182A);
+        }
+        .productive-card .pfs-nw-title {
+          color: #FFFFFF;
         }
         .pfs-nw-equation {
           font-size: 0.78rem;
@@ -2938,7 +2946,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           margin-bottom: 12px;
         }
         .productive-card .pfs-nw-equation {
-          color: #94A3B8;
+          color: #E2E8F0;
         }
         .pfs-nw-result-val {
           font-size: 2rem;
@@ -3015,12 +3023,46 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           gap: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
         }
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           .pfs-pdf-action-card {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
           }
+        }
+        .pfs-pdf-action-left {
+          flex: 1 1 auto;
+          min-width: 280px;
+        }
+        .pfs-pdf-action-right {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: nowrap;
+          flex-shrink: 0;
+        }
+        .pfs-btn-preview-action {
+          background: #FFFFFF;
+          color: #00182A;
+          border: 1px solid #CBD5E1;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-size: 0.92rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          min-height: 48px;
+          transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .pfs-btn-preview-action:hover {
+          background: #F8FAFC;
+          border-color: #00AB96;
+          color: #00AB96;
         }
         .pfs-pdf-title {
           font-size: 1.15rem;
@@ -3031,7 +3073,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-pdf-desc {
           font-size: 0.85rem;
           color: #334155;
-          max-width: 650px;
+          max-width: 580px;
           line-height: 1.5;
           margin: 0;
         }
