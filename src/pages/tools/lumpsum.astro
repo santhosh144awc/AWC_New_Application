@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import LumpSumCalculatorIsland from '../../features/calculators/LumpSumCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
@@ -18,61 +20,26 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
   title="Lump Sum Calculator: See What One Investment Could Become — Ant Wealth Creation"
   description="Model compound growth for a one-time lump-sum investment across custom time horizons and assumed return rates with transparent mathematical assumptions."
   canonicalUrl="https://antwealth.in/tools/lumpsum/"
+  currentPath="/tools/lumpsum/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/lumpsum/" />
+
     <PageIntro
       eyebrow="Money Lab · One-Time Investing"
       title="See what one investment could become."
-      description="Adjust the one-time amount, investment horizon, and assumed annual return. This is a mathematical scenario—not a forecast or promise of investment performance."
+      description="Adjust the one-time amount, investment horizon, and assumed annual return to evaluate long-term compounding."
     />
 
-    <!-- Interactive Concept C Lump-Sum Calculator Island -->
     <LumpSumCalculatorIsland client:load />
 
-    <!-- Related Planners & Explorations (Concept C Design) -->
-    <section class="related-tools-section" aria-labelledby="related-tools-title">
-      <div class="section-header-compact">
-        <span class="eyebrow">Explore Next</span>
-        <h2 id="related-tools-title" class="related-heading">Connect one-time capital to your broader roadmap</h2>
-        <p class="related-sub">Evaluate whether deploying surplus capital upfront or pacing it monthly best fits your life goals.</p>
-      </div>
+    <WhatsAppToolLeadBar
+      toolName="Lump Sum Growth Calculator"
+      promptQuestion="Planning how to deploy a one-time bonus or maturity amount?"
+    />
 
-      <div class="related-grid">
-        <a href="/tools/sip/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-jade-soft)">📈</span>
-            <span class="card-tag">Monthly Investing</span>
-          </div>
-          <h3 class="card-title">Compare with Monthly SIP</h3>
-          <p class="card-desc">Compare the compounding dynamics of disciplined monthly installments against a single upfront lump sum.</p>
-          <span class="card-action">Open calculator →</span>
-        </a>
-
-        <a href="/plan/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-mint)">🎓</span>
-            <span class="card-tag">Family Milestones</span>
-          </div>
-          <h3 class="card-title">Plan a Family Goal</h3>
-          <p class="card-desc">Model inflation-adjusted targets for children's higher education, home purchases, and long-term milestones.</p>
-          <span class="card-action">Plan milestones →</span>
-        </a>
-
-        <a href="/tools/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-sand)">🛠️</span>
-            <span class="card-tag">Tools Directory</span>
-          </div>
-          <h3 class="card-title">Browse Other Tools</h3>
-          <p class="card-desc">Explore situation-based simulators for net worth evaluation, loan prepayment vs investing, and emergency funds.</p>
-          <span class="card-action">Browse tools →</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
         <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Lump Sum calculator generates mathematical projections based on hypothetical user-selected rates of return and does not predict or guarantee fund performance, capital preservation, or actual future returns.
@@ -87,128 +54,15 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
     padding-bottom: var(--space-16);
   }
 
-  /* Related Tools Section */
-  .related-tools-section {
-    margin-top: 48px;
-    padding-top: 36px;
-    border-top: 1px solid var(--awc-line);
-  }
-
-  .section-header-compact {
-    margin-bottom: 24px;
-  }
-
-  .section-header-compact .eyebrow {
-    margin-bottom: 8px;
-  }
-
-  .related-heading {
-    font-size: clamp(22px, 3vw, 28px);
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    color: var(--awc-navy);
-    margin: 4px 0 6px;
-  }
-
-  .related-sub {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 768px) {
-    .related-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .related-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--awc-line);
-    border-radius: 20px;
-    padding: 22px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-  }
-
-  .related-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-border-interactive);
-    box-shadow: var(--shadow-card);
-  }
-
-  .card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-
-  .card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 18px;
-  }
-
-  .card-tag {
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--awc-jade-deep);
-  }
-
-  .card-title {
-    font-size: 17px;
-    font-weight: 850;
-    letter-spacing: -0.03em;
-    color: var(--awc-navy);
-    margin: 0 0 8px;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--color-text-muted);
-    margin: 0 0 16px;
-    flex: 1;
-  }
-
-  .card-action {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--color-text-brand);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .related-card:hover .card-action {
-    color: var(--awc-jade-deep);
-  }
-
-  /* Regulatory Disclosure Note */
   .regulatory-disclosure-note {
-    margin-top: 40px;
+    margin-top: 32px;
+    padding: 18px 22px;
     background-color: var(--awc-paper);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 14px;
-    padding: 16px 20px;
-    font-size: 11px;
-    line-height: 1.6;
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    font-size: 12px;
     color: var(--color-text-muted);
+    line-height: 1.6;
   }
 
   .regulatory-disclosure-note p {

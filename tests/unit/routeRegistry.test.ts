@@ -13,9 +13,9 @@ describe('Phase 18.2 — Route Registry, Status Badge & Truthfulness Audit', () 
   const canonicalCrosswalkPath = path.join(rootDir, 'product-docs/finance/CURRENT_INCOME_TAX_LAW_CROSSWALK.csv');
 
   it('1. All canonical routes maintain stable IDs and valid trailing-slash paths', () => {
-    expect(TOP_NAV_ROUTES.length).toBe(6);
+    expect(TOP_NAV_ROUTES.length).toBe(7);
     const allRoutes = getAllRegisteredRoutes();
-    expect(allRoutes.length).toBe(25);
+    expect(allRoutes.length).toBe(24);
 
     for (const route of allRoutes) {
       expect(route.id).toBeTruthy();
@@ -108,7 +108,7 @@ describe('Phase 18.2 — Route Registry, Status Badge & Truthfulness Audit', () 
     });
 
     it('loan vs invest trade-off is marked as an active interactive calculator', () => {
-      const loanVsInvest = TOOL_ROUTES.find(r => r.id === 'tool-loan-vs-invest');
+      const loanVsInvest = TOOL_ROUTES.find(r => r.id === 'tool-home-foreclosure');
       expect(loanVsInvest).toBeDefined();
       expect(loanVsInvest?.statusBadge).toContain('Interactive Calculator Active');
     });

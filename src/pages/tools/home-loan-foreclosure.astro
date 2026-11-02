@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import LoanPrepaymentVsInvestmentIsland from '../../features/calculators/LoanPrepaymentVsInvestmentIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
@@ -15,108 +17,32 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
 ---
 
 <BaseLayout
-  title="Home Loan Prepayment vs Parallel Investment Simulator — Ant Wealth Creation"
-  description="Compare whether prepaying your home loan or investing surplus cash in parallel creates a stronger net financial position over the exact same loan horizon and cash budget."
+  title="Home Loan Prepayment vs Parallel Investment Calculator — Ant Wealth Creation"
+  description="Compare using extra monthly cash to prepay your home loan early against investing the same surplus in a monthly SIP."
   canonicalUrl="https://antwealth.in/tools/home-loan-foreclosure/"
   currentPath="/tools/home-loan-foreclosure/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/home-loan-foreclosure/" />
+
     <PageIntro
-      eyebrow="Money Decisions · Home Loan"
-      title="Should you prepay your home loan or invest alongside it?"
-      description="Compare two disciplined strategies using the exact same monthly household cash budget over the remaining loan tenure. All figures are objective mathematical simulations based on entered assumptions, not guarantees or forecasts."
+      eyebrow="Money Lab · Home Loan Decisions"
+      title="Should extra money go to your loan or an investment?"
+      description="Compare prepaying a reducing-balance home loan early against investing the same monthly surplus into a SIP."
     />
 
-    <!-- Interactive Concept C Home Loan Prepayment vs Parallel Investment Simulator Island -->
     <LoanPrepaymentVsInvestmentIsland client:load />
 
-    <!-- Editorial Principles Section (Low Density, Clean Dividers) -->
-    <section class="editorial-principles-section" aria-labelledby="principles-heading">
-      <div class="principles-header">
-        <span class="eyebrow">Decision Framework</span>
-        <h2 id="principles-heading" class="principles-title">Strategic Principles for Mortgage Borrowers</h2>
-        <p class="principles-sub">
-          Neither debt prepayment nor parallel market investing is universally superior for every household. Evaluate the trade-offs through three objective financial lenses:
-        </p>
-      </div>
+    <WhatsAppToolLeadBar
+      toolName="Home Loan Prepayment vs SIP Calculator"
+      promptQuestion="Deciding whether to prepay your home loan or start a parallel SIP?"
+    />
 
-      <div class="principles-grid">
-        <div class="principle-column">
-          <div class="principle-number">01</div>
-          <h3 class="principle-heading">Interest Cost Reduction vs Market Growth</h3>
-          <p class="principle-text">
-            Prepaying reduces future loan interest under the loan's terms. The financial benefit depends on the loan's rate and schedule, applicable charges, and any tax effects. Investment growth is uncertain and can be negative.
-          </p>
-        </div>
-
-        <div class="principle-column">
-          <div class="principle-number">02</div>
-          <h3 class="principle-heading">Emergency Liquidity & Capital Accessibility</h3>
-          <p class="principle-text">
-            Principal paid to your bank is committed to real estate equity and cannot be readily liquidated during emergencies without refinancing or sale. Before committing surplus money to loan prepayment or market-linked investments, consider keeping an emergency reserve that is accessible when needed and appropriate for your household's expenses and risks.
-          </p>
-        </div>
-
-        <div class="principle-column">
-          <div class="principle-number">03</div>
-          <h3 class="principle-heading">The Equal Cash-Budget Fairness Rule</h3>
-          <p class="principle-text">
-            To compare both paths fairly, the model allocates the exact same total monthly cash budget in every single period. In Strategy A, once your debt is completely paid off, the freed cash flow (former EMI plus surplus) is invested through the end of the original comparison horizon.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Related Planners & Explorations (Concept C Design) -->
-    <section class="related-tools-section" aria-labelledby="related-tools-title">
-      <div class="section-header-compact">
-        <span class="eyebrow">Explore Next</span>
-        <h2 id="related-tools-title" class="related-heading">Connect your mortgage strategy to your broader roadmap</h2>
-        <p class="related-sub">
-          Evaluate how disciplined monthly investing, multi-stage wealth growth, and family milestones fit alongside your home loan commitments.
-        </p>
-      </div>
-
-      <div class="related-grid">
-        <a href="/tools/sip-growth/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-jade-soft)">📈</span>
-            <span class="card-tag">Growth Lab</span>
-          </div>
-          <h3 class="card-title">Advanced SIP Growth Simulator</h3>
-          <p class="card-desc">Model multi-stage wealth accumulation with annual step-ups, milestone lump sums, and holding horizons.</p>
-          <span class="card-action">Open growth simulator →</span>
-        </a>
-
-        <a href="/tools/sip/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-mint)">🪙</span>
-            <span class="card-tag">Monthly Investing</span>
-          </div>
-          <h3 class="card-title">Monthly SIP Calculator</h3>
-          <p class="card-desc">Explore regular monthly mutual fund investing without mortgage or multi-stage loan complexity.</p>
-          <span class="card-action">Open SIP calculator →</span>
-        </a>
-
-        <a href="/plan/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-sand)">🎯</span>
-            <span class="card-tag">Family Roadmap</span>
-          </div>
-          <h3 class="card-title">Plan a Family Goal</h3>
-          <p class="card-desc">Map household capital accumulation against children's education, home purchases, and long-term security.</p>
-          <span class="card-action">Explore goal planner →</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
-        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer}
-        This simulation excludes lender prepayment charges and loan processing fees. Tax deductions and taxes on investment gains are not included in this tool. All investment returns and interest rates are user-entered mathematical assumptions and do not guarantee or predict actual portfolio or debt outcomes.
+        <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} Loan prepayment and parallel investment comparisons are mathematical illustrations based on user-supplied loan terms and assumed investment returns. Prepayment rules, lender charges, and floating interest rates vary by loan agreement. Tax effects (including any Section 24(b) or 80C deductions) are excluded.
       </p>
     </aside>
   </div>
@@ -128,215 +54,22 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
     padding-bottom: var(--space-16);
   }
 
-  /* Editorial Principles Section (Low-Density Concept C) */
-  .editorial-principles-section {
-    margin-top: 56px;
-    padding: 36px 32px;
-    background-color: var(--awc-paper);
-    border: 1px solid var(--awc-line);
-    border-radius: 20px;
-  }
-
-  @media (max-width: 600px) {
-    .editorial-principles-section {
-      padding: 24px 18px;
-    }
-  }
-
-  .principles-header {
-    margin-bottom: 28px;
-  }
-
-  .principles-title {
-    font-size: clamp(20px, 2.5vw, 26px);
-    font-weight: 850;
-    letter-spacing: -0.03em;
-    color: var(--awc-navy);
-    margin: 4px 0 8px;
-  }
-
-  .principles-sub {
-    font-size: 14.5px;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    margin: 0;
-    max-width: 780px;
-  }
-
-  .principles-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 28px;
-    border-top: 1px solid var(--awc-line);
-    padding-top: 28px;
-  }
-
-  @media (min-width: 850px) {
-    .principles-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-    }
-
-    .principle-column:not(:last-child) {
-      border-right: 1px solid var(--awc-line);
-      padding-right: 32px;
-    }
-  }
-
-  .principle-column {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .principle-number {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--color-text-brand);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .principle-heading {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--awc-navy);
-    letter-spacing: -0.02em;
-    margin: 0 0 10px;
-    line-height: 1.35;
-  }
-
-  .principle-text {
-    font-size: 13.5px;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  /* Related Tools Grid */
-  .related-tools-section {
-    margin-top: 56px;
-  }
-
-  .section-header-compact {
-    margin-bottom: 24px;
-  }
-
-  .eyebrow {
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-brand);
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .related-heading {
-    font-size: clamp(20px, 2.5vw, 24px);
-    font-weight: 850;
-    letter-spacing: -0.03em;
-    color: var(--awc-navy);
-    margin: 0 0 6px;
-  }
-
-  .related-sub {
-    font-size: 14px;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 800px) {
-    .related-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
+  .regulatory-disclosure-note {
+    margin-top: 32px;
+    padding: 18px 22px;
     background-color: var(--awc-paper);
     border: 1px solid var(--awc-line);
     border-radius: 16px;
-    text-decoration: none;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .related-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-border-interactive);
-    box-shadow: 0 8px 24px rgba(23, 48, 71, 0.08);
-  }
-
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
-  .card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 18px;
-  }
-
-  .card-tag {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--color-text-muted);
-    background-color: rgba(74, 96, 114, 0.08);
-    padding: 3px 8px;
-    border-radius: 6px;
-  }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--awc-navy);
-    margin: 0 0 8px;
-    line-height: 1.3;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-    margin: 0 0 16px;
-    flex-grow: 1;
-  }
-
-  .card-action {
-    font-size: 13px;
-    font-weight: 750;
-    color: var(--color-text-brand);
-    margin-top: auto;
-  }
-
-  /* Regulatory Disclosure Note */
-  .regulatory-disclosure-note {
-    margin-top: 48px;
-    padding: 20px 24px;
-    background-color: var(--awc-paper);
-    border-left: 3px solid var(--color-border-interactive);
-    border-radius: 0 12px 12px 0;
-  }
-
-  .regulatory-disclosure-note p {
     font-size: 12px;
     color: var(--color-text-muted);
     line-height: 1.6;
+  }
+
+  .regulatory-disclosure-note p {
     margin: 0;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>

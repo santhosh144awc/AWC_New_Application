@@ -42,7 +42,7 @@ describe('Concept C Phase 1 — Data & Filter Invariants', () => {
       const swp = resolved.find((t) => t.id === 'tool-swp');
       const retirement = resolved.find((t) => t.id === 'goal-retirement');
       const retirementIncome = resolved.find((t) => t.id === 'goal-retirement-income');
-      const loanVsInvest = resolved.find((t) => t.id === 'tool-loan-vs-invest');
+      const loanVsInvest = resolved.find((t) => t.id === 'tool-home-foreclosure');
 
       expect(swp?.status).toBe('active');
       expect(swp?.statusLabel).toContain('Live calculator');

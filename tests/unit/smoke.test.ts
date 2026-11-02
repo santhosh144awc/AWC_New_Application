@@ -65,9 +65,9 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
   describe('Route Registry & Navigation Architecture (src/config/routes.ts)', () => {
     it('provides exactly 6 primary top-navigation routes', async () => {
       const { TOP_NAV_ROUTES } = await import('../../src/config/routes');
-      expect(TOP_NAV_ROUTES).toHaveLength(6);
+      expect(TOP_NAV_ROUTES).toHaveLength(7);
       expect(TOP_NAV_ROUTES.map(r => r.path)).toEqual([
-        '/',
+        '/', '/tools/personal-finance-statement/',
         '/health-check/',
         '/plan/',
         '/tools/',
@@ -79,7 +79,7 @@ describe('Unit Test Suite & Foundation Smoke Test', () => {
     it('registers all 25 distinct canonical application routes without duplicates', async () => {
       const { getAllRegisteredRoutes } = await import('../../src/config/routes');
       const allRoutes = getAllRegisteredRoutes();
-      expect(allRoutes.length).toBe(25);
+      expect(allRoutes.length).toBe(24);
 
       const paths = allRoutes.map(r => r.path);
       const uniquePaths = new Set(paths);

@@ -14,7 +14,7 @@ calculatorCTA:
   title: "Compare Prepaying vs Investing"
   description: "Use our Loan vs Investment Simulator to compare the long-term wealth impact of loan prepayment versus equity SIPs."
   buttonLabel: "Open Loan vs Investment Calculator"
-  href: "/tools/loan-vs-invest/"
+  href: "/tools/home-loan-foreclosure/"
 ---
 
 One of the most frequent dilemmas faced by Indian families is: **"When I have extra money every month, should I use it to prepay my home loan early, or should I invest it in mutual funds?"**

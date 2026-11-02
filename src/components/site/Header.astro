@@ -10,7 +10,7 @@ const { currentPath = '/' } = Astro.props;
 const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
 function isActive(path: string): boolean {
-  return path === '/' ? normalizedPath === '/' : normalizedPath.startsWith(path);
+  return path === '/' ? normalizedPath === '/' : path === '/tools/' ? normalizedPath.startsWith('/tools/') && !normalizedPath.startsWith('/tools/personal-finance-statement/') : normalizedPath.startsWith(path);
 }
 
 // First sentence of the approved firm tagline, e.g. "Make Better Money Decisions."
@@ -516,7 +516,7 @@ const shortTagline = BUSINESS_PROFILE.firm.tagline.split('.')[0];
       display: block;
     }
 
-    .mobile-menu-toggle {
+    .nav-link, .portfolio-link { padding: 0.45rem 0.52rem; font-size: 0.77rem; } .mobile-menu-toggle {
       display: none;
     }
   }

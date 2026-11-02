@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import SipCalculatorIsland from '../../features/calculators/SipCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
@@ -15,64 +17,29 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
 ---
 
 <BaseLayout
-  title="SIP Calculator: See What Regular Investing Could Build — Ant Wealth Creation"
-  description="Model monthly mutual fund compounding, annual step-up SIP acceleration, and long-term purchasing power with transparent mathematical assumptions."
+  title="SIP Wealth Simulator: See How Monthly Investing Could Grow — Ant Wealth Creation"
+  description="Explore how a monthly mutual fund SIP could compound over time, and compare a fixed monthly amount against an annual step-up."
   canonicalUrl="https://antwealth.in/tools/sip/"
+  currentPath="/tools/sip/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/sip/" />
+
     <PageIntro
       eyebrow="Money Lab · Monthly Investing"
-      title="See what regular investing could build."
-      description="Adjust the monthly amount, time and assumed return. This is a mathematical scenario—not a forecast or promise of investment performance."
+      title="See how monthly investing could grow."
+      description="Adjust the monthly SIP amount, time horizon, assumed annual return, and optional yearly step-up to compare scenarios."
     />
 
-    <!-- Interactive Concept C SIP Calculator Island -->
     <SipCalculatorIsland client:load />
 
-    <!-- Related Planners & Explorations (Concept C Design) -->
-    <section class="related-tools-section" aria-labelledby="related-tools-title">
-      <div class="section-header-compact">
-        <span class="eyebrow">Explore Next</span>
-        <h2 id="related-tools-title" class="related-heading">Connect your SIP to broader life goals</h2>
-        <p class="related-sub">Investing is more purposeful when earmarked for a specific family milestone.</p>
-      </div>
+    <WhatsAppToolLeadBar
+      toolName="SIP Wealth Simulator"
+      promptQuestion="Want to align this monthly SIP scenario with your family goals?"
+    />
 
-      <div class="related-grid">
-        <a href="/tools/lumpsum/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-jade-soft)">◉</span>
-            <span class="card-tag">One-time Investment</span>
-          </div>
-          <h3 class="card-title">Lump Sum Calculator</h3>
-          <p class="card-desc">Compare the compounding dynamics of a single upfront investment against regular monthly contributions.</p>
-          <span class="card-action">Open calculator →</span>
-        </a>
-
-        <a href="/plan/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-mint)">🎓</span>
-            <span class="card-tag">Family Milestones</span>
-          </div>
-          <h3 class="card-title">Life Milestones Planner</h3>
-          <p class="card-desc">Model inflation-adjusted targets for children's higher education, home purchases, and long-term milestones.</p>
-          <span class="card-action">Plan milestones →</span>
-        </a>
-
-        <a href="/health-check/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-sand)">◎</span>
-            <span class="card-tag">Diagnostic</span>
-          </div>
-          <h3 class="card-title">Financial Health Check</h3>
-          <p class="card-desc">Evaluate your emergency fund, debt-to-income ratio, and protection foundation before committing high monthly SIPs.</p>
-          <span class="card-action">Check health →</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
         <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The SIP calculator generates mathematical projections based on hypothetical user-selected rates of return and does not predict or guarantee fund performance, capital preservation, or actual future returns.
@@ -87,127 +54,22 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
     padding-bottom: var(--space-16);
   }
 
-  /* Related Tools Section */
-  .related-tools-section {
-    margin-top: 48px;
-    padding-top: 36px;
-    border-top: 1px solid var(--awc-line);
-  }
-
-  .section-header-compact {
-    margin-bottom: 24px;
-  }
-
-  .section-header-compact .eyebrow {
-    margin-bottom: 8px;
-  }
-
-  .related-heading {
-    font-size: clamp(22px, 3vw, 28px);
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    color: var(--awc-navy);
-    margin: 4px 0 6px;
-  }
-
-  .related-sub {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 768px) {
-    .related-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .related-card {
-    background-color: var(--color-bg-surface);
+  .regulatory-disclosure-note {
+    margin-top: 32px;
+    padding: 18px 22px;
+    background-color: var(--awc-paper);
     border: 1px solid var(--awc-line);
-    border-radius: 20px;
-    padding: 22px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-  }
-
-  .related-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-border-interactive);
-    box-shadow: var(--shadow-card);
-  }
-
-  .card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-
-  .card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 20px;
-  }
-
-  .card-tag {
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-muted);
-  }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: var(--awc-navy);
-    margin: 0 0 6px;
-  }
-
-  .card-desc {
+    border-radius: 16px;
     font-size: 12px;
     color: var(--color-text-muted);
     line-height: 1.6;
-    margin: 0 0 16px;
-    flex-grow: 1;
-  }
-
-  .card-action {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--color-text-brand);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* Regulatory Note */
-  .regulatory-disclosure-note {
-    margin-top: 36px;
-    padding: 16px 20px;
-    background-color: var(--awc-paper);
-    border: 1px solid var(--awc-line);
-    border-radius: 14px;
   }
 
   .regulatory-disclosure-note p {
-    font-size: 11px;
-    color: var(--color-text-muted);
-    line-height: 1.6;
     margin: 0;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>
