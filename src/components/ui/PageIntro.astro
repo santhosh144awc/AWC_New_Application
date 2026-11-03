@@ -13,7 +13,7 @@ interface Props {
   icon?: string;
 }
 
-const { eyebrow, title, description, statusBadge, icon } = Astro.props;
+const { eyebrow, title, description, statusBadge } = Astro.props;
 const isPreview = statusBadge ? /gate-|preview|specification|review/i.test(statusBadge) : false;
 ---
 
@@ -29,7 +29,6 @@ const isPreview = statusBadge ? /gate-|preview|specification|review/i.test(statu
       </p>
     )}
   </div>
-  {icon && <div class="page-intro__mark" aria-hidden="true">{icon}</div>}
 </header>
 
 <style>
@@ -38,11 +37,12 @@ const isPreview = statusBadge ? /gate-|preview|specification|review/i.test(statu
     align-items: center;
     justify-content: space-between;
     gap: var(--space-8);
-    padding: var(--space-10) var(--space-10);
+    padding: var(--space-8) var(--space-10);
     margin: var(--space-2) 0 var(--space-8);
     border: 1px solid var(--awc-line);
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, var(--awc-mist) 0%, var(--awc-paper) 62%, #dcf1e6 100%);
+    background: var(--primitive-white);
+    box-shadow: 0 10px 28px rgba(15, 34, 53, 0.04);
   }
 
   .page-intro__text {
@@ -118,7 +118,7 @@ const isPreview = statusBadge ? /gate-|preview|specification|review/i.test(statu
 
   @media (max-width: 767px) {
     .page-intro {
-      padding: var(--space-6) var(--space-5);
+      padding: var(--space-4) var(--space-4); margin: 0 0 var(--space-4);
       border-radius: var(--radius-lg);
     }
 

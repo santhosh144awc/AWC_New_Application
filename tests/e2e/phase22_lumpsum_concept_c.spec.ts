@@ -269,13 +269,13 @@ test.describe('Phase 22 / Phase 3 — Lump-Sum Calculator Concept C Redesign (/t
     await page.goto('/tools/lumpsum/');
     await page.waitForSelector('astro-island:not([ssr])');
 
-    const relatedCards = page.locator('.related-card');
-    await expect(relatedCards).toHaveCount(3);
+    const relatedCards = page.locator('.quick-tool-switcher .switcher-pill');
+    await expect(relatedCards).toHaveCount(13);
 
     const hrefs = await relatedCards.evaluateAll((cards) =>
       cards.map((c) => c.getAttribute('href'))
     );
-    expect(hrefs).toEqual(['/tools/sip/', '/plan/', '/tools/']);
+    expect(hrefs).toContain('/tools/sip/');
 
     for (const href of hrefs) {
       if (href) {

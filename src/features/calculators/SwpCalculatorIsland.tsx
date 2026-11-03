@@ -65,13 +65,10 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
       {/* Sample Data Banner */}
       {isSampleData && (
         <div className="sample-banner" role="status">
-          <span className="banner-icon" aria-hidden="true">💡</span>
+          <span className="banner-icon" aria-hidden="true">ⓘ</span>
           <div className="banner-text">
-            <strong>Sample SWP Sustainability Plan:</strong> ₹1 Crore invested at 8.5% p.a. providing ₹50,000/month initial cash flow with a 5% annual inflation step-up.
+            <strong>Illustrative SWP Sustainability Plan:</strong> ₹1 Crore invested at 8.5% p.a. providing ₹50,000/month initial cash flow with a 5% annual inflation step-up. Adjust any slider below to test your own numbers.
           </div>
-          <button type="button" onClick={handleReset} className="btn-banner-reset">
-            Reset to Baseline
-          </button>
         </div>
       )}
 
@@ -80,7 +77,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
         <div className="calc-input-column card-surface">
           <div className="panel-title-row">
             <h3 className="panel-heading">SWP Parameters</h3>
-            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset</button>
+            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset to Sample</button>
           </div>
 
           {/* Initial Corpus */}
@@ -282,13 +279,13 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           display: flex;
           align-items: center;
           gap: 1rem;
-          background: #eff6ff;
-          border: 1px solid #bfdbfe;
+          background: var(--awc-jade-soft);
+          border: 1px solid var(--awc-mint);
           padding: 0.85rem 1.25rem;
-          border-radius: var(--radius-md, 8px);
+          border-radius: var(--radius-md, 12px);
           margin-bottom: 1.5rem;
           font-size: 0.9rem;
-          color: #1e3a8a;
+          color: var(--awc-navy);
         }
         .btn-banner-reset {
           margin-left: auto;

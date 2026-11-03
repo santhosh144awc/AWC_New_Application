@@ -14,8 +14,8 @@ const switcherItems = [
   { label: 'SWP Income', shortLabel: 'SWP', href: '/tools/swp/', icon: '⇄' },
   { label: 'Loan Prepay vs SIP', shortLabel: 'Loan Prepay vs SIP', href: '/tools/home-loan-foreclosure/', icon: '⇣' },
   { label: 'Loan Interest Recovery', shortLabel: 'Loan Recovery SIP', href: '/tools/loan-sip-recovery/', icon: '⇣' },
-  { label: "Children's Future", shortLabel: 'Children', href: '/plan/children/', icon: '🎒' },
-  { label: 'Home Purchase', shortLabel: 'Home Buy', href: '/plan/home-purchase/', icon: '🏡' },
+  { label: "Children's Future", shortLabel: 'Children', href: '/plan/children/', icon: '◇' },
+  { label: 'Home Purchase', shortLabel: 'Home Buy', href: '/plan/home-purchase/', icon: '⌂' },
   { label: 'Retirement Corpus', shortLabel: 'Retirement', href: '/plan/retirement/', icon: '⟳' },
   { label: '3-Bucket Income', shortLabel: '3-Bucket Income', href: '/plan/retirement-income/', icon: '⇄' },
   { label: 'Life Cover Audit', shortLabel: 'Life Cover', href: '/tools/life-insurance/', icon: '⬡' },
@@ -86,6 +86,30 @@ const switcherItems = [
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+
+  @media (max-width: 767px) {
+    .quick-tool-switcher {
+      padding: 10px 12px;
+      margin: 0 0 12px 0;
+    }
+
+    .switcher-pills {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+
+    .switcher-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .switcher-pill {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
   }
 
   .switcher-pill {

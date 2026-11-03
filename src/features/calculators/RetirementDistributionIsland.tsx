@@ -70,13 +70,10 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
       {/* Sample Data Banner */}
       {isSampleData && (
         <div className="sample-banner" role="status">
-          <span className="banner-icon" aria-hidden="true">💡</span>
+          <span className="banner-icon" aria-hidden="true">ⓘ</span>
           <div className="banner-text">
-            <strong>Sample Retirement Cash-Flow Plan:</strong> Retiring at age 60 living through age 90 with ₹80,000/month living expense under a 3-bucket decumulation framework. Adjust parameters below to model your requirements.
+            <strong>Illustrative Retirement Cash-Flow Plan:</strong> Retiring at age 60 living through age 90 with ₹80,000/month living expense under a 3-bucket decumulation framework. Adjust parameters below to model your requirements.
           </div>
-          <button type="button" onClick={handleReset} className="btn-banner-reset">
-            Reset to Baseline
-          </button>
         </div>
       )}
 
@@ -85,7 +82,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
         <div className="calc-input-column card-surface">
           <div className="panel-title-row">
             <h3 className="panel-heading">Retirement Decumulation Inputs</h3>
-            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset</button>
+            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset to Sample</button>
           </div>
 
           {/* Monthly Living Expense */}
@@ -338,13 +335,13 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
           display: flex;
           align-items: center;
           gap: 1rem;
-          background: #f0fdf4;
-          border: 1px solid #bbf7d0;
+          background: var(--awc-jade-soft);
+          border: 1px solid var(--awc-mint);
           padding: 0.85rem 1.25rem;
-          border-radius: var(--radius-md, 8px);
+          border-radius: var(--radius-md, 12px);
           margin-bottom: 1.5rem;
           font-size: 0.9rem;
-          color: #166534;
+          color: var(--awc-navy);
         }
         .btn-banner-reset {
           margin-left: auto;

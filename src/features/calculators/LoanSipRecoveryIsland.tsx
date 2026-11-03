@@ -1,8 +1,7 @@
-import React, { useState, useId, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   calculateLoanSipRecovery,
   validateLoanSipRecoveryInputs,
-  ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE,
   type LoanSipRecoveryInputs,
   type LoanSipRecoveryResult,
 } from '../../domain/finance/loanSipRecovery';
@@ -32,7 +31,6 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM_STATE);
   const [isExample, setIsExample] = useState<boolean>(true);
   const [showMilestones, setShowMilestones] = useState<boolean>(false);
-  const baseId = useId();
 
   // Parsing values
   const principalNum = Number(form.loanPrincipal);
@@ -80,36 +78,15 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
     setShowMilestones(false);
   };
 
-  const handleLoadExample = () => {
-    setForm({
-      loanPrincipal: String(ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.loanPrincipal),
-      annualLoanInterestRatePercent: String(ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.annualLoanInterestRatePercent),
-      loanTenureYears: String(ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.loanTenureYears),
-      sipMode: ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.sipMode,
-      sipPercentageOfEmi: String(ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.sipPercentageOfEmi),
-      fixedMonthlySipAmount: '6500',
-      annualInvestmentReturnRatePercent: String(ILLUSTRATIVE_LOAN_SIP_RECOVERY_EXAMPLE.annualInvestmentReturnRatePercent),
-    });
-    setIsExample(true);
-  };
-
   return (
     <div className="recovery-workbench" id="loan-sip-recovery-calculator" data-testid="recovery-workbench">
       {/* Example Status Banner */}
       {isExample && (
         <div className="example-banner example-active" role="status" data-testid="illustrative-banner">
-          <span className="banner-icon" aria-hidden="true">💡</span>
+          <span className="banner-icon" aria-hidden="true">ⓘ</span>
           <div className="banner-text">
             <strong>Illustrative Benchmark Scenario:</strong> A ₹50 Lakhs home loan at 8.5% over 20 years paired with a 15% parallel SIP earning an assumed 12.0% p.a. Adjust any slider below to model your family scenario.
           </div>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="btn-banner-action"
-            id="recovery-banner-reset-btn"
-          >
-            Reset to Defaults
-          </button>
         </div>
       )}
 

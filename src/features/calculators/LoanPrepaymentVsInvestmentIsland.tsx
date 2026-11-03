@@ -644,16 +644,31 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
                   {showOneTimes ? '▲ Collapse' : `▼ Expand (${oneTimes.length} Active)`}
                 </button>
                 {showOneTimes && (
-                  <button
-                    type="button"
-                    className="btn-secondary btn-sm"
-                    id="add-onetime-row-btn"
-                    onClick={handleAddOneTime}
-                    disabled={oneTimes.length >= 10}
-                    aria-label="Add a one-time cash injection"
-                  >
-                    + Add Injection
-                  </button>
+                  <>
+                    {oneTimes.length > 0 && (
+                      <button
+                        type="button"
+                        className="btn-toggle-subtle"
+                        onClick={() => {
+                          setIsCustom(true);
+                          setOneTimes([]);
+                        }}
+                        aria-label="Clear all one-time cash injections"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="btn-secondary btn-sm"
+                      id="add-onetime-row-btn"
+                      onClick={handleAddOneTime}
+                      disabled={oneTimes.length >= 10}
+                      aria-label="Add a one-time cash injection"
+                    >
+                      + Add Injection
+                    </button>
+                  </>
                 )}
               </div>
             </div>

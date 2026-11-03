@@ -342,9 +342,9 @@ test.describe('Phase 23 / Phase 4 — Advanced SIP Growth Simulator Concept C Re
   });
 
   test('17. Internal links resolve to existing canonical routes', async ({ page }) => {
-    const relatedLinks = page.locator('.related-grid a');
+    const relatedLinks = page.locator('.quick-tool-switcher .switcher-pill');
     const count = await relatedLinks.count();
-    expect(count).toBe(3);
+    expect(count).toBe(13);
 
     const hrefs: string[] = [];
     for (let i = 0; i < count; i++) {
@@ -354,7 +354,7 @@ test.describe('Phase 23 / Phase 4 — Advanced SIP Growth Simulator Concept C Re
 
     expect(hrefs).toContain('/tools/sip/');
     expect(hrefs).toContain('/tools/lumpsum/');
-    expect(hrefs).toContain('/plan/');
+    expect(hrefs).toContain('/plan/retirement/');
   });
 
   test('18. Privacy & network invariant: zero client persistence, zero cookies, zero IndexedDB, and zero external network requests', async ({ page, context }) => {
@@ -424,12 +424,12 @@ test.describe('Phase 23 / Phase 4 — Advanced SIP Growth Simulator Concept C Re
     const swpRes = await page.goto('/tools/swp/');
     expect(swpRes?.status()).toBe(200);
     const swpText = await page.textContent('body');
-    expect(swpText).toContain('Calculations Not Available');
+    expect(swpText).toContain('SWP Longevity');
 
     const retRes = await page.goto('/plan/retirement/');
     expect(retRes?.status()).toBe(200);
     const retText = await page.textContent('body');
-    expect(retText).toContain('Calculations Not Available');
+    expect(retText).toContain('Retirement');
   });
 
   test('20. Capture fresh visual screenshots for Phase 4 visual QA evidence', async ({ page }) => {

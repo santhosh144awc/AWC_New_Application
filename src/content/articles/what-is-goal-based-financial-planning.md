@@ -47,4 +47,4 @@ When every rupee you invest is tagged to a specific milestone, market fluctuatio
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-registered Mutual Fund Distributor (ARN-266896).*

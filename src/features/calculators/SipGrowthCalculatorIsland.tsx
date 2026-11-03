@@ -535,7 +535,11 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                 aria-expanded={showAdvanced}
                 aria-controls="advanced-options-container"
               >
-                <span>{showAdvanced ? '▲ Hide advanced options' : '▼ Add advanced options (Annual step-up, one-time top-ups, holding period)'}</span>
+                <span>
+                  {showAdvanced
+                    ? '▲ Hide advanced options'
+                    : `▼ Add advanced options (Annual step-up${lumpSums.length > 0 ? `, ${lumpSums.length} active top-up` : ', one-time top-ups'}, holding period)`}
+                </span>
                 <span className="toggle-pill">{showAdvanced ? 'Collapse' : 'Expand'}</span>
               </button>
 
@@ -647,14 +651,29 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                           Incorporate annual incentives, matured deposits, or occasional surpluses at the start of specific projection years (Years 1 to {totalProjectionYears}).
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        id="add-lumpsum-row-btn"
-                        onClick={handleAddLumpSum}
-                        className="btn-add-lump"
-                      >
-                        + Add One-Time Investment
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {lumpSums.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsCustom(true);
+                              setLumpSums([]);
+                            }}
+                            className="btn-add-lump"
+                            style={{ background: 'transparent', color: 'var(--color-text-secondary)', border: '1px solid var(--awc-line)' }}
+                          >
+                            Clear Top-Ups
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          id="add-lumpsum-row-btn"
+                          onClick={handleAddLumpSum}
+                          className="btn-add-lump"
+                        >
+                          + Add One-Time Investment
+                        </button>
+                      </div>
                     </div>
 
                     {lumpSums.length === 0 ? (

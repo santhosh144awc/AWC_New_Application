@@ -19,11 +19,6 @@ import React, { useState, useId, useRef } from 'react';
 import {
   calculateComprehensivePersonalFinanceStatement,
   createBlankPredefinedStatement,
-  SAMPLE_INCOME_ITEMS,
-  SAMPLE_ITEMIZED_EXPENSES,
-  SAMPLE_ONGOING_INVESTMENTS,
-  SAMPLE_ASSET_ITEMS,
-  SAMPLE_LIABILITY_ITEMS,
   type ComprehensiveStatementInputs,
   type PersonalFinanceStatementResult,
   type ExpenseFrequency,
@@ -179,7 +174,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         // Total top offset: only the fixed/sticky site header + 16px buffer
         // Note: the stage navigation ribbon is in normal document flow and NOT sticky
         const totalTopOffset = headerH + 16;
-        
+
         // Calculate absolute top position in the document
         const elementTop = targetEl.getBoundingClientRect().top + window.pageYOffset;
         const targetY = elementTop - totalTopOffset;
@@ -241,28 +236,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setPdfError(null);
     setShowResetModal(false);
     setShowPreviewModal(false);
-    setCurrentStage(1);
-  };
-
-  // Explicit Load Sample Data action (Urban Family sample)
-  const handleLoadSample = () => {
-    setClientName('Ramesh & Priya Sundaram');
-    setSpouseName('Priya');
-    setChildrenNames('Ananya, Aarav');
-    setStatementDate(getTodayLocalDateString());
-    setPreparedBy('C. Santhosh Sathriyan');
-    setIncomes(SAMPLE_INCOME_ITEMS.map((item) => ({ ...item })));
-    setExpenseEntryMode('CATEGORY_BREAKDOWN');
-    setSingleMonthlyExpense('95000');
-    setExpenses(SAMPLE_ITEMIZED_EXPENSES.map((item) => ({ ...item })));
-    setOngoingInvestments(SAMPLE_ONGOING_INVESTMENTS.map((item) => ({ ...item })));
-    setAssets(SAMPLE_ASSET_ITEMS.map((item) => ({ ...item })));
-    setLiabilities(SAMPLE_LIABILITY_ITEMS.map((item) => ({ ...item })));
-    setAssumedReturnRatePercent('10');
-    setDiscussionNotes(
-      'Priority focus on building 6-month liquid contingency reserve and deploying unallocated monthly surplus into long-term equity SIPs.'
-    );
-    setPdfError(null);
     setCurrentStage(1);
   };
 
@@ -524,7 +497,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             />
           </div>
 
-          
+
         </div>
       </section>
 
@@ -873,10 +846,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                     r.frequency === 'MONTHLY'
                       ? 12
                       : r.frequency === 'QUARTERLY'
-                      ? 4
-                      : r.frequency === 'HALF_YEARLY'
-                      ? 2
-                      : 1;
+                        ? 4
+                        : r.frequency === 'HALF_YEARLY'
+                          ? 2
+                          : 1;
                   return sum + r.enteredAmount * mult;
                 }, 0);
 
@@ -918,10 +891,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                               row.frequency === 'MONTHLY'
                                 ? 12
                                 : row.frequency === 'QUARTERLY'
-                                ? 4
-                                : row.frequency === 'HALF_YEARLY'
-                                ? 2
-                                : 1;
+                                  ? 4
+                                  : row.frequency === 'HALF_YEARLY'
+                                    ? 2
+                                    : 1;
                             const rowAnnual = row.enteredAmount * mult;
 
                             return (
@@ -1138,9 +1111,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 </div>
                 <div className="text-right">
                   <span
-                    className={`pfs-surplus-amount ${
-                      result.savingsStage.annualSurplusForFreshInvestments < 0 ? 'text-negative' : 'text-teal'
-                    }`}
+                    className={`pfs-surplus-amount ${result.savingsStage.annualSurplusForFreshInvestments < 0 ? 'text-negative' : 'text-teal'
+                      }`}
                   >
                     {formatINR(result.savingsStage.annualSurplusForFreshInvestments)} / year
                   </span>

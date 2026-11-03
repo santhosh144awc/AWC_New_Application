@@ -788,26 +788,13 @@ export default function HealthQuestionnaire(): React.JSX.Element {
           align-items: center;
           justify-content: center;
           width: 100%;
-          border-radius: 20px;
-          background: linear-gradient(135deg, #E6F6EF 0%, #F3FAF7 55%, #F8EFD7 100%);
-          padding: 1.5rem;
+          border-radius: 16px;
+          background: #F8FAFC;
+          padding: 1.25rem;
           position: relative;
           overflow: hidden;
-          min-height: 320px;
-          border: 1px solid #D8E9E1;
-        }
-
-        .start-art-col:before {
-          content: "";
-          position: absolute;
-          width: 320px;
-          height: 320px;
-          border: 1px solid rgba(19, 122, 113, 0.12);
-          border-radius: 50%;
-          right: -40px;
-          top: -60px;
-          box-shadow: 0 0 0 24px rgba(255, 255, 255, 0.22), 0 0 0 52px rgba(255, 255, 255, 0.16);
-          pointer-events: none;
+          min-height: 290px;
+          border: 1px solid #E2E8F0;
         }
 
         .start-art-col svg {
@@ -908,31 +895,17 @@ export default function HealthQuestionnaire(): React.JSX.Element {
 
         /* Dedicated 3-layer Illustration Stage matching approved prototype */
         .illustration-panel {
-          border-radius: 20px;
-          border: 1px solid #D8E9E1;
-          background: linear-gradient(150deg, #F0FAF6 0%, #F7FAF8 52%, #FFF7DF 100%);
+          border-radius: 16px;
+          border: 1px solid #E2E8F0;
+          background: #F8FAFC;
           padding: 1.5rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           width: 100%;
-          min-height: 480px;
+          min-height: 440px;
           position: relative;
           overflow: hidden;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-
-        .illustration-panel:after {
-          content: "";
-          position: absolute;
-          width: 240px;
-          height: 240px;
-          border-radius: 50%;
-          border: 1px solid rgba(19, 122, 113, 0.10);
-          right: -100px;
-          top: 100px;
-          box-shadow: 0 0 0 24px rgba(255, 255, 255, 0.18), 0 0 0 48px rgba(255, 255, 255, 0.12);
-          pointer-events: none;
         }
 
         .illustration-meta {

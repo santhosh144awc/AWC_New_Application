@@ -10,14 +10,14 @@ test.describe('Phase 24 / Phase 5 — Home Loan Prepayment vs Parallel Investmen
   });
 
   test('1. Canonical route returns 200, one H1, correct title, and accessible main landmark', async ({ page }) => {
-    await expect(page).toHaveTitle(/Home Loan Prepayment vs Parallel Investment Simulator — Ant Wealth Creation/);
+    await expect(page).toHaveTitle(/Home Loan Prepayment vs Parallel Investment Calculator — Ant Wealth Creation/);
 
     const h1s = page.locator('h1');
     await expect(h1s).toHaveCount(1);
-    await expect(h1s).toHaveText('Should you prepay your home loan or invest alongside it?');
+    await expect(h1s).toHaveText('Should extra money go to your loan or an investment?');
 
     const eyebrow = page.locator('.page-intro .eyebrow');
-    await expect(eyebrow).toContainText('Money Decisions · Home Loan');
+    await expect(eyebrow).toContainText('Money Lab · Home Loan Decisions');
 
     const main = page.locator('main');
     await expect(main).toBeVisible();
@@ -382,16 +382,16 @@ test.describe('Phase 24 / Phase 5 — Home Loan Prepayment vs Parallel Investmen
     const swpRes = await page.goto('/tools/swp/');
     expect(swpRes?.status()).toBe(200);
     const swpText = await page.textContent('body');
-    expect(swpText).toContain('Calculations Not Available');
+    expect(swpText).toContain('SWP Longevity');
 
     const retRes = await page.goto('/plan/retirement/');
     expect(retRes?.status()).toBe(200);
     const retText = await page.textContent('body');
-    expect(retText).toContain('Calculations Not Available');
+    expect(retText).toContain('Retirement');
   });
 
   test('16. Canonical related links resolve to canonical paths only', async ({ page }) => {
-    const relatedLinks = page.locator('.related-grid a');
+    const relatedLinks = page.locator('.quick-tool-switcher .switcher-pill');
     const count = await relatedLinks.count();
     expect(count).toBeGreaterThanOrEqual(3);
 
@@ -403,7 +403,7 @@ test.describe('Phase 24 / Phase 5 — Home Loan Prepayment vs Parallel Investmen
 
     expect(hrefs).toContain('/tools/sip-growth/');
     expect(hrefs).toContain('/tools/sip/');
-    expect(hrefs).toContain('/plan/');
+    expect(hrefs).toContain('/plan/retirement/');
   });
 
   test('17. Capture fresh Phase 5 visual evidence screenshots', async ({ page }) => {

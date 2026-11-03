@@ -84,4 +84,44 @@ test.describe('Phase 55: Clean Editorial Company Homepage, Workbench Simplificat
       expect(href).toContain('https://wa.me/918087971566?text=');
     }
   });
+
+  test('4. Sitewide audit fixes: 1-click Clear buttons for pre-loaded top-ups, executive 7-Pillar Health Check SVG, LaTeX-free articles, and production disclaimers', async ({ page }) => {
+    // 1. SIP Growth Simulator: 1-click Clear Top-Ups button
+    await page.goto('/tools/sip-growth/');
+    await page.waitForSelector('astro-island:not([ssr])');
+    const advToggle = page.locator('#toggle-advanced-options-btn');
+    await expect(advToggle).toContainText('1 active top-up');
+    await advToggle.click();
+    const clearTopUpsBtn = page.getByRole('button', { name: 'Clear Top-Ups' });
+    await expect(clearTopUpsBtn).toBeVisible();
+    await clearTopUpsBtn.click();
+    await expect(page.locator('.lumpsum-row-card')).toHaveCount(0);
+
+    // 2. Home Loan Prepayment vs SIP: 1-click Clear All button
+    await page.goto('/tools/home-loan-foreclosure/');
+    await page.waitForSelector('astro-island:not([ssr])');
+    const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+    await expect(clearAllBtn).toBeVisible();
+    await clearAllBtn.click();
+    await expect(page.locator('.one-time-row')).toHaveCount(0);
+
+    // 3. Health Check: Executive 7-Pillar Diagnostic Framework SVG
+    await page.goto('/health-check/');
+    await page.waitForSelector('astro-island:not([ssr])');
+    const introSvg = page.locator('.start-art-col svg');
+    await expect(introSvg).toBeVisible();
+    await expect(introSvg).toContainText('7-PILLAR DIAGNOSTIC FRAMEWORK');
+
+    // 4. Articles: No raw LaTeX strings and confirmed ARN-266896 disclaimer
+    await page.goto('/learn/what-is-sip-and-how-does-it-work/');
+    const sipArticleText = await page.textContent('main');
+    expect(sipArticleText).not.toContain('$i =');
+    expect(sipArticleText).not.toContain('registration details pending confirmation');
+    expect(sipArticleText).toContain('ARN-266896');
+
+    // 5. Disclaimer page: No Development & Staging Notice
+    await page.goto('/disclaimer/');
+    const disclaimerText = await page.textContent('main');
+    expect(disclaimerText).not.toContain('Development & Staging Notice');
+  });
 });
