@@ -127,6 +127,9 @@ const startingTools = [
             <a class="btn-secondary-jade" href="/tools/personal-finance-statement/">
               Open Personal Finance Statement →
             </a>
+            <a class="btn-tertiary-check" href="/health-check/">
+              Take 2-Minute Financial Health Check →
+            </a>
           </div>
         </div>
 
@@ -483,6 +486,27 @@ const startingTools = [
   .btn-secondary-jade:hover {
     background-color: var(--awc-mint);
     border-color: var(--awc-jade);
+  }
+
+  .btn-tertiary-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background-color: var(--primitive-white);
+    color: var(--awc-navy);
+    border: 1px solid var(--awc-line);
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn-tertiary-check:hover {
+    border-color: var(--awc-jade);
+    color: var(--awc-jade-deep);
+    background-color: var(--awc-paper);
   }
 
   .hero-visual {
