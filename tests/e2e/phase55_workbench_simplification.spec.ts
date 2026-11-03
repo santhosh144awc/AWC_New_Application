@@ -1,44 +1,45 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Phase 55: Company Visiting Card Homepage, Workbench Simplification & Lead Sharing Verification', () => {
-  test('1. Homepage acts as a modern Company Website & Digital Visiting Card explaining products, layman personal finance, founder story, 8 client reviews, and supporting tools', async ({ page }) => {
+test.describe('Phase 55: Clean Editorial Company Homepage, Workbench Simplification & Lead Sharing Verification', () => {
+  test('1. Homepage acts as a clean, light editorial Company Website with 6-step family hero, founder profile, 3 service pillars, 8 client reviews, and 4 supporting starting-point tools', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // 1. Hero & Digital Visiting Card
-    const hero = page.locator('section.hero');
+    // 1. Clean Light Hero & 4-Column Practice Credential Bar
+    const hero = page.locator('section.hero-section');
     await expect(hero).toBeVisible();
-    await expect(hero).toContainText('Helping Indian families protect what matters and build lasting wealth.');
-    const visitingCard = hero.locator('aside.visiting-card');
-    await expect(visitingCard).toBeVisible();
-    await expect(visitingCard).toContainText('C. Santhosh Sathriyan, B.E.');
-    await expect(visitingCard).toContainText('Mutual Funds (SIP / Lump Sum / SWP)');
-    await expect(visitingCard).toContainText('Life Insurance (LIC)');
-    await expect(visitingCard).toContainText('Health Insurance (Star Health)');
+    await expect(hero).toContainText('Make Better Money Decisions. Build a Better Future.');
+    const trustBar = hero.locator('.trust-bar');
+    await expect(trustBar).toBeVisible();
+    await expect(trustBar.locator('.trust-col')).toHaveCount(4);
+    await expect(trustBar).toContainText('C. Santhosh Sathriyan, B.E., QPFP');
+    await expect(trustBar).toContainText('AMFI-Registered (ARN-266896)');
+    await expect(trustBar).toContainText('LIC Life Cover & Star Health');
 
-    // 2. What We Offer: 4 Core Products & Services
+    // 2. Meet Santhosh (Clean Executive Profile / Visiting Card)
+    const aboutSection = page.locator('#about');
+    await expect(aboutSection).toBeVisible();
+    await expect(aboutSection).toContainText('C. Santhosh Sathriyan, B.E.');
+    await expect(aboutSection).toContainText('+91 80879 71566');
+    await expect(aboutSection).toContainText('santhosh@antwealth.in');
+
+    // 3. How We Help Your Family: 3 Clean Service Pillars
     const services = page.locator('#services');
     await expect(services).toBeVisible();
-    await expect(services.locator('.service-card')).toHaveCount(4);
+    await expect(services.locator('.service-card')).toHaveCount(3);
+    await expect(services).toContainText('Life & Health Insurance');
     await expect(services).toContainText('Mutual Fund Distribution');
-    await expect(services).toContainText('Life Insurance & Term Cover');
-    await expect(services).toContainText('Health & Medical Insurance');
-    await expect(services).toContainText('Personal Finance & Goal Planning');
-
-    // 3. Personal Finance Simplified for a Layman (3 Steps)
-    const laymanGuide = page.locator('#personal-finance-guide');
-    await expect(laymanGuide).toBeVisible();
-    await expect(laymanGuide.locator('.step-card')).toHaveCount(3);
+    await expect(services).toContainText('Personal Finance Planning');
 
     // 4. 8 verified client testimonials remain intact
     const testimonials = page.locator('#testimonials .testimonial-card');
     await expect(testimonials).toHaveCount(8);
 
-    // 5. Supporting Tools section is present below testimonials
+    // 5. Supporting Tools section shows 4 clean starting-point cards + View All Tools link
     const workbench = page.locator('#interactive-tools-workbench');
     await expect(workbench).toBeVisible();
-    await expect(workbench.locator('.diag-card')).toHaveCount(3);
-    await expect(workbench.locator('.workbench-card')).toHaveCount(11);
+    await expect(workbench.locator('.tool-box')).toHaveCount(4);
+    await expect(workbench.locator('a.section-link')).toHaveAttribute('href', '/tools/');
 
     // 6. Production SEO meta robots is index, follow and footer staging notice is removed
     const robotsMeta = page.locator('meta[name="robots"]');

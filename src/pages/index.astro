@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { BUSINESS_PROFILE } from '../layouts/../config/businessProfile';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
 import { CLIENT_TESTIMONIALS } from '../config/testimonials';
 
 const approvedArticles = await getCollection('articles', ({ data }) => {
@@ -16,537 +16,357 @@ approvedArticles.sort((a, b) => {
 
 const featuredArticles = approvedArticles.slice(0, 3);
 
-const coreServices = [
+const servicePillars = [
   {
-    tag: 'AMFI-Registered · ARN-266896',
-    icon: '📈',
-    title: 'Mutual Fund Distribution',
-    summary:
-      'Build long-term wealth through disciplined monthly SIPs, Step-Up SIPs, Lump Sum investments, and retirement SWP cash-flow portfolios across equity, hybrid, debt, and liquid funds.',
-    highlights: [
-      'Goal-linked portfolios for education, home & retirement',
-      'Asset allocation tailored to your risk comfort & timeline',
-      'Dedicated client portfolio tracking via TheMFBox portal',
+    number: '01 / Protection First',
+    title: 'Life & Health Insurance',
+    subtitle: 'LIC Advisor & Star Health Insurance Agent',
+    description:
+      'Before investing in the market, we make sure your family is protected against medical emergencies and unexpected loss of income.',
+    points: [
+      'Pure Term Life Insurance for family income security',
+      'Family Floater & Senior Citizen Health Insurance',
+      'Honest, needs-based coverage sizing without high-pressure sales',
     ],
-    ctaLabel: 'Explore SIP & Wealth Calculators →',
-    ctaHref: '/tools/sip/',
-    tint: 'mint',
-  },
-  {
-    tag: 'LIC Life Insurance Advisor',
-    icon: '🛡️',
-    title: 'Life Insurance & Term Cover',
-    summary:
-      'Protect the people who depend on your income. We help you evaluate your family’s true protection gap—covering living costs, active loans, and future children’s milestones.',
-    highlights: [
-      'Pure term life insurance & family income replacement',
-      'Needs-based protection sizing (no high-pressure sales)',
-      'Rooted in decades of second-generation LIC service heritage',
-    ],
-    ctaLabel: 'Check Your Life Cover Need →',
+    ctaLabel: 'Estimate your family protection need →',
     ctaHref: '/tools/life-insurance/',
-    tint: 'sand',
   },
   {
-    tag: 'Star Health Insurance Agent',
-    icon: '🏥',
-    title: 'Health & Medical Insurance',
-    summary:
-      'A single unexpected hospitalization can wipe out years of disciplined savings. We help families put a reliable medical shield in place before market-linked investing.',
-    highlights: [
-      'Family floater & individual medical insurance plans',
-      'Senior citizen & parents’ health protection guidance',
-      'Dedicated support for policy selection & renewals',
+    number: '02 / Wealth Creation',
+    title: 'Mutual Fund Distribution',
+    subtitle: 'AMFI-Registered Distributor (ARN-266896)',
+    description:
+      'Grow your savings systematically through diversified equity, hybrid, and debt mutual funds aligned with your family’s timeline and risk comfort.',
+    points: [
+      'Monthly SIPs, Step-Up SIPs & Lump Sum portfolios',
+      'Retirement monthly income (SWP) planning',
+      '24/7 online portfolio tracking via TheMFBox client portal',
     ],
-    ctaLabel: 'Discuss Health Cover on WhatsApp ↗',
-    ctaHref: BUSINESS_PROFILE.contact.whatsappUrl,
-    external: true,
-    tint: 'mist',
+    ctaLabel: 'Explore SIP & wealth calculators →',
+    ctaHref: '/tools/sip/',
   },
   {
-    tag: 'QPFP Certified Guidance',
-    icon: '🧭',
-    title: 'Personal Finance & Goal Planning',
-    summary:
-      'Practical, jargon-free guidance to organize your household cash flow, build an emergency reserve, balance loan prepayments against investments, and map every family goal.',
-    highlights: [
+    number: '03 / Family Roadmap',
+    title: 'Personal Finance Planning',
+    subtitle: 'QPFP Certified Financial Guidance',
+    description:
+      'Understand where your money goes, organize your emergency fund, balance loan prepayments against investments, and map every family milestone.',
+    points: [
+      'Children’s higher education & marriage planning',
+      'Home purchase & loan prepayment strategy',
       'Complete 6-Stage Household Personal Finance Statement',
-      'Children’s higher education & marriage funding roadmaps',
-      'Home loan prepayment vs SIP & retirement planning',
     ],
-    ctaLabel: 'Open Personal Finance Statement →',
+    ctaLabel: 'Build your Personal Finance Statement →',
     ctaHref: '/tools/personal-finance-statement/',
-    tint: 'mint',
   },
 ];
 
-const laymanSteps = [
+const startingTools = [
   {
-    step: 'Step 01',
-    title: 'Know Where Your Money Goes',
-    subtitle: 'Cash Flow, Emergency Cushion & True Net Worth',
-    description:
-      'Good personal finance starts with clarity. Before buying any financial product, map your family’s monthly income, essential living expenses, existing EMIs, and keep 3 to 6 months of expenses in a safe emergency reserve.',
-    actionLabel: 'Try the 2-Minute Health Check →',
-    actionHref: '/health-check/',
-  },
-  {
-    step: 'Step 02',
-    title: 'Protect Your Family First',
-    subtitle: 'Health Insurance & Pure Term Life Cover',
-    description:
-      'Before chasing investment returns, build a strong safety wall around your family. Adequate Health Insurance protects your savings from hospital bills, and Term Life Insurance ensures your family’s lifestyle and goals are never disrupted.',
-    actionLabel: 'Estimate Family Life Cover →',
-    actionHref: '/tools/life-insurance/',
-  },
-  {
-    step: 'Step 03',
-    title: 'Invest With Purpose for Life Goals',
-    subtitle: 'Disciplined Mutual Fund SIPs & Asset Allocation',
-    description:
-      'Give every rupee a clear purpose and timeline. By linking your monthly mutual fund SIPs and lump-sum investments to real milestones—children’s college, a debt-free home, and retirement—you stay calm through market ups and downs.',
-    actionLabel: 'Explore Goal Roadmaps →',
-    actionHref: '/plan/',
-  },
-];
-
-const diagnosticTools = [
-  {
-    badge: 'Flagship 6-Stage Diagnostic + PDF',
+    type: 'Flagship 6-Stage Tool',
     title: 'Personal Finance Statement',
-    question: 'Want a complete picture of your household income, expenses, assets, debts, and net worth?',
-    desc: 'Organize your family finances across 6 clear stages and download a 5-page client-ready PDF statement—100% locally in your browser.',
+    description:
+      'Map your family income, expenses, assets, and liabilities, and download a client-ready 5-page PDF balance sheet.',
+    ctaLabel: 'Open Statement →',
     href: '/tools/personal-finance-statement/',
-    cta: 'Open Personal Finance Statement →',
     featured: true,
   },
   {
-    badge: '2-Minute Self-Check',
-    title: '7-Pillar Financial Health Check',
-    question: 'How strong are your emergency reserves, insurance cover, and savings habits?',
-    desc: 'Answer seven simple questions to see where your household finances are strong and what to prioritize next.',
+    type: '2-Minute Checkup',
+    title: 'Financial Health Check',
+    description:
+      'Answer 7 quick questions to check your emergency reserve, EMI load, insurance cover, and retirement readiness.',
+    ctaLabel: 'Start Checkup →',
     href: '/health-check/',
-    cta: 'Start 2-Minute Checkup →',
     featured: false,
   },
   {
-    badge: '2-Minute Balance Sheet',
-    title: 'Quick Net Worth Snapshot',
-    question: 'What does your family own and owe right now?',
-    desc: 'Separate personal-use property (like your home and car) from productive financial assets that can fund future goals.',
-    href: '/tools/net-worth/',
-    cta: 'Open Net Worth Snapshot →',
+    type: 'Family Milestones',
+    title: 'Goal & SIP Calculators',
+    description:
+      'Plan inflation-adjusted targets for children’s education, home purchase, retirement corpus, and monthly SIPs.',
+    ctaLabel: 'Open Calculators →',
+    href: '/plan/',
     featured: false,
   },
-];
-
-const quickCalculators = [
-  { label: 'SIP Wealth Simulator', category: 'Monthly Investing', href: '/tools/sip/' },
-  { label: 'Lump Sum Calculator', category: 'One-Time Investing', href: '/tools/lumpsum/' },
-  { label: 'Step-Up SIP Growth', category: 'Annual Step-Ups', href: '/tools/sip-growth/' },
-  { label: 'Children’s Future Planner', category: 'Education & Marriage', href: '/plan/children/' },
-  { label: 'Home Purchase Planner', category: 'Down Payment & EMI', href: '/plan/home-purchase/' },
-  { label: 'Retirement Corpus Planner', category: 'Lifelong Nest Egg', href: '/plan/retirement/' },
-  { label: '3-Bucket Retirement Income', category: 'Post-Retirement Cash Flow', href: '/plan/retirement-income/' },
-  { label: 'SWP Monthly Income', category: 'Systematic Withdrawal', href: '/tools/swp/' },
-  { label: 'Loan Prepayment vs SIP', category: 'Debt vs Investment', href: '/tools/home-loan-foreclosure/' },
-  { label: 'Loan Interest Recovery SIP', category: 'Borrowing Cost Offset', href: '/tools/loan-sip-recovery/' },
-  { label: 'Life Insurance Needs Audit', category: 'Family Protection', href: '/tools/life-insurance/' },
+  {
+    type: 'Debt Decisions',
+    title: 'Loan Prepay vs SIP',
+    description:
+      'Compare prepaying your home loan early against investing your monthly surplus in a diversified mutual fund SIP.',
+    ctaLabel: 'Compare Options →',
+    href: '/tools/home-loan-foreclosure/',
+    featured: false,
+  },
 ];
 ---
 
 <BaseLayout
-  title={`${BUSINESS_PROFILE.firm.name} — Mutual Funds, Life & Health Insurance & Personal Finance Guidance`}
-  description="Ant Wealth Creation helps Indian families understand personal finance, protect their loved ones with Life and Health Insurance, and build lasting wealth through goal-based Mutual Fund investments."
-  currentPath="/"
+  title="Ant Wealth Creation | Personal Finance, Mutual Funds & Family Insurance"
+  description="Ant Wealth Creation (AMFI ARN-266896), founded by C. Santhosh Sathriyan, B.E., QPFP, helps Indian families with Mutual Fund investments, LIC Life Insurance, Star Health Insurance, and clear Personal Finance planning."
 >
   <div class="container home-page">
-    <!-- 1. HERO: COMPANY IDENTITY & EXECUTIVE DIGITAL VISITING CARD -->
-    <section class="hero surface-dark" aria-labelledby="hero-heading">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow-light">
-            <span class="eyebrow-dot" aria-hidden="true"></span>
-            Ant Wealth Creation · Mutual Funds · Life &amp; Health Insurance
-          </div>
-
-          <h1 id="hero-heading">
-            Helping Indian families protect what matters and build lasting wealth.
-          </h1>
-
-          <p class="hero-lead">
-            Personal finance does not have to be complicated. Whether you want to start disciplined <strong>Mutual Fund investments</strong>, safeguard your family with the right <strong>Life and Health Insurance</strong>, or plan step-by-step for your children’s education and retirement—we guide you with clarity, patience, and transparency.
+    <!-- 1. CLEAN LIGHT EDITORIAL HERO WITH 6-STEP FAMILY JOURNEY VISUAL -->
+    <section class="hero-section" aria-labelledby="hero-heading">
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-kicker">Personal Finance · Mutual Funds · Insurance</span>
+          <h1 id="hero-heading">Make Better Money Decisions. Build a Better Future.</h1>
+          <p>
+            We help Indian families organize their household finances, protect their loved ones with the right Life and Health Insurance, and build lasting wealth through disciplined Mutual Fund investing.
           </p>
-
-          <div class="hero-cta-row">
+          <div class="hero-buttons">
             <a
-              class="btn-hero-gold"
+              class="btn-primary-navy"
               href={BUSINESS_PROFILE.contact.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Chat with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
+              Speak with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
             </a>
-            <a class="btn-hero-ghost" href="#services">
-              Explore Our Services ↓
+            <a class="btn-secondary-jade" href="/tools/personal-finance-statement/">
+              Open Personal Finance Statement →
             </a>
-            <a class="btn-hero-ghost" href="#personal-finance-guide">
-              How Personal Finance Works ↓
-            </a>
-          </div>
-
-          <div class="hero-trust" role="list" aria-label="Core practice credentials">
-            <div class="trust-item" role="listitem">
-              <strong>Mutual Fund Distribution</strong>
-              <span>AMFI-Registered ({BUSINESS_PROFILE.regulatory.arn})</span>
-            </div>
-            <div class="trust-item" role="listitem">
-              <strong>Life &amp; Health Protection</strong>
-              <span>LIC Advisor &amp; Star Health Agent</span>
-            </div>
-            <div class="trust-item" role="listitem">
-              <strong>Personal Finance Guidance</strong>
-              <span>QPFP Certified · Markets Since {BUSINESS_PROFILE.firm.experienceSince}</span>
-            </div>
           </div>
         </div>
 
-        <!-- Right Column: Digital Visiting Card of C. Santhosh Sathriyan -->
-        <aside class="visiting-card" aria-label="Advisor Digital Visiting Card">
-          <div class="vc-header">
-            <img
-              src={BUSINESS_PROFILE.founder.photoPath}
-              alt={BUSINESS_PROFILE.founder.fullName}
-              width="84"
-              height="84"
-              class="vc-avatar"
-            />
-            <div class="vc-identity">
-              <span class="vc-badge">Founder &amp; Financial Guide</span>
-              <h2 class="vc-name">{BUSINESS_PROFILE.founder.fullName}</h2>
-              <p class="vc-creds">{BUSINESS_PROFILE.founder.credentials}</p>
-              <p class="vc-location">📍 {BUSINESS_PROFILE.firm.headquarters} · Serving Clients Across India</p>
-            </div>
+        <div class="hero-visual">
+          <img
+            src="/assets/homeScreenimage.webp"
+            alt="6 Steps of Personal Finance: 1. Income, 2. Savings, 3. Protection, 4. Goals, 5. Investment, 6. Financial Freedom"
+            width="900"
+            height="600"
+            loading="eager"
+          />
+        </div>
+      </div>
+
+      <!-- 4-COLUMN PRACTICE CREDENTIAL BAR -->
+      <div class="trust-bar" aria-label="Practice Credentials">
+        <div class="trust-col">
+          <span class="trust-label">Advisor &amp; Founder</span>
+          <strong class="trust-value">{BUSINESS_PROFILE.founder.fullName}, QPFP</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Mutual Fund Distribution</span>
+          <strong class="trust-value">AMFI-Registered ({BUSINESS_PROFILE.regulatory.arn})</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Insurance Partners</span>
+          <strong class="trust-value">LIC Life Cover &amp; Star Health</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Track Record</span>
+          <strong class="trust-value">Market Experience Since {BUSINESS_PROFILE.firm.experienceSince}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MEET SANTHOSH (CLEAN EXECUTIVE PROFILE / DIGITAL VISITING CARD) -->
+    <section class="section" id="about" aria-labelledby="about-heading">
+      <div class="advisor-card">
+        <div class="advisor-photo-wrap">
+          <img
+            src="/assets/santhosh_photo.webp"
+            alt={BUSINESS_PROFILE.founder.fullName}
+            width="240"
+            height="280"
+            loading="eager"
+          />
+        </div>
+
+        <div class="advisor-body">
+          <span class="section-kicker">Your Financial Guide</span>
+          <h2 id="about-heading">{BUSINESS_PROFILE.founder.fullName}</h2>
+          <div class="advisor-creds">
+            QPFP Certified · AMFI-Registered Mutual Fund Distributor ({BUSINESS_PROFILE.regulatory.arn})
           </div>
 
-          <blockquote class="vc-quote">
+          <blockquote class="advisor-quote">
             “{BUSINESS_PROFILE.founder.quote}”
           </blockquote>
 
-          <div class="vc-services-box">
-            <span class="vc-box-label">Products &amp; Services We Provide</span>
-            <div class="vc-pills">
-              <span class="vc-pill">Mutual Funds (SIP / Lump Sum / SWP)</span>
-              <span class="vc-pill">Life Insurance (LIC)</span>
-              <span class="vc-pill">Health Insurance (Star Health)</span>
-              <span class="vc-pill">Goal &amp; Retirement Planning</span>
+          <p class="advisor-bio">
+            With experience in Indian financial markets since {BUSINESS_PROFILE.firm.experienceSince} and raised in a family with decades of LIC service heritage, Santhosh founded {BUSINESS_PROFILE.firm.name} in {BUSINESS_PROFILE.firm.foundingYear} to give families honest, jargon-free guidance across Mutual Funds, Life Insurance, and Health Insurance—without high-pressure sales.
+          </p>
+
+          <div class="advisor-contact-row">
+            <div class="contact-item">
+              <span>Direct Phone &amp; WhatsApp</span>
+              <strong><a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a></strong>
+            </div>
+            <div class="contact-item">
+              <span>Email</span>
+              <strong><a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a></strong>
+            </div>
+            <div class="contact-item">
+              <span>Office</span>
+              <strong>Dharmapuri, Tamil Nadu</strong>
+            </div>
+            <div class="contact-item">
+              <span>Practice Details</span>
+              <strong><a href="/about/">Read full profile →</a></strong>
             </div>
           </div>
-
-          <div class="vc-contact-strip">
-            <a href={`tel:${BUSINESS_PROFILE.contact.phone}`} class="vc-contact-item">
-              <span class="vc-contact-lbl">Direct Phone</span>
-              <strong>{BUSINESS_PROFILE.contact.phoneDisplay}</strong>
-            </a>
-            <a href={`mailto:${BUSINESS_PROFILE.contact.email}`} class="vc-contact-item">
-              <span class="vc-contact-lbl">Email</span>
-              <strong>{BUSINESS_PROFILE.contact.email}</strong>
-            </a>
-          </div>
-
-          <div class="vc-actions">
-            <a
-              href={BUSINESS_PROFILE.contact.whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-vc-primary"
-            >
-              Message on WhatsApp ↗
-            </a>
-            <a
-              href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-vc-secondary"
-            >
-              Client Portfolio Login ↗
-            </a>
-          </div>
-        </aside>
+        </div>
       </div>
     </section>
 
-    <!-- 2. WHAT WE OFFER: PRODUCTS & SERVICES -->
+    <!-- 3. THREE CLEAN SERVICE PILLARS -->
     <section class="section" id="services" aria-labelledby="services-heading">
-      <div class="section-head">
+      <div class="section-header">
         <div>
-          <div class="eyebrow">What We Offer · Products &amp; Services</div>
-          <h2 id="services-heading">Complete Protection &amp; Wealth Solutions for Your Family</h2>
+          <span class="section-kicker">How We Help Your Family</span>
+          <h2 id="services-heading">Clear Products &amp; Practical Financial Guidance</h2>
+          <p>
+            Everything your family needs to stay protected today and invest confidently for tomorrow—explained in plain English.
+          </p>
         </div>
-        <p>
-          Everything you need to safeguard your family against life’s uncertainties and grow your savings systematically—explained in plain language.
-        </p>
       </div>
 
       <div class="services-grid">
-        {coreServices.map((service) => (
-          <article class={`service-card tint-${service.tint}`}>
-            <div class="service-top">
-              <span class="service-icon" aria-hidden="true">{service.icon}</span>
-              <span class="service-tag">{service.tag}</span>
-            </div>
-
-            <h3 class="service-title">{service.title}</h3>
-            <p class="service-summary">{service.summary}</p>
-
-            <ul class="service-list">
-              {service.highlights.map((pt) => (
-                <li>{pt}</li>
+        {servicePillars.map((pillar) => (
+          <article class="service-card">
+            <span class="service-num">{pillar.number}</span>
+            <h3>{pillar.title}</h3>
+            <div class="service-sub">{pillar.subtitle}</div>
+            <p>{pillar.description}</p>
+            <ul class="service-points">
+              {pillar.points.map((point) => (
+                <li>{point}</li>
               ))}
             </ul>
-
-            <a
-              href={service.ctaHref}
-              class="service-cta"
-              target={service.external ? '_blank' : undefined}
-              rel={service.external ? 'noopener noreferrer' : undefined}
-            >
-              {service.ctaLabel}
+            <a class="service-link" href={pillar.ctaHref}>
+              {pillar.ctaLabel}
             </a>
           </article>
         ))}
       </div>
     </section>
 
-    <!-- 3. PERSONAL FINANCE FOR EVERY LAYMAN (3 SIMPLE STEPS) -->
-    <section class="section" id="personal-finance-guide" aria-labelledby="layman-heading">
-      <div class="layman-banner">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Personal Finance Simplified</div>
-            <h2 id="layman-heading">New to Personal Finance? Here Is How It Works in 3 Simple Steps</h2>
-          </div>
-          <p>
-            You do not need complex financial jargon to manage money well. Every strong family financial plan follows this simple order:
-          </p>
-        </div>
-
-        <div class="steps-grid">
-          {laymanSteps.map((st) => (
-            <div class="step-card">
-              <span class="step-badge">{st.step}</span>
-              <h3 class="step-title">{st.title}</h3>
-              <p class="step-subtitle">{st.subtitle}</p>
-              <p class="step-desc">{st.description}</p>
-              <a href={st.actionHref} class="step-link">{st.actionLabel}</a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. WHY FAMILIES TRUST ANT WEALTH CREATION (ABOUT SANTHOSH) -->
-    <section class="section" id="about" aria-labelledby="about-heading">
-      <div class="about-card">
-        <div class="about-photo-col">
-          <img
-            src={BUSINESS_PROFILE.founder.photoPath}
-            alt={BUSINESS_PROFILE.founder.fullName}
-            width="280"
-            height="340"
-            loading="lazy"
-            class="founder-photo"
-          />
-        </div>
-        <div class="about-copy-col">
-          <div class="eyebrow">Our Story &amp; Heritage</div>
-          <h2 id="about-heading">Personal Guidance Rooted in Trust Since {BUSINESS_PROFILE.firm.experienceSince}</h2>
-          <p class="founder-role">
-            {BUSINESS_PROFILE.founder.fullName} · {BUSINESS_PROFILE.founder.designation} ({BUSINESS_PROFILE.founder.credentials})
-          </p>
-          <p class="founder-bio">{BUSINESS_PROFILE.founder.bio}</p>
-          <p class="founder-bio" style="margin-top: 10px;">{BUSINESS_PROFILE.founder.heritage}</p>
-
-          <div class="promises-grid">
-            <div class="promise-item">
-              <strong>01 · Protection Before Products</strong>
-              <span>We ensure emergency funds, health cover, and term insurance are in place first.</span>
-            </div>
-            <div class="promise-item">
-              <strong>02 · Clarity Over Jargon</strong>
-              <span>Every mutual fund or insurance option is explained simply so you decide with confidence.</span>
-            </div>
-            <div class="promise-item">
-              <strong>03 · Goal-Driven Discipline</strong>
-              <span>No speculative tips—investments are mapped to your family’s real timelines.</span>
-            </div>
-            <div class="promise-item">
-              <strong>04 · Regulated &amp; Transparent</strong>
-              <span>AMFI-registered distributor ({BUSINESS_PROFILE.regulatory.arn}) with full commission transparency.</span>
-            </div>
-          </div>
-
-          <div class="about-actions">
-            <a class="btn-primary" href="/about/">Read Full Story &amp; Credentials →</a>
-            <a class="btn-secondary" href="/commission-disclosure/">How We Are Compensated →</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. REAL CLIENT EXPERIENCES (TESTIMONIALS) -->
+    <!-- 4. CLIENT EXPERIENCES (ALL 8 VERIFIED CLIENT REVIEWS) -->
     <section class="section" id="testimonials" aria-labelledby="testimonials-heading">
-      <div class="section-head">
+      <div class="section-header">
         <div>
-          <div class="eyebrow">Client Reviews &amp; Experiences</div>
-          <h2 id="testimonials-heading">Trusted by Families, Professionals &amp; Business Owners</h2>
+          <span class="section-kicker">Client Experiences</span>
+          <h2 id="testimonials-heading">Trusted by Families, Educators &amp; Professionals</h2>
+          <p>
+            Genuine words from clients who partner with {BUSINESS_PROFILE.founder.shortName} and {BUSINESS_PROFILE.firm.name} for mutual fund investing, insurance protection, and long-term family planning.
+          </p>
         </div>
-        <p>
-          Read genuine experiences shared by our clients across mutual fund portfolio management, term and health insurance, and personal finance mentoring.
-        </p>
       </div>
 
-      <div class="testimonials-grid">
+      <div class="reviews-grid">
         {CLIENT_TESTIMONIALS.map((item) => (
-          <article class="testimonial-card">
-            <div class="testimonial-header">
-              <div class="testimonial-avatar" aria-hidden="true">
+          <article class="review-card testimonial-card">
+            <blockquote class="review-text">“{item.quote}”</blockquote>
+            <div class="review-author">
+              <div class="review-initials" aria-hidden="true">
                 {item.photoPath ? (
-                  <img src={item.photoPath} alt={item.name} width="48" height="48" loading="lazy" />
+                  <img src={item.photoPath} alt={item.name} loading="lazy" />
                 ) : (
-                  <span class="avatar-initials">{item.initials}</span>
+                  <span>{item.initials}</span>
                 )}
               </div>
-              <div class="testimonial-author">
-                <h3 class="author-name">{item.name}</h3>
-                <p class="author-role">{item.companyOrOrg ? `${item.role} · ${item.companyOrOrg}` : item.role}</p>
+              <div>
+                <h3 class="review-name">{item.name}</h3>
+                <p class="review-role">
+                  {item.role}
+                  {item.companyOrOrg ? ` · ${item.companyOrOrg}` : ''}
+                </p>
               </div>
             </div>
-
-            <span class="testimonial-highlight">Verified Client Review</span>
-
-            <blockquote class="testimonial-quote">
-              “{item.quote}”
-            </blockquote>
           </article>
         ))}
       </div>
     </section>
 
-    <!-- 6. SUPPORTING PERSONAL FINANCE TOOLS & CALCULATORS -->
-    <section class="section" id="interactive-tools-workbench" aria-labelledby="workbench-heading">
-      <div class="section-head">
+    <!-- 5. SUPPORTING SELF-CHECK TOOLS (4 CLEAN STARTING POINTS) -->
+    <section class="section" id="interactive-tools-workbench" aria-labelledby="tools-heading">
+      <div class="section-header section-header-row">
         <div>
-          <div class="eyebrow">Free Supporting Tools &amp; Diagnostics</div>
-          <h2 id="workbench-heading">Explore Your Numbers at Your Own Pace</h2>
+          <span class="section-kicker">Free Self-Check Tools</span>
+          <h2 id="tools-heading">Understand Your Numbers at Your Own Pace</h2>
+          <p>
+            Try our browser-private calculators to check your household balance sheet or test a goal scenario before we meet.
+          </p>
         </div>
-        <p>
-          We built these free, browser-private tools to help you understand your household finances and test scenarios before or during our consultation.
-        </p>
+        <a class="section-link" href="/tools/">View All Tools →</a>
       </div>
 
-      <!-- 3 Household Diagnostics -->
-      <div class="diagnostics-grid">
-        {diagnosticTools.map((tool) => (
-          <a href={tool.href} class={`diag-card ${tool.featured ? 'is-featured' : ''}`}>
-            <div class="diag-top">
-              <span class="diag-badge">{tool.badge}</span>
-            </div>
-            <h3 class="diag-title">{tool.title}</h3>
-            <p class="diag-question">“{tool.question}”</p>
-            <p class="diag-desc">{tool.desc}</p>
-            <span class="diag-cta">{tool.cta}</span>
-          </a>
-        ))}
-      </div>
-
-      <!-- Compact Supporting Calculators Grid -->
-      <div class="calculators-subhead">
-        <h3>Quick Goal, SIP &amp; Loan Calculators</h3>
-        <a href="/tools/" class="view-all-link">Open Full Tools Directory →</a>
-      </div>
-
-      <div class="workbench-grid">
-        {quickCalculators.map((calc) => (
-          <a href={calc.href} class="workbench-card">
-            <span class="workbench-cat">{calc.category}</span>
-            <h4 class="workbench-title">{calc.label} →</h4>
+      <div class="tools-row">
+        {startingTools.map((tool) => (
+          <a class:list={['tool-box', { featured: tool.featured }]} href={tool.href}>
+            <span class="tool-type">{tool.type}</span>
+            <h3>{tool.title}</h3>
+            <p>{tool.description}</p>
+            <span class="tool-cta">{tool.ctaLabel}</span>
           </a>
         ))}
       </div>
     </section>
 
-    <!-- 7. LEARNING LIBRARY PREVIEW -->
+    <!-- 6. PLAIN-LANGUAGE GUIDES -->
     <section class="section" id="learn" aria-labelledby="learn-heading">
-      <div class="section-head">
+      <div class="section-header section-header-row">
         <div>
-          <div class="eyebrow">Plain-Language Financial Guides</div>
-          <h2 id="learn-heading">Learn the Basics of Smart Money Management</h2>
+          <span class="section-kicker">Investor Education</span>
+          <h2 id="learn-heading">Plain-Language Personal Finance Guides</h2>
+          <p>
+            Short, practical reads written for Indian households—without confusing textbook jargon.
+          </p>
         </div>
-        <p>
-          Short, practical articles written for Indian families—covering SIPs, emergency reserves, asset allocation, and life insurance.
-        </p>
+        <a class="section-link" href="/learn/">Browse All {approvedArticles.length} Guides →</a>
       </div>
 
-      <div class="learn-grid">
+      <div class="guides-grid">
         {featuredArticles.map((article) => (
-          <article class="article-card">
-            <div class="article-meta">
-              <span>{article.data.category}</span>
-              <span>{article.data.readingTime}</span>
-            </div>
+          <article class="guide-card">
+            <span class="guide-meta">{article.data.category} · {article.data.readingTime}</span>
             <h3>
               <a href={`/learn/${article.id}/`}>{article.data.title}</a>
             </h3>
             <p>{article.data.description}</p>
-            <a class="card-cta" href={`/learn/${article.id}/`}>
-              Read guide →
-            </a>
+            <a class="guide-link" href={`/learn/${article.id}/`}>Read guide →</a>
           </article>
         ))}
       </div>
-
-      <div class="section-foot">
-        <a class="btn-secondary" href="/learn/">Browse all {approvedArticles.length} educational guides →</a>
-      </div>
     </section>
 
-    <!-- 8. CONTACT & DIRECT CONSULTATION -->
+    <!-- 7. DIRECT CONSULTATION / CONTACT -->
     <section class="section" id="contact" aria-labelledby="contact-heading">
-      <div class="contact-band surface-dark">
+      <div class="contact-card">
         <div class="contact-copy">
-          <div class="eyebrow-light">
-            <span class="eyebrow-dot" aria-hidden="true"></span>
-            Direct 1-on-1 Consultation
-          </div>
-          <h2 id="contact-heading">Ready to organize your family’s financial future?</h2>
+          <span class="section-kicker">Direct 1-on-1 Consultation</span>
+          <h2 id="contact-heading">Have a question about your family’s finances?</h2>
           <p>
-            Reach out directly to <strong>{BUSINESS_PROFILE.founder.fullName}</strong> for a friendly, no-obligation conversation about Mutual Funds, Life Insurance, Health Insurance, or your family’s financial goals.
+            Reach out directly to <strong>{BUSINESS_PROFILE.founder.fullName}</strong> for a friendly, no-obligation conversation about Mutual Funds, Life Insurance, Health Insurance, or your household financial roadmap.
           </p>
-          <div class="contact-cta-row">
+          <div class="hero-buttons">
             <a
-              class="btn-hero-gold"
+              class="btn-primary-navy"
               href={BUSINESS_PROFILE.contact.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Chat with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
+              Message {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
             </a>
-            <a class="btn-hero-ghost" href="/contact/">
-              Consultation details &amp; office info →
+            <a class="btn-secondary-jade" href="/contact/">
+              Office Address &amp; Consultation Details →
             </a>
           </div>
         </div>
-        <div class="contact-details">
-          <div class="contact-detail-card">
-            <span>Direct Phone</span>
+
+        <div class="contact-meta-grid">
+          <div class="contact-meta-box">
+            <span>Direct Phone &amp; WhatsApp</span>
             <strong><a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a></strong>
           </div>
-          <div class="contact-detail-card">
+          <div class="contact-meta-box">
             <span>Email</span>
             <strong><a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a></strong>
           </div>
-          <div class="contact-detail-card">
+          <div class="contact-meta-box">
             <span>Office Location</span>
             <strong>{BUSINESS_PROFILE.firm.headquarters}</strong>
           </div>
@@ -558,1041 +378,730 @@ const quickCalculators = [
 
 <style>
   .home-page {
-    padding-top: 22px;
-    padding-bottom: 48px;
+    padding-top: 28px;
+    padding-bottom: 56px;
   }
 
-  /* Eyebrows */
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--awc-jade-deep);
+  /* 1. CLEAN LIGHT HERO WITH 6-STEP FAMILY JOURNEY VISUAL */
+  .hero-section {
+    padding-bottom: 44px;
   }
 
-  .eyebrow-light {
-    display: inline-flex;
+  .hero-banner {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background-color: var(--primitive-white);
+    background-image:
+      linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 34%, rgba(255, 255, 255, 0) 43%),
+      url('/assets/homeScreenimage.webp');
+    background-size: cover, contain;
+    background-position: left center, right center;
+    background-repeat: no-repeat;
+    border: 1px solid var(--awc-line);
+    box-shadow: var(--shadow-card);
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--primitive-teal-100);
+    min-height: 500px;
+  }
+
+  .hero-content {
+    padding: 48px 24px 48px 48px;
+    max-width: 530px;
+    z-index: 2;
+  }
+
+  .hero-kicker,
+  .section-kicker {
+    display: block;
     font-size: 12px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--awc-jade-deep);
+    margin-bottom: 10px;
   }
 
-  .eyebrow-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--awc-gold);
+  .hero-content h1 {
+    margin: 0 0 16px;
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    color: var(--awc-navy);
   }
 
-  /* 1. HERO & DIGITAL VISITING CARD */
-  .hero {
-    padding: 36px;
-    border-radius: 32px;
-    background:
-      radial-gradient(circle at 86% 18%, rgba(242, 198, 93, 0.2), transparent 26%),
-      radial-gradient(circle at 70% 80%, rgba(22, 135, 126, 0.28), transparent 34%),
-      linear-gradient(135deg, var(--awc-navy) 0%, var(--primitive-navy-800) 58%, var(--primitive-teal-700) 100%);
-    color: var(--primitive-white);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1.08fr 0.92fr;
-    gap: 28px;
-    align-items: center;
-  }
-
-  .hero h1 {
-    margin: 16px 0 14px;
-    font-size: clamp(32px, 4.3vw, 50px);
-    line-height: 1.06;
-    letter-spacing: -0.04em;
-    font-weight: 850;
-    color: var(--primitive-white);
-  }
-
-  .hero-lead {
-    margin: 0;
-    max-width: 58ch;
-    color: var(--color-text-on-dark);
+  .hero-content p {
+    margin: 0 0 26px;
     font-size: 16px;
     line-height: 1.65;
+    color: var(--color-text-secondary);
+    max-width: 48ch;
   }
 
-  .hero-lead strong {
-    color: var(--primitive-white);
-  }
-
-  .hero-cta-row {
+  .hero-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 24px;
-  }
-
-  .btn-hero-gold,
-  .btn-hero-ghost,
-  .btn-primary,
-  .btn-secondary {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 46px;
-    padding: 12px 20px;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 800;
-    text-decoration: none;
-    transition: transform 0.15s ease, background-color 0.15s ease, filter 0.15s ease;
-  }
-
-  .btn-hero-gold {
-    background: var(--awc-gold);
-    color: var(--awc-navy);
-  }
-
-  .btn-hero-gold:hover {
-    filter: brightness(1.04);
-    transform: translateY(-1px);
-  }
-
-  .btn-hero-ghost {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--primitive-white);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-  }
-
-  .btn-hero-ghost:hover {
-    background: rgba(255, 255, 255, 0.16);
-  }
-
-  .btn-primary {
-    background: var(--awc-jade-action);
-    color: var(--primitive-white);
-  }
-
-  .btn-primary:hover {
-    background: var(--awc-jade-deep);
-  }
-
-  .btn-secondary {
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-    border: 1px solid var(--awc-line);
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--awc-jade);
-    color: var(--awc-jade-deep);
-  }
-
-  .hero-trust {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin-top: 26px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-  }
-
-  .trust-item strong {
-    display: block;
-    font-size: 13.5px;
-    color: var(--primitive-white);
-  }
-
-  .trust-item span {
-    display: block;
-    margin-top: 3px;
-    font-size: 12px;
-    line-height: 1.45;
-    color: var(--color-text-on-dark);
-  }
-
-  /* Executive Digital Visiting Card */
-  .visiting-card {
-    padding: 24px;
-    border-radius: 26px;
-    background: rgba(15, 34, 51, 0.56);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(14px);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    box-shadow: var(--shadow-card);
-  }
-
-  .vc-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .vc-avatar {
-    width: 82px;
-    height: 82px;
-    border-radius: 20px;
-    object-fit: cover;
-    border: 2px solid var(--awc-gold);
-    flex-shrink: 0;
-    background: var(--awc-navy);
-  }
-
-  .vc-badge {
-    display: inline-block;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: var(--awc-gold);
-    color: var(--awc-navy);
-    font-size: 10.5px;
-    font-weight: 850;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
-  }
-
-  .vc-name {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 850;
-    letter-spacing: -0.025em;
-    color: var(--primitive-white);
-  }
-
-  .vc-creds {
-    margin: 2px 0 0;
-    font-size: 12.5px;
-    font-weight: 750;
-    color: var(--primitive-teal-100);
-  }
-
-  .vc-location {
-    margin: 3px 0 0;
-    font-size: 11.5px;
-    color: var(--color-text-on-dark);
-  }
-
-  .vc-quote {
-    margin: 0;
-    padding: 10px 14px;
-    border-left: 3px solid var(--awc-gold);
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 0 12px 12px 0;
-    font-size: 12.5px;
-    font-style: italic;
-    line-height: 1.5;
-    color: var(--primitive-white);
-  }
-
-  .vc-services-box {
-    padding: 12px 14px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .vc-box-label {
-    display: block;
-    font-size: 10.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--awc-gold);
-    margin-bottom: 8px;
-  }
-
-  .vc-pills {
-    display: flex;
     flex-wrap: wrap;
-    gap: 6px;
   }
 
-  .vc-pill {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(207, 239, 227, 0.14);
-    border: 1px solid rgba(207, 239, 227, 0.24);
-    color: var(--primitive-white);
-    font-size: 11.5px;
-    font-weight: 700;
-  }
-
-  .vc-contact-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .vc-contact-item {
-    padding: 9px 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    text-decoration: none;
-    color: var(--primitive-white);
-    transition: background-color 0.15s ease;
-  }
-
-  .vc-contact-item:hover {
-    background: rgba(255, 255, 255, 0.14);
-  }
-
-  .vc-contact-lbl {
-    display: block;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-on-dark);
-  }
-
-  .vc-contact-item strong {
-    display: block;
-    font-size: 12.5px;
-    color: var(--primitive-white);
-    margin-top: 2px;
-  }
-
-  .vc-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .btn-vc-primary,
-  .btn-vc-secondary {
+  .btn-primary-navy {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 42px;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 12.5px;
-    font-weight: 800;
+    padding: 13px 22px;
+    border-radius: 10px;
+    background-color: var(--awc-navy);
+    color: var(--primitive-white);
+    font-size: 14px;
+    font-weight: 700;
     text-decoration: none;
-    text-align: center;
-    transition: transform 0.15s ease, background-color 0.15s ease;
+    transition: background-color 0.15s ease, transform 0.15s ease;
   }
 
-  .btn-vc-primary {
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-  }
-
-  .btn-vc-primary:hover {
-    background: var(--awc-mint);
+  .btn-primary-navy:hover {
+    background-color: var(--primitive-navy-800);
     transform: translateY(-1px);
   }
 
-  .btn-vc-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--primitive-white);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+  .btn-secondary-jade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 20px;
+    border-radius: 10px;
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+    border: 1px solid var(--awc-mint);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  .btn-vc-secondary:hover {
-    background: rgba(255, 255, 255, 0.18);
+  .btn-secondary-jade:hover {
+    background-color: var(--awc-mint);
+    border-color: var(--awc-jade);
   }
 
-  /* SECTIONS */
+  .hero-visual {
+    display: none;
+  }
+
+  .hero-visual img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* 4-COLUMN CREDENTIAL BAR */
+  .trust-bar {
+    margin-top: 18px;
+    padding: 18px 28px;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .trust-col {
+    border-right: 1px solid var(--awc-line);
+    padding-right: 16px;
+  }
+
+  .trust-col:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .trust-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 3px;
+  }
+
+  .trust-value {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--awc-navy);
+  }
+
+  /* COMMON SECTION STYLING */
   .section {
-    padding: 36px 0;
+    padding: 48px 0;
+    border-top: 1px solid var(--awc-line);
   }
 
-  .section-head {
+  .section-header {
+    margin-bottom: 30px;
+  }
+
+  .section-header-row {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 20px;
   }
 
-  .section-head h2 {
-    margin: 6px 0 0;
-    font-size: clamp(26px, 3.2vw, 36px);
-    line-height: 1.12;
-    letter-spacing: -0.035em;
-    font-weight: 850;
-    color: var(--awc-navy);
-  }
-
-  .section-head p {
-    margin: 0;
-    max-width: 52ch;
-    color: var(--color-text-muted);
-    font-size: 14.5px;
-    line-height: 1.55;
-  }
-
-  /* 2. PRODUCTS & SERVICES GRID */
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-
-  .service-card {
-    display: flex;
-    flex-direction: column;
-    padding: 26px;
-    border-radius: 24px;
-    background: var(--primitive-white);
-    border: 1px solid var(--awc-line);
-    box-shadow: var(--shadow-card);
-  }
-
-  .service-card.tint-mint {
-    background: linear-gradient(165deg, var(--primitive-teal-50) 0%, var(--primitive-white) 52%);
-  }
-
-  .service-card.tint-sand {
-    background: linear-gradient(165deg, var(--awc-sand) 0%, var(--primitive-white) 52%);
-  }
-
-  .service-card.tint-mist {
-    background: linear-gradient(165deg, var(--awc-mist) 0%, var(--primitive-white) 52%);
-  }
-
-  .service-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .service-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: var(--primitive-white);
-    border: 1px solid var(--awc-line);
-    display: grid;
-    place-items: center;
-    font-size: 20px;
-  }
-
-  .service-tag {
-    padding: 5px 11px;
-    border-radius: 999px;
-    background: var(--awc-jade-soft);
-    color: var(--awc-jade-deep);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-  }
-
-  .service-title {
+  .section-header h2 {
     margin: 0 0 8px;
-    font-size: 22px;
-    font-weight: 850;
-    letter-spacing: -0.03em;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    font-weight: 800;
     color: var(--awc-navy);
   }
 
-  .service-summary {
-    margin: 0 0 14px;
-    font-size: 14px;
+  .section-header p {
+    margin: 0;
+    max-width: 64ch;
+    font-size: 15.5px;
     line-height: 1.6;
     color: var(--color-text-secondary);
   }
 
-  .service-list {
-    margin: 0 0 18px;
-    padding-left: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--awc-navy);
-    font-weight: 650;
-    flex: 1;
-  }
-
-  .service-cta {
-    display: inline-flex;
-    align-items: center;
-    font-size: 13.5px;
-    font-weight: 850;
+  .section-link {
+    font-size: 14px;
+    font-weight: 700;
     color: var(--awc-jade-deep);
     text-decoration: none;
+    white-space: nowrap;
   }
 
-  .service-cta:hover {
+  .section-link:hover {
     text-decoration: underline;
   }
 
-  /* 3. PERSONAL FINANCE FOR EVERY LAYMAN */
-  .layman-banner {
-    padding: 32px;
-    border-radius: 28px;
-    background: linear-gradient(180deg, var(--awc-mist) 0%, var(--primitive-white) 100%);
-    border: 1px solid var(--awc-line);
-  }
-
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .step-card {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    border-radius: 22px;
+  /* 2. MEET SANTHOSH (ADVISOR PROFILE CARD) */
+  .advisor-card {
     background: var(--primitive-white);
     border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 36px;
+    align-items: center;
     box-shadow: var(--shadow-subtle);
   }
 
-  .step-badge {
-    align-self: flex-start;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--awc-navy);
-    color: var(--primitive-white);
-    font-size: 11px;
+  .advisor-photo-wrap {
+    text-align: center;
+  }
+
+  .advisor-photo-wrap img {
+    width: 220px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid var(--awc-line);
+    background: var(--awc-paper);
+  }
+
+  .advisor-body h2 {
+    margin: 0 0 4px;
+    font-size: clamp(24px, 2.6vw, 30px);
     font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+  }
+
+  .advisor-creds {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--awc-jade-deep);
+    margin-bottom: 16px;
+  }
+
+  .advisor-quote {
+    margin: 0 0 16px;
+    font-size: 15.5px;
+    font-style: italic;
+    color: var(--awc-navy);
+    border-left: 3px solid var(--awc-gold);
+    padding-left: 16px;
+    line-height: 1.55;
+  }
+
+  .advisor-bio {
+    margin: 0 0 22px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+    max-width: 70ch;
+  }
+
+  .advisor-contact-row {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--awc-line);
+    justify-content: start;
+  }
+
+  .contact-item span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
     letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+  }
+
+  .contact-item strong {
+    font-size: 14px;
+    color: var(--awc-navy);
+  }
+
+  .contact-item a {
+    color: var(--awc-navy);
+    text-decoration: none;
+  }
+
+  .contact-item a:hover {
+    color: var(--awc-jade-deep);
+    text-decoration: underline;
+  }
+
+  /* 3. THREE CLEAN SERVICE PILLARS */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .service-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 18px;
+    padding: 30px 26px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .service-num {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 10px;
   }
 
-  .step-title {
-    margin: 0 0 4px;
-    font-size: 19px;
-    font-weight: 850;
-    letter-spacing: -0.025em;
-    color: var(--awc-navy);
-  }
-
-  .step-subtitle {
-    margin: 0 0 10px;
-    font-size: 12.5px;
+  .service-card h3 {
+    margin: 0 0 6px;
+    font-size: 21px;
     font-weight: 800;
-    color: var(--awc-jade-deep);
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
   }
 
-  .step-desc {
-    margin: 0 0 16px;
-    font-size: 13.5px;
+  .service-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--awc-jade-deep);
+    margin-bottom: 14px;
+  }
+
+  .service-card p {
+    margin: 0 0 18px;
+    font-size: 14.5px;
     line-height: 1.6;
     color: var(--color-text-secondary);
     flex: 1;
   }
 
-  .step-link {
-    font-size: 13px;
-    font-weight: 850;
+  .service-points {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--awc-line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--awc-navy);
+    font-weight: 500;
+  }
+
+  .service-points li::before {
+    content: "— ";
     color: var(--awc-jade-deep);
+    font-weight: 700;
+  }
+
+  .service-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--awc-navy);
     text-decoration: none;
   }
 
-  .step-link:hover {
+  .service-link:hover {
+    color: var(--awc-jade-deep);
     text-decoration: underline;
   }
 
-  /* 4. ABOUT SANTHOSH */
-  .about-card {
+  /* 4. CLIENT EXPERIENCES (TESTIMONIALS) */
+  .reviews-grid {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 28px;
-    align-items: center;
-    padding: 28px;
-    border-radius: 28px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .review-card {
     background: var(--primitive-white);
     border: 1px solid var(--awc-line);
-    box-shadow: var(--shadow-card);
-  }
-
-  .founder-photo {
-    width: 100%;
-    height: auto;
-    border-radius: 22px;
-    object-fit: cover;
-    border: 1px solid var(--awc-line);
-  }
-
-  .about-copy-col h2 {
-    margin: 6px 0 4px;
-    font-size: clamp(24px, 3vw, 34px);
-    letter-spacing: -0.035em;
-    font-weight: 850;
-  }
-
-  .founder-role {
-    margin: 0 0 12px;
-    font-size: 14px;
-    font-weight: 750;
-    color: var(--awc-jade-deep);
-  }
-
-  .founder-bio {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
-  }
-
-  .promises-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  .promise-item {
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: var(--awc-paper);
-    border: 1px solid var(--awc-line);
-  }
-
-  .promise-item strong {
-    display: block;
-    font-size: 13px;
-    color: var(--awc-navy);
-    margin-bottom: 3px;
-  }
-
-  .promise-item span {
-    display: block;
-    font-size: 12px;
-    line-height: 1.45;
-    color: var(--color-text-muted);
-  }
-
-  .about-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  /* 5. TESTIMONIALS */
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  .testimonial-card {
+    border-radius: 16px;
+    padding: 26px;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    border-radius: 22px;
-    background: var(--primitive-white);
-    border: 1px solid var(--awc-line);
-    box-shadow: var(--shadow-card);
+    justify-content: space-between;
+    box-shadow: var(--shadow-subtle);
   }
 
-  .testimonial-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-  }
-
-  .testimonial-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--awc-navy) 0%, var(--primitive-teal-700) 100%);
-    color: var(--primitive-white);
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    overflow: hidden;
-    border: 2px solid var(--awc-mint);
-  }
-
-  .testimonial-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .avatar-initials {
-    font-size: 15px;
-    font-weight: 850;
-    letter-spacing: 0.04em;
-    color: var(--primitive-white);
-  }
-
-  .author-name {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 850;
-    letter-spacing: -0.02em;
-    color: var(--awc-navy);
-  }
-
-  .author-role {
-    margin: 2px 0 0;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--awc-jade-deep);
-  }
-
-  .testimonial-highlight {
-    align-self: flex-start;
-    margin-bottom: 12px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--awc-jade-soft);
-    color: var(--awc-jade-deep);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.03em;
-  }
-
-  .testimonial-quote {
-    margin: 0;
-    font-size: 13.5px;
+  .review-text {
+    margin: 0 0 18px;
+    font-size: 14px;
     line-height: 1.65;
     color: var(--color-text-secondary);
     white-space: pre-line;
   }
 
-  /* 6. SUPPORTING TOOLS */
-  .diagnostics-grid {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .diag-card {
+  .review-author {
     display: flex;
-    flex-direction: column;
-    padding: 22px;
-    border-radius: 22px;
-    background: var(--primitive-white);
-    border: 1px solid var(--awc-line);
-    box-shadow: var(--shadow-subtle);
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.15s ease, border-color 0.15s ease;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--awc-line);
+    padding-top: 14px;
   }
 
-  .diag-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--awc-jade);
-  }
-
-  .diag-card.is-featured {
-    background: linear-gradient(145deg, var(--awc-mint) 0%, var(--primitive-white) 68%);
-    border: 2px solid var(--awc-jade);
-  }
-
-  .diag-top {
-    margin-bottom: 8px;
-  }
-
-  .diag-badge {
-    display: inline-block;
-    padding: 4px 10px;
+  .review-initials {
+    width: 40px;
+    height: 40px;
     border-radius: 999px;
-    background: var(--awc-jade-soft);
-    color: var(--awc-jade-deep);
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .diag-card.is-featured .diag-badge {
     background: var(--awc-navy);
     color: var(--primitive-white);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    overflow: hidden;
   }
 
-  .diag-title {
-    margin: 0 0 6px;
-    font-size: 20px;
-    font-weight: 850;
-    letter-spacing: -0.025em;
+  .review-initials img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .review-name {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 700;
     color: var(--awc-navy);
   }
 
-  .diag-question {
-    margin: 0 0 8px;
-    font-size: 13px;
-    font-weight: 750;
-    color: var(--awc-jade-deep);
+  .review-role {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
   }
 
-  .diag-desc {
-    margin: 0 0 14px;
-    font-size: 13px;
+  /* 5. SUPPORTING SELF-CHECK TOOLS (4 CARDS) */
+  .tools-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .tool-box {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .tool-box:hover {
+    border-color: var(--awc-jade);
+    transform: translateY(-2px);
+  }
+
+  .tool-box.featured {
+    border-color: var(--awc-jade);
+    background: var(--awc-jade-soft);
+  }
+
+  .tool-type {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--awc-jade-deep);
+    margin-bottom: 8px;
+  }
+
+  .tool-box h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.015em;
+  }
+
+  .tool-box p {
+    margin: 0 0 16px;
+    font-size: 13.5px;
     line-height: 1.55;
     color: var(--color-text-secondary);
     flex: 1;
   }
 
-  .diag-cta {
+  .tool-cta {
     font-size: 13px;
-    font-weight: 850;
-    color: var(--awc-jade-deep);
-  }
-
-  .calculators-subhead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .calculators-subhead h3 {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 850;
+    font-weight: 700;
     color: var(--awc-navy);
   }
 
-  .view-all-link {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--awc-jade-deep);
-    text-decoration: none;
-  }
-
-  .workbench-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-
-  .workbench-card {
-    display: flex;
-    flex-direction: column;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: var(--primitive-white);
-    border: 1px solid var(--awc-line);
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.15s ease, border-color 0.15s ease;
-  }
-
-  .workbench-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--awc-jade);
-    background: var(--primitive-teal-50);
-  }
-
-  .workbench-cat {
-    font-size: 10.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-muted);
-    margin-bottom: 4px;
-  }
-
-  .workbench-title {
-    margin: 0;
-    font-size: 14.5px;
-    font-weight: 800;
-    color: var(--awc-navy);
-  }
-
-  /* 7. LEARN */
-  .learn-grid {
+  /* 6. PLAIN-LANGUAGE GUIDES */
+  .guides-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 20px;
   }
 
-  .article-card {
-    display: flex;
-    flex-direction: column;
-    padding: 22px;
-    border-radius: 22px;
+  .guide-card {
     background: var(--primitive-white);
     border: 1px solid var(--awc-line);
-    box-shadow: var(--shadow-card);
-  }
-
-  .article-meta {
+    border-radius: 16px;
+    padding: 24px;
     display: flex;
-    justify-content: space-between;
-    font-size: 12px;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .guide-meta {
+    font-size: 11.5px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--awc-jade-deep);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
-  .article-card h3 {
+  .guide-card h3 {
     margin: 0 0 8px;
-    font-size: 18px;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
+    font-size: 17px;
     font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
   }
 
-  .article-card h3 a {
+  .guide-card h3 a {
     color: var(--awc-navy);
     text-decoration: none;
   }
 
-  .article-card h3 a:hover {
+  .guide-card h3 a:hover {
     color: var(--awc-jade-deep);
   }
 
-  .article-card p {
+  .guide-card p {
     margin: 0 0 16px;
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.55;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     flex: 1;
   }
 
-  .card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13.5px;
-    font-weight: 800;
+  .guide-link {
+    font-size: 13px;
+    font-weight: 700;
     color: var(--awc-jade-deep);
     text-decoration: none;
   }
 
-  .section-foot {
-    margin-top: 18px;
+  .guide-link:hover {
+    text-decoration: underline;
   }
 
-  /* 8. CONTACT */
-  .contact-band {
+  /* 7. CONTACT SECTION */
+  .contact-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    padding: 36px;
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 24px;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 32px;
     align-items: center;
-    padding: 32px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, var(--awc-navy) 0%, var(--primitive-navy-800) 100%);
-    color: var(--primitive-white);
+    box-shadow: var(--shadow-subtle);
   }
 
   .contact-copy h2 {
-    margin: 12px 0 8px;
-    font-size: clamp(24px, 3vw, 34px);
-    color: var(--primitive-white);
-    letter-spacing: -0.03em;
+    margin: 0 0 10px;
+    font-size: clamp(24px, 2.6vw, 30px);
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
   }
 
   .contact-copy p {
-    margin: 0;
-    color: var(--color-text-on-dark);
+    margin: 0 0 22px;
     font-size: 15px;
     line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 58ch;
   }
 
-  .contact-copy strong {
-    color: var(--primitive-white);
-  }
-
-  .contact-cta-row {
+  .contact-meta-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
+    flex-direction: column;
+    gap: 12px;
+    border-left: 1px solid var(--awc-line);
+    padding-left: 28px;
   }
 
-  .contact-details {
-    display: grid;
-    gap: 10px;
-  }
-
-  .contact-detail-card {
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-  }
-
-  .contact-detail-card span {
+  .contact-meta-box span {
     display: block;
     font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-on-dark);
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
   }
 
-  .contact-detail-card strong,
-  .contact-detail-card a {
-    display: block;
-    margin-top: 2px;
+  .contact-meta-box strong {
     font-size: 14.5px;
-    color: var(--primitive-white);
+    color: var(--awc-navy);
+  }
+
+  .contact-meta-box a {
+    color: var(--awc-navy);
     text-decoration: none;
   }
 
-  /* RESPONSIVE */
-  @media (max-width: 1080px) {
-    .hero-grid,
-    .services-grid,
-    .steps-grid,
-    .diagnostics-grid,
-    .about-card,
-    .contact-band {
-      grid-template-columns: 1fr;
+  .contact-meta-box a:hover {
+    color: var(--awc-jade-deep);
+    text-decoration: underline;
+  }
+
+  /* RESPONSIVE BREAKPOINTS */
+  @media (max-width: 1024px) {
+    .hero-banner {
+      background-image: none;
+      flex-direction: column;
+      min-height: auto;
     }
 
-    .workbench-grid {
+    .hero-content {
+      max-width: 100%;
+      padding: 36px 28px 20px;
+    }
+
+    .hero-visual {
+      display: block;
+      width: 100%;
+      padding: 0 20px 24px;
+    }
+
+    .trust-bar {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .testimonials-grid,
-    .learn-grid {
+    .trust-col:nth-child(2) {
+      border-right: none;
+    }
+
+    .advisor-card {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .advisor-photo-wrap {
+      text-align: left;
+    }
+
+    .advisor-contact-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .services-grid,
+    .guides-grid {
       grid-template-columns: 1fr;
     }
 
-    .founder-photo {
-      max-width: 240px;
+    .tools-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact-card {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-meta-grid {
+      border-left: none;
+      border-top: 1px solid var(--awc-line);
+      padding-left: 0;
+      padding-top: 20px;
     }
   }
 
-  @media (max-width: 640px) {
-    .hero,
-    .layman-banner {
-      padding: 22px 18px;
-      border-radius: 24px;
+  @media (max-width: 680px) {
+    .home-page {
+      padding-top: 16px;
     }
 
-    .vc-header {
-      flex-direction: column;
-      align-items: flex-start;
+    .hero-content {
+      padding: 28px 20px 16px;
     }
 
-    .hero-trust,
-    .vc-contact-strip,
-    .vc-actions,
-    .promises-grid,
-    .workbench-grid {
+    .trust-bar,
+    .reviews-grid,
+    .tools-row,
+    .advisor-contact-row {
       grid-template-columns: 1fr;
     }
 
-    .section-head,
-    .calculators-subhead {
-      flex-direction: column;
-      align-items: flex-start;
+    .trust-col {
+      border-right: none;
+      border-bottom: 1px solid var(--awc-line);
+      padding-right: 0;
+      padding-bottom: 12px;
     }
 
-    .about-card,
-    .contact-band {
-      padding: 20px;
+    .trust-col:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .advisor-card,
+    .contact-card {
+      padding: 24px 20px;
+    }
+
+    .section-header-row {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>
