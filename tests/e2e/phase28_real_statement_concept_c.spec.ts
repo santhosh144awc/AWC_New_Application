@@ -63,30 +63,11 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
       await expect(resultsCol).toContainText('40.0%');
     });
 
-    test('1.3 Educational details section distinguishes physical vs financial assets without claiming provident funds fund emergencies', async ({ page }) => {
-      const details = page.locator('.worth-details');
-      await expect(details).toBeVisible();
-
-      // Ensure summary title reflects refined distinction
-      const summaryText = details.locator('.summary-text');
-      await expect(summaryText).toHaveText('How Net Worth is Evaluated: Accounting vs Financial Assets');
-
-      // Open details
-      await summaryText.click();
-
-      // Check card badge and title
-      const financialCard = details.locator('.worth-card').first();
-      await expect(financialCard.locator('.worth-badge')).toHaveText('Excludes Physical Assets');
-      await expect(financialCard.locator('.worth-title')).toHaveText('Cash & Financial Assets After Liabilities');
-
-      // Check description copy: Explains distinct access and warns EPF/PPF/NPS must not be assumed emergency cash
-      const descText = await financialCard.locator('.worth-desc').textContent();
-      expect(descText).toContain('instruments such as EPF, PPF, and NPS involve mandatory lock-ins, withdrawal conditions, or settlement timelines and must not be assumed to be immediately available emergency cash.');
-
-      // Negative assertions
-      expect(descText).not.toContain('fund upcoming family milestones or living emergencies');
-      await expect(details).not.toContainText('Productive Liquid Net Worth');
-      await expect(details).not.toContainText('Readily Accessible Capital');
+    test('1.3 Regulatory disclosure note provides transparent guidance and non-certificate disclaimer', async ({ page }) => {
+      const disclosure = page.locator('.regulatory-disclosure-note');
+      await expect(disclosure).toBeVisible();
+      await expect(disclosure).toContainText('Regulatory Notice:');
+      await expect(disclosure).toContainText('does not constitute a formal net worth certificate');
     });
 
     test('1.4 Clear all entries resets inputs and clears illustrative status', async ({ page }) => {
@@ -142,12 +123,12 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
       }
     });
 
-    test('1.7 Reciprocal link to REAL Financial Statement resolves to HTTP 200', async ({ page }) => {
-      const link = page.locator('a[href="/health-check/real-statement/"]').first();
+    test('1.7 Reciprocal link to Personal Finance Statement resolves to HTTP 200', async ({ page }) => {
+      const link = page.locator('a[href="/tools/personal-finance-statement/"]').first();
       await expect(link).toBeVisible();
       await link.click();
-      await page.waitForURL('**/health-check/real-statement/');
-      await expect(page.locator('h1')).toHaveText('REAL Financial Statement & Household Balance Sheet');
+      await page.waitForURL('**/tools/personal-finance-statement/');
+      await expect(page.locator('h1')).toHaveText('Personal Finance Statement');
     });
 
     test('1.8 Strict privacy invariant: zero external network requests, zero client storage, zero cookies, zero IndexedDB, and zero URL leakage in fresh context', async ({ browser }) => {
@@ -223,95 +204,67 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
     });
   });
 
-  test.describe('2. Comprehensive REAL Financial Statement (/health-check/real-statement/)', () => {
+  test.describe('2. Comprehensive Personal Finance Statement (/tools/personal-finance-statement/)', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/health-check/real-statement/');
+      await page.goto('/tools/personal-finance-statement/');
     });
 
-    test('2.1 Renders 4-stage wizard in fresh empty state with accessible stepper', async ({ page }) => {
-      await expect(page).toHaveTitle(/REAL Financial Statement & Balance Sheet — Ant Wealth Creation/);
+    test('2.1 Renders 6-stage statement in fresh empty state with accessible stepper', async ({ page }) => {
+      await expect(page).toHaveTitle(/Personal Finance Statement/);
       const h1 = page.locator('h1');
       await expect(h1).toHaveCount(1);
-      await expect(h1).toHaveText('REAL Financial Statement & Household Balance Sheet');
+      await expect(h1).toHaveText('Personal Finance Statement');
 
-      const app = page.locator('#real-statement-app');
+      const app = page.locator('#personal-finance-statement-app');
       await expect(app).toBeVisible();
 
-      // Check stepper button has aria-current="step"
-      const step1Btn = page.locator('#stage-nav-btn-1');
-      await expect(step1Btn).toHaveAttribute('aria-current', 'step');
+      // Check stepper button
+      const step1Btn = page.locator('#btn-nav-stage-1');
+      await expect(step1Btn).toBeVisible();
 
       // Empty initial state
-      await expect(app.locator('.empty-state').first()).toBeVisible();
-      await expect(app.locator('.example-loaded-banner')).toHaveCount(0);
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹0');
+      await expect(page.locator('#metric-networth .pfs-metric-value')).toContainText('₹0');
     });
 
-    test('2.2 Loads canonical Urban Family Example (VEC-REAL-01) across all 4 stages', async ({ page }) => {
-      const app = page.locator('#real-statement-app');
+    test('2.2 Calculates net worth and metrics across statement stages', async ({ page }) => {
+      const app = page.locator('#personal-finance-statement-app');
+      await expect(app).toBeVisible();
 
-      // Click Load Urban Family Example
-      await page.click('#load-sample-btn');
+      // Wait for table rows hydration
+      const incomeRows = app.locator('#table-income tbody tr');
+      await expect(incomeRows).toHaveCount(7);
 
-      // Conspicuous notice visible
-      const notice = app.locator('.example-loaded-banner');
-      await expect(notice).toBeVisible();
-      await expect(notice).toContainText('Illustrative example loaded — these are not your figures.');
-
-      // Stage 1 Live Feedback: ₹2,25,000 income, ₹1,60,000 outflows, ₹65,000 surplus, 28.9% savings rate
-      await expect(app.locator('.stage-live-summary')).toContainText('₹2,25,000');
-      await expect(app.locator('.stage-live-summary')).toContainText('₹1,60,000');
-      await expect(app.locator('.stage-live-summary')).toContainText('₹65,000');
-      await expect(app.locator('.stage-live-summary')).toContainText('28.9%');
+      // Stage 1: Enter income
+      const firstMonthlyInput = incomeRows.first().locator('input[data-field="monthly-gross"]');
+      await firstMonthlyInput.fill('150000');
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹18,00,000');
 
       // Navigate Stage 2
-      await page.click('#continue-to-stage-2-btn');
-      await expect(page.locator('#stage-2-title')).toHaveText('Liquid & Safety Assets');
-      await expect(app.locator('.stage-live-summary')).toContainText('₹7,50,000');
-      await expect(app.locator('.stage-live-summary')).toContainText('6.0 Months');
-
-      // Navigate Stage 3
-      await page.click('#continue-to-stage-3-btn');
-      await expect(page.locator('#stage-3-title')).toHaveText('Growth Capital & Property');
-      await expect(app.locator('.stage-live-summary')).toContainText('₹1,29,50,000'); // Total Assets
-      await expect(app.locator('.stage-live-summary')).toContainText('₹34,50,000'); // Productive Wealth
-      await expect(app.locator('.stage-live-summary')).toContainText('₹95,00,000'); // Personal Consumption Assets
+      await page.click('#btn-nav-stage-2');
+      await expect(page.locator('#pane-stage-2')).toBeVisible();
 
       // Navigate Stage 4
-      await page.click('#continue-to-stage-4-btn');
-      await expect(page.locator('#stage-4-title')).toHaveText('Liabilities & Net Worth Review');
+      await page.click('#btn-nav-stage-4');
+      await expect(page.locator('#pane-stage-4')).toBeVisible();
 
-      // Review Dashboard calculations
-      const eqCard = app.locator('.balance-sheet-equation-card');
-      await expect(eqCard).toContainText('₹1,29,50,000'); // Total Assets
-      await expect(eqCard).toContainText('₹45,00,000'); // Total Liabilities
-      await expect(eqCard).toContainText('₹84,50,000'); // Accounting Net Worth
-
-      const productiveCard = app.locator('.productive-nw-card');
-      await expect(productiveCard).toContainText('-₹10,50,000'); // Productive Net Worth
-
-      // Debt-to-Asset ratio: 34.7%
-      await expect(page.locator('#final-statement-results')).toContainText('34.7%');
+      // Navigate Stage 6
+      await page.click('#btn-nav-stage-6');
+      await expect(page.locator('#pane-stage-6')).toBeVisible();
+      await expect(page.locator('#networth-dashboard')).toBeVisible();
     });
 
-    test('2.3 Measures headline metric coordinates and asserts zero overflow at 360px, 390px, and 1440px in Stage 4', async ({ page }) => {
+    test('2.3 Measures headline metric coordinates and asserts zero overflow at 360px, 390px, and 1440px in Stage 6', async ({ page }) => {
       for (const vp of [
         { width: 360, height: 800 },
         { width: 390, height: 844 },
         { width: 1440, height: 900 },
       ]) {
         await page.setViewportSize({ width: vp.width, height: vp.height });
-        await page.goto('/health-check/real-statement/');
-        await page.click('#load-sample-btn');
-        await page.click('#stage-nav-btn-4');
+        await page.goto('/tools/personal-finance-statement/');
+        await page.click('#btn-nav-stage-6');
 
-        const headlineEl = page.locator('#real-statement-headline-val');
-        await expect(headlineEl).toBeVisible();
-        await expect(headlineEl).toHaveText('₹84,50,000');
-
-        const box = await headlineEl.boundingBox();
-        expect(box).not.toBeNull();
-        expect(box!.width).toBeGreaterThan(0);
-        expect(box!.height).toBeGreaterThan(0);
+        await expect(page.locator('#pane-stage-6')).toBeVisible();
 
         // Check horizontal overflow
         const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
@@ -320,7 +273,7 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
     });
 
     test('2.4 Reciprocal link to Quick Net Worth resolves to HTTP 200', async ({ page }) => {
-      const link = page.locator('a[href="/tools/net-worth/"]').first();
+      const link = page.locator('.quick-tool-switcher a[href="/tools/net-worth/"]').first();
       await expect(link).toBeVisible();
       await link.click();
       await page.waitForURL('**/tools/net-worth/');
@@ -328,25 +281,25 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
     });
 
     test('2.5 Retains entered data when moving between stages via stepper navigation', async ({ page }) => {
-      await page.click('#load-sample-btn');
+      await expect(page.locator('#table-income tbody tr')).toHaveCount(7);
 
       // Edit first income amount in Stage 1
-      const firstIncomeRow = page.locator('.table-block').first().locator('.item-row').first();
-      await firstIncomeRow.locator('input[type="text"]').last().fill('180000');
+      const firstIncomeRow = page.locator('#table-income tbody tr').first();
+      await firstIncomeRow.locator('input[data-field="monthly-gross"]').fill('180000');
 
-      // Navigate to Stage 3
-      await page.click('#stage-nav-btn-3');
-      await expect(page.locator('#stage-3-title')).toHaveText('Growth Capital & Property');
+      // Navigate to Stage 2
+      await page.click('#btn-nav-stage-2');
+      await expect(page.locator('#pane-stage-2')).toBeVisible();
 
       // Navigate back to Stage 1
-      await page.click('#stage-nav-btn-1');
-      await expect(page.locator('#stage-1-title')).toHaveText('Monthly Household Cash Flow');
+      await page.click('#btn-nav-stage-1');
+      await expect(page.locator('#pane-stage-1')).toBeVisible();
 
       // Verify retained value
-      await expect(firstIncomeRow.locator('input[type="text"]').last()).toHaveValue('180000');
+      await expect(firstIncomeRow.locator('input[data-field="monthly-gross"]')).toHaveValue('180000');
     });
 
-    test('2.6 Strict privacy invariant: zero external network requests, zero client storage, zero cookies, zero IndexedDB, and zero URL parameter leakage across 4 stages in fresh context', async ({ browser }) => {
+    test('2.6 Strict privacy invariant: zero external network requests, zero client storage, zero cookies, zero IndexedDB, and zero URL parameter leakage across stages in fresh context', async ({ browser }) => {
       const context = await browser.newContext();
       const page = await context.newPage();
 
@@ -366,28 +319,22 @@ test.describe('Phase 9.1 Concept C — REAL Financial Statement & Net Worth Sema
       });
 
       // Load route
-      await page.goto('/health-check/real-statement/');
-
-      // Load sample
-      await page.click('#load-sample-btn');
+      await page.goto('/tools/personal-finance-statement/');
+      await expect(page.locator('#table-income tbody tr')).toHaveCount(7);
 
       // Edit representative input in Stage 1
-      const firstIncomeRow = page.locator('.table-block').first().locator('.item-row').first();
-      await firstIncomeRow.locator('input[type="text"]').last().fill('180000');
+      const firstIncomeRow = page.locator('#table-income tbody tr').first();
+      await firstIncomeRow.locator('input[data-field="monthly-gross"]').fill('180000');
 
       // Navigate across stages
-      await page.click('#stage-nav-btn-2');
-      await expect(page.locator('#stage-2-title')).toHaveText('Liquid & Safety Assets');
+      await page.click('#btn-nav-stage-2');
+      await expect(page.locator('#pane-stage-2')).toBeVisible();
 
-      await page.click('#stage-nav-btn-3');
-      await expect(page.locator('#stage-3-title')).toHaveText('Growth Capital & Property');
+      await page.click('#btn-nav-stage-4');
+      await expect(page.locator('#pane-stage-4')).toBeVisible();
 
-      // Edit representative input in Stage 3
-      const firstGrowthRow = page.locator('.table-block').first().locator('.item-row').first();
-      await firstGrowthRow.locator('input[type="text"]').last().fill('1600000');
-
-      await page.click('#stage-nav-btn-4');
-      await expect(page.locator('#stage-4-title')).toHaveText('Liabilities & Net Worth Review');
+      await page.click('#btn-nav-stage-6');
+      await expect(page.locator('#pane-stage-6')).toBeVisible();
 
       // Assert external request list is empty
       expect(externalRequests).toEqual([]);

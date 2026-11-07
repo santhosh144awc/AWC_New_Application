@@ -4,7 +4,7 @@ import * as path from 'path';
 
 test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky Stage Navigation and Clean Workspace', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
   });
 
   test('1. Layout & Ordering: Client Info -> Stepper Nav -> Financial Summary -> Active Stage Pane', async ({ page }) => {
@@ -47,14 +47,15 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     const dateInput = page.locator('input[type="date"]');
     await expect(dateInput).toHaveCount(0);
 
-    // Prepared By must appear as non-editable text "Prepared by: C. Santhosh Sathriyan"
-    const preparerInfo = page.locator('#pfs-preparer-info');
-    await expect(preparerInfo).toBeVisible();
-    await expect(preparerInfo).toContainText('Prepared by: C. Santhosh Sathriyan');
-
-    // Confirm it is not an editable input
+    // Prepared By is non-editable and appears on preview
     const preparerInput = page.locator('input[name*="preparer"], input[id*="preparedBy"]');
     await expect(preparerInput).toHaveCount(0);
+
+    await page.click('#btn-nav-stage-6');
+    await page.click('#btn-preview-statement');
+    const previewModal = page.locator('.pfs-preview-modal-box');
+    await expect(previewModal).toContainText('Prepared by C. Santhosh Sathriyan');
+    await page.click('#btn-close-preview');
   });
 
   test('3. Reset Statement restores clean initial state, local date internally, and resets to Stage 1', async ({ page }) => {
@@ -96,8 +97,8 @@ test.describe('Phase 48 — Personal Finance Statement: Metadata Order, Sticky S
     await expect(page.locator('#metric-liabilities .pfs-metric-value')).toContainText('₹0');
     await expect(page.locator('#metric-networth .pfs-metric-value')).toContainText('₹0');
 
-    // Preparer remains fixed
-    await expect(page.locator('#pfs-preparer-info')).toContainText('Prepared by: C. Santhosh Sathriyan');
+    // Verify stage 1 is active
+    await expect(page.locator('#pane-stage-1')).toBeVisible();
   });
 
   test('4. Stepper Navigation: Operates in normal document flow (non-sticky), scrolls away with document, active indicator updates, stage titles remain visible', async ({ page }) => {

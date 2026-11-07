@@ -10,7 +10,6 @@ test.describe('Phase 50 — Fix Stage Navigation Scrolling and Asset Purpose Fie
     for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 800 }]) {
       await page.setViewportSize(viewport);
 
-      const header = page.locator('.site-header');
       const stepperNav = page.locator('.pfs-nav-stepper');
 
       // 1. Position style is static (not sticky, not fixed)

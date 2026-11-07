@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,7 +24,10 @@ test.describe('Phase 9.1 Visual Evidence & Screenshot Capture', () => {
     });
 
     // 2. Desktop 1440px with Educational Details Expanded
-    await page.click('.worth-details-summary');
+    const summaryEl = page.locator('.worth-details-summary');
+    if (await summaryEl.count() > 0) {
+      await summaryEl.click();
+    }
     await page.screenshot({
       path: path.join(evidenceDir, 'net-worth-desktop-1440-details-expanded.png'),
       fullPage: true,
@@ -52,17 +56,26 @@ test.describe('Phase 9.1 Visual Evidence & Screenshot Capture', () => {
   });
 
   test('Capture REAL Financial Statement screenshots (Desktop 1440px, Mobile 390px, Mobile 360px)', async ({ page }) => {
+    // Ensure output directories exist
+    if (!fs.existsSync(evidenceDir)) {
+      fs.mkdirSync(evidenceDir, { recursive: true });
+    }
+    if (!fs.existsSync(standardScreenshotsDir)) {
+      fs.mkdirSync(standardScreenshotsDir, { recursive: true });
+    }
+
     // 1. Desktop 1440px Stage 1
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/health-check/real-statement/');
-    await page.click('#load-sample-btn');
+    await page.goto('/tools/personal-finance-statement/');
+    await page.waitForTimeout(300);
     await page.screenshot({
       path: path.join(evidenceDir, 'real-statement-desktop-1440-stage1.png'),
       fullPage: true,
     });
 
-    // 2. Desktop 1440px Stage 4
-    await page.click('#stage-nav-btn-4');
+    // 2. Desktop 1440px Stage 6
+    await page.click('#btn-nav-stage-6');
+    await page.waitForTimeout(300);
     await page.screenshot({
       path: path.join(evidenceDir, 'real-statement-desktop-1440-stage4.png'),
       fullPage: true,
@@ -71,11 +84,12 @@ test.describe('Phase 9.1 Visual Evidence & Screenshot Capture', () => {
       path: path.join(standardScreenshotsDir, 'desktop-real-statement.png'),
     });
 
-    // 3. Mobile 390px Stage 4
+    // 3. Mobile 390px Stage 6
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/health-check/real-statement/');
-    await page.click('#load-sample-btn');
-    await page.click('#stage-nav-btn-4');
+    await page.goto('/tools/personal-finance-statement/');
+    await page.waitForTimeout(300);
+    await page.click('#btn-nav-stage-6');
+    await page.waitForTimeout(300);
     await page.screenshot({
       path: path.join(evidenceDir, 'real-statement-mobile-390-stage4.png'),
       fullPage: true,
@@ -84,11 +98,12 @@ test.describe('Phase 9.1 Visual Evidence & Screenshot Capture', () => {
       path: path.join(standardScreenshotsDir, 'mobile-real-statement.png'),
     });
 
-    // 4. Mobile 360px Stage 4
+    // 4. Mobile 360px Stage 6
     await page.setViewportSize({ width: 360, height: 800 });
-    await page.goto('/health-check/real-statement/');
-    await page.click('#load-sample-btn');
-    await page.click('#stage-nav-btn-4');
+    await page.goto('/tools/personal-finance-statement/');
+    await page.waitForTimeout(300);
+    await page.click('#btn-nav-stage-6');
+    await page.waitForTimeout(300);
     await page.screenshot({
       path: path.join(evidenceDir, 'real-statement-mobile-360-stage4.png'),
       fullPage: true,

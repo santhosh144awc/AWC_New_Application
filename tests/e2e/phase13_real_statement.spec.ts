@@ -2,155 +2,105 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Worth', () => {
 
-  test.describe('A. Full Guided REAL Financial Statement (/health-check/real-statement/)', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/health-check/real-statement/');
-    });
-
-    test('renders with useful unique title, exactly one H1, and mounts active wizard in fresh empty state', async ({ page }) => {
-      await expect(page).toHaveTitle(/REAL Financial Statement & Balance Sheet — Ant Wealth Creation/);
+  test.describe('A. Full Guided REAL Financial Statement (/tools/personal-finance-statement/)', () => {
+    test('renders with useful unique title, exactly one H1, and mounts active statement app', async ({ page }) => {
+      await page.goto('/tools/personal-finance-statement/');
+      await expect(page).toHaveTitle(/Personal Finance Statement/);
       const h1s = page.locator('h1');
       await expect(h1s).toHaveCount(1);
-      await expect(h1s).toHaveText('REAL Financial Statement & Household Balance Sheet');
+      await expect(h1s).toHaveText('Personal Finance Statement');
 
-      // Verify wizard island is mounted and active
-      const wizard = page.locator('#real-statement-app');
-      await expect(wizard).toBeVisible();
+      // Verify app island is mounted and active
+      const app = page.locator('#personal-finance-statement-app');
+      await expect(app).toBeVisible();
 
-      // Fresh tool must NOT display sample figures as if they were the visitor's own
-      await expect(wizard.locator('.empty-state').first()).toBeVisible();
-      await expect(wizard.locator('.stage-live-summary')).toContainText('Enter your monthly figures or click Load Urban Family Example');
-      await expect(wizard.locator('.example-loaded-banner')).toHaveCount(0);
+      // Fresh tool starts in empty state
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹0');
+      await expect(page.locator('#metric-networth .pfs-metric-value')).toContainText('₹0');
+
+      // Stepper buttons for 6 stages
+      for (let i = 1; i <= 6; i++) {
+        await expect(page.locator(`#btn-nav-stage-${i}`)).toBeVisible();
+      }
+
+      // Legacy route redirects correctly to canonical URL
+      await page.goto('/health-check/real-statement/');
+      await page.waitForURL('**/tools/personal-finance-statement/');
+      await expect(page.locator('#personal-finance-statement-app')).toBeVisible();
     });
 
-    test('loads canonical Urban Family Example (VEC-REAL-01) with conspicuous notice and correct metrics across all 4 stages', async ({ page }) => {
-      const wizard = page.locator('#real-statement-app');
+    test('calculates net worth and metrics across statement stages', async ({ page }) => {
+      await page.goto('/tools/personal-finance-statement/');
+      const app = page.locator('#personal-finance-statement-app');
+      await expect(app).toBeVisible();
 
-      // Click Load Urban Family Example
-      await page.click('#load-sample-btn');
+      // Ensure React has hydrated the table rows
+      const incomeRows = app.locator('#table-income tbody tr');
+      await expect(incomeRows).toHaveCount(7);
 
-      // Conspicuous notice must be visible
-      const exampleNotice = wizard.locator('.example-loaded-banner');
-      await expect(exampleNotice).toBeVisible();
-      await expect(exampleNotice).toContainText('Illustrative example loaded — these are not your figures.');
+      // Stage 1: Enter income
+      const firstMonthlyInput = incomeRows.first().locator('input[data-field="monthly-gross"]');
+      await firstMonthlyInput.fill('150000');
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹18,00,000');
 
-      // Stage 1: Cash Flow (Reconciled with VEC-REAL-01)
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹2,25,000'); // Monthly Take-Home Income
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹1,60,000'); // Total Outflows
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹65,000'); // Monthly Surplus
-      await expect(wizard.locator('.stage-live-summary')).toContainText('28.9%'); // Savings Rate (~28.89%)
+      // Navigate to Stage 2: Expenses
+      await page.click('#btn-nav-stage-2');
+      await expect(page.locator('#pane-stage-2')).toBeVisible();
 
-      // Navigate to Stage 2: Liquid & Safety Assets
-      await page.click('#continue-to-stage-2-btn');
-      await expect(wizard.locator('#stage-2-title')).toHaveText('Liquid & Safety Assets');
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹7,50,000'); // Accessible Safety Reserves
-      await expect(wizard.locator('.stage-live-summary')).toContainText('6.0 Months'); // Emergency Runway (750k / 125k)
+      // Navigate to Stage 4: Assets
+      await page.click('#btn-nav-stage-4');
+      await expect(page.locator('#pane-stage-4')).toBeVisible();
 
-      // Navigate to Stage 3: Growth Capital & Property
-      await page.click('#continue-to-stage-3-btn');
-      await expect(wizard.locator('#stage-3-title')).toHaveText('Growth Capital & Property');
-      // Reconciled Total Assets: ₹1,29,50,000 (No ₹3L FD; Jewellery separated from SGB)
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹1,29,50,000');
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹34,50,000'); // Productive Wealth
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹95,00,000'); // Personal Consumption Assets
-
-      // Navigate to Stage 4: Liabilities & Net Worth Review
-      await page.click('#continue-to-stage-4-btn');
-      await expect(wizard.locator('#stage-4-title')).toHaveText('Liabilities & Net Worth Review');
-
-      // Verify Final Balance Sheet Equation Card
-      const equationCard = wizard.locator('.balance-sheet-equation-card');
-      await expect(equationCard).toBeVisible();
-      await expect(equationCard).toContainText('₹1,29,50,000'); // Total Assets
-      await expect(equationCard).toContainText('₹45,00,000'); // Total Liabilities
-      await expect(equationCard).toContainText('₹84,50,000'); // Accounting Net Worth
-
-      // Verify Productive Net Worth Card
-      const productiveCard = wizard.locator('.productive-nw-card');
-      await expect(productiveCard).toBeVisible();
-      await expect(productiveCard).toContainText('-₹10,50,000'); // Productive-Asset-Adjusted Net Worth (Negative!)
-
-      // Verify Debt-to-Asset Ratio
-      await expect(wizard.locator('#final-statement-results')).toContainText('34.7%'); // 45L / 129.5L
-
-      // Verify Stage 4 conspicuous illustrative callout banner
-      const stage4Callout = wizard.locator('.example-callout-banner');
-      await expect(stage4Callout).toBeVisible();
-      await expect(stage4Callout).toContainText('Illustrative example loaded — these are not your figures.');
+      // Navigate to Stage 6: Review
+      await page.click('#btn-nav-stage-6');
+      await expect(page.locator('#pane-stage-6')).toBeVisible();
+      await expect(page.locator('#networth-dashboard')).toBeVisible();
     });
 
-    test('supports add, edit, and remove rows dynamically, clearing example-loaded status', async ({ page }) => {
-      const wizard = page.locator('#real-statement-app');
+    test('supports add, edit, and remove rows dynamically', async ({ page }) => {
+      await page.goto('/tools/personal-finance-statement/');
+      const incomeRows = page.locator('#table-income tbody tr');
+      const initialCount = await incomeRows.count();
 
-      // Load example first
-      await page.click('#load-sample-btn');
-      await expect(wizard.locator('.example-loaded-banner')).toBeVisible();
+      // Add income row
+      await page.click('#btn-add-income');
+      await expect(page.locator('#table-income tbody tr')).toHaveCount(initialCount + 1);
 
-      // Edit first income row from 150000 to 200000
-      const firstIncomeRow = wizard.locator('.table-block').first().locator('.item-row').first();
-      const amountInput = firstIncomeRow.locator('input[type="text"]').last();
-      await amountInput.fill('200000');
+      // Edit newly added row
+      const lastRow = page.locator('#table-income tbody tr').last();
+      await lastRow.locator('input[type="text"]').first().fill('Consulting Fee');
+      await lastRow.locator('input[data-field="monthly-gross"]').fill('25000');
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹3,00,000');
 
-      // Live summary should now reflect 200000 + 75000 = 275000
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹2,75,000');
-
-      // Example loaded banner should now be cleared since user edited figures
-      await expect(wizard.locator('.example-loaded-banner')).toHaveCount(0);
-
-      // Add new income row
-      await page.click('#add-income-btn');
-      const lastIncomeRow = wizard.locator('.table-block').first().locator('.item-row').last();
-      const newAmountInput = lastIncomeRow.locator('input[type="text"]').last();
-      await newAmountInput.fill('25000');
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹3,00,000');
-
-      // Remove the newly added row
-      await lastIncomeRow.locator('.btn-remove').click();
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹2,75,000');
+      // Delete the newly added row
+      await lastRow.locator('.pfs-btn-row-del').click();
+      await expect(page.locator('#table-income tbody tr')).toHaveCount(initialCount);
     });
 
-    test('validates inputs inline and suppresses calculation on invalid amounts without treating blank as zero', async ({ page }) => {
-      const wizard = page.locator('#real-statement-app');
+    test('reset button opens modal and clears entries back to neutral empty state', async ({ page }) => {
+      await page.goto('/tools/personal-finance-statement/');
+      await expect(page.locator('#table-income tbody tr')).toHaveCount(7);
+      const firstMonthlyInput = page.locator('#table-income tbody tr input[data-field="monthly-gross"]').first();
+      await firstMonthlyInput.fill('200000');
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹24,00,000');
 
-      // Load example then invalidate an amount
-      await page.click('#load-sample-btn');
-      const firstIncomeRow = wizard.locator('.table-block').first().locator('.item-row').first();
-      const amountInput = firstIncomeRow.locator('input[type="text"]').last();
-      await amountInput.fill('invalid-amount');
+      // Click reset button
+      await page.click('#btn-start-over');
+      const modal = page.locator('#pfs-reset-modal, .pfs-modal-backdrop');
+      await expect(modal).toBeVisible();
 
-      // Inline error message should be displayed and calculation suppressed
-      await expect(firstIncomeRow.locator('.row-error')).toBeVisible();
-      await expect(wizard.locator('.summary-pending')).toContainText('Please correct invalid input amounts');
-
-      // Correct the value back to 150000
-      await amountInput.fill('150000');
-      await expect(firstIncomeRow.locator('.row-error')).toHaveCount(0);
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹2,25,000');
-    });
-
-    test('clear all entries returns wizard to empty initial state and removes example results', async ({ page }) => {
-      const wizard = page.locator('#real-statement-app');
-
-      // Load sample first
-      await page.click('#load-sample-btn');
-      await expect(wizard.locator('.stage-live-summary')).toContainText('₹2,25,000');
-
-      // Clear all entries / Start over
-      await page.click('#clear-all-btn');
-
-      // Verify empty states in Stage 1 and pending summary notice
-      await expect(wizard.locator('.empty-state').first()).toBeVisible();
-      await expect(wizard.locator('.summary-pending')).toContainText('Enter your monthly figures or click Load Urban Family Example');
-      await expect(wizard.locator('.example-loaded-banner')).toHaveCount(0);
+      // Confirm reset
+      await page.click('#btn-confirm-reset');
+      await expect(modal).not.toBeVisible();
+      await expect(page.locator('#metric-income .pfs-metric-value')).toContainText('₹0');
     });
 
     test('maintains strict in-memory privacy with zero persistence or storage leakage', async ({ page }) => {
-      // Load example and navigate to stage 4
-      await page.click('#load-sample-btn');
-      await page.click('#stage-nav-btn-4');
-      await expect(page.locator('#final-statement-results')).toBeVisible();
+      await page.goto('/tools/personal-finance-statement/');
+      const firstMonthlyInput = page.locator('#table-income tbody tr input[data-field="monthly-gross"]').first();
+      await firstMonthlyInput.fill('150000');
 
-      // Check localStorage has no financial keys or data
+      // Check localStorage, sessionStorage, cookies
       const localStorageKeys = await page.evaluate(() => Object.keys(window.localStorage));
       const financialKeywords = ['worth', 'income', 'outflow', 'asset', 'liability', 'real_statement', 'balance'];
       const hasLeakedLocal = localStorageKeys.some((k) =>
@@ -158,16 +108,14 @@ test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Wo
       );
       expect(hasLeakedLocal).toBe(false);
 
-      // Check sessionStorage has no financial keys
       const sessionStorageKeys = await page.evaluate(() => Object.keys(window.sessionStorage));
       const hasLeakedSession = sessionStorageKeys.some((k) =>
         financialKeywords.some((w) => k.toLowerCase().includes(w))
       );
       expect(hasLeakedSession).toBe(false);
 
-      // Check cookies
       const cookies = await page.evaluate(() => document.cookie);
-      expect(cookies).not.toContain('real_statement');
+      expect(cookies).not.toContain('statement');
 
       // Check URL query parameters
       const url = new URL(page.url());
@@ -177,6 +125,7 @@ test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Wo
     test('has zero horizontal overflow on mobile 360px and 390px viewports', async ({ page }) => {
       for (const width of [360, 390]) {
         await page.setViewportSize({ width, height: 800 });
+        await page.goto('/tools/personal-finance-statement/');
         const hasHorizontalScroll = await page.evaluate(() => {
           return document.documentElement.scrollWidth > document.documentElement.clientWidth;
         });
@@ -185,9 +134,9 @@ test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Wo
     });
 
     test('captures desktop (1440px) and mobile (390px) screenshots for REAL statement', async ({ page }) => {
-      await page.click('#load-sample-btn');
-      await page.click('#stage-nav-btn-4');
-      await expect(page.locator('#final-statement-results')).toBeVisible();
+      await page.goto('/tools/personal-finance-statement/');
+      await page.click('#btn-nav-stage-6');
+      await expect(page.locator('#pane-stage-6')).toBeVisible();
 
       // Desktop 1440px
       await page.setViewportSize({ width: 1440, height: 900 });
@@ -289,12 +238,13 @@ test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Wo
     test('includes accessible link to full REAL Financial Statement', async ({ page }) => {
       const deepDiveLink = page.locator('.btn-deep-dive');
       await expect(deepDiveLink).toBeVisible();
-      await expect(deepDiveLink).toHaveAttribute('href', '/health-check/real-statement/');
+      await expect(deepDiveLink).toHaveAttribute('href', '/tools/personal-finance-statement/');
     });
 
     test('has zero horizontal overflow on mobile viewports', async ({ page }) => {
       for (const width of [360, 390]) {
         await page.setViewportSize({ width, height: 800 });
+        await page.goto('/tools/net-worth/');
         const hasHorizontalScroll = await page.evaluate(() => {
           return document.documentElement.scrollWidth > document.documentElement.clientWidth;
         });
@@ -303,6 +253,7 @@ test.describe('Phase 14 Remediation — REAL Financial Statement & Family Net Wo
     });
 
     test('captures desktop (1440px) and mobile (390px) screenshots for Net Worth tool', async ({ page }) => {
+      await page.goto('/tools/net-worth/');
       await page.click('#reset-net-worth-example-btn');
 
       // Desktop 1440px

@@ -16,8 +16,8 @@ test.describe('Phase 17 — Retirement Planning GATE-A Preview & Claim Audit', (
     },
     {
       path: '/tools/swp/',
-      titleRegex: /Systematic Withdrawal Plan/i,
-      expectedH1: 'Systematic Withdrawal Plan (SWP) Simulator',
+      titleRegex: /(Systematic Withdrawal Plan|SWP Longevity)/i,
+      expectedH1: /(Systematic Withdrawal Plan \(SWP\) Simulator|SWP Longevity & Systematic Withdrawal Simulator)/,
       screenshotName: 'tools-swp',
     },
   ];

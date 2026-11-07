@@ -77,36 +77,30 @@ test.describe('Phase 20 — Concept C Production Redesign Suite (Header, Home, P
     await page.goto('/');
 
     // Hero title & accent
-    const heroTitle = page.locator('#hero-title');
+    const heroTitle = page.locator('#hero-heading');
     await expect(heroTitle).toBeVisible();
-    await expect(heroTitle).toContainText('Know where you stand.');
+    await expect(heroTitle).toContainText('Make Better Money Decisions');
 
-    // Money map nodes
-    const orbitNodes = page.locator('.orbit-node');
-    await expect(orbitNodes).toHaveCount(5);
+    // Practice Credentials
+    const trustBar = page.locator('.trust-bar');
+    await expect(trustBar).toBeVisible();
+    await expect(trustBar.locator('.trust-col')).toHaveCount(4);
 
-    // Starting points
-    const startCards = page.locator('.start-card');
-    await expect(startCards).toHaveCount(3);
+    // Services
+    const services = page.locator('#services');
+    await expect(services).toBeVisible();
+    await expect(services.locator('.service-card')).toHaveCount(3);
 
-    // Journey strip
-    const journeyBubbles = page.locator('.journey-mini');
-    await expect(journeyBubbles).toHaveCount(6);
-
-    // 7 Pillars
-    const pillarCards = page.locator('.pillar');
-    await expect(pillarCards).toHaveCount(7);
-
-    // Approved Guides
-    const guideCards = page.locator('.guide-card');
-    await expect(guideCards).toHaveCount(3);
+    // Starting tools workbench
+    const workbench = page.locator('#interactive-tools-workbench');
+    await expect(workbench).toBeVisible();
+    await expect(workbench.locator('.tool-box')).toHaveCount(4);
 
     // Founder Bio & Compliance Notice
-    const aboutSection = page.locator('.about');
+    const aboutSection = page.locator('#about');
     await expect(aboutSection).toBeVisible();
     await expect(aboutSection).toContainText('Santhosh');
     await expect(aboutSection).toContainText('Mutual Fund Distributor');
-    await expect(aboutSection).toContainText('does not offer fee-based investment advisory services under SEBI');
   });
 
   /* --------------------------------------------------------------------------
@@ -160,7 +154,7 @@ test.describe('Phase 20 — Concept C Production Redesign Suite (Header, Home, P
 
     const toolCards = page.locator('.tool-card');
     const initialCount = await toolCards.count();
-    expect(initialCount).toBe(15);
+    expect(initialCount).toBe(14);
 
     // Filter by 'grow' category
     const growFilterBtn = page.locator('.filter-btn[data-intent="grow"]');

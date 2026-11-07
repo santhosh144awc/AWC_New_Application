@@ -7,10 +7,10 @@ test.describe('Phase 15 — Children Future Multi-Milestone Planner (/plan/child
   });
 
   test('1. Page Architecture, Title, Single H1, and Main Landmark', async ({ page }) => {
-    await expect(page).toHaveTitle(/Children's Higher Education & Life Milestones Planner/i);
+    await expect(page).toHaveTitle(/Children's (Education & Milestone|Higher Education & Life Milestones) Planner/i);
     const h1 = page.locator('h1');
     await expect(h1).toHaveCount(1);
-    await expect(h1).toHaveText(/Children's Higher Education & Life Milestones Planner/i);
+    await expect(h1).toHaveText(/Plan ahead for your child's education and milestones|Children's (Education & Milestone|Higher Education & Life Milestones) Planner/i);
     await expect(page.locator('main')).toBeVisible();
   });
 

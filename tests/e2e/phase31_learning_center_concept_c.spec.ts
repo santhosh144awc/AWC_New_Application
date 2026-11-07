@@ -22,7 +22,7 @@ test.describe('Phase 31 / Concept C Phase 12 — Financial Learning Center (/lea
     // Editorial review notice is present with neutral phrasing
     const notice = page.locator('.review-notice');
     await expect(notice).toBeVisible();
-    await expect(notice).toContainText('withheld under qualified professional review');
+    await expect(notice).toContainText('Editorial Standards & Ongoing Review');
   });
 
   test('2. Initial state: All topics is selected, 10 cards visible, and live count reads 10 guides available', async ({ page }) => {
@@ -331,21 +331,20 @@ test.describe('Phase 31 / Concept C Phase 12 — Financial Learning Center (/lea
     expect(pageBg).not.toBe('transparent');
     expect(pageBg).toBe('rgb(246, 248, 245)');
 
-    // 2. .learn-hero has an applied background gradient, not 'none'
-    const heroBgImg = await page.locator('.learn-hero').evaluate((el) => {
-      return window.getComputedStyle(el).backgroundImage;
+    // 2. .learn-hero has a non-transparent background (editorial white card)
+    const heroBg = await page.locator('.learn-hero').evaluate((el) => {
+      return window.getComputedStyle(el).backgroundColor;
     });
-    expect(heroBgImg).not.toBe('none');
-    expect(heroBgImg).toContain('gradient');
+    expect(heroBg).toBe('rgb(255, 255, 255)');
 
     // 3. Primary action has real visible background and readable foreground
-    // .btn-primary-hero uses --color-highlight (#F2C65D = rgb(242, 198, 93)) with navy text (#173047 = rgb(23, 48, 71))
+    // .btn-primary-hero uses --awc-jade (#137A71 = rgb(19, 122, 113)) with white text
     const heroBtnStyles = await page.locator('.btn-primary-hero').evaluate((el) => {
       const cs = window.getComputedStyle(el);
       return { bg: cs.backgroundColor, color: cs.color };
     });
-    expect(heroBtnStyles.bg).toBe('rgb(242, 198, 93)');
-    expect(heroBtnStyles.color).toBe('rgb(23, 48, 71)');
+    expect(heroBtnStyles.bg).toBe('rgb(19, 122, 113)');
+    expect(heroBtnStyles.color).toBe('rgb(255, 255, 255)');
 
     // .btn-read-featured uses --color-action (#137A71 = rgb(19, 122, 113)) with white text
     const readBtnStyles = await page.locator('.btn-read-featured').first().evaluate((el) => {

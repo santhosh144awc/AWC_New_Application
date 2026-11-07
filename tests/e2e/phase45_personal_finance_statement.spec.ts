@@ -3,12 +3,12 @@ import * as fs from 'fs';
 
 test.describe('Phase 45 — Personal Finance Statement UX & Functional Defects Verification', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
   });
 
   test('1. Initial state: Blank client names, zero fictional data, complete predefined rows in all stages', async ({ page }) => {
     // 1. Title & layout
-    await expect(page).toHaveTitle(/Personal Finance Statement & Household Balance Sheet — Ant Wealth Creation/);
+    await expect(page).toHaveTitle(/Personal Finance Statement/);
     const app = page.locator('#personal-finance-statement-app');
     await expect(app).toBeVisible();
 

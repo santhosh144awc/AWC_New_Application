@@ -23,7 +23,6 @@ import {
   type PersonalFinanceStatementResult,
   type ExpenseFrequency,
   type ExpenseEntryMode,
-  type HouseholdExpenseMode,
   type AssetClass,
   type LiabilityType,
   type IncomeLineItem,

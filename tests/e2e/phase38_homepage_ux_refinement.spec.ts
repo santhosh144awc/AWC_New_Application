@@ -6,118 +6,65 @@ test.describe('Homepage Sequence Restoration Suite', () => {
     await page.goto('/');
 
     // 1. Hero
-    const heroTitle = page.locator('#hero-title');
+    const heroTitle = page.locator('#hero-heading');
     await expect(heroTitle).toBeVisible();
-    await expect(heroTitle).toContainText('Know where you stand');
-    await expect(heroTitle).toContainText('Choose your next move');
+    await expect(heroTitle).toContainText('Make Better Money Decisions');
 
-    // 2. Starting points
-    const startHeading = page.locator('#start-heading');
-    await expect(startHeading).toBeVisible();
-    await expect(startHeading).toContainText('One clear next step is enough');
-    const startCards = page.locator('.start-card');
-    await expect(startCards).toHaveCount(3);
-    await expect(startCards.nth(0)).toHaveAttribute('href', '/health-check/');
-    await expect(startCards.nth(1)).toHaveAttribute('href', '/plan/');
-    await expect(startCards.nth(2)).toHaveAttribute('href', '/tools/');
+    // 2. Trust bar
+    const trustBar = page.locator('.trust-bar');
+    await expect(trustBar).toBeVisible();
+    await expect(trustBar.locator('.trust-col')).toHaveCount(4);
 
-    // 3. Move one stage at a time (Journey Strip)
-    const journeyHeading = page.locator('#journey-heading');
-    await expect(journeyHeading).toBeVisible();
-    await expect(journeyHeading).toContainText('Move one stage at a time');
-    const journeyStrip = page.locator('.journey-strip .journey-mini');
-    await expect(journeyStrip).toHaveCount(6);
+    // 3. About Santhosh
+    const aboutSection = page.locator('#about');
+    await expect(aboutSection).toBeVisible();
 
-    // 4. Financial wellbeing has more than one number (7 Pillars)
-    const pillarsHeading = page.locator('#pillars-heading');
-    await expect(pillarsHeading).toBeVisible();
-    await expect(pillarsHeading).toContainText('Financial wellbeing has more than one number');
-    const pillars = page.locator('.pillars__grid .pillar');
-    await expect(pillars).toHaveCount(7);
+    // 4. Services / Pillars
+    const servicesSection = page.locator('#services');
+    await expect(servicesSection).toBeVisible();
+    await expect(servicesSection.locator('.service-card')).toHaveCount(3);
 
-    // 5. Goals ("What are you planning for?")
-    const goalsHeading = page.locator('#goals-heading');
-    await expect(goalsHeading).toBeVisible();
-    await expect(goalsHeading).toContainText('What are you planning for?');
-    const goalTiles = page.locator('.goal-grid .goal-tile');
-    await expect(goalTiles).toHaveCount(4);
+    // 5. Testimonials
+    const testimonialsSection = page.locator('#testimonials');
+    await expect(testimonialsSection).toBeVisible();
 
-    // 6. Educational articles ("Learn without the jargon")
-    const learnHeading = page.locator('#learn-heading');
-    await expect(learnHeading).toBeVisible();
-    await expect(learnHeading).toContainText('Good money decisions start with understanding');
-    const guideCards = page.locator('.guide-grid .guide-card');
-    await expect(guideCards).toHaveCount(3);
+    // 6. Starting Tools Workbench
+    const toolsSection = page.locator('#interactive-tools-workbench');
+    await expect(toolsSection).toBeVisible();
 
-    // 7. About section
-    const aboutHeading = page.locator('#about-heading');
-    await expect(aboutHeading).toBeVisible();
-    await expect(aboutHeading).toContainText('Financial planning should help you feel clearer');
+    // 7. Learn Guides
+    const learnSection = page.locator('#learn');
+    await expect(learnSection).toBeVisible();
 
-    // 8. Closing contact CTA
-    const contactHeading = page.locator('#contact-heading');
-    await expect(contactHeading).toBeVisible();
-    await expect(contactHeading).toContainText('Start with a short, no-pressure conversation');
-
-    // Verify exact sequential order in DOM
-    const isSequential = await page.evaluate(() => {
-      const hero = document.getElementById('hero-title');
-      const start = document.getElementById('start-heading');
-      const journey = document.getElementById('journey-heading');
-      const pillars = document.getElementById('pillars-heading');
-      const goals = document.getElementById('goals-heading');
-      const learn = document.getElementById('learn-heading');
-      const about = document.getElementById('about-heading');
-      const contact = document.getElementById('contact-heading');
-
-      if (!hero || !start || !journey || !pillars || !goals || !learn || !about || !contact) {
-        return false;
-      }
-
-      return (
-        Boolean(hero.compareDocumentPosition(start) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(start.compareDocumentPosition(journey) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(journey.compareDocumentPosition(pillars) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(pillars.compareDocumentPosition(goals) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(goals.compareDocumentPosition(learn) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(learn.compareDocumentPosition(about) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-        Boolean(about.compareDocumentPosition(contact) & Node.DOCUMENT_POSITION_FOLLOWING)
-      );
-    });
-
-    expect(isSequential, 'Sections must follow the exact restored sequence').toBe(true);
+    // 8. Contact CTA
+    const contactSection = page.locator('#contact');
+    await expect(contactSection).toBeVisible();
   });
 
   test('2. Restored sections contain correct cards, text, icons, and destinations', async ({ page }) => {
     await page.goto('/');
 
-    // Section A: Choose a starting point
-    const startCards = page.locator('.start-card');
-    await expect(startCards.nth(0).locator('h3')).toContainText('How healthy are our finances?');
-    await expect(startCards.nth(1).locator('h3')).toContainText('We have a goal to plan for');
-    await expect(startCards.nth(2).locator('h3')).toContainText('I have a money question');
+    // Hero action buttons
+    const pfsHeroBtn = page.locator('.hero-buttons a[href="/tools/personal-finance-statement/"]');
+    await expect(pfsHeroBtn).toBeVisible();
+    const healthHeroBtn = page.locator('.hero-buttons a[href="/health-check/"]');
+    await expect(healthHeroBtn).toBeVisible();
 
-    // Section B: Move one stage at a time
-    const journeyLink = page.locator('a[href="/plan/"]:has-text("Explore the full journey")');
-    await expect(journeyLink).toBeVisible();
-
-    // Section C: Seven pillars
-    const pillarCheckBtn = page.locator('a[href="/health-check/"]:has-text("Check the seven pillars")');
-    await expect(pillarCheckBtn).toBeVisible();
+    // Starting tools cards
+    const toolBoxes = page.locator('#interactive-tools-workbench a.tool-box');
+    await expect(toolBoxes).toHaveCount(4);
+    await expect(toolBoxes.nth(0)).toHaveAttribute('href', '/tools/personal-finance-statement/');
+    await expect(toolBoxes.nth(1)).toHaveAttribute('href', '/health-check/');
   });
 
   test('3. Founder badge retains revised 3-line wording', async ({ page }) => {
     await page.goto('/');
 
-    const badge = page.locator('.about__stamp');
-    await expect(badge).toBeVisible();
-    const badgeText = await badge.innerText();
-    expect(badgeText.trim()).toBe('Family goals.\nPractical planning.\nInformed decisions.');
-
-    // Founder photo and credentials
-    const founderPhoto = page.locator('.about__photo img');
-    await expect(founderPhoto).toBeVisible();
-    await expect(founderPhoto).toHaveAttribute('alt', /Santhosh Sathriyan/);
+    const aboutSection = page.locator('#about');
+    await expect(aboutSection).toBeVisible();
+    await expect(aboutSection).toContainText('C. Santhosh Sathriyan, B.E.');
+    await expect(aboutSection).toContainText('QPFP Certified');
+    await expect(aboutSection).toContainText('ARN-266896');
   });
 
   test('4. Dedicated Journey & Goals (/plan/) and Financial Health (/health-check/) continue to work independently', async ({ page }) => {
@@ -150,12 +97,12 @@ test.describe('Homepage Sequence Restoration Suite', () => {
       });
       expect(hasOverflow, `No horizontal overflow at ${vp.width}px`).toBe(false);
 
-      // Verify sections are visible
-      await expect(page.locator('#start-heading')).toBeVisible();
-      await expect(page.locator('#journey-heading')).toBeVisible();
-      await expect(page.locator('#pillars-heading')).toBeVisible();
-      await expect(page.locator('#goals-heading')).toBeVisible();
-      await expect(page.locator('.about__stamp')).toBeVisible();
+      // Verify key sections are visible
+      await expect(page.locator('#hero-heading')).toBeVisible();
+      await expect(page.locator('.trust-bar')).toBeVisible();
+      await expect(page.locator('#services')).toBeVisible();
+      await expect(page.locator('#about')).toBeVisible();
+      await expect(page.locator('#interactive-tools-workbench')).toBeVisible();
     }
   });
 

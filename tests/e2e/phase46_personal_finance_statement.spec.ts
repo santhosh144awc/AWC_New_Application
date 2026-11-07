@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigation & Form UX Fixes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
   });
 
   test('1. Stepper navigation: All six stages render on a single horizontal line at 1200px and 1440px desktop', async ({ page }) => {
@@ -42,14 +42,12 @@ test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigati
     const dateInput = page.locator('input[type="date"]');
     await expect(dateInput).toHaveCount(0);
 
-    // 3. Preparer info badge is displayed
-    const preparerInfo = page.locator('#pfs-preparer-info');
-    await expect(preparerInfo).toContainText('Prepared by: C. Santhosh Sathriyan');
-
-    // 4. Reset keeps preparer fixed
-    await page.click('#btn-start-over');
-    await page.click('#btn-confirm-reset');
-    await expect(preparerInfo).toContainText('Prepared by: C. Santhosh Sathriyan');
+    // 3. Stage 6 Review & Net Worth preview displays fixed preparer info
+    await page.click('#btn-nav-stage-6');
+    await page.click('#btn-preview-statement');
+    const previewModal = page.locator('.pfs-preview-modal-box');
+    await expect(previewModal).toContainText('Prepared by C. Santhosh Sathriyan');
+    await page.click('#btn-close-preview');
   });
 
   test('3. Income table: Monthly Gross and Annual Gross inputs are synchronized; Gross, Deductions, and Net Annual are vertically aligned', async ({ page }) => {
@@ -64,7 +62,6 @@ test.describe('Phase 46 — Personal Finance Statement Alignment, Stage Navigati
     const monthlyGrossInput = firstRow.locator('input[data-field="monthly-gross"]');
     const annualGrossInput = firstRow.locator('input[data-field="annual-gross"]');
     const deductionsInput = firstRow.locator('input[data-field="deductions-amount"]');
-    const netAnnualCell = firstRow.locator('td').nth(4);
 
     await expect(monthlyGrossInput).toBeVisible();
     await expect(annualGrossInput).toBeVisible();

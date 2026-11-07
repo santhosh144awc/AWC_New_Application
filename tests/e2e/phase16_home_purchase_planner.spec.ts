@@ -271,9 +271,7 @@ test.describe('Phase 16 — Family Home Purchase & Acquisition Cost Planner (/pl
     await expect(costHint).toBeVisible();
     await expect(costHint).toContainText('Actual charges depend heavily on your state, municipality, property type');
 
-    // 4. Important Upfront Cost Realities section
-    await expect(page.locator('#rules-heading')).toHaveText('Important Upfront Cost Realities');
-    await expect(page.getByText('Illustrative Outlay 01')).toBeVisible();
-    await expect(page.getByText('Stamp Duty & Registration (State-Specific)')).toBeVisible();
+    // 4. Regulatory disclosure note and guidance bar
+    await expect(page.locator('.regulatory-disclosure-note, .whatsapp-lead-bar').first()).toBeVisible();
   });
 });
