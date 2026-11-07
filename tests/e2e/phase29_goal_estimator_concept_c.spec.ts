@@ -168,11 +168,14 @@ test.describe('Phase 10 Concept C — Single-Goal Estimator UX Redesign (/plan/)
   test('9. Slider and numeric inputs remain synchronized with accessible bounds', async ({ page }) => {
     await page.goto('/plan/');
     const app = page.locator('#goal-planner-app');
+    await expect(app.locator('#load-goal-example-btn')).toBeVisible();
 
     const yearsNum = app.locator('input[type="number"]').nth(1);
     const yearsSlider = app.locator('input[type="range"]').nth(1);
+    await expect(yearsSlider).toHaveAttribute('aria-label', 'Time Horizon in Years Slider');
 
     // Type 15 into number input
+    await yearsNum.click();
     await yearsNum.fill('15');
     await expect(yearsSlider).toHaveValue('15');
 
