@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Global Header Consistency Across All Routes', () => {
   const routesToTest = [
     { name: 'Home', path: '/', expectedActiveText: 'Home' },
+    { name: 'Personal Finance Statement', path: '/tools/personal-finance-statement/', expectedActiveText: 'Personal Finance Statement' },
     { name: 'Financial Health', path: '/health-check/', expectedActiveText: 'Financial Health' },
     { name: 'Journey & Goals', path: '/plan/', expectedActiveText: 'Journey & Goals' },
     { name: 'Tools', path: '/tools/', expectedActiveText: 'Tools' },
@@ -42,10 +43,11 @@ test.describe('Global Header Consistency Across All Routes', () => {
             await expect(navList).toBeVisible();
 
             const navItems = page.locator('.desktop-nav .nav-item');
-            await expect(navItems).toHaveCount(7);
+            await expect(navItems).toHaveCount(8);
 
             const expectedLabels = [
               'Home',
+              'Personal Finance Statement',
               'Financial Health',
               'Journey & Goals',
               'Tools',
@@ -54,13 +56,13 @@ test.describe('Global Header Consistency Across All Routes', () => {
               'Portfolio Login',
             ];
 
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
               const item = navItems.nth(i);
               await expect(item).toContainText(expectedLabels[i]);
             }
 
-            // Portfolio Login is the 7th item and at the far right
-            const portfolioItem = navItems.nth(6);
+            // Portfolio Login is the 8th item and at the far right
+            const portfolioItem = navItems.nth(7);
             const portfolioLink = portfolioItem.locator('a.portfolio-link');
             await expect(portfolioLink).toBeVisible();
             await expect(portfolioLink).toHaveAttribute('target', '_blank');
@@ -81,10 +83,11 @@ test.describe('Global Header Consistency Across All Routes', () => {
             await expect(drawer).toBeVisible();
 
             const mobileItems = page.locator('.mobile-nav-list li');
-            await expect(mobileItems).toHaveCount(7);
+            await expect(mobileItems).toHaveCount(8);
 
             const expectedMobileLabels = [
               'Home',
+              'Personal Finance Statement',
               'Financial Health',
               'Journey & Goals',
               'Tools',
@@ -93,7 +96,7 @@ test.describe('Global Header Consistency Across All Routes', () => {
               'Portfolio Login',
             ];
 
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
               const item = mobileItems.nth(i);
               await expect(item).toContainText(expectedMobileLabels[i]);
             }

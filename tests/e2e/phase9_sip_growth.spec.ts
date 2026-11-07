@@ -126,17 +126,10 @@ test.describe('Phase 9 — Advanced SIP Growth Simulator (/tools/sip-growth/)', 
     await expect(timingNotice).toContainText('Each one-time investment is assumed to be added at the beginning of the selected projection year');
     await expect(timingNotice).toContainText('Lump sums scheduled in post-SIP holding years continue compounding');
 
-    // Educational section
-    const educationalHeading = page.locator('#insight-heading');
-    await expect(educationalHeading).toBeVisible();
-    await expect(educationalHeading).toContainText('Why Advanced Life-Stage Simulation Matters');
-
-    // Check strategy cards
-    const cards = page.locator('.feature-card');
-    await expect(cards).toHaveCount(3);
-    await expect(cards.nth(0)).toContainText('Capped Step-Up Horizons');
-    await expect(cards.nth(1)).toContainText('Milestone Lump-Sum Infusions');
-    await expect(cards.nth(2)).toContainText('Post-SIP Wealth Compounding');
+    // Regulatory disclosure note
+    const disclosure = page.locator('.regulatory-disclosure-note');
+    await expect(disclosure).toBeVisible();
+    await expect(disclosure).toContainText('Regulatory Notice:');
   });
 
   test('zero-return scenario yields final corpus equal to total contributions exactly', async ({ page }) => {

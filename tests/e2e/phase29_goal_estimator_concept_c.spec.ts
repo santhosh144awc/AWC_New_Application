@@ -305,13 +305,12 @@ test.describe('Phase 10 Concept C — Single-Goal Estimator UX Redesign (/plan/)
     await context.close();
   });
 
-  test('13. Retirement/SWP previews remain "Calculations Not Available" under GATE-A', async ({ page }) => {
+  test('13. Retirement/SWP planners are active milestones with accessible canonical links', async ({ page }) => {
     await page.goto('/plan/');
 
-    // Verify retirement card indicates preview status
-    const retirementCard = page.locator('.roadmap-card[data-status="blocked"]').first();
-    await expect(retirementCard).toBeVisible();
-    await expect(retirementCard).toContainText('Calculations Not Available');
+    // Verify retirement card is present and links to active planner
+    const retirementLink = page.locator('.roadmaps-grid a[href="/plan/retirement/"]').first();
+    await expect(retirementLink).toBeVisible();
   });
 
   test('14. Milestone cards and internal links target canonical registered routes', async ({ page }) => {

@@ -5,12 +5,6 @@
  * (`routes.ts`). Every entry points at an existing registry route id; the
  * directory never defines its own paths or titles, so a route can never be
  * advertised here that does not exist in the registry.
- *
- * Status vocabulary:
- * - active  : interactive and verified in the current build
- * - preview : specification preview (model still in review)
- * - blocked : calculations unavailable under a compliance gate
- *             (GATE-A retirement/SWP, GATE-C tax). Never rendered as interactive.
  */
 
 import {
@@ -59,6 +53,18 @@ export interface ToolDirectoryEntry {
 
 export const TOOL_DIRECTORY: ToolDirectoryEntry[] = [
   {
+    routeId: 'tool-personal-finance-statement',
+    intents: ['understand'],
+    summary: 'Complete 6-stage household statement covering income, expenses, savings, assets, debts and productive net worth with a client-ready PDF report.',
+    question: 'Where does our money actually go?',
+    keywords: ['income', 'expenses', 'budget', 'statement', 'cash flow', 'household', 'personal finance'],
+    status: 'active',
+    statusLabel: 'Flagship diagnostic',
+    actionLabel: 'Open Personal Finance Statement',
+    icon: '▥',
+    tint: 'mint',
+  },
+  {
     routeId: 'diag-health-check',
     intents: ['understand', 'protect'],
     summary: 'Answer seven short questions about cash flow, reserves, debt, protection, investing, goals and retirement.',
@@ -81,18 +87,6 @@ export const TOOL_DIRECTORY: ToolDirectoryEntry[] = [
     actionLabel: 'Open balance sheet',
     icon: '▤',
     tint: 'mist',
-  },
-  {
-    routeId: 'tool-personal-finance-statement',
-    intents: ['understand'],
-    summary: 'A deeper household statement covering income, expenses, assets, debts and productive net worth.',
-    question: 'Where does our money actually go?',
-    keywords: ['income', 'expenses', 'budget', 'statement', 'cash flow', 'household'],
-    status: 'active',
-    statusLabel: 'Live diagnostic',
-    actionLabel: 'Open Personal Finance Statement',
-    icon: '▥',
-    tint: 'mint',
   },
   {
     routeId: 'tool-sip',
@@ -207,7 +201,7 @@ export const TOOL_DIRECTORY: ToolDirectoryEntry[] = [
     intents: ['loan'],
     summary: 'Compare paying a home loan down early with investing the same money through a parallel SIP.',
     question: 'Should I prepay my home loan or invest?',
-    keywords: ['home loan', 'prepay', 'foreclose', 'foreclosure', 'emi', 'mortgage', 'interest'],
+    keywords: ['home loan', 'prepay', 'foreclose', 'foreclosure', 'emi', 'mortgage', 'interest', 'trade-off', 'loan vs invest'],
     status: 'active',
     statusLabel: 'Live calculator',
     actionLabel: 'Compare payments',
@@ -225,18 +219,6 @@ export const TOOL_DIRECTORY: ToolDirectoryEntry[] = [
     actionLabel: 'Calculate recovery',
     icon: '⇣',
     tint: 'mint',
-  },
-  {
-    routeId: 'tool-loan-vs-invest',
-    intents: ['loan'],
-    summary: 'Compare prepaying your home loan against investing surplus capital into diversified equity.',
-    question: 'Is it better to prepay a loan or invest?',
-    keywords: ['prepay', 'invest', 'trade-off', 'loan', 'tax', 'mortgage'],
-    status: 'active',
-    statusLabel: 'Live calculator',
-    actionLabel: 'Compare options',
-    icon: '⚖',
-    tint: 'sand',
   },
 ];
 

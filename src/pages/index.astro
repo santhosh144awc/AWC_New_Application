@@ -1,1365 +1,1131 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Button from '../components/ui/Button.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
 import { BUSINESS_PROFILE } from '../config/businessProfile';
-import { JOURNEY_STAGES } from '../config/journey';
-import { HEALTH_PILLARS } from '../domain/finance/financialHealth';
 import { CLIENT_TESTIMONIALS } from '../config/testimonials';
 
-const pillarIcons = ['◉', '◈', '⇣', '⬡', '↗', '◎', '⟳'];
+const approvedArticles = await getCollection('articles', ({ data }) => {
+  return data.publicationStatus === 'APPROVED';
+});
 
-// Approved guides only (same rule as /learn/); never link to withheld articles.
-const approved = await getCollection('articles', ({ data }) => data.publicationStatus === 'APPROVED');
-approved.sort((a, b) => {
-  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+approvedArticles.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
   return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
 });
-const guides = approved.slice(0, 3);
 
-const orbitNodes = [
-  { cls: 'one', icon: '◉', label: 'Cash flow', sub: 'Today', href: '/tools/personal-finance-statement/' },
-  { cls: 'two', icon: '⬡', label: 'Protection', sub: 'Safety', href: '/tools/life-insurance/' },
-  { cls: 'three', icon: '◎', label: 'Goals', sub: 'Tomorrow', href: '/plan/' },
-  { cls: 'four', icon: '↗', label: 'Investing', sub: 'Growth', href: '/tools/sip/' },
-  { cls: 'five', icon: '◈', label: 'Resilience', sub: 'Reserve', href: '/health-check/' },
+const featuredArticles = approvedArticles.slice(0, 3);
+
+const servicePillars = [
+  {
+    number: '01 / Protection First',
+    title: 'Life & Health Insurance',
+    subtitle: 'LIC Advisor & Star Health Insurance Agent',
+    description:
+      'Before investing in the market, we make sure your family is protected against medical emergencies and unexpected loss of income.',
+    points: [
+      'Pure Term Life Insurance for family income security',
+      'Family Floater & Senior Citizen Health Insurance',
+      'Honest, needs-based coverage sizing without high-pressure sales',
+    ],
+    ctaLabel: 'Estimate your family protection need →',
+    ctaHref: '/tools/life-insurance/',
+  },
+  {
+    number: '02 / Wealth Creation',
+    title: 'Mutual Fund Distribution',
+    subtitle: 'AMFI-Registered Distributor (ARN-266896)',
+    description:
+      'Grow your savings systematically through diversified equity, hybrid, and debt mutual funds aligned with your family’s timeline and risk comfort.',
+    points: [
+      'Monthly SIPs, Step-Up SIPs & Lump Sum portfolios',
+      'Retirement monthly income (SWP) planning',
+      '24/7 online portfolio tracking via TheMFBox client portal',
+    ],
+    ctaLabel: 'Explore SIP & wealth calculators →',
+    ctaHref: '/tools/sip/',
+  },
+  {
+    number: '03 / Family Roadmap',
+    title: 'Personal Finance Planning',
+    subtitle: 'QPFP Certified Financial Guidance',
+    description:
+      'Understand where your money goes, organize your emergency fund, balance loan prepayments against investments, and map every family milestone.',
+    points: [
+      'Children’s higher education & marriage planning',
+      'Home purchase & loan prepayment strategy',
+      'Complete 6-Stage Household Personal Finance Statement',
+    ],
+    ctaLabel: 'Build your Personal Finance Statement →',
+    ctaHref: '/tools/personal-finance-statement/',
+  },
 ];
 
-const goalTiles = [
-  { icon: '🎓', title: 'Children’s future', text: 'Separate milestones, future costs and existing savings.', href: '/plan/children/', cta: 'Plan this goal →' },
-  { icon: '⌂', title: 'Buy a home', text: 'Explore upfront cash, purchase costs and EMI comfort.', href: '/plan/home-purchase/', cta: 'Plan this goal →' },
-  { icon: '↗', title: 'Grow investments', text: 'Try a monthly investment and a yearly step-up scenario.', href: '/tools/sip/', cta: 'Try an SIP →' },
-  { icon: '⟳', title: 'Retirement', text: 'Explore retirement targets, living costs and accumulation scenarios.', href: '/plan/retirement/', cta: 'Plan retirement →' },
+const startingTools = [
+  {
+    type: 'Flagship 6-Stage Tool',
+    title: 'Personal Finance Statement',
+    description:
+      'Map your family income, expenses, assets, and liabilities, and download a client-ready 5-page PDF balance sheet.',
+    ctaLabel: 'Open Statement →',
+    href: '/tools/personal-finance-statement/',
+    featured: true,
+  },
+  {
+    type: '2-Minute Checkup',
+    title: 'Financial Health Check',
+    description:
+      'Answer 7 quick questions to check your emergency reserve, EMI load, insurance cover, and retirement readiness.',
+    ctaLabel: 'Start Checkup →',
+    href: '/health-check/',
+    featured: false,
+  },
+  {
+    type: 'Family Milestones',
+    title: 'Goal & SIP Calculators',
+    description:
+      'Plan inflation-adjusted targets for children’s education, home purchase, retirement corpus, and monthly SIPs.',
+    ctaLabel: 'Open Calculators →',
+    href: '/plan/',
+    featured: false,
+  },
+  {
+    type: 'Debt Decisions',
+    title: 'Loan Prepay vs SIP',
+    description:
+      'Compare prepaying your home loan early against investing your monthly surplus in a diversified mutual fund SIP.',
+    ctaLabel: 'Compare Options →',
+    href: '/tools/home-loan-foreclosure/',
+    featured: false,
+  },
 ];
-
 ---
 
 <BaseLayout
-  title="Ant Wealth Creation — Know Where You Stand. Choose Your Next Move."
-  description="A practical place to understand your family's money, plan life's milestones and learn what each financial choice could mean. Plain-language tools with no forced lead collection."
-  currentPath="/"
+  title="Ant Wealth Creation | Personal Finance, Mutual Funds & Family Insurance"
+  description="Ant Wealth Creation (AMFI ARN-266896), founded by C. Santhosh Sathriyan, B.E., QPFP, helps Indian families with Mutual Fund investments, LIC Life Insurance, Star Health Insurance, and clear Personal Finance planning."
 >
-  <!-- 1. HERO -->
-  <section class="hero surface-dark" aria-labelledby="hero-title">
-    <div class="container hero__grid">
-      <div class="hero__copy">
-        <span class="eyebrow">FAMILY FINANCE, MADE CLEARER</span>
-        <h1 id="hero-title" class="hero__title">
-          Know where you stand. <span class="hero__accent">Choose your next move.</span>
-        </h1>
-        <p class="hero__lead">
-          A practical place to understand your finances and find useful next steps for your family.
-        </p>
-
-        <div class="hero__actions">
-          <Button variant="gold" href="/health-check/">Start your health check →</Button>
-          <Button variant="light" href="/tools/">View all tools →</Button>
+  <div class="container home-page">
+    <!-- 1. CLEAN LIGHT EDITORIAL HERO WITH 6-STEP FAMILY JOURNEY VISUAL -->
+    <section class="hero-section" aria-labelledby="hero-heading">
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-kicker">Personal Finance · Mutual Funds · Insurance</span>
+          <h1 id="hero-heading">Make Better Money Decisions. Build a Better Future.</h1>
+          <p>
+            We help Indian families organize their household finances, protect their loved ones with the right Life and Health Insurance, and build lasting wealth through disciplined Mutual Fund investing.
+          </p>
+          <div class="hero-buttons">
+            <a
+              class="btn-primary-navy"
+              href={BUSINESS_PROFILE.contact.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Speak with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
+            </a>
+            <a class="btn-secondary-jade" href="/tools/personal-finance-statement/">
+              Open Personal Finance Statement →
+            </a>
+            <a class="btn-tertiary-check" href="/health-check/">
+              Take 2-Minute Financial Health Check →
+            </a>
+          </div>
         </div>
 
-        <ul class="hero__meta" role="list">
-          <li><span class="tiny-dot" aria-hidden="true"></span>No forced lead collection</li>
-          <li><span class="tiny-dot" aria-hidden="true"></span>Plain-language guidance</li>
-          <li><span class="tiny-dot" aria-hidden="true"></span>Your inputs stay in your browser</li>
-        </ul>
+        <div class="hero-visual">
+          <img
+            src="/assets/homeScreenimage.webp"
+            alt="6 Steps of Personal Finance: 1. Income, 2. Savings, 3. Protection, 4. Goals, 5. Investment, 6. Financial Freedom"
+            width="900"
+            height="600"
+            loading="eager"
+          />
+        </div>
       </div>
 
-      <div class="hero__art">
-        <p class="hero__sticker">One family. Many milestones.</p>
-        <nav class="money-map" aria-label="Your money map: where to start">
-          <div class="money-map__center">
-            <span class="money-map__house" aria-hidden="true">⌂</span>
-            <strong>Your money map</strong>
-            <small>Understand · Plan · Adjust</small>
+      <!-- 4-COLUMN PRACTICE CREDENTIAL BAR -->
+      <div class="trust-bar" aria-label="Practice Credentials">
+        <div class="trust-col">
+          <span class="trust-label">Advisor &amp; Founder</span>
+          <strong class="trust-value">{BUSINESS_PROFILE.founder.fullName}, QPFP</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Mutual Fund Distribution</span>
+          <strong class="trust-value">AMFI-Registered ({BUSINESS_PROFILE.regulatory.arn})</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Insurance Partners</span>
+          <strong class="trust-value">LIC Life Cover &amp; Star Health</strong>
+        </div>
+        <div class="trust-col">
+          <span class="trust-label">Track Record</span>
+          <strong class="trust-value">Market Experience Since {BUSINESS_PROFILE.firm.experienceSince}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MEET SANTHOSH (CLEAN EXECUTIVE PROFILE / DIGITAL VISITING CARD) -->
+    <section class="section" id="about" aria-labelledby="about-heading">
+      <div class="advisor-card">
+        <div class="advisor-photo-wrap">
+          <img
+            src="/assets/santhosh_photo.webp"
+            alt={BUSINESS_PROFILE.founder.fullName}
+            width="240"
+            height="280"
+            loading="eager"
+          />
+        </div>
+
+        <div class="advisor-body">
+          <span class="section-kicker">Your Financial Guide</span>
+          <h2 id="about-heading">{BUSINESS_PROFILE.founder.fullName}</h2>
+          <div class="advisor-creds">
+            QPFP Certified · AMFI-Registered Mutual Fund Distributor ({BUSINESS_PROFILE.regulatory.arn})
           </div>
-          {orbitNodes.map((node) => (
-            <a href={node.href} class={`orbit-node orbit-node--${node.cls}`}>
-              <span class="orbit-node__icon" aria-hidden="true">{node.icon}</span>
-              <b>{node.label}</b>
-              <small>{node.sub}</small>
+
+          <blockquote class="advisor-quote">
+            “{BUSINESS_PROFILE.founder.quote}”
+          </blockquote>
+
+          <p class="advisor-bio">
+            With experience in Indian financial markets since {BUSINESS_PROFILE.firm.experienceSince} and raised in a family with decades of LIC service heritage, Santhosh founded {BUSINESS_PROFILE.firm.name} in {BUSINESS_PROFILE.firm.foundingYear} to give families honest, jargon-free guidance across Mutual Funds, Life Insurance, and Health Insurance—without high-pressure sales.
+          </p>
+
+          <div class="advisor-contact-row">
+            <div class="contact-item">
+              <span>Direct Phone &amp; WhatsApp</span>
+              <strong><a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a></strong>
+            </div>
+            <div class="contact-item">
+              <span>Email</span>
+              <strong><a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a></strong>
+            </div>
+            <div class="contact-item">
+              <span>Office</span>
+              <strong>Dharmapuri, Tamil Nadu</strong>
+            </div>
+            <div class="contact-item">
+              <span>Practice Details</span>
+              <strong><a href="/about/">Read full profile →</a></strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. THREE CLEAN SERVICE PILLARS -->
+    <section class="section" id="services" aria-labelledby="services-heading">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">How We Help Your Family</span>
+          <h2 id="services-heading">Clear Products &amp; Practical Financial Guidance</h2>
+          <p>
+            Everything your family needs to stay protected today and invest confidently for tomorrow—explained in plain English.
+          </p>
+        </div>
+      </div>
+
+      <div class="services-grid">
+        {servicePillars.map((pillar) => (
+          <article class="service-card">
+            <span class="service-num">{pillar.number}</span>
+            <h3>{pillar.title}</h3>
+            <div class="service-sub">{pillar.subtitle}</div>
+            <p>{pillar.description}</p>
+            <ul class="service-points">
+              {pillar.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+            <a class="service-link" href={pillar.ctaHref}>
+              {pillar.ctaLabel}
             </a>
-          ))}
-        </nav>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. STARTING POINTS -->
-  <section class="section" aria-labelledby="start-heading">
-    <div class="container">
-      <SectionHeader
-        id="start-heading"
-        eyebrow="Choose a starting point"
-        title="One clear next step is enough."
-        subtitle="You do not need to solve everything today. Start with the question that matters most to you right now."
-      />
-
-      <div class="start-grid">
-        <a href="/health-check/" class="start-card start-card--mint">
-          <span class="start-card__top">
-            <span class="num-chip">01 · Understand</span>
-            <span class="big-icon" aria-hidden="true">◉</span>
-          </span>
-          <span class="start-card__text">
-            <h3>How healthy are our finances?</h3>
-            <p>A quick, ungated check across seven parts of family financial wellbeing.</p>
-          </span>
-          <span class="start-card__action"><span>Start the health check</span><span class="arrow" aria-hidden="true">↗</span></span>
-        </a>
-
-        <a href="/plan/" class="start-card start-card--mist">
-          <span class="start-card__top">
-            <span class="num-chip">02 · Plan</span>
-            <span class="big-icon" aria-hidden="true">◎</span>
-          </span>
-          <span class="start-card__text">
-            <h3>We have a goal to plan for.</h3>
-            <p>Follow the six-stage journey, or go straight to education, a home or another milestone.</p>
-          </span>
-          <span class="start-card__action"><span>Open the journey &amp; goals</span><span class="arrow" aria-hidden="true">↗</span></span>
-        </a>
-
-        <a href="/tools/" class="start-card start-card--sand">
-          <span class="start-card__top">
-            <span class="num-chip">03 · Explore</span>
-            <span class="big-icon" aria-hidden="true">⌘</span>
-          </span>
-          <span class="start-card__text">
-            <h3>I have a money question.</h3>
-            <p>Find a calculator by the situation you are trying to understand.</p>
-          </span>
-          <span class="start-card__action"><span>Find the right tool</span><span class="arrow" aria-hidden="true">↗</span></span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. JOURNEY STRIP -->
-  <section class="section section--navy surface-dark" aria-labelledby="journey-heading">
-    <div class="container">
-      <SectionHeader
-        id="journey-heading"
-        dark
-        eyebrow="A journey, not a checklist"
-        title="Move one stage at a time."
-        subtitle="Choose a stage to see what it means and which tools can help you take the next small step."
-      />
-
-      <ol class="journey-strip" role="list">
-        {JOURNEY_STAGES.map((stage, index) => (
-          <li>
-            <a href={`/plan/#stage-${stage.id}`} class="journey-mini">
-              <span class="journey-mini__bubble" aria-hidden="true">{index + 1}</span>
-              <b>{stage.label}</b>
-              <small>{stage.title}</small>
-            </a>
-          </li>
+          </article>
         ))}
-      </ol>
-
-      <div class="section__cta">
-        <Button variant="gold" href="/plan/" icon="→">Explore the full journey</Button>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 4. SEVEN PILLARS -->
-  <section class="section section--white" aria-labelledby="pillars-heading">
-    <div class="container pillars">
-      <div class="pillars__intro">
-        <span class="eyebrow">The bigger picture</span>
-        <h2 id="pillars-heading" class="pillars__title">Financial wellbeing has more than one number.</h2>
-        <p>
-          Income and net worth matter, but so do resilience, protection, goals and the confidence to make
-          choices. The health check looks at seven areas, one at a time.
-        </p>
-        <Button variant="primary" href="/health-check/" icon="→">Check the seven pillars</Button>
+    <!-- 4. CLIENT EXPERIENCES (ALL 8 VERIFIED CLIENT REVIEWS) -->
+    <section class="section" id="testimonials" aria-labelledby="testimonials-heading">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">Client Experiences</span>
+          <h2 id="testimonials-heading">Trusted by Families, Educators &amp; Professionals</h2>
+          <p>
+            Genuine words from clients who partner with {BUSINESS_PROFILE.founder.shortName} and {BUSINESS_PROFILE.firm.name} for mutual fund investing, insurance protection, and long-term family planning.
+          </p>
+        </div>
       </div>
 
-      <ol class="pillars__grid" role="list">
-        {HEALTH_PILLARS.map((pillar, index) => (
-          <li class="pillar">
-            <span class="pillar__icon" aria-hidden="true">{pillarIcons[index]}</span>
-            <b>{pillar.shortTitle}</b>
-            <small>Pillar {index + 1}</small>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <!-- 5. GOALS -->
-  <section class="section section--mist" aria-labelledby="goals-heading">
-    <div class="container">
-      <SectionHeader
-        id="goals-heading"
-        eyebrow="Goals that make it personal"
-        title="What are you planning for?"
-        subtitle="Start with a life milestone. Each planner helps you explore costs, timing and funding under assumptions you choose."
-      />
-
-      <ul class="goal-grid" role="list">
-        {goalTiles.map((tile) => (
-          <li>
-            <a href={tile.href} class="goal-tile">
-              <span class="goal-tile__symbol" aria-hidden="true">{tile.icon}</span>
-              <h3>{tile.title}</h3>
-              <p>{tile.text}</p>
-              <span class="goal-tile__cta">{tile.cta}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <!-- 6. LEARN -->
-  <section class="section section--white" aria-labelledby="learn-heading">
-    <div class="container">
-      <SectionHeader
-        id="learn-heading"
-        eyebrow="Learn without the jargon"
-        title="Good money decisions start with understanding."
-      />
-
-      <ul class="guide-grid" role="list">
-        {guides.map((guide, index) => (
-          <li>
-            <a href={`/learn/${guide.id}/`} class={`guide-card guide-card--${index}`}>
-              <span class="guide-card__meta">{guide.data.category} · {guide.data.readingTime}</span>
-              <h3>{guide.data.title}</h3>
-              <p>{guide.data.description}</p>
-              <span class="guide-card__cta">Read this guide →</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <div class="section__cta">
-        <Button variant="light" href="/learn/" icon="→">Browse all guides</Button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. ABOUT -->
-  <section class="section" aria-labelledby="about-heading">
-    <div class="container about">
-      <div class="about__photo">
-        <img
-          src={BUSINESS_PROFILE.founder.photoPath}
-          alt={`${BUSINESS_PROFILE.founder.fullName}, founder of ${BUSINESS_PROFILE.firm.name}`}
-          width="360"
-          height="450"
-          loading="lazy"
-        />
-        <p class="about__stamp">Family goals.<br />Practical planning.<br />Informed decisions.</p>
-      </div>
-
-      <div class="about__copy">
-        <span class="eyebrow">A little about the practice</span>
-        <h2 id="about-heading" class="about__title">
-          Financial planning should help you feel clearer — not more confused.
-        </h2>
-        <p>{BUSINESS_PROFILE.founder.bio}</p>
-
-        <ul class="about__facts" role="list">
-          <li>{BUSINESS_PROFILE.founder.fullName}</li>
-          <li>{BUSINESS_PROFILE.founder.credentials}</li>
-          <li>Markets since {BUSINESS_PROFILE.firm.experienceSince}</li>
-        </ul>
-
-        <p class="about__note">
-          {BUSINESS_PROFILE.regulatory.distributorRoleText}. {BUSINESS_PROFILE.regulatory.sebiRIAStatusNotice}
-          <a href="/disclaimer/">Read the full disclosures</a>.
-        </p>
-
-        <Button variant="primary" href="/about/" icon="→">Meet the practice</Button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. CLIENT TESTIMONIALS -->
-  <section class="section section--mist" aria-labelledby="testimonials-heading">
-    <div class="container">
-      <SectionHeader
-        id="testimonials-heading"
-        eyebrow="Real Client Experiences"
-        title="Trusted by families and professionals across India."
-        subtitle="Genuine reflections from working individuals, business owners, and families building their financial foundation with Ant Wealth Creation."
-      />
-
-      <div class="testimonials-grid" role="list">
-        {CLIENT_TESTIMONIALS.map((t) => (
-          <article class="testimonial-card" role="listitem">
-            <div class="testimonial-card__quote-mark" aria-hidden="true">&ldquo;</div>
-            <p class="testimonial-card__quote">{t.quote}</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">
-                {t.photoPath ? (
-                  <img
-                    src={t.photoPath}
-                    alt={t.name}
-                    class="testimonial-card__img"
-                    width="48"
-                    height="48"
-                    loading="lazy"
-                  />
+      <div class="reviews-grid">
+        {CLIENT_TESTIMONIALS.map((item) => (
+          <article class="review-card testimonial-card">
+            <blockquote class="review-text">“{item.quote}”</blockquote>
+            <div class="review-author">
+              <div class="review-initials" aria-hidden="true">
+                {item.photoPath ? (
+                  <img src={item.photoPath} alt={item.name} loading="lazy" />
                 ) : (
-                  <div class="testimonial-card__placeholder" aria-label={"Avatar for " + t.name}>
-                    <span class="testimonial-card__initials">{t.initials}</span>
-                  </div>
+                  <span>{item.initials}</span>
                 )}
               </div>
-              <div class="testimonial-card__meta">
-                <span class="testimonial-card__name">{t.name}</span>
-                <span class="testimonial-card__role">
-                  {t.role}
-                  {t.companyOrOrg ? (" · " + t.companyOrOrg) : ''}
-                </span>
+              <div>
+                <h3 class="review-name">{item.name}</h3>
+                <p class="review-role">
+                  {item.role}
+                  {item.companyOrOrg ? ` · ${item.companyOrOrg}` : ''}
+                </p>
               </div>
             </div>
           </article>
         ))}
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 9. CONTACT -->
-  <section class="section section--tight" aria-labelledby="contact-heading">
-    <div class="container">
-      <div class="contact-band">
+    <!-- 5. SUPPORTING SELF-CHECK TOOLS (4 CLEAN STARTING POINTS) -->
+    <section class="section" id="interactive-tools-workbench" aria-labelledby="tools-heading">
+      <div class="section-header section-header-row">
         <div>
-          <span class="eyebrow">Prefer to talk it through?</span>
-          <h2 id="contact-heading" class="contact-band__title">
-            Start with a short, no-pressure conversation with {BUSINESS_PROFILE.founder.shortName}.
-          </h2>
-          <p><a href="/contact/">See what to expect from a consultation</a></p>
+          <span class="section-kicker">Free Self-Check Tools</span>
+          <h2 id="tools-heading">Understand Your Numbers at Your Own Pace</h2>
+          <p>
+            Try our browser-private calculators to check your household balance sheet or test a goal scenario before we meet.
+          </p>
         </div>
-        <div class="contact-band__actions">
-          <Button
-            variant="primary"
-            href={BUSINESS_PROFILE.contact.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            icon="↗"
-          >
-            Chat on WhatsApp<span class="sr-only"> (opens in a new window)</span>
-          </Button>
-          <Button variant="light" href={`tel:${BUSINESS_PROFILE.contact.phone}`}>
-            Call {BUSINESS_PROFILE.contact.phoneDisplay}
-          </Button>
+        <a class="section-link" href="/tools/">View All Tools →</a>
+      </div>
+
+      <div class="tools-row">
+        {startingTools.map((tool) => (
+          <a class:list={['tool-box', { featured: tool.featured }]} href={tool.href}>
+            <span class="tool-type">{tool.type}</span>
+            <h3>{tool.title}</h3>
+            <p>{tool.description}</p>
+            <span class="tool-cta">{tool.ctaLabel}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- 6. PLAIN-LANGUAGE GUIDES -->
+    <section class="section" id="learn" aria-labelledby="learn-heading">
+      <div class="section-header section-header-row">
+        <div>
+          <span class="section-kicker">Investor Education</span>
+          <h2 id="learn-heading">Plain-Language Personal Finance Guides</h2>
+          <p>
+            Short, practical reads written for Indian households—without confusing textbook jargon.
+          </p>
+        </div>
+        <a class="section-link" href="/learn/">Browse All {approvedArticles.length} Guides →</a>
+      </div>
+
+      <div class="guides-grid">
+        {featuredArticles.map((article) => (
+          <article class="guide-card">
+            <span class="guide-meta">{article.data.category} · {article.data.readingTime}</span>
+            <h3>
+              <a href={`/learn/${article.id}/`}>{article.data.title}</a>
+            </h3>
+            <p>{article.data.description}</p>
+            <a class="guide-link" href={`/learn/${article.id}/`}>Read guide →</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 7. DIRECT CONSULTATION / CONTACT -->
+    <section class="section" id="contact" aria-labelledby="contact-heading">
+      <div class="contact-card">
+        <div class="contact-copy">
+          <span class="section-kicker">Direct 1-on-1 Consultation</span>
+          <h2 id="contact-heading">Have a question about your family’s finances?</h2>
+          <p>
+            Reach out directly to <strong>{BUSINESS_PROFILE.founder.fullName}</strong> for a friendly, no-obligation conversation about Mutual Funds, Life Insurance, Health Insurance, or your household financial roadmap.
+          </p>
+          <div class="hero-buttons">
+            <a
+              class="btn-primary-navy"
+              href={BUSINESS_PROFILE.contact.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Message {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
+            </a>
+            <a class="btn-secondary-jade" href="/contact/">
+              Office Address &amp; Consultation Details →
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-meta-grid">
+          <div class="contact-meta-box">
+            <span>Direct Phone &amp; WhatsApp</span>
+            <strong><a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a></strong>
+          </div>
+          <div class="contact-meta-box">
+            <span>Email</span>
+            <strong><a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a></strong>
+          </div>
+          <div class="contact-meta-box">
+            <span>Office Location</span>
+            <strong>{BUSINESS_PROFILE.firm.headquarters}</strong>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
-  .section {
-    padding: var(--space-20) 0;
+  .home-page {
+    padding-top: 28px;
+    padding-bottom: 56px;
   }
 
-  .section--tight {
-    padding: var(--space-8) 0 var(--space-20);
+  /* 1. CLEAN LIGHT HERO WITH 6-STEP FAMILY JOURNEY VISUAL */
+  .hero-section {
+    padding-bottom: 44px;
   }
 
-  .section--white {
-    background: var(--primitive-white);
-  }
-
-  .section--mist {
-    background: #e7f2ef;
-  }
-
-  .section--navy {
-    background: var(--awc-navy);
-    color: var(--color-text-on-dark);
-  }
-
-  .section__cta {
-    display: flex;
-    justify-content: center;
-    margin-top: var(--space-8);
-  }
-
-  /* ---------- Hero ---------- */
-  .hero {
+  .hero-banner {
     position: relative;
-    isolation: isolate;
+    border-radius: 24px;
     overflow: hidden;
-    background: var(--awc-navy);
-    color: var(--color-text-on-dark);
-  }
-
-  .hero::before,
-  .hero::after {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
-
-  .hero::before {
-    top: -300px;
-    right: -120px;
-    width: 680px;
-    height: 680px;
-  }
-
-  .hero::after {
-    top: -190px;
-    right: 30px;
-    width: 460px;
-    height: 460px;
-  }
-
-  .hero__grid {
-    display: grid;
-    grid-template-columns: 1.03fr 0.97fr;
-    gap: var(--space-12);
-    align-items: center;
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-16);
-  }
-
-  .hero__title {
-    margin: var(--space-5) 0 var(--space-5);
-    max-width: 650px;
-    font-size: clamp(2.6rem, 4.8vw, 4.4rem);
-    line-height: 1.02;
-    letter-spacing: -0.055em;
-    font-weight: 900;
-    color: var(--primitive-white);
-  }
-
-  .hero__accent {
-    color: var(--awc-gold);
-  }
-
-  .hero__lead {
-    max-width: 560px;
-    margin-bottom: var(--space-6);
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: #ddebe7;
-  }
-
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-
-  .hero__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-5);
-    margin: var(--space-6) 0 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #b7cbc6;
-  }
-
-  .hero__meta li {
+    background-color: var(--primitive-white);
+    background-image:
+      linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 34%, rgba(255, 255, 255, 0) 43%),
+      url('/assets/homeScreenimage.webp');
+    background-size: cover, contain;
+    background-position: left center, right center;
+    background-repeat: no-repeat;
+    border: 1px solid var(--awc-line);
+    box-shadow: var(--shadow-card);
     display: flex;
     align-items: center;
-    gap: 7px;
+    min-height: 500px;
   }
 
-  .tiny-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--awc-gold);
-  }
-
-  /* Money map */
-  .hero__art {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 420px;
-  }
-
-  .hero__sticker {
-    position: absolute;
-    top: 6%;
-    left: 4%;
-    z-index: 4;
-    margin: 0;
-    padding: 0.55rem 0.9rem;
-    border-radius: var(--radius-pill);
-    background: var(--awc-sand);
-    color: var(--awc-navy);
-    font-size: 0.7rem;
-    font-weight: 900;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transform: rotate(-6deg);
-    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
-  }
-
-  .money-map {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: min(100%, 450px);
-    aspect-ratio: 1;
-    border: 1px dashed rgba(218, 229, 255, 0.32);
-    border-radius: 50%;
-  }
-
-  .money-map::before,
-  .money-map::after {
-    content: '';
-    position: absolute;
-    border: 1px solid rgba(218, 229, 255, 0.17);
-    border-radius: 50%;
-    inset: 10%;
-  }
-
-  .money-map::after {
-    inset: 22%;
-  }
-
-  .money-map__center {
-    position: relative;
+  .hero-content {
+    padding: 48px 24px 48px 48px;
+    max-width: 530px;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 190px;
-    height: 190px;
-    border-radius: 50%;
-    background: var(--awc-gold);
-    color: var(--awc-navy);
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
   }
 
-  .money-map__house {
-    font-size: 2.6rem;
-    line-height: 1;
-  }
-
-  .money-map__center strong {
-    margin-top: 5px;
-    font-size: 0.95rem;
-  }
-
-  .money-map__center small {
-    max-width: 120px;
-    margin-top: 2px;
-    font-size: 0.65rem;
-  }
-
-  .orbit-node {
-    position: absolute;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 104px;
-    min-height: 94px;
-    padding: 12px 10px;
-    border-radius: 20px;
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-    text-align: center;
-    text-decoration: none;
-    box-shadow: 0 15px 36px rgba(0, 0, 0, 0.22);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .orbit-node:hover {
-    color: var(--awc-navy);
-    transform: translateY(-4px) scale(1.04);
-    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.3);
-  }
-
-  .orbit-node__icon {
-    margin-bottom: 4px;
-    font-size: 1.5rem;
-    line-height: 1.2;
-  }
-
-  .orbit-node b {
-    font-size: 0.72rem;
-  }
-
-  .orbit-node small {
-    font-size: 0.62rem;
-    color: var(--color-text-muted);
-  }
-
-  .orbit-node--one { top: 3%; left: 39%; }
-  .orbit-node--two { top: 31%; right: -2%; background: var(--awc-sand); }
-  .orbit-node--three { bottom: 7%; right: 12%; background: var(--awc-mint); }
-  .orbit-node--four { bottom: 8%; left: 5%; background: var(--awc-mist); }
-  .orbit-node--five { top: 30%; left: -3%; background: var(--awc-mist); }
-
-  /* ---------- Starting points ---------- */
-  .start-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-4);
-  }
-
-  .start-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 228px;
-    padding: var(--space-6);
-    border-radius: 26px;
-    color: var(--awc-navy);
-    text-decoration: none;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .start-card:hover {
-    color: var(--awc-navy);
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .start-card--mint { background: var(--awc-mint); }
-  .start-card--mist { background: var(--awc-mist); }
-  .start-card--sand { background: var(--awc-sand); }
-
-  .start-card__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .num-chip {
-    padding: 0.4rem 0.65rem;
-    border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.75);
-    font-size: 0.7rem;
-    font-weight: 900;
-    letter-spacing: 0.05em;
+  .hero-kicker,
+  .section-kicker {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
     text-transform: uppercase;
-  }
-
-  .big-icon {
-    display: grid;
-    place-items: center;
-    width: 53px;
-    height: 53px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.7);
-    font-size: 1.6rem;
-  }
-
-  .start-card__text h3 {
-    max-width: 260px;
-    margin: var(--space-5) 0 var(--space-2);
-    font-size: 1.6rem;
-    line-height: 1.1;
-    letter-spacing: -0.045em;
-  }
-
-  .start-card__text p {
-    max-width: 300px;
-    margin: 0;
-    font-size: var(--text-body-sm);
-    color: var(--primitive-slate-700);
-  }
-
-  .start-card__action {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: var(--space-5);
-    font-size: var(--text-body-sm);
-    font-weight: 900;
-  }
-
-  .arrow {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.75);
-  }
-
-  /* ---------- Journey strip ---------- */
-  .journey-strip {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    margin: var(--space-10) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .journey-strip::before {
-    content: '';
-    position: absolute;
-    top: 29px;
-    left: 8%;
-    right: 8%;
-    height: 3px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--awc-gold), var(--awc-jade));
-  }
-
-  .journey-mini {
-    position: relative;
-    display: block;
-    padding: 0 var(--space-2);
-    color: var(--primitive-white);
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .journey-mini:hover {
-    color: var(--primitive-white);
-  }
-
-  .journey-mini__bubble {
-    display: grid;
-    place-items: center;
-    width: 60px;
-    height: 60px;
-    margin: 0 auto var(--space-3);
-    border: 4px solid var(--awc-navy);
-    border-radius: 50%;
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-    font-weight: 900;
-    box-shadow: 0 0 0 6px var(--awc-navy);
-    transition: transform var(--transition-fast), background-color var(--transition-fast);
-  }
-
-  .journey-mini:hover .journey-mini__bubble,
-  .journey-mini:focus-visible .journey-mini__bubble {
-    transform: scale(1.08);
-    background: var(--awc-gold);
-  }
-
-  .journey-mini b {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.8rem;
-  }
-
-  .journey-mini small {
-    display: block;
-    margin: 0 auto;
-    max-width: 150px;
-    font-size: 0.7rem;
-    line-height: 1.4;
-    color: #c5d7d2;
-  }
-
-  /* ---------- Pillars ---------- */
-  .pillars {
-    display: grid;
-    grid-template-columns: 0.7fr 1.3fr;
-    gap: var(--space-12);
-    align-items: center;
-  }
-
-  .pillars__title {
-    margin: var(--space-3) 0;
-    font-size: clamp(1.9rem, 3vw, 2.6rem);
-    line-height: 1.08;
-    letter-spacing: -0.05em;
-  }
-
-  .pillars__intro p {
-    max-width: 420px;
-    margin-bottom: var(--space-5);
-    color: var(--color-text-muted);
-    line-height: 1.75;
-  }
-
-  .pillars__grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-3);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .pillar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: var(--space-4);
-    min-height: 130px;
-    padding: var(--space-4);
-    border: 1px solid var(--awc-line);
-    border-radius: 19px;
-    background: var(--primitive-white);
-  }
-
-  .pillar:nth-child(2),
-  .pillar:nth-child(6) { background: var(--awc-mist); }
-  .pillar:nth-child(3),
-  .pillar:nth-child(7) { background: var(--awc-sand); }
-  .pillar:nth-child(5) { background: var(--awc-mint); }
-
-  .pillar__icon {
-    font-size: 1.5rem;
-  }
-
-  .pillar b {
-    font-size: 0.8rem;
-    line-height: 1.25;
-    color: var(--awc-navy);
-  }
-
-  .pillar small {
-    font-size: 0.68rem;
-    color: var(--color-text-muted);
-  }
-
-  /* ---------- Goals ---------- */
-  .goal-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-4);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .goal-tile {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    height: 100%;
-    min-height: 220px;
-    padding: var(--space-5);
-    border: 1px solid var(--awc-line);
-    border-radius: 22px;
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-    text-decoration: none;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .goal-tile:hover {
-    color: var(--awc-navy);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .goal-tile__symbol {
-    display: grid;
-    place-items: center;
-    width: 54px;
-    height: 54px;
-    margin-bottom: var(--space-4);
-    border-radius: 17px;
-    background: var(--awc-jade-soft);
-    font-size: 1.7rem;
-  }
-
-  .goal-grid li:nth-child(2) .goal-tile__symbol { background: var(--awc-mint); }
-  .goal-grid li:nth-child(3) .goal-tile__symbol { background: var(--awc-sand); }
-  .goal-grid li:nth-child(4) .goal-tile__symbol { background: var(--awc-mist); }
-
-  .goal-tile h3 {
-    margin-bottom: var(--space-2);
-    font-size: 1.2rem;
-    letter-spacing: -0.035em;
-  }
-
-  .goal-tile p {
-    margin-bottom: auto;
-    font-size: var(--text-body-sm);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-  }
-
-  .goal-tile__cta {
-    margin-top: var(--space-4);
-    font-size: 0.8rem;
-    font-weight: 900;
+    letter-spacing: 0.1em;
     color: var(--awc-jade-deep);
+    margin-bottom: 10px;
   }
 
-  /* ---------- Guides ---------- */
-  .guide-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-4);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .guide-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: var(--space-5);
-    border: 1px solid var(--awc-line);
-    border-radius: 22px;
-    background: var(--primitive-white);
-    color: var(--awc-navy);
-    text-decoration: none;
-    border-top: 6px solid var(--awc-jade-soft);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .guide-card--1 { border-top-color: var(--awc-mint); }
-  .guide-card--2 { border-top-color: var(--awc-sand); }
-
-  .guide-card:hover {
-    color: var(--awc-navy);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .guide-card__meta {
-    margin-bottom: var(--space-3);
-    font-size: 0.68rem;
+  .hero-content h1 {
+    margin: 0 0 16px;
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
     font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--awc-navy);
   }
 
-  .guide-card h3 {
-    margin-bottom: var(--space-2);
-    font-size: 1.15rem;
-    line-height: 1.2;
-    letter-spacing: -0.035em;
-  }
-
-  .guide-card p {
-    margin-bottom: var(--space-4);
-    font-size: var(--text-body-sm);
-    color: var(--color-text-muted);
+  .hero-content p {
+    margin: 0 0 26px;
+    font-size: 16px;
     line-height: 1.65;
+    color: var(--color-text-secondary);
+    max-width: 48ch;
   }
 
-  .guide-card__cta {
-    margin-top: auto;
-    font-size: 0.8rem;
-    font-weight: 900;
+  .hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-navy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    border-radius: 10px;
+    background-color: var(--awc-navy);
+    color: var(--primitive-white);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-primary-navy:hover {
+    background-color: var(--primitive-navy-800);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary-jade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 20px;
+    border-radius: 10px;
+    background-color: var(--awc-jade-soft);
     color: var(--awc-jade-deep);
+    border: 1px solid var(--awc-mint);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  /* ---------- Testimonials ---------- */
-  .testimonials-grid {
+  .btn-secondary-jade:hover {
+    background-color: var(--awc-mint);
+    border-color: var(--awc-jade);
+  }
+
+  .btn-tertiary-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background-color: var(--primitive-white);
+    color: var(--awc-navy);
+    border: 1px solid var(--awc-line);
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn-tertiary-check:hover {
+    border-color: var(--awc-jade);
+    color: var(--awc-jade-deep);
+    background-color: var(--awc-paper);
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .hero-visual img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* 4-COLUMN CREDENTIAL BAR */
+  .trust-bar {
+    margin-top: 18px;
+    padding: 18px 28px;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .trust-col {
+    border-right: 1px solid var(--awc-line);
+    padding-right: 16px;
+  }
+
+  .trust-col:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .trust-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 3px;
+  }
+
+  .trust-value {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--awc-navy);
+  }
+
+  /* COMMON SECTION STYLING */
+  .section {
+    padding: 48px 0;
+    border-top: 1px solid var(--awc-line);
+  }
+
+  .section-header {
+    margin-bottom: 30px;
+  }
+
+  .section-header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .section-header h2 {
+    margin: 0 0 8px;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+    color: var(--awc-navy);
+  }
+
+  .section-header p {
+    margin: 0;
+    max-width: 64ch;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .section-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--awc-jade-deep);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .section-link:hover {
+    text-decoration: underline;
+  }
+
+  /* 2. MEET SANTHOSH (ADVISOR PROFILE CARD) */
+  .advisor-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 36px;
+    align-items: center;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .advisor-photo-wrap {
+    text-align: center;
+  }
+
+  .advisor-photo-wrap img {
+    width: 220px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid var(--awc-line);
+    background: var(--awc-paper);
+  }
+
+  .advisor-body h2 {
+    margin: 0 0 4px;
+    font-size: clamp(24px, 2.6vw, 30px);
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+  }
+
+  .advisor-creds {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--awc-jade-deep);
+    margin-bottom: 16px;
+  }
+
+  .advisor-quote {
+    margin: 0 0 16px;
+    font-size: 15.5px;
+    font-style: italic;
+    color: var(--awc-navy);
+    border-left: 3px solid var(--awc-gold);
+    padding-left: 16px;
+    line-height: 1.55;
+  }
+
+  .advisor-bio {
+    margin: 0 0 22px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+    max-width: 70ch;
+  }
+
+  .advisor-contact-row {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--awc-line);
+    justify-content: start;
+  }
+
+  .contact-item span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+  }
+
+  .contact-item strong {
+    font-size: 14px;
+    color: var(--awc-navy);
+  }
+
+  .contact-item a {
+    color: var(--awc-navy);
+    text-decoration: none;
+  }
+
+  .contact-item a:hover {
+    color: var(--awc-jade-deep);
+    text-decoration: underline;
+  }
+
+  /* 3. THREE CLEAN SERVICE PILLARS */
+  .services-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6);
+    gap: 22px;
   }
 
-  .testimonial-card {
+  .service-card {
     background: var(--primitive-white);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
+    border: 1px solid var(--awc-line);
+    border-radius: 18px;
+    padding: 30px 26px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .service-num {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .service-card h3 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+  }
+
+  .service-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--awc-jade-deep);
+    margin-bottom: 14px;
+  }
+
+  .service-card p {
+    margin: 0 0 18px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    flex: 1;
+  }
+
+  .service-points {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--awc-line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--awc-navy);
+    font-weight: 500;
+  }
+
+  .service-points li::before {
+    content: "— ";
+    color: var(--awc-jade-deep);
+    font-weight: 700;
+  }
+
+  .service-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--awc-navy);
+    text-decoration: none;
+  }
+
+  .service-link:hover {
+    color: var(--awc-jade-deep);
+    text-decoration: underline;
+  }
+
+  /* 4. CLIENT EXPERIENCES (TESTIMONIALS) */
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .review-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 26px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: var(--shadow-subtle);
-    position: relative;
-    transition: transform var(--transition-fast, 0.15s ease), box-shadow var(--transition-fast, 0.15s ease);
   }
 
-  .testimonial-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-card);
-  }
-
-  .testimonial-card__quote-mark {
-    font-family: var(--font-family-heading);
-    font-size: 3rem;
-    line-height: 1;
-    color: var(--awc-jade-action);
-    opacity: 0.25;
-    margin-bottom: -10px;
-    user-select: none;
-  }
-
-  .testimonial-card__quote {
-    font-size: var(--text-body-sm);
+  .review-text {
+    margin: 0 0 18px;
+    font-size: 14px;
+    line-height: 1.65;
     color: var(--color-text-secondary);
-    line-height: 1.68;
-    margin: 0 0 var(--space-6) 0;
-    flex-grow: 1;
+    white-space: pre-line;
   }
 
-  .testimonial-card__author {
+  .review-author {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border-subtle);
+    gap: 12px;
+    border-top: 1px solid var(--awc-line);
+    padding-top: 14px;
   }
 
-  .testimonial-card__avatar {
+  .review-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--awc-navy);
+    color: var(--primitive-white);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
     overflow: hidden;
   }
 
-  .testimonial-card__img {
+  .review-initials img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
   }
 
-  .testimonial-card__placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--awc-navy) 0%, var(--awc-jade-action) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--awc-mint);
-    border-radius: 50%;
+  .review-name {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--awc-navy);
   }
 
-  .testimonial-card__initials {
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: var(--primitive-white);
-    letter-spacing: 0.05em;
+  .review-role {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
   }
 
-  .testimonial-card__meta {
+  /* 5. SUPPORTING SELF-CHECK TOOLS (4 CARDS) */
+  .tools-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .tool-box {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-subtle);
   }
 
-  .testimonial-card__name {
-    font-family: var(--font-family-heading);
-    font-size: 0.95rem;
+  .tool-box:hover {
+    border-color: var(--awc-jade);
+    transform: translateY(-2px);
+  }
+
+  .tool-box.featured {
+    border-color: var(--awc-jade);
+    background: var(--awc-jade-soft);
+  }
+
+  .tool-type {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--awc-jade-deep);
+    margin-bottom: 8px;
+  }
+
+  .tool-box h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
     font-weight: 800;
     color: var(--awc-navy);
-    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .tool-box p {
+    margin: 0 0 16px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+    flex: 1;
+  }
+
+  .tool-cta {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--awc-navy);
+  }
+
+  /* 6. PLAIN-LANGUAGE GUIDES */
+  .guides-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .guide-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .guide-meta {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--awc-jade-deep);
+    margin-bottom: 8px;
+  }
+
+  .guide-card h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .guide-card h3 a {
+    color: var(--awc-navy);
+    text-decoration: none;
+  }
+
+  .guide-card h3 a:hover {
+    color: var(--awc-jade-deep);
+  }
+
+  .guide-card p {
+    margin: 0 0 16px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+    flex: 1;
+  }
+
+  .guide-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--awc-jade-deep);
+    text-decoration: none;
+  }
+
+  .guide-link:hover {
+    text-decoration: underline;
+  }
+
+  /* 7. CONTACT SECTION */
+  .contact-card {
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 22px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 32px;
+    align-items: center;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .contact-copy h2 {
+    margin: 0 0 10px;
+    font-size: clamp(24px, 2.6vw, 30px);
+    font-weight: 800;
+    color: var(--awc-navy);
+    letter-spacing: -0.02em;
+  }
+
+  .contact-copy p {
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 58ch;
+  }
+
+  .contact-meta-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-left: 1px solid var(--awc-line);
+    padding-left: 28px;
+  }
+
+  .contact-meta-box span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
     margin-bottom: 2px;
   }
 
-  .testimonial-card__role {
-    font-size: 0.78rem;
-    color: var(--color-text-muted);
-    line-height: 1.35;
-  }
-
-    /* ---------- About ---------- */
-  .about {
-    display: grid;
-    grid-template-columns: 0.75fr 1.25fr;
-    gap: var(--space-16);
-    align-items: center;
-  }
-
-  .about__photo {
-    position: relative;
-    max-width: 360px;
-  }
-
-  .about__photo img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: center top;
-    border-radius: 28px;
-    background: var(--awc-mint);
-  }
-
-  .about__stamp {
-    position: absolute;
-    right: -22px;
-    bottom: 25px;
-    max-width: 160px;
-    margin: 0;
-    padding: var(--space-4);
-    border-radius: 17px;
-    background: var(--awc-gold);
-    color: var(--awc-navy);
-    font-size: 0.75rem;
-    font-weight: 900;
-    line-height: 1.4;
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .about__title {
-    margin: var(--space-3) 0 var(--space-4);
-    font-size: clamp(1.9rem, 3.4vw, 2.9rem);
-    line-height: 1.06;
-    letter-spacing: -0.05em;
-  }
-
-  .about__copy p {
-    max-width: 620px;
-    color: var(--color-text-muted);
-    line-height: 1.75;
-  }
-
-  .about__facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: var(--space-5) 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .about__facts li {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--awc-line);
-    border-radius: 12px;
-    background: var(--primitive-white);
-    font-size: 0.75rem;
-    font-weight: 800;
+  .contact-meta-box strong {
+    font-size: 14.5px;
     color: var(--awc-navy);
   }
 
-  .about__note {
-    margin-bottom: var(--space-5);
-    padding: 0.8rem 1rem;
-    border-left: 4px solid var(--awc-gold);
-    border-radius: 0 12px 12px 0;
-    background: var(--awc-sand);
-    font-size: 0.8rem;
-    color: var(--awc-sand-ink) !important;
+  .contact-meta-box a {
+    color: var(--awc-navy);
+    text-decoration: none;
   }
 
-  .about__note a {
-    color: var(--awc-sand-ink);
-    font-weight: 800;
+  .contact-meta-box a:hover {
+    color: var(--awc-jade-deep);
+    text-decoration: underline;
   }
 
-  /* ---------- Contact ---------- */
-  .contact-band {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-8);
-    padding: var(--space-10);
-    border-radius: 28px;
-    background: var(--awc-mint);
-  }
-
-  .contact-band__title {
-    max-width: 560px;
-    margin: var(--space-3) 0 var(--space-3);
-    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
-    line-height: 1.12;
-    letter-spacing: -0.045em;
-  }
-
-  .contact-band p {
-    margin: 0;
-    font-size: var(--text-body-sm);
-  }
-
-  .contact-band__actions {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    flex-shrink: 0;
-  }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 1099px) {
-    .hero__grid {
-      gap: var(--space-6);
+  /* RESPONSIVE BREAKPOINTS */
+  @media (max-width: 1024px) {
+    .hero-banner {
+      background-image: none;
+      flex-direction: column;
+      min-height: auto;
     }
 
-    .money-map {
-      width: 370px;
+    .hero-content {
+      max-width: 100%;
+      padding: 36px 28px 20px;
     }
 
-    .money-map__center {
-      width: 150px;
-      height: 150px;
+    .hero-visual {
+      display: block;
+      width: 100%;
+      padding: 0 20px 24px;
     }
 
-    .orbit-node {
-      width: 90px;
-      min-height: 82px;
-    }
-
-    .goal-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 899px) {
-    .section {
-      padding: var(--space-16) 0;
-    }
-
-    .hero__grid {
-      grid-template-columns: 1fr;
-      padding-top: var(--space-12);
-      padding-bottom: var(--space-12);
-    }
-
-    .hero__art {
-      min-height: 360px;
-    }
-
-    .start-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .start-card {
-      min-height: 190px;
-    }
-
-    .journey-strip {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      row-gap: var(--space-8);
-    }
-
-    .journey-strip::before {
-      display: none;
-    }
-
-    .testimonials-grid {
+    .trust-bar {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-4);
     }
 
-    .pillars {
+    .trust-col:nth-child(2) {
+      border-right: none;
+    }
+
+    .advisor-card {
       grid-template-columns: 1fr;
-      gap: var(--space-8);
+      gap: 24px;
     }
 
-    .guide-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .about {
-      grid-template-columns: 1fr;
-      gap: var(--space-8);
-    }
-
-    .about__photo {
-      max-width: 280px;
-      margin: 0 auto;
-    }
-
-    .contact-band {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: var(--space-6);
-    }
-
-    .contact-band__actions {
-      width: 100%;
-    }
-
-    .contact-band__actions :global(.awc-btn) {
-      width: 100%;
-    }
-  }
-
-  /* Small screens: the orbit becomes a calm, readable map (no overlap) */
-  @media (max-width: 639px) {
-    .hero__art {
-      min-height: 0;
-      flex-direction: column;
-    }
-
-    .hero__sticker {
-      position: static;
-      align-self: flex-start;
-      margin-bottom: var(--space-4);
-      transform: rotate(-2deg);
-    }
-
-    .money-map {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-3);
-      width: 100%;
-      aspect-ratio: auto;
-      border: 0;
-      border-radius: 0;
-    }
-
-    .money-map::before,
-    .money-map::after {
-      display: none;
-    }
-
-    .money-map__center {
-      grid-column: 1 / -1;
-      width: 100%;
-      height: auto;
-      padding: var(--space-4);
-      border-radius: 22px;
-      flex-direction: row;
-      gap: var(--space-3);
+    .advisor-photo-wrap {
       text-align: left;
     }
 
-    .money-map__house {
-      font-size: 2rem;
+    .advisor-contact-row {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .orbit-node {
-      position: static;
-      width: auto;
-      min-height: 84px;
-    }
-
-    .hero__actions :global(.awc-btn) {
-      width: 100%;
-    }
-
-    .goal-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-3);
-    }
-
-    .goal-tile {
-      min-height: 200px;
-      padding: var(--space-4);
-    }
-
-    .journey-strip {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .pillars__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .testimonials-grid {
+    .services-grid,
+    .guides-grid {
       grid-template-columns: 1fr;
-      gap: var(--space-4);
     }
 
-    .about__stamp {
-      right: -8px;
+    .tools-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact-card {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-meta-grid {
+      border-left: none;
+      border-top: 1px solid var(--awc-line);
+      padding-left: 0;
+      padding-top: 20px;
     }
   }
 
-  @media (max-width: 400px) {
-    .goal-grid {
+  @media (max-width: 680px) {
+    .home-page {
+      padding-top: 16px;
+    }
+
+    .hero-content {
+      padding: 28px 20px 16px;
+    }
+
+    .trust-bar,
+    .reviews-grid,
+    .tools-row,
+    .advisor-contact-row {
       grid-template-columns: 1fr;
+    }
+
+    .trust-col {
+      border-right: none;
+      border-bottom: 1px solid var(--awc-line);
+      padding-right: 0;
+      padding-bottom: 12px;
+    }
+
+    .trust-col:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .advisor-card,
+    .contact-card {
+      padding: 24px 20px;
+    }
+
+    .section-header-row {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>

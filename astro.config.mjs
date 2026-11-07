@@ -5,4 +5,9 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://antwealth.in',
   integrations: [react()],
+  vite: {
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    },
+  },
 });

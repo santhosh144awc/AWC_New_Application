@@ -24,8 +24,15 @@ export const TOP_NAV_ROUTES: NavRoute[] = [
     id: 'nav-home',
     label: 'Home',
     path: '/',
-    description: 'The Family Money Map Gateway and orientation portal.',
+    description: 'Personal Finance Statement & Interactive Financial Calculators Workbench.',
     category: 'core',
+  },
+  {
+    id: 'nav-pfs',
+    label: 'Personal Finance Statement',
+    path: '/tools/personal-finance-statement/',
+    description: 'Comprehensive 6-stage household financial statement with client-ready PDF report.',
+    category: 'tool',
   },
   {
     id: 'nav-health-check',
@@ -105,6 +112,15 @@ export const GOAL_ROUTES: NavRoute[] = [
 
 export const TOOL_ROUTES: NavRoute[] = [
   {
+    id: 'tool-personal-finance-statement',
+    label: 'Personal Finance Statement',
+    path: '/tools/personal-finance-statement/',
+    description: 'Household financial statement covering income, expenses, savings, assets, liabilities, and net worth with client-ready PDF.',
+    category: 'tool',
+    eyebrow: 'Household Diagnostic',
+    statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
+  },
+  {
     id: 'tool-sip',
     label: 'SIP Wealth Simulator',
     path: '/tools/sip/',
@@ -159,15 +175,6 @@ export const TOOL_ROUTES: NavRoute[] = [
     statusBadge: 'Interactive Calculator Active • Dual-Engine Model',
   },
   {
-    id: 'tool-loan-vs-invest',
-    label: 'Loan vs Investment Trade-off',
-    path: '/tools/loan-vs-invest/',
-    description: 'Side-by-side trade-off analysis between mortgage prepayment and long-term equity investing under compound interest modeling.',
-    category: 'tool',
-    eyebrow: 'Trade-off Analysis',
-    statusBadge: 'Interactive Calculator Active • Arbitrage Analysis',
-  },
-  {
     id: 'tool-life-insurance',
     label: 'Life Insurance Needs Audit',
     path: '/tools/life-insurance/',
@@ -184,15 +191,6 @@ export const TOOL_ROUTES: NavRoute[] = [
     category: 'tool',
     eyebrow: 'Solvency & Diagnostics',
     statusBadge: 'Interactive Diagnostic Active • Productive Balance Sheet',
-  },
-  {
-    id: 'tool-personal-finance-statement',
-    label: 'Personal Finance Statement',
-    path: '/tools/personal-finance-statement/',
-    description: 'Household financial statement covering income, expenses, savings, assets, liabilities, and net worth with client-ready PDF.',
-    category: 'tool',
-    eyebrow: 'Household Diagnostic',
-    statusBadge: 'Interactive Diagnostic Active • In-Memory Privacy',
   },
 ];
 
@@ -250,13 +248,19 @@ export const CONTACT_ROUTE: NavRoute = {
  * Returns all registered application routes for automated validation.
  */
 export function getAllRegisteredRoutes(): NavRoute[] {
-  return [
-    ...TOP_NAV_ROUTES,
-    ...GOAL_ROUTES.filter(r => !TOP_NAV_ROUTES.some(t => t.path === r.path)),
-    ...TOOL_ROUTES.filter(r => !TOP_NAV_ROUTES.some(t => t.path === r.path)),
+  const baseRoutes = [
+    ...TOP_NAV_ROUTES.filter(r => r.id !== 'nav-pfs'),
+    ...GOAL_ROUTES,
+    ...TOOL_ROUTES,
     ...LEGAL_ROUTES,
     CONTACT_ROUTE,
   ];
+  const seenPaths = new Set<string>();
+  return baseRoutes.filter((r) => {
+    if (seenPaths.has(r.path)) return false;
+    seenPaths.add(r.path);
+    return true;
+  });
 }
 
 /**

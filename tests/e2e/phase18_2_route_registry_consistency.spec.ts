@@ -47,10 +47,9 @@ test.describe('Phase 18.2 — Route Registry, Status Badge & Directory Consisten
     await expect(loanRecoveryCard.locator('.tool-badge')).toHaveText(/Interactive Calculator Active|Live calculator/i);
     await expect(loanRecoveryCard.locator('.btn-tool')).toHaveText(/Calculate recovery|Launch Calculator/i);
 
-    // 6. Loan vs Invest is an active interactive calculator
+    // 6. Redundant Loan vs Invest card is consolidated into Home Loan Foreclosure vs SIP
     const loanVsInvestCard = page.locator('.tool-card').filter({ hasText: 'Loan vs Investment Trade-off' });
-    await expect(loanVsInvestCard.locator('.tool-badge')).toHaveText(/Interactive Calculator Active|Live calculator/i);
-    await expect(loanVsInvestCard.locator('.btn-tool')).toHaveText(/Compare options|Launch Calculator/i);
+    await expect(loanVsInvestCard).toHaveCount(0);
   });
 
   test('milestone goal planning hub (/plan/) shows interactive milestone planners', async ({ page }) => {

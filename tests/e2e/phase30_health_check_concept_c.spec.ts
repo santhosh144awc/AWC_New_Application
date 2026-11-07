@@ -188,9 +188,9 @@ test.describe('Phase 30 / Concept C Phase 11 — 7-Pillar Family Financial Healt
     await expect(page.locator('#health-overall-score')).toHaveText('22');
     await expect(page.locator('#health-band-badge')).toContainText('Priority Areas Identified');
 
-    // Check deep-dive link to REAL Financial Statement
+    // Check deep-dive link to canonical Personal Finance Statement
     const realStmtLink = page.locator('#link-real-statement');
-    await expect(realStmtLink).toHaveAttribute('href', '/health-check/real-statement/');
+    await expect(realStmtLink).toHaveAttribute('href', '/tools/personal-finance-statement/');
 
     // Check contact guidance link
     const contactLink = page.locator('#link-contact');

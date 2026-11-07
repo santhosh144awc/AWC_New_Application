@@ -96,11 +96,11 @@ test.describe('Health Check Redesign Viewport & Visual Check', () => {
     await page.goto('/');
 
     // Check homepage hero CTA buttons
-    const startHealthBtn = page.getByRole('link', { name: 'Start your health check →' });
+    const startHealthBtn = page.getByRole('link', { name: 'Open Personal Finance Statement →' });
     await expect(startHealthBtn).toBeVisible();
-    await expect(startHealthBtn).toHaveAttribute('href', '/health-check/');
+    await expect(startHealthBtn).toHaveAttribute('href', '/tools/personal-finance-statement/');
 
-    const viewToolsBtn = page.getByRole('link', { name: 'View all tools →' });
+    const viewToolsBtn = page.getByRole('link', { name: 'View All Tools →' });
     await expect(viewToolsBtn).toBeVisible();
     await expect(viewToolsBtn).toHaveAttribute('href', '/tools/');
 
@@ -113,7 +113,7 @@ test.describe('Health Check Redesign Viewport & Visual Check', () => {
 
     // Verify Portfolio Login is present as the 7th item at the far right of the nav
     const navItems = page.locator('.desktop-nav .nav-item');
-    await expect(navItems).toHaveCount(7);
+    await expect(navItems).toHaveCount(8);
     const lastNavItem = navItems.last();
     await expect(lastNavItem.locator('.portfolio-link')).toBeVisible();
     await expect(lastNavItem.locator('.portfolio-link')).toContainText('Portfolio Login');

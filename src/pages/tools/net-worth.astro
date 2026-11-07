@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import NetWorthCalculatorIsland from '../../features/calculators/NetWorthCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
@@ -22,85 +24,21 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/net-worth/" />
+
     <PageIntro
       eyebrow="Money Lab · Solvency Diagnostic"
       title="Family Net Worth & Balance Sheet Calculator"
-      description="Add what the household owns and owes to see an instant net worth snapshot."
+      description="Add what the household owns and owes to see an instant net worth snapshot separating financial assets from personal-use property."
     />
 
-    <!-- Interactive Concept C Net Worth Calculator Island -->
     <NetWorthCalculatorIsland client:load />
 
-    <!-- Collapsed by default educational details -->
-    <details class="worth-details">
-      <summary class="worth-details-summary">
-        <span class="summary-icon">💡</span>
-        <span class="summary-text">How Net Worth is Evaluated: Accounting vs Financial Assets</span>
-        <span class="toggle-indicator">▼</span>
-      </summary>
-      <div class="details-content">
-        <div class="worth-types-grid">
-          <div class="worth-card">
-            <span class="worth-badge">Excludes Physical Assets</span>
-            <h3 class="worth-title">Cash &amp; Financial Assets After Liabilities</h3>
-            <p class="worth-desc">
-              Aggregates cash reserves, fixed deposits, mutual funds, direct equities, and retirement accounts minus all debt obligations. Access and liquidity differ significantly across holdings: while bank balances and liquid funds can be accessed immediately, instruments such as EPF, PPF, and NPS involve mandatory lock-ins, withdrawal conditions, or settlement timelines and must not be assumed to be immediately available emergency cash.
-            </p>
-          </div>
+    <WhatsAppToolLeadBar
+      toolName="Quick Net Worth Calculator"
+      promptQuestion="Want a full 6-stage cash flow and balance sheet statement with a 5-page PDF?"
+    />
 
-          <div class="worth-card">
-            <span class="worth-badge">Accounting Net Worth</span>
-            <h3 class="worth-title">Total Balance Sheet (Including Property)</h3>
-            <p class="worth-desc">
-              Your primary residence, personal vehicle, and household goods contribute to overall accounting balance sheet net worth and personal utility, but cannot easily be drawn upon to meet monthly living expenses.
-            </p>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Reciprocal Navigation Strip -->
-    <section class="related-tools-section" aria-labelledby="related-tools-title">
-      <div class="section-header-compact">
-        <span class="eyebrow">Explore Next</span>
-        <h2 id="related-tools-title" class="related-heading">Connect your net worth to broader planning</h2>
-        <p class="related-sub">Choose a deeper assessment or explore specific investment simulators.</p>
-      </div>
-
-      <div class="related-grid">
-        <a href="/tools/personal-finance-statement/" class="related-card highlight-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--primitive-teal-100, #CFEFE3)">▥</span>
-            <span class="card-tag">Comprehensive Diagnostic</span>
-          </div>
-          <h3 class="card-title">Personal Finance Statement</h3>
-          <p class="card-desc">Need a more complete household review? Open the guided 6-stage review covering monthly cash flow, emergency runway, asset allocation, and client-ready PDF.</p>
-          <span class="card-action">Open Statement →</span>
-        </a>
-
-        <a href="/tools/sip/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--primitive-gold-50, #FDF7E7)">↗</span>
-            <span class="card-tag">Wealth Building</span>
-          </div>
-          <h3 class="card-title">SIP Wealth Simulator</h3>
-          <p class="card-desc">Explore how monthly compounding and annual step-ups help grow your productive financial assets over time.</p>
-          <span class="card-action">Simulate SIP →</span>
-        </a>
-
-        <a href="/tools/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--primitive-slate-50, #F1F5F9)">▤</span>
-            <span class="card-tag">All Calculators</span>
-          </div>
-          <h3 class="card-title">Tools Directory</h3>
-          <p class="card-desc">Browse our complete directory of goal calculators, debt simulators, and solvency diagnostics.</p>
-          <span class="card-action">Browse all tools →</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
         <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Net Worth Calculator provides an illustrative mathematical aggregation of user-entered assets and liabilities and does not constitute a formal net worth certificate, audit, credit rating, or investment recommendation.
@@ -115,236 +53,22 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
     padding-bottom: var(--space-16);
   }
 
-  /* Collapsible Educational Details */
-  .worth-details {
-    background-color: var(--color-bg-surface, #ffffff);
-    border: 1px solid var(--color-border-subtle, #e2e8f0);
-    border-radius: var(--radius-lg, 12px);
-    margin: var(--space-6) 0 var(--space-8) 0;
-    overflow: hidden;
-    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
-  }
-
-  .worth-details-summary {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--color-brand-primary, #173047);
-    user-select: none;
-    list-style: none;
-  }
-
-  .worth-details-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .summary-icon {
-    font-size: 1.1rem;
-  }
-
-  .summary-text {
-    flex: 1;
-  }
-
-  .toggle-indicator {
-    font-size: 0.75rem;
-    color: var(--color-text-secondary, #64748b);
-    transition: transform var(--transition-fast, 150ms ease);
-  }
-
-  .worth-details[open] .toggle-indicator {
-    transform: rotate(180deg);
-  }
-
-  .details-content {
-    padding: 0 var(--space-5) var(--space-5) var(--space-5);
-    border-top: 1px solid var(--color-border-subtle, #f1f5f9);
-    margin-top: var(--space-2);
-  }
-
-  .worth-types-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-  }
-
-  @media (min-width: 640px) {
-    .worth-types-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .worth-card {
-    background-color: var(--awc-paper);
-    border: 1px solid var(--color-border-subtle, #e2e8f0);
-    border-radius: var(--radius-md, 8px);
-    padding: var(--space-4);
-  }
-
-  .worth-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--color-brand-accent, #16877E);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: var(--space-1);
-  }
-
-  .worth-title {
-    font-size: 1rem;
-    font-family: var(--font-family-heading, inherit);
-    font-weight: 700;
-    color: var(--color-brand-primary, #173047);
-    margin: 0 0 var(--space-2) 0;
-  }
-
-  .worth-desc {
-    font-size: 0.82rem;
-    color: var(--color-text-secondary, #475569);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  /* Related Tools Section */
-  .related-tools-section {
-    margin-top: var(--space-10);
-    padding-top: var(--space-8);
-    border-top: 1px solid var(--color-border-subtle, #e2e8f0);
-  }
-
-  .section-header-compact {
-    margin-bottom: var(--space-6);
-  }
-
-  .eyebrow {
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-brand-accent, #16877E);
-    display: block;
-    margin-bottom: var(--space-1);
-  }
-
-  .related-heading {
-    font-size: var(--text-h3, 1.3rem);
-    font-family: var(--font-family-heading, inherit);
-    font-weight: 700;
-    color: var(--color-brand-primary, #173047);
-    margin: 0 0 var(--space-1) 0;
-  }
-
-  .related-sub {
-    font-size: 0.88rem;
-    color: var(--color-text-secondary, #64748b);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  @media (min-width: 768px) {
-    .related-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .related-card {
-    background-color: var(--color-bg-surface, #ffffff);
-    border: 1px solid var(--color-border-subtle, #e2e8f0);
-    border-radius: var(--radius-lg, 12px);
-    padding: var(--space-5);
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: all var(--transition-fast, 150ms ease);
-    box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.04));
-  }
-
-  .related-card:hover {
-    border-color: var(--color-brand-accent, #16877E);
-    box-shadow: 0 4px 12px rgba(22, 135, 126, 0.1);
-    transform: translateY(-2px);
-  }
-
-  .highlight-card {
-    border-color: var(--primitive-teal-200, #99f6e4);
-    background: linear-gradient(180deg, #ffffff 0%, var(--primitive-teal-50, #f0fdfa) 100%);
-  }
-
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-3);
-  }
-
-  .card-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm, 6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-  }
-
-  .card-tag {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--color-brand-primary, #173047);
-    background-color: var(--awc-paper);
-    padding: 0.15rem 0.45rem;
-    border-radius: var(--radius-pill, 9999px);
-  }
-
-  .card-title {
-    font-size: 1.05rem;
-    font-family: var(--font-family-heading, inherit);
-    font-weight: 700;
-    color: var(--color-brand-primary, #173047);
-    margin: 0 0 var(--space-2) 0;
-  }
-
-  .card-desc {
-    font-size: 0.82rem;
-    color: var(--color-text-secondary, #64748b);
-    line-height: 1.45;
-    margin: 0 0 var(--space-4) 0;
-    flex: 1;
-  }
-
-  .card-action {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--color-brand-accent, #16877E);
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Regulatory Note */
   .regulatory-disclosure-note {
-    margin-top: var(--space-10);
+    margin-top: var(--space-8);
     padding: var(--space-4) var(--space-5);
-    background-color: var(--awc-sand);
-    border-left: 3px solid var(--awc-gold);
-    border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+    background-color: var(--primitive-gold-50);
+    border: 1px solid var(--primitive-gold-100);
+    border-radius: 12px;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
   }
 
   .regulatory-disclosure-note p {
-    font-size: 0.78rem;
-    color: var(--color-text-secondary, #475569);
-    line-height: 1.5;
     margin: 0;
+  }
+
+  .regulatory-disclosure-note strong {
+    color: var(--color-brand-primary);
   }
 </style>

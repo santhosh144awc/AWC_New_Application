@@ -10,7 +10,7 @@ test('Capture Phase 47 visual screenshots', async ({ page }) => {
 
   // 1. Stage 1 at desktop width 1440px
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/health-check/real-statement/');
+  await page.goto('/tools/personal-finance-statement/');
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(screenshotsDir, '01_stage1_desktop_1440px.png'), fullPage: false });
 
@@ -26,7 +26,7 @@ test('Capture Phase 47 visual screenshots', async ({ page }) => {
 
   // Back to desktop for interactive edits
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/health-check/real-statement/');
+  await page.goto('/tools/personal-finance-statement/');
   await page.waitForTimeout(300);
 
   const firstRow = page.locator('#table-income tbody tr').nth(0);
@@ -45,9 +45,10 @@ test('Capture Phase 47 visual screenshots', async ({ page }) => {
   await firstRow.scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(screenshotsDir, '05_income_row_after_annual_edit.png'), fullPage: false });
 
+  // Fill client name required for PDF generation
+  await page.locator('input[placeholder="e.g. Ramesh & Priya Sundaram"]').fill('Ramesh Sundaram');
+
   // 6. Statement Preview with fixed preparer and DD-MM-YYYY date
-  await page.click('#btn-load-sample');
-  await page.waitForTimeout(200);
   await page.click('#btn-nav-stage-6');
   await page.waitForTimeout(300);
   await page.click('#btn-preview-statement');

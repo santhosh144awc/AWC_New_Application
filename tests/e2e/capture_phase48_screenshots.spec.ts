@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -13,7 +13,7 @@ test.beforeAll(() => {
 test.describe('Phase 48 Screenshots Capture', () => {
   test('Capture 1440px desktop screenshots (Stage 1, Stage 3, Stage 6, and Scrolled Sticky Stepper)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
     await page.waitForSelector('.pfs-meta-section');
 
     // 1. Initial view Stage 1
@@ -54,7 +54,7 @@ test.describe('Phase 48 Screenshots Capture', () => {
 
   test('Capture 1280px desktop screenshot', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
     await page.waitForSelector('.pfs-meta-section');
     await page.waitForTimeout(300);
     await page.screenshot({
@@ -65,7 +65,7 @@ test.describe('Phase 48 Screenshots Capture', () => {
 
   test('Capture 390px mobile screenshot', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
     await page.waitForSelector('.pfs-meta-section');
     await page.waitForTimeout(300);
     await page.screenshot({

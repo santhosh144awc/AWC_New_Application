@@ -1,0 +1,152 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+const switcherItems = [
+  { label: 'Personal Finance Statement', shortLabel: 'Personal Finance Statement', href: '/tools/personal-finance-statement/', icon: '▥', primary: true },
+  { label: 'SIP Simulator', shortLabel: 'SIP', href: '/tools/sip/', icon: '↗' },
+  { label: 'Lump Sum', shortLabel: 'Lump Sum', href: '/tools/lumpsum/', icon: '◉' },
+  { label: 'Advanced SIP', shortLabel: 'Step-Up SIP', href: '/tools/sip-growth/', icon: '▥' },
+  { label: 'SWP Income', shortLabel: 'SWP', href: '/tools/swp/', icon: '⇄' },
+  { label: 'Loan Prepay vs SIP', shortLabel: 'Loan Prepay vs SIP', href: '/tools/home-loan-foreclosure/', icon: '⇣' },
+  { label: 'Loan Interest Recovery', shortLabel: 'Loan Recovery SIP', href: '/tools/loan-sip-recovery/', icon: '⇣' },
+  { label: "Children's Future", shortLabel: 'Children', href: '/plan/children/', icon: '◇' },
+  { label: 'Home Purchase', shortLabel: 'Home Buy', href: '/plan/home-purchase/', icon: '⌂' },
+  { label: 'Retirement Corpus', shortLabel: 'Retirement', href: '/plan/retirement/', icon: '⟳' },
+  { label: '3-Bucket Income', shortLabel: '3-Bucket Income', href: '/plan/retirement-income/', icon: '⇄' },
+  { label: 'Life Cover Audit', shortLabel: 'Life Cover', href: '/tools/life-insurance/', icon: '⬡' },
+  { label: 'Quick Net Worth', shortLabel: 'Net Worth', href: '/tools/net-worth/', icon: '▤' },
+];
+---
+
+<nav class="quick-tool-switcher" aria-label="Quick Tool Switcher">
+  <div class="switcher-header">
+    <span class="switcher-label">Quick Switch Tool:</span>
+    <a href="/tools/" class="switcher-all-link">All Tools Directory →</a>
+  </div>
+  <div class="switcher-pills">
+    {switcherItems.map((item) => {
+      const active = normalizedPath === item.href;
+      return (
+        <a
+          href={item.href}
+          class={`switcher-pill ${active ? 'is-active' : ''} ${item.primary ? 'is-flagship' : ''}`}
+          aria-current={active ? 'page' : undefined}
+        >
+          <span class="pill-icon" aria-hidden="true">{item.icon}</span>
+          <span class="pill-text">{item.shortLabel}</span>
+        </a>
+      );
+    })}
+  </div>
+</nav>
+
+<style>
+  .quick-tool-switcher {
+    background-color: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin: 0 0 20px 0;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .switcher-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .switcher-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .switcher-all-link {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    text-decoration: none;
+  }
+
+  .switcher-all-link:hover {
+    text-decoration: underline;
+  }
+
+  .switcher-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  @media (max-width: 767px) {
+    .quick-tool-switcher {
+      padding: 10px 12px;
+      margin: 0 0 12px 0;
+    }
+
+    .switcher-pills {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+
+    .switcher-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .switcher-pill {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+
+  .switcher-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--awc-line);
+    background-color: var(--awc-paper);
+    color: var(--awc-navy);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .switcher-pill:hover {
+    border-color: var(--awc-jade);
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+  }
+
+  .switcher-pill.is-flagship {
+    border-color: var(--primitive-teal-200);
+    background-color: var(--primitive-teal-50);
+  }
+
+  .switcher-pill.is-active {
+    background-color: var(--awc-navy);
+    border-color: var(--awc-navy);
+    color: var(--primitive-white);
+  }
+
+  .pill-icon {
+    font-size: 12px;
+    line-height: 1;
+  }
+</style>
+

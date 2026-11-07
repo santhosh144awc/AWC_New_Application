@@ -37,7 +37,7 @@ For example, contributing ₹10,000 at the beginning of each month for 15 years 
 * **Estimated Future Corpus:** ₹47,59,314
 * **Estimated Compound Wealth Gain:** ₹29,59,314
 
-*(Assumptions: Modelled with beginning-of-month annuity-due timing, exact geometric monthly rate conversion $i = (1 + 0.12)^{1/12} - 1 \approx 0.0094888$, zero step-up, and before taxes, transaction fees, and scheme expense ratios. This is an illustrative simulation, not a performance guarantee.)*
+*(Assumptions: Modelled with beginning-of-month annuity-due timing, exact geometric monthly rate conversion `i = (1 + 0.12)^(1/12) - 1 ≈ 0.0094888`, zero step-up, and before taxes, transaction fees, and scheme expense ratios. This is an illustrative simulation, not a performance guarantee.)*
 
 ## What is a Step-Up SIP?
 
@@ -53,4 +53,4 @@ Stepping up your SIP dramatically expands your accumulated wealth because you st
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-registered Mutual Fund Distributor (ARN-266896).*

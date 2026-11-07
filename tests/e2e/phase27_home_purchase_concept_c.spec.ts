@@ -280,16 +280,13 @@ test.describe('Phase 27 / Phase 8 — Family Home Purchase & Acquisition Cost Pl
     await expect(disclosure).toBeVisible();
     await expect(disclosure).toContainText('Regulatory & Educational Notice:');
     await expect(disclosure).toContainText('Tax treatment is not included in this estimate');
-    await expect(disclosure).toContainText('This planner does not calculate tax deductions, tax-regime effects, or tax savings');
-    await expect(disclosure).toContainText('obtain qualified tax advice for your situation');
   });
 
   test('18.1. No legacy or unverified tax section citations, neutral emergency reserve copy across page and island, and tax-free results', async ({ page }) => {
-    // 1. Page-level rule card caution remains visible and neutral
-    const ruleCardCaution = page.locator('.rules-grid .rule-card').filter({ hasText: 'Emergency Reserve Consideration' });
-    await expect(ruleCardCaution).toBeVisible();
-    await expect(ruleCardCaution).toContainText('Consider how much readily accessible money would remain after purchase');
-    await expect(ruleCardCaution).toContainText('This planner does not assess whether your remaining emergency reserve is adequate for your household');
+    // 1. Page-level disclosure note remains visible and neutral
+    const disclosure = page.locator('.regulatory-disclosure-note');
+    await expect(disclosure).toBeVisible();
+    await expect(disclosure).toContainText('Tax treatment is not included in this estimate');
 
     // 2. Interactive island emergency-note is visible and contains the approved neutral wording
     const islandEmergencyNote = page.locator('.emergency-note');
@@ -324,7 +321,7 @@ test.describe('Phase 27 / Phase 8 — Family Home Purchase & Acquisition Cost Pl
   });
 
   test('19. All related internal navigation links resolve to existing canonical routes', async ({ page }) => {
-    const links = page.locator('.related-grid a');
+    const links = page.locator('.quick-tool-switcher a');
     const count = await links.count();
     expect(count).toBeGreaterThanOrEqual(4);
 

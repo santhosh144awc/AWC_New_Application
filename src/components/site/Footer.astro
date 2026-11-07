@@ -45,7 +45,7 @@ const goalLinks = [...GOAL_ROUTES, ...(realStatement ? [realStatement] : [])];
           {goalLinks.map((route) => (
             <li><a href={route.path}>{route.label}</a></li>
           ))}
-          {TOOL_ROUTES.slice(0, 3).map((tool) => (
+          {TOOL_ROUTES.filter((tool) => tool.id !== 'tool-personal-finance-statement').slice(0, 3).map((tool) => (
             <li><a href={tool.path}>{tool.label}</a></li>
           ))}
           <li><a href="/tools/">All tools →</a></li>
@@ -107,7 +107,7 @@ const goalLinks = [...GOAL_ROUTES, ...(realStatement ? [realStatement] : [])];
       </p>
 
       <p class="statutory-subtle">
-        {BUSINESS_PROFILE.disclosures.prototypeNotice}
+        {/* Staging notice omitted in production */}
       </p>
     </div>
 

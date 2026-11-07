@@ -7,15 +7,15 @@ test.describe('Phase 36 — Home Loan + SIP Interest Recovery Calculator E2E', (
     const response = await page.goto(routePath);
     expect(response?.status()).toBe(200);
 
-    await expect(page).toHaveTitle(/Home Loan Interest Recovery via Parallel SIP Calculator/i);
+    await expect(page).toHaveTitle(/Loan Interest Recovery via SIP Calculator/i);
 
     const h1 = page.locator('h1');
     await expect(h1).toHaveCount(1);
-    await expect(h1).toHaveText('Can a parallel SIP offset your home loan interest?');
+    await expect(h1).toHaveText('Could a parallel SIP offset the interest you pay on a loan?');
 
-    const badge = page.locator('.intro-status-badge');
+    const badge = page.locator('.page-intro .eyebrow');
     await expect(badge).toBeVisible();
-    await expect(badge).toContainText('Interactive Calculator Active • Dual-Engine Model');
+    await expect(badge).toContainText('Money Lab · Borrowing Strategy');
 
     // Verify React island is mounted
     const workbench = page.locator('[data-testid="recovery-workbench"]');

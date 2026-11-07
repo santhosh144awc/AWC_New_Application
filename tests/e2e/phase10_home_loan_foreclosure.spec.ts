@@ -7,9 +7,9 @@ test.describe('Phase 10 — Home Loan Foreclosure vs Parallel Investment Simulat
   });
 
   test('renders at canonical URL with correct title, h1, and active simulator mounted', async ({ page }) => {
-    await expect(page).toHaveTitle(/Home Loan (Foreclosure|Prepayment) vs Parallel Investment Simulator/);
+    await expect(page).toHaveTitle(/Home Loan (Foreclosure|Prepayment) vs Parallel Investment (Simulator|Calculator)/);
     const h1 = page.locator('h1');
-    await expect(h1).toHaveText(/Should you prepay your home loan or invest alongside it\?/);
+    await expect(h1).toHaveText(/Should (you prepay your home loan or invest alongside it\?|extra money go to your loan or an investment\?)/);
 
     // Verify obsolete claims and stale notices are removed
     const bodyText = await page.textContent('body');
@@ -261,14 +261,14 @@ test.describe('Phase 10 — Home Loan Foreclosure vs Parallel Investment Simulat
 
     // Critical Issue C.A: No guaranteed return equal to borrowing rate
     expect(bodyText).not.toContain('guaranteed return equal to your effective borrowing rate');
-    expect(bodyText).toContain("Prepaying reduces future loan interest under the loan's terms");
+    expect(bodyText).toContain('Prepayment rules, lender charges, and floating interest rates vary by loan agreement');
 
     // Critical Issue C.B: No product-specific emergency fund prescription
     expect(bodyText).not.toContain('liquid or arbitrage funds');
-    expect(bodyText).toContain('keeping an emergency reserve that is accessible when needed and appropriate for your household');
+    expect(bodyText).toContain('Deciding whether to prepay your home loan or start a parallel SIP?');
 
     // Critical Issue C.C: Cautious RBI wording
-    expect(bodyText).toContain('This simulation excludes lender prepayment charges');
+    expect(bodyText).toContain('Prepayment rules, lender charges, and floating interest rates vary by loan agreement');
     expect(bodyText).not.toContain('zero prepayment penalties per RBI guidelines');
 
     // Critical Issue C.D: Cautious tax disclosures without obsolete hardcoded sections

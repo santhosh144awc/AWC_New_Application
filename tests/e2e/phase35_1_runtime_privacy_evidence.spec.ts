@@ -435,7 +435,7 @@ test.describe('Phase 16.3 — Runtime Privacy Evidence, Storage Hooks & Network 
     expect(state.idbStatus.databases).toEqual([]);
   });
 
-  test('5. Real Financial Statement Wizard (/health-check/real-statement/) preserves multi-stage privacy without storage writes', async ({ page }) => {
+  test('5. Personal Finance Statement (/tools/personal-finance-statement/) preserves multi-stage privacy without storage writes', async ({ page }) => {
     await instrumentStorage(page);
 
     const observedRequests: {
@@ -455,31 +455,20 @@ test.describe('Phase 16.3 — Runtime Privacy Evidence, Storage Hooks & Network 
       });
     });
 
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
     await page.waitForSelector('astro-island:not([ssr])');
-    const wizard = page.locator('#real-statement-app');
-    await expect(wizard).toBeVisible();
+    const app = page.locator('#personal-finance-statement-app');
+    await expect(app).toBeVisible();
 
     const pageOrigin = new URL(page.url()).origin;
     const SYNTH_INCOME = '195000';
 
-    // Click load illustrative example
-    const loadSampleBtn = page.locator('#load-sample-btn');
-    await expect(loadSampleBtn).toBeVisible();
-    await expect(loadSampleBtn).toBeEnabled();
-    await loadSampleBtn.click();
-    await expect(wizard.locator('.example-loaded-banner')).toBeVisible();
-
     // Required assertion: income input must be visible, enabled, filled, and confirmed
-    const incomeInput = wizard.locator('input[id*="-inc-amt-"]').first();
+    const incomeInput = app.locator('input[data-field="monthly-gross"]').first();
     await expect(incomeInput).toBeVisible();
     await expect(incomeInput).toBeEnabled();
     await incomeInput.fill(SYNTH_INCOME);
     await expect(incomeInput).toHaveValue(SYNTH_INCOME);
-
-    // Verify custom scenario banner activates
-    await expect(wizard.locator('.custom-loaded-banner')).toBeVisible();
-    await expect(wizard.locator('.custom-loaded-banner')).toContainText('Custom Scenario');
 
     for (const req of observedRequests) {
       expect(new URL(req.url).origin).toBe(pageOrigin);

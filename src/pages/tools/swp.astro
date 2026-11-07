@@ -1,397 +1,71 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import SwpCalculatorIsland from '../../features/calculators/SwpCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
 
 const crumbs = getBreadcrumbsForPath('/tools/swp/');
+const { regulatory, disclosures } = BUSINESS_PROFILE;
 ---
 
 <BaseLayout
-  title="Systematic Withdrawal Plan (SWP) Cash-Flow Simulator — Ant Wealth Creation"
-  description="Model monthly cash outflows, capital longevity, and balance depletion from an invested mutual fund corpus."
+  title="SWP Longevity & Systematic Withdrawal Simulator — Ant Wealth Creation"
+  description="Simulate monthly systematic withdrawals, inflation-adjusted cash flows, and capital longevity over a 50-year horizon."
   currentPath="/tools/swp/"
 >
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/swp/" />
+
     <PageIntro
-      eyebrow="Cash-Flow Modeling"
-      title="Systematic Withdrawal Plan (SWP) Simulator"
-      description="Plan regular monthly cash flows from an accumulated corpus. Model portfolio longevity, withdrawal rates, annual step-ups, and balance trajectory."
+      eyebrow="Cash Flow & Retirement"
+      title="SWP Longevity & Systematic Withdrawal Simulator"
+      description="Model how long your investment corpus can sustain regular monthly withdrawals under inflation and assumed return rates."
       statusBadge="Interactive Calculator Active • 50-Year Simulation"
     />
 
-    <!-- Interactive Concept C SWP Longevity Simulator Island -->
     <SwpCalculatorIsland client:load />
 
-    <!-- Key Dynamics of SWP -->
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="section-title">Key Dynamics of Systematic Withdrawal Planning</h2>
-      <p class="section-desc">
-        In decumulation planning, sustainability is sensitive to withdrawal rate, market volatility, inflation, and sequence-of-returns risk:
+    <WhatsAppToolLeadBar
+      toolName="SWP Longevity Simulator"
+      promptQuestion="Planning a monthly retirement income or SWP cash flow?"
+    />
+
+    <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
+      <p>
+        <strong>Regulatory Notice:</strong> {regulatory.registrationStatusText}. {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} SWP projections are mathematical simulations assuming linear monthly compounding and do not guarantee regular income or protect against sequence-of-returns risk.
       </p>
-
-      <div class="swp-rules-grid">
-        <div class="swp-card safe-rule">
-          <span class="swp-badge">Illustrative Benchmark</span>
-          <div class="swp-metric">4% – 6% Initial Withdrawal Assumption</div>
-          <p class="swp-desc">In financial planning scenarios, an initial annual withdrawal rate between 4% and 6% is frequently modeled as an illustrative stress test. Actual portfolio longevity depends on realized asset returns, volatility sequence, and inflation.</p>
-        </div>
-
-        <div class="swp-card danger-rule">
-          <span class="swp-badge">Elevated Depletion Risk</span>
-          <div class="swp-metric">&gt; 8%–9% Annual Withdrawal Assumption</div>
-          <p class="swp-desc">Higher withdrawal rates combined with early market downturns (negative sequence of returns) substantially accelerate capital erosion and can lead to premature portfolio exhaustion.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Structural SWP Principles -->
-    <section class="principles-section" aria-labelledby="principles-heading">
-      <h2 id="principles-heading" class="section-title">Fundamental Mechanics of Mutual Fund SWP</h2>
-      <p class="section-desc">
-        Unlike bank fixed-deposit interest payouts, a Systematic Withdrawal Plan in mutual funds operates on unit cancellation:
-      </p>
-
-      <div class="principles-grid">
-        <div class="principle-card">
-          <div class="principle-icon" aria-hidden="true">🔢</div>
-          <h3 class="principle-title">Unit Redemption vs Interest</h3>
-          <p class="principle-desc">
-            An SWP generates monthly cash flow by redeeming the exact number of units required to equal your desired rupee amount at prevailing NAV. When NAV rises, fewer units are redeemed; when NAV declines, more units are redeemed.
-          </p>
-        </div>
-
-        <div class="principle-card">
-          <div class="principle-icon" aria-hidden="true">⚖️</div>
-          <h3 class="principle-title">Capital Preservation vs Depletion</h3>
-          <p class="principle-desc">
-            If your withdrawal rate is lower than the net portfolio return, your underlying capital continues to compound. If your withdrawal rate exceeds portfolio return plus inflation, your capital base gradually depletes.
-          </p>
-        </div>
-
-        <div class="principle-card">
-          <div class="principle-icon" aria-hidden="true">🗓️</div>
-          <h3 class="principle-title">Timing: Beginning vs End of Period</h3>
-          <p class="principle-desc">
-            Withdrawal timing mathematically influences compounding. Withdrawing at the beginning of each month (annuity due) leaves slightly less capital to compound during that month compared to end-of-month withdrawals.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Indian Mutual Fund SWP Taxation Primer -->
-    <section class="tax-primer-section" aria-labelledby="tax-heading">
-      <div class="tax-primer-box">
-        <h2 id="tax-heading" class="tax-title">Indian Mutual Fund SWP Taxation Primer</h2>
-        <p class="tax-desc">
-          One of the major advantages of mutual fund SWP compared to traditional bank deposits is its tax efficiency, governed by the First-In, First-Out (FIFO) principle:
-        </p>
-        <ul class="tax-list">
-          <li><strong>Principal vs Gain Separation:</strong> In each SWP withdrawal, only the capital gains component is taxable; the principal invested is returned tax-free. In early years of an SWP, principal constitutes a large portion of the redemption.</li>
-          <li><strong>Equity Mutual Funds (Section 112A):</strong> Long-term capital gains (held &gt; 12 months) are taxed at 12.5% on gains exceeding the statutory ₹1.25 Lakh threshold per financial year. Short-term gains are taxed at 20% (Section 111A).</li>
-          <li><strong>Debt Mutual Funds (Section 50AA):</strong> For specified debt funds acquired after 1 April 2023, capital gains are treated as short-term and taxed at the investor's applicable income tax slab rate.</li>
-        </ul>
-        <p class="tax-footer">
-          Because tax implications depend on scheme categories, individual holding periods, and slab rates, calculating personalized net post-tax cash flows requires consultation with a qualified tax advisor.
-        </p>
-      </div>
-    </section>
-
-    <!-- Related Active Calculators -->
-    <section class="related-tools-section" aria-labelledby="tools-heading">
-      <h2 id="tools-heading" class="section-title">Explore Active Investment Calculators</h2>
-      <p class="section-desc">
-        Model wealth accumulation and growth using our verified interactive tools:
-      </p>
-
-      <div class="tools-grid">
-        <a href="/tools/sip/" class="tool-card-link">
-          <span class="tool-tag">Live Calculator</span>
-          <h3 class="tool-card-title">SIP Wealth Simulator</h3>
-          <p class="tool-card-desc">Explore how disciplined monthly investing compounds over multi-year horizons with verified math.</p>
-          <span class="tool-card-action">Launch SIP Calculator →</span>
-        </a>
-
-        <a href="/tools/sip-growth/" class="tool-card-link">
-          <span class="tool-tag">Live Calculator</span>
-          <h3 class="tool-card-title">Advanced SIP Growth</h3>
-          <p class="tool-card-desc">Simulate multi-lump-sum inflows, annual step-ups, and extended holding periods.</p>
-          <span class="tool-card-action">Launch Advanced SIP →</span>
-        </a>
-
-        <a href="/plan/retirement-income/" class="tool-card-link">
-          <span class="tool-tag">Live Planner</span>
-          <h3 class="tool-card-title">Three-Bucket Framework</h3>
-          <p class="tool-card-desc">Learn how to divide your retirement corpus into Liquidity, Income, and Growth buckets to manage sequence risk.</p>
-          <span class="tool-card-action">Launch 3-Bucket Planner →</span>
-        </a>
-      </div>
-    </section>
-
-    <div class="nav-links-strip">
-      <a href="/tools/" class="btn-subtle">← Back to All Tools</a>
-      <a href="/plan/retirement-income/" class="btn-subtle">View Three-Bucket Strategy →</a>
-    </div>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
   .page-container {
+    padding-top: var(--space-4);
     padding-bottom: var(--space-16);
   }
 
-  .educational-insight-box,
-  .principles-section,
-  .tax-primer-section,
-  .related-tools-section {
-    margin: var(--space-12) 0;
-  }
-
-  .section-title {
-    font-size: var(--text-h2);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .section-desc {
-    font-size: var(--text-body);
-    color: var(--color-text-secondary);
+  .regulatory-disclosure-note {
+    margin-top: 32px;
+    padding: 18px 22px;
+    background-color: var(--awc-paper);
+    border: 1px solid var(--awc-line);
+    border-radius: 16px;
+    font-size: 12px;
+    color: var(--color-text-muted);
     line-height: 1.6;
-    margin-bottom: var(--space-8);
-    max-width: 720px;
   }
 
-  .swp-rules-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  @media (min-width: 640px) {
-    .swp-rules-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .swp-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .safe-rule {
-    border-color: var(--primitive-teal-500);
-    border-width: 2px;
-    background-color: var(--primitive-teal-50);
-  }
-
-  .danger-rule {
-    border-color: var(--primitive-rose-600);
-    border-width: 2px;
-    background-color: var(--primitive-rose-100);
-  }
-
-  .swp-badge {
-    font-size: var(--text-caption);
-    font-weight: 700;
-    color: var(--color-text-brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: var(--space-2);
-  }
-
-  .swp-metric {
-    font-size: var(--text-h3);
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-3);
-  }
-
-  .swp-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
+  .regulatory-disclosure-note p {
     margin: 0;
   }
 
-  .principles-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  @media (min-width: 768px) {
-    .principles-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .principle-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .principle-icon {
-    font-size: 1.75rem;
-    line-height: 1;
-    margin-bottom: var(--space-1);
-  }
-
-  .principle-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-  }
-
-  .principle-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  .tax-primer-box {
-    background-color: var(--primitive-gold-50);
-    border: 1px solid var(--primitive-gold-100);
-    border-left: 4px solid var(--primitive-gold-500);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-  }
-
-  .tax-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-text-accent);
-    margin-bottom: var(--space-2);
-  }
-
-  .tax-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-4);
-  }
-
-  .tax-list {
-    margin: 0 0 var(--space-4) 0;
-    padding-left: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-  }
-
-  .tax-footer {
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--color-text-accent);
-    margin: 0;
-  }
-
-  .tools-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  @media (min-width: 768px) {
-    .tools-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .tool-card-link {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-  }
-
-  .tool-card-link:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-subtle);
-    border-color: var(--color-brand-primary);
-  }
-
-  .tool-tag {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-brand);
-    background-color: var(--primitive-teal-50);
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    align-self: flex-start;
-  }
-
-  .tool-card-title {
-    font-size: var(--text-h4);
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    color: var(--color-brand-primary);
-  }
-
-  .tool-card-desc {
-    font-size: var(--text-body-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    flex: 1;
-    margin: 0;
-  }
-
-  .tool-card-action {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
-    margin-top: var(--space-2);
-  }
-
-  .nav-links-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--color-border-subtle);
-    padding-top: var(--space-8);
-    margin-top: var(--space-12);
-  }
-
-  .btn-subtle {
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--color-text-brand);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    transition: all var(--transition-fast);
-  }
-
-  .btn-subtle:hover {
-    background-color: var(--primitive-teal-50);
-    border-color: var(--primitive-teal-100);
+  .regulatory-disclosure-note strong {
+    color: var(--awc-navy);
   }
 </style>

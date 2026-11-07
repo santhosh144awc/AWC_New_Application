@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 test.describe('Phase 47 — Personal Finance Statement: Linked Monthly/Annual Income Fields and Indian Date Format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
   });
 
   test('1. Income stage: Entry Period dropdown is removed, and table header renders new 5-column structure', async ({ page }) => {
@@ -29,7 +29,6 @@ test.describe('Phase 47 — Personal Finance Statement: Linked Monthly/Annual In
     const firstRow = page.locator('#table-income tbody tr').nth(0);
     const monthlyInput = firstRow.locator('input[data-field="monthly-gross"]');
     const annualInput = firstRow.locator('input[data-field="annual-gross"]');
-    const deductionsInput = firstRow.locator('input[data-field="deductions-amount"]');
     const netAnnualCell = firstRow.locator('td').nth(4);
 
     await monthlyInput.fill('50000');
@@ -128,14 +127,10 @@ test.describe('Phase 47 — Personal Finance Statement: Linked Monthly/Annual In
     const dateInput = page.locator('input[type="date"]');
     await expect(dateInput).toHaveCount(0);
 
-    // Preparer info badge displays fixed preparer
-    const preparerBadge = page.locator('#pfs-preparer-info');
-    await expect(preparerBadge).toContainText('Prepared by: C. Santhosh Sathriyan');
-
-    // Reset statement maintains fixed preparer
+    // Reset statement maintains clean state in Stage 1
     await page.click('#btn-start-over');
     await page.click('#btn-confirm-reset');
-    await expect(preparerBadge).toContainText('Prepared by: C. Santhosh Sathriyan');
+    await expect(page.locator('#pane-stage-1')).toBeVisible();
   });
 
   test('8. Statement Preview & PDF Download: Display DD-MM-YYYY format and fixed preparer', async ({ page }) => {

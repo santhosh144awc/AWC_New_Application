@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import QuickToolSwitcher from '../../components/ui/QuickToolSwitcher.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import WhatsAppToolLeadBar from '../../components/ui/WhatsAppToolLeadBar.astro';
 import SipGrowthCalculatorIsland from '../../features/calculators/SipGrowthCalculatorIsland';
 import { getBreadcrumbsForPath } from '../../config/routes';
 import { BUSINESS_PROFILE } from '../../config/businessProfile';
@@ -23,91 +25,21 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
   <div class="container page-container">
     <Breadcrumbs crumbs={crumbs} />
 
+    <QuickToolSwitcher currentPath="/tools/sip-growth/" />
+
     <PageIntro
       eyebrow="Money Lab · SIP Growth"
       title="Explore how your investments could grow over time."
-      description="Compare regular monthly investing, annual step-ups, occasional top-ups, and prolonged compounding after recurring contributions stop. All results are mathematical illustrations based on assumed returns, not forecasts or guarantees."
+      description="Combine monthly SIPs, annual step-ups, occasional lump-sum top-ups, and extended post-SIP holding periods."
     />
 
-    <!-- Interactive Concept C Advanced SIP Growth Simulator Island -->
     <SipGrowthCalculatorIsland client:load />
 
-    <!-- Educational Deep-Dive Section (Concept C Design) -->
-    <section class="educational-insight-box" aria-labelledby="insight-heading">
-      <h2 id="insight-heading" class="insight-title">Why Advanced Life-Stage Simulation Matters</h2>
-      <p class="insight-desc">
-        Standard financial calculators often assume unchanged monthly installments. This simulator lets you model scenarios where contributions adjust over time and portfolios remain invested for additional holding periods:
-      </p>
+    <WhatsAppToolLeadBar
+      toolName="Advanced SIP Growth Simulator"
+      promptQuestion="Want to structure a step-up SIP and lump-sum plan for your household?"
+    />
 
-      <div class="simulation-cards-grid">
-        <div class="feature-card">
-          <div class="card-pill">01 · Scenario Simulation</div>
-          <h3 class="card-feature-title">Capped Step-Up Horizons</h3>
-          <p class="card-feature-text">
-            If you wish to test annual contribution increases, the model applies percentage step-ups starting in Year 2 (Month 13). Setting a step-up cap keeps contributions level at the selected installment for remaining SIP years.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="card-pill">02 · Milestone Capital</div>
-          <h3 class="card-feature-title">Milestone Lump-Sum Infusions</h3>
-          <p class="card-feature-text">
-            Annual performance incentives, matured deposits, or occasional surpluses can be modeled at the beginning of specific projection years without altering your recurring monthly SIP debit.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="card-pill">03 · Extended Horizon</div>
-          <h3 class="card-feature-title">Post-SIP Wealth Compounding</h3>
-          <p class="card-feature-text">
-            The model allows you to evaluate portfolio compounding across additional holding years after recurring monthly contributions stop, continuing monthly compounding on the existing balance under your assumed return rate.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Related Planners & Explorations (Concept C Design) -->
-    <section class="related-tools-section" aria-labelledby="related-tools-title">
-      <div class="section-header-compact">
-        <span class="eyebrow">Explore Next</span>
-        <h2 id="related-tools-title" class="related-heading">Connect your growth simulation to broader life plans</h2>
-        <p class="related-sub">Evaluate whether fixed monthly investing, one-time capital deployment, or targeted milestone planning best fits your household roadmap.</p>
-      </div>
-
-      <div class="related-grid">
-        <a href="/tools/sip/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-jade-soft)">📈</span>
-            <span class="card-tag">Monthly Investing</span>
-          </div>
-          <h3 class="card-title">Compare with Monthly SIP</h3>
-          <p class="card-desc">See disciplined monthly investing without the multi-lump-sum or post-SIP holding complexity.</p>
-          <span class="card-action">Open SIP calculator →</span>
-        </a>
-
-        <a href="/tools/lumpsum/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-sand)">💰</span>
-            <span class="card-tag">One-Time Capital</span>
-          </div>
-          <h3 class="card-title">One-Time Lump Sum</h3>
-          <p class="card-desc">Model compounding on a single initial deployment without monthly recurring contributions.</p>
-          <span class="card-action">Open lump-sum calculator →</span>
-        </a>
-
-        <a href="/plan/" class="related-card">
-          <div class="card-top">
-            <span class="card-icon" style="background: var(--awc-mint)">🎓</span>
-            <span class="card-tag">Family Milestones</span>
-          </div>
-          <h3 class="card-title">Plan a Family Goal</h3>
-          <p class="card-desc">Map multi-stage capital accumulation against children's education, home purchases, and family milestones.</p>
-          <span class="card-action">Plan milestones →</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Transparent Regulatory Disclosure -->
     <aside class="regulatory-disclosure-note" aria-label="Regulatory Notice">
       <p>
         <strong>Regulatory Notice:</strong> {registrationNotice} {disclosures.mutualFundRisk} {disclosures.simulationDisclaimer} The Advanced SIP Growth simulator generates mathematical illustrations based on user-selected assumptions (including annual step-ups, intermittent lump sums, and holding periods) and does not predict or guarantee fund performance, capital preservation, or future returns.
@@ -122,198 +54,18 @@ const registrationNotice = regulatory.arnStatus === 'CONFIRMED'
     padding-bottom: var(--space-16);
   }
 
-  /* Educational Insight Section */
-  .educational-insight-box {
-    margin-top: 48px;
-    padding: 32px;
+  .regulatory-disclosure-note {
+    margin-top: 32px;
+    padding: 18px 22px;
     background-color: var(--awc-paper);
     border: 1px solid var(--awc-line);
-    border-radius: 20px;
-  }
-
-  .insight-title {
-    font-size: clamp(20px, 2.5vw, 24px);
-    font-weight: 850;
-    letter-spacing: -0.03em;
-    color: var(--awc-navy);
-    margin: 0 0 8px;
-  }
-
-  .insight-desc {
-    font-size: 13.5px;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    max-width: 65ch;
-    margin: 0 0 24px;
-  }
-
-  .simulation-cards-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 768px) {
-    .simulation-cards-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .feature-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--awc-line);
     border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .card-pill {
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-brand);
-  }
-
-  .card-feature-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--awc-navy);
-    margin: 0;
-  }
-
-  .card-feature-text {
-    font-size: 12.5px;
-    color: var(--color-text-muted);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  /* Related Tools Section */
-  .related-tools-section {
-    margin-top: 48px;
-    padding-top: 36px;
-    border-top: 1px solid var(--awc-line);
-  }
-
-  .section-header-compact {
-    margin-bottom: 24px;
-  }
-
-  .section-header-compact .eyebrow {
-    margin-bottom: 8px;
-  }
-
-  .related-heading {
-    font-size: clamp(22px, 3vw, 28px);
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    color: var(--awc-navy);
-    margin: 4px 0 6px;
-  }
-
-  .related-sub {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 768px) {
-    .related-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .related-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--awc-line);
-    border-radius: 20px;
-    padding: 22px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-  }
-
-  .related-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-border-interactive);
-    box-shadow: var(--shadow-card);
-  }
-
-  .card-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 18px;
-  }
-
-  .card-tag {
-    font-size: 11px;
-    font-weight: 750;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-brand);
-  }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--awc-navy);
-    margin: 0 0 8px;
-    letter-spacing: -0.02em;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    line-height: 1.55;
-    margin: 0 0 16px;
-    flex-grow: 1;
-  }
-
-  .card-action {
-    font-size: 13px;
-    font-weight: 750;
-    color: var(--color-text-brand);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* Regulatory Disclosure Note */
-  .regulatory-disclosure-note {
-    margin-top: 36px;
-    padding: 16px 20px;
-    background-color: var(--awc-sand);
-    border: 1px solid var(--awc-line);
-    border-left: 4px solid var(--color-border-interactive);
-    border-radius: 12px;
-  }
-
-  .regulatory-disclosure-note p {
     font-size: 12px;
     color: var(--color-text-muted);
     line-height: 1.6;
+  }
+
+  .regulatory-disclosure-note p {
     margin: 0;
   }
 

@@ -19,7 +19,7 @@ test.describe('Phase 21 / Phase 2 — SIP Calculator Concept C Redesign (/tools/
     // Assert single H1 with Concept C headline
     const h1s = page.locator('h1');
     await expect(h1s).toHaveCount(1);
-    await expect(h1s).toHaveText('See what regular investing could build.');
+    await expect(h1s).toHaveText('See how monthly investing could grow.');
 
     // Assert zero console errors
     expect(consoleErrors).toEqual([]);

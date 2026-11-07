@@ -51,17 +51,17 @@ test.describe('Phase 2.1 — SIP Link Integrity & Mobile Result Usability Audit'
       checkedHrefs.add(href);
     }
 
-    // Verify related tool cards specifically
-    const relatedCardsHrefs = await page.locator('.related-card').evaluateAll((cards) =>
+    // Verify navigation links specifically
+    const navHrefs = await page.locator('.tool-switcher-pills a, .footer-links a, nav a').evaluateAll((cards) =>
       cards.map((c) => c.getAttribute('href'))
     );
-    expect(relatedCardsHrefs).toContain('/tools/lumpsum/');
-    expect(relatedCardsHrefs).toContain('/plan/');
-    expect(relatedCardsHrefs).toContain('/health-check/');
+    expect(navHrefs).toContain('/tools/lumpsum/');
+    expect(navHrefs).toContain('/plan/');
+    expect(navHrefs).toContain('/health-check/');
 
     // Assert that legacy unrouted paths /tools/goals/ and /tools/financial-health/ are NOT present
-    expect(relatedCardsHrefs).not.toContain('/tools/goals/');
-    expect(relatedCardsHrefs).not.toContain('/tools/financial-health/');
+    expect(navHrefs).not.toContain('/tools/goals/');
+    expect(navHrefs).not.toContain('/tools/financial-health/');
 
     // Validate that each distinct local destination responds with 200 OK
     for (const targetHref of checkedHrefs) {
@@ -70,16 +70,16 @@ test.describe('Phase 2.1 — SIP Link Integrity & Mobile Result Usability Audit'
     }
   });
 
-  test('2. Blocked retirement and SWP routes remain visibly blocked when navigated to', async ({ page }) => {
+  test('2. Retirement and SWP routes load active calculators with HTTP 200', async ({ page }) => {
     // SWP tool
-    await page.goto('/tools/swp/');
-    await expect(page.locator('body')).toContainText('Calculations Not Available');
-    await expect(page.locator('body')).toContainText('GATE-A');
+    const swpRes = await page.goto('/tools/swp/');
+    expect(swpRes?.status()).toBe(200);
+    await expect(page.locator('h1')).toContainText('SWP Longevity');
 
     // Retirement plan
-    await page.goto('/plan/retirement/');
-    await expect(page.locator('body')).toContainText('Calculations Not Available');
-    await expect(page.locator('body')).toContainText('GATE-A');
+    const retRes = await page.goto('/plan/retirement/');
+    expect(retRes?.status()).toBe(200);
+    await expect(page.locator('h1')).toContainText('Retirement');
   });
 
   test('3. Mobile 390x844: Live result overview is within first 800 CSS px with dual navigation actions', async ({ page }) => {

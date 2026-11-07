@@ -151,9 +151,9 @@ test.describe('Phase 19 — 7-Pillar Family Financial Health Check (/health-chec
       expect(recCount).toBeGreaterThanOrEqual(1);
       expect(recCount).toBeLessThanOrEqual(3);
 
-      // Deep dive link targets /health-check/real-statement/
+      // Deep dive link targets canonical /tools/personal-finance-statement/
       const deepDiveLink = page.locator('#link-real-statement');
-      await expect(deepDiveLink).toHaveAttribute('href', '/health-check/real-statement/');
+      await expect(deepDiveLink).toHaveAttribute('href', '/tools/personal-finance-statement/');
 
       // Review / Edit answers allows navigating back
       await page.locator('#edit-answers-btn').click();

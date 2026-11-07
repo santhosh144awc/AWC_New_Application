@@ -24,8 +24,8 @@ However, failing to account for **inflation and compounding** can leave a major 
 
 In India, general retail inflation averages 5%–6% per year, but **education and healthcare inflation** frequently runs at 8%–10% annually.
 
-* A higher education course costing **₹20 Lakhs today** will cost approximately **₹51.9 Lakhs in 10 years** (at an illustrative 10% annual inflation assumption: $20 \times (1.10)^{10}$).
-* In 15 years, that same course will require approximately **₹83.5 Lakhs** ($20 \times (1.10)^{15}$).
+* A higher education course costing **₹20 Lakhs today** will cost approximately **₹51.9 Lakhs in 10 years** (at an illustrative 10% annual inflation assumption: `20 × (1.10)^10`).
+* In 15 years, that same course will require approximately **₹83.5 Lakhs** (`20 × (1.10)^15`).
 
 Targeting today's price tag without inflation adjustments will fund only a fraction of the actual future requirement.
 
@@ -34,7 +34,7 @@ Targeting today's price tag without inflation adjustments will fund only a fract
 To calculate how much to save each month, you must look at three interconnected levers:
 
 1. **Time Horizon:** How many years remain before the milestone occurs? The longer your runway, the smaller your required monthly commitment.
-2. **Target Cost in Future Rupees:** Inflating today's expense to future value ($FV = PV \times (1 + r)^n$).
+2. **Target Cost in Future Rupees:** Inflating today's expense to future value (`Future Cost = Present Cost × (1 + Inflation)^Years`).
 3. **Expected Investment Return:** Choosing an appropriate asset allocation (e.g., equity mutual funds for goals > 5 years, debt/arbitrage for goals < 3 years).
 
 ## 3. The Power of Starting Early
@@ -54,4 +54,4 @@ Consider an inflation-adjusted target of **₹50 Lakhs** (assuming zero initial 
 
 ---
 
-*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation provides mutual fund distribution services (registration details pending confirmation against the official registry).*
+*Disclaimer: Returns shown are illustrations based on the assumptions used and are not guaranteed. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Ant Wealth Creation is an AMFI-registered Mutual Fund Distributor (ARN-266896).*

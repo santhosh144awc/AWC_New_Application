@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as path from 'path';
 
 test('Capture Phase 46 visual screenshots', async ({ page }) => {
@@ -6,7 +6,7 @@ test('Capture Phase 46 visual screenshots', async ({ page }) => {
 
   // 1. Stage 1 on desktop at 1440px
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/health-check/real-statement/');
+  await page.goto('/tools/personal-finance-statement/');
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(screenshotsDir, '01_stage1_desktop_1440px.png'), fullPage: false });
 
@@ -22,7 +22,7 @@ test('Capture Phase 46 visual screenshots', async ({ page }) => {
 
   // Reset to desktop for navigation tests
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/health-check/real-statement/');
+  await page.goto('/tools/personal-finance-statement/');
   await page.waitForTimeout(300);
 
   // 4. Stage 2 after clicking Continue

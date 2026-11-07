@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Personal Finance Statement — Complete 6-Stage Workflow & Verification', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/health-check/real-statement/');
+    await page.goto('/tools/personal-finance-statement/');
   });
 
   test('1. Page renders with correct title, breadcrumbs, and 6-stage navigation', async ({ page }) => {
-    await expect(page).toHaveTitle(/Personal Finance Statement & Household Balance Sheet — Ant Wealth Creation/);
+    await expect(page).toHaveTitle(/Personal Finance Statement/);
 
     const h1 = page.locator('h1');
     await expect(h1).toHaveCount(1);
-    await expect(h1).toHaveText('Personal Finance Statement & Household Balance Sheet');
+    await expect(h1).toHaveText('Personal Finance Statement');
 
     // App wrapper
     const app = page.locator('#personal-finance-statement-app');
