@@ -267,7 +267,7 @@ const startingTools = [
           >
             ←
           </button>
-          <span class="slider-counter" id="reviews-counter" aria-live="polite">01 / {String(CLIENT_TESTIMONIALS.length).padStart(2, '0')}</span>
+          <span class="slider-counter" id="reviews-counter" aria-live="polite">01 / 06</span>
           <button
             type="button"
             id="reviews-next-btn"
@@ -324,15 +324,8 @@ const startingTools = [
         ))}
       </div>
 
-      <div class="slider-dots" id="reviews-dots" aria-hidden="true">
-        {CLIENT_TESTIMONIALS.map((_, idx) => (
-          <button
-            type="button"
-            class={`slider-dot ${idx === 0 ? 'active' : ''}`}
-            data-index={idx}
-            aria-label={`Go to review ${idx + 1}`}
-          />
-        ))}
+      <div class="slider-dots" id="reviews-dots" aria-label="Review slide indicators">
+        {/* Synchronized dynamically on mount to match active screen width slides */}
       </div>
     </section>
 
@@ -874,17 +867,15 @@ const startingTools = [
     box-shadow: var(--shadow-subtle);
   }
 
-  .slider-arrow-btn:hover:not(:disabled) {
+  .slider-arrow-btn:hover {
     background: var(--awc-navy);
     color: var(--primitive-white);
     border-color: var(--awc-navy);
     transform: translateY(-1px);
   }
 
-  .slider-arrow-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    box-shadow: none;
+  .slider-arrow-btn:active {
+    transform: translateY(1px);
   }
 
   .reviews-slider-track {
@@ -1387,12 +1378,12 @@ const startingTools = [
     const prevBtn = document.getElementById('reviews-prev-btn') as HTMLButtonElement | null;
     const nextBtn = document.getElementById('reviews-next-btn') as HTMLButtonElement | null;
     const counter = document.getElementById('reviews-counter');
-    const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.slider-dot'));
+    const dotsContainer = document.getElementById('reviews-dots');
     if (!track || !prevBtn || !nextBtn) return;
 
     const cards = Array.from(track.querySelectorAll<HTMLElement>('.testimonial-card'));
-    const total = cards.length;
-    if (total === 0) return;
+    const totalCards = cards.length;
+    if (totalCards === 0) return;
 
     function getCardStep(): number {
       if (cards.length > 1) {
@@ -1402,51 +1393,93 @@ const startingTools = [
       return track ? track.clientWidth * 0.85 : 360;
     }
 
-    function updateState(): void {
-      if (!track || !prevBtn || !nextBtn) return;
-      const scrollLeft = track.scrollLeft;
+    function getTotalSlides(): number {
+      if (!track) return 1;
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      if (maxScroll <= 5) return 1;
       const step = getCardStep();
-      const activeIndex = Math.min(
-        total - 1,
-        Math.max(0, Math.round(scrollLeft / (step || 1)))
-      );
-
-      if (counter) {
-        counter.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
-      }
-
-      dots.forEach((dot, idx) => {
-        if (idx === activeIndex) {
-          dot.classList.add('active');
-          dot.setAttribute('aria-current', 'true');
-        } else {
-          dot.classList.remove('active');
-          dot.removeAttribute('aria-current');
-        }
-      });
-
-      const maxScroll = track.scrollWidth - track.clientWidth - 4;
-      prevBtn.disabled = scrollLeft <= 4;
-      nextBtn.disabled = scrollLeft >= maxScroll;
+      return Math.max(1, Math.round(maxScroll / (step || 1)) + 1);
     }
 
-    prevBtn.addEventListener('click', () => {
+    function getSlideTarget(index: number, totalSlides: number): number {
+      if (!track) return 0;
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      if (index <= 0) return 0;
+      if (index >= totalSlides - 1) return maxScroll;
       const step = getCardStep();
-      track.scrollBy({ left: -step, behavior: 'smooth' });
+      return Math.min(maxScroll, index * step);
+    }
+
+    function getCurrentSlideIndex(totalSlides: number): number {
+      if (!track) return 0;
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      if (maxScroll <= 0) return 0;
+      const scrollLeft = track.scrollLeft;
+      if (scrollLeft >= maxScroll - 20) return totalSlides - 1;
+      const step = getCardStep();
+      return Math.min(totalSlides - 1, Math.max(0, Math.round(scrollLeft / (step || 1))));
+    }
+
+    function syncDots(totalSlides: number, activeIndex: number): void {
+      if (!dotsContainer) return;
+      const existingDots = Array.from(dotsContainer.querySelectorAll<HTMLButtonElement>('.slider-dot'));
+      if (existingDots.length !== totalSlides) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = `slider-dot ${i === activeIndex ? 'active' : ''}`;
+          dot.setAttribute('data-index', String(i));
+          dot.setAttribute('aria-label', `Go to slide ${i + 1} of ${totalSlides}`);
+          if (i === activeIndex) dot.setAttribute('aria-current', 'true');
+          dot.addEventListener('click', () => {
+            if (!track) return;
+            track.scrollTo({ left: getSlideTarget(i, totalSlides), behavior: 'smooth' });
+          });
+          dotsContainer.appendChild(dot);
+        }
+      } else {
+        existingDots.forEach((dot, idx) => {
+          if (idx === activeIndex) {
+            dot.classList.add('active');
+            dot.setAttribute('aria-current', 'true');
+          } else {
+            dot.classList.remove('active');
+            dot.removeAttribute('aria-current');
+          }
+        });
+      }
+    }
+
+    function updateState(): void {
+      if (!track) return;
+      const totalSlides = getTotalSlides();
+      const activeIndex = getCurrentSlideIndex(totalSlides);
+
+      if (counter) {
+        counter.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      }
+
+      syncDots(totalSlides, activeIndex);
+
+      // Buttons are always active and clickable (continuous looping)
+      if (prevBtn) prevBtn.disabled = false;
+      if (nextBtn) nextBtn.disabled = false;
+    }
+
+    // Wrap-around continuous navigation
+    prevBtn.addEventListener('click', () => {
+      const totalSlides = getTotalSlides();
+      const current = getCurrentSlideIndex(totalSlides);
+      const prevIndex = current <= 0 ? totalSlides - 1 : current - 1;
+      track.scrollTo({ left: getSlideTarget(prevIndex, totalSlides), behavior: 'smooth' });
     });
 
     nextBtn.addEventListener('click', () => {
-      const step = getCardStep();
-      track.scrollBy({ left: step, behavior: 'smooth' });
-    });
-
-    dots.forEach((dot) => {
-      dot.addEventListener('click', () => {
-        const idx = Number(dot.getAttribute('data-index') || 0);
-        if (cards[idx]) {
-          cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-        }
-      });
+      const totalSlides = getTotalSlides();
+      const current = getCurrentSlideIndex(totalSlides);
+      const nextIndex = current >= totalSlides - 1 ? 0 : current + 1;
+      track.scrollTo({ left: getSlideTarget(nextIndex, totalSlides), behavior: 'smooth' });
     });
 
     // Mouse drag-to-scroll support for desktop
@@ -1496,6 +1529,10 @@ const startingTools = [
         ticking = true;
       }
     }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      window.requestAnimationFrame(() => updateState());
+    });
 
     // Initial state setup
     updateState();
