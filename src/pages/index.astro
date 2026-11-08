@@ -247,39 +247,91 @@ const startingTools = [
       </div>
     </section>
 
-    <!-- 4. CLIENT EXPERIENCES (ALL 8 VERIFIED CLIENT REVIEWS) -->
+    <!-- 4. CLIENT EXPERIENCES (ALL 8 VERIFIED CLIENT REVIEWS SLIDER) -->
     <section class="section" id="testimonials" aria-labelledby="testimonials-heading">
-      <div class="section-header">
-        <div>
+      <div class="section-header section-header-slider">
+        <div class="slider-header-text">
           <span class="section-kicker">Client Experiences</span>
           <h2 id="testimonials-heading">Trusted by Families, Educators &amp; Professionals</h2>
           <p>
             Genuine words from clients who partner with {BUSINESS_PROFILE.founder.shortName} and {BUSINESS_PROFILE.firm.name} for mutual fund investing, insurance protection, and long-term family planning.
           </p>
         </div>
+        <div class="slider-controls" aria-label="Review slider controls">
+          <button
+            type="button"
+            id="reviews-prev-btn"
+            class="slider-arrow-btn"
+            aria-label="Previous review"
+            title="Previous review"
+          >
+            ←
+          </button>
+          <span class="slider-counter" id="reviews-counter" aria-live="polite">01 / {String(CLIENT_TESTIMONIALS.length).padStart(2, '0')}</span>
+          <button
+            type="button"
+            id="reviews-next-btn"
+            class="slider-arrow-btn"
+            aria-label="Next review"
+            title="Next review"
+          >
+            →
+          </button>
+        </div>
       </div>
 
-      <div class="reviews-grid">
-        {CLIENT_TESTIMONIALS.map((item) => (
-          <article class="review-card testimonial-card">
-            <blockquote class="review-text">“{item.quote}”</blockquote>
-            <div class="review-author">
-              <div class="review-initials" aria-hidden="true">
-                {item.photoPath ? (
-                  <img src={item.photoPath} alt={item.name} loading="lazy" />
-                ) : (
-                  <span>{item.initials}</span>
-                )}
+      <div
+        class="reviews-slider-track"
+        id="reviews-track"
+        tabindex="0"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Client reviews carousel"
+      >
+        {CLIENT_TESTIMONIALS.map((item, idx) => (
+          <article class="review-card testimonial-card" data-index={idx}>
+            <div class="review-card-top">
+              <div class="review-author">
+                <div class="review-avatar-wrap">
+                  {item.photoPath ? (
+                    <img
+                      src={item.photoPath}
+                      alt={item.name}
+                      class="review-avatar-img"
+                      width="56"
+                      height="56"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span class="review-initials-fallback">{item.initials}</span>
+                  )}
+                </div>
+                <div class="review-author-info">
+                  <h3 class="review-name">{item.name}</h3>
+                  <p class="review-role">
+                    {item.role}
+                    {item.companyOrOrg ? ` · ${item.companyOrOrg}` : ''}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 class="review-name">{item.name}</h3>
-                <p class="review-role">
-                  {item.role}
-                  {item.companyOrOrg ? ` · ${item.companyOrOrg}` : ''}
-                </p>
+              <div class="review-rating-badge" aria-label="5 out of 5 stars">
+                <span class="star-rating" aria-hidden="true">★★★★★</span>
+                <span class="verified-badge">Verified Client</span>
               </div>
             </div>
+            <blockquote class="review-text">“{item.quote}”</blockquote>
           </article>
+        ))}
+      </div>
+
+      <div class="slider-dots" id="reviews-dots" aria-hidden="true">
+        {CLIENT_TESTIMONIALS.map((_, idx) => (
+          <button
+            type="button"
+            class={`slider-dot ${idx === 0 ? 'active' : ''}`}
+            data-index={idx}
+            aria-label={`Go to review ${idx + 1}`}
+          />
         ))}
       </div>
     </section>
@@ -777,71 +829,235 @@ const startingTools = [
     text-decoration: underline;
   }
 
-  /* 4. CLIENT EXPERIENCES (TESTIMONIALS) */
-  .reviews-grid {
+  /* 4. CLIENT EXPERIENCES (TESTIMONIALS SLIDER) */
+  .section-header-slider {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .slider-header-text {
+    max-width: 68ch;
+  }
+
+  .slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .slider-counter {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--awc-navy);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    min-width: 58px;
+    text-align: center;
+  }
+
+  .slider-arrow-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid var(--awc-line);
+    background: var(--primitive-white);
+    color: var(--awc-navy);
+    font-size: 18px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .slider-arrow-btn:hover:not(:disabled) {
+    background: var(--awc-navy);
+    color: var(--primitive-white);
+    border-color: var(--awc-navy);
+    transform: translateY(-1px);
+  }
+
+  .slider-arrow-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .reviews-slider-track {
+    display: flex;
     gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 6px 4px 16px;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .reviews-slider-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reviews-slider-track.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
   }
 
   .review-card {
+    flex: 0 0 clamp(320px, 38vw, 440px);
+    max-width: 440px;
     background: var(--primitive-white);
     border: 1px solid var(--awc-line);
-    border-radius: 16px;
-    padding: 26px;
+    border-radius: 18px;
+    padding: 26px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: var(--shadow-subtle);
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
 
-  .review-text {
-    margin: 0 0 18px;
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
-    white-space: pre-line;
+  .review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -6px rgba(0, 24, 42, 0.08);
+    border-color: var(--awc-jade-soft);
+  }
+
+  .review-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .review-author {
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-top: 1px solid var(--awc-line);
-    padding-top: 14px;
+    gap: 14px;
+    min-width: 0;
   }
 
-  .review-initials {
-    width: 40px;
-    height: 40px;
+  .review-avatar-wrap {
+    width: 56px;
+    height: 56px;
     border-radius: 999px;
-    background: var(--awc-navy);
-    color: var(--primitive-white);
+    border: 2px solid var(--primitive-white);
+    box-shadow: 0 2px 10px rgba(0, 24, 42, 0.12);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--awc-paper);
     display: grid;
     place-items: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-    overflow: hidden;
   }
 
-  .review-initials img {
+  .review-avatar-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center top;
+  }
+
+  .review-initials-fallback {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: var(--awc-navy);
+    color: var(--primitive-white);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .review-author-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .review-name {
     margin: 0;
-    font-size: 14.5px;
+    font-size: 15.5px;
     font-weight: 700;
     color: var(--awc-navy);
+    line-height: 1.3;
   }
 
   .review-role {
-    margin: 2px 0 0;
+    margin: 3px 0 0;
     font-size: 12.5px;
     color: var(--color-text-muted);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .review-rating-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .star-rating {
+    color: #F59E0B;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  .verified-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--awc-jade-deep);
+    background: rgba(0, 171, 150, 0.08);
+    border-radius: 999px;
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+
+  .review-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+    white-space: pre-line;
+    position: relative;
+    padding-top: 14px;
+    border-top: 1px solid var(--awc-line);
+    flex-grow: 1;
+  }
+
+  .slider-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: none;
+    background: var(--awc-line);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .slider-dot.active {
+    width: 24px;
+    background: var(--awc-jade-deep);
   }
 
   /* 5. SUPPORTING SELF-CHECK TOOLS (4 CARDS) */
@@ -1100,10 +1316,45 @@ const startingTools = [
     }
 
     .trust-bar,
-    .reviews-grid,
     .tools-row,
     .advisor-contact-row {
       grid-template-columns: 1fr;
+    }
+
+    .section-header-slider {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .slider-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .review-card {
+      flex: 0 0 88%;
+      max-width: 88%;
+      padding: 22px 18px;
+    }
+
+    .review-card-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .review-rating-badge {
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .review-avatar-wrap {
+      width: 50px;
+      height: 50px;
     }
 
     .trust-col {
@@ -1129,3 +1380,130 @@ const startingTools = [
     }
   }
 </style>
+
+<script>
+  function setupTestimonialsSlider() {
+    const track = document.getElementById('reviews-track');
+    const prevBtn = document.getElementById('reviews-prev-btn') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('reviews-next-btn') as HTMLButtonElement | null;
+    const counter = document.getElementById('reviews-counter');
+    const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.slider-dot'));
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const cards = Array.from(track.querySelectorAll<HTMLElement>('.testimonial-card'));
+    const total = cards.length;
+    if (total === 0) return;
+
+    function getCardStep(): number {
+      if (cards.length > 1) {
+        const step = cards[1].offsetLeft - cards[0].offsetLeft;
+        if (step > 0) return step;
+      }
+      return track ? track.clientWidth * 0.85 : 360;
+    }
+
+    function updateState(): void {
+      if (!track || !prevBtn || !nextBtn) return;
+      const scrollLeft = track.scrollLeft;
+      const step = getCardStep();
+      const activeIndex = Math.min(
+        total - 1,
+        Math.max(0, Math.round(scrollLeft / (step || 1)))
+      );
+
+      if (counter) {
+        counter.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+      }
+
+      dots.forEach((dot, idx) => {
+        if (idx === activeIndex) {
+          dot.classList.add('active');
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.classList.remove('active');
+          dot.removeAttribute('aria-current');
+        }
+      });
+
+      const maxScroll = track.scrollWidth - track.clientWidth - 4;
+      prevBtn.disabled = scrollLeft <= 4;
+      nextBtn.disabled = scrollLeft >= maxScroll;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      const step = getCardStep();
+      track.scrollBy({ left: -step, behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const step = getCardStep();
+      track.scrollBy({ left: step, behavior: 'smooth' });
+    });
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const idx = Number(dot.getAttribute('data-index') || 0);
+        if (cards[idx]) {
+          cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+        }
+      });
+    });
+
+    // Mouse drag-to-scroll support for desktop
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+
+    track.addEventListener('mousedown', (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - track.offsetLeft;
+      scrollStart = track.scrollLeft;
+      track.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      track.classList.remove('is-dragging');
+    });
+
+    track.addEventListener('mousemove', (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - track.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      track.scrollLeft = scrollStart - walk;
+    });
+
+    // Keyboard navigation
+    track.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevBtn.click();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextBtn.click();
+      }
+    });
+
+    let ticking = false;
+    track.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateState();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Initial state setup
+    updateState();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupTestimonialsSlider);
+  } else {
+    setupTestimonialsSlider();
+  }
+</script>
