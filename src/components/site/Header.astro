@@ -1,0 +1,599 @@
+---
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
+import { TOP_NAV_ROUTES } from '../../config/routes';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+function isActive(path: string): boolean {
+  return path === '/' && normalizedPath === '/';
+}
+---
+
+<header class="site-header" role="banner">
+  <div class="container header-container">
+    <a href="/" class="brand-link" aria-label={`${BUSINESS_PROFILE.firm.name} — Your Trusted Partner for Insurance & Investments`}>
+      <img
+        src="/assets/logo_awc_full.png"
+        alt="Ant Wealth Creation — Your Trusted Partner for Insurance & Investments"
+        width="260"
+        height="52"
+        class="brand-logo-full"
+      />
+      <img
+        src="/assets/logo_awc.png"
+        alt="Ant Wealth Creation"
+        width="44"
+        height="48"
+        class="brand-logo-short"
+      />
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav" aria-label="Main Navigation">
+      <ul class="nav-list" role="list">
+        {TOP_NAV_ROUTES.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <li class="nav-item">
+              <a
+                href={item.path}
+                class={`nav-link ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+        <!-- Mandatory Portfolio Login redirecting to TheMFBox -->
+        <li class="nav-item nav-item-portfolio">
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="portfolio-link nav-link-portfolio"
+            id="header-portfolio-login"
+          >
+            <img
+              src="/assets/logo_awc.png"
+              alt=""
+              width="18"
+              height="20"
+              class="portfolio-btn-icon"
+              aria-hidden="true"
+            />
+            <span>Portfolio Login</span>
+            <span class="sr-only">(opens TheMFBox investor portal in new window)</span>
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Header Actions (Mobile Portfolio shortcut + Hamburger menu toggle) -->
+    <div class="header-actions">
+      <a
+        href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mobile-header-portfolio-btn"
+        aria-label="Portfolio Login on TheMFBox"
+      >
+        Portfolio Login ↗
+      </a>
+      <button
+        type="button"
+        id="mobile-menu-toggle"
+        class="mobile-menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav-drawer"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="hamburger-box" aria-hidden="true">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Accessible Mobile Navigation Drawer -->
+  <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true" hidden></div>
+
+  <div
+    id="mobile-nav-drawer"
+    class="mobile-nav-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Mobile Navigation Menu"
+    hidden
+  >
+    <div class="mobile-drawer-header">
+      <img
+        src="/assets/logo_awc_full.png"
+        alt="Ant Wealth Creation"
+        width="190"
+        height="38"
+        class="drawer-logo"
+      />
+      <button
+        type="button"
+        id="mobile-drawer-close"
+        class="mobile-drawer-close"
+        aria-label="Close navigation menu"
+      >
+        <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+
+    <nav class="mobile-nav-list-wrapper" aria-label="Mobile navigation">
+      <ul class="mobile-nav-list" role="list">
+        {TOP_NAV_ROUTES.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <li class="mobile-nav-item">
+              <a
+                href={item.path}
+                class={`mobile-nav-link ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+        <li class="mobile-nav-item">
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-nav-link mobile-portfolio-link"
+          >
+            Portfolio Login (TheMFBox) ↗
+            <span class="sr-only">(opens external investor portal in new window)</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mobile-drawer-actions">
+      <a
+        href={BUSINESS_PROFILE.contact.whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mobile-whatsapp-link"
+      >
+        Chat with {BUSINESS_PROFILE.founder.shortName} on WhatsApp ↗
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initMobileMenu() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const closeBtn = document.getElementById('mobile-drawer-close');
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+
+    if (!toggleBtn || !drawer || !backdrop || toggleBtn.dataset.bound === 'true') return;
+    toggleBtn.dataset.bound = 'true';
+
+    const focusableSelector = 'a[href], button:not([disabled])';
+
+    function openMenu() {
+      drawer?.removeAttribute('hidden');
+      backdrop?.removeAttribute('hidden');
+      requestAnimationFrame(() => {
+        drawer?.classList.add('is-open');
+        backdrop?.classList.add('is-open');
+      });
+      toggleBtn?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      closeBtn?.focus();
+    }
+
+    function closeMenu(returnFocus = true) {
+      drawer?.classList.remove('is-open');
+      backdrop?.classList.remove('is-open');
+      toggleBtn?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        if (!drawer?.classList.contains('is-open')) {
+          drawer?.setAttribute('hidden', '');
+          backdrop?.setAttribute('hidden', '');
+        }
+      }, 250);
+      if (returnFocus) toggleBtn?.focus();
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    closeBtn?.addEventListener('click', () => closeMenu());
+    backdrop.addEventListener('click', () => closeMenu());
+
+    drawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => closeMenu(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (toggleBtn.getAttribute('aria-expanded') !== 'true') return;
+
+      if (e.key === 'Escape') {
+        closeMenu();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(focusableSelector));
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--awc-line);
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: 76px;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    color: var(--awc-navy);
+    border-radius: var(--radius-md);
+  }
+
+  .brand-logo-full {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .brand-logo-short {
+    display: none;
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .desktop-nav {
+    display: none;
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0.5rem 0.72rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 10px;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+  }
+
+  .nav-item-portfolio {
+    margin-left: 6px;
+  }
+
+  .portfolio-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.83rem;
+    font-weight: 800;
+    color: var(--awc-navy);
+    background-color: var(--awc-jade-soft);
+    border: 1px solid rgba(15, 118, 110, 0.28);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 10px;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform 0.15s ease;
+  }
+
+  .portfolio-link:hover {
+    color: var(--primitive-white);
+    background-color: var(--awc-navy);
+    border-color: var(--awc-navy);
+    transform: translateY(-1px);
+  }
+
+  .portfolio-btn-icon {
+    width: 18px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 3px;
+    background: #FFFFFF;
+    padding: 1px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mobile-header-portfolio-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--awc-jade-deep);
+    background-color: var(--awc-jade-soft);
+    border: 1px solid rgba(15, 118, 110, 0.25);
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .mobile-menu-toggle:hover {
+    background-color: var(--awc-mist);
+  }
+
+  .hamburger-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20px;
+    height: 14px;
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--awc-navy);
+    border-radius: 2px;
+  }
+
+  .mobile-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 34, 51, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+
+  .mobile-nav-backdrop.is-open {
+    opacity: 1;
+  }
+
+  .mobile-nav-backdrop[hidden],
+  .mobile-nav-drawer[hidden] {
+    display: none !important;
+  }
+
+  .mobile-nav-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 88vw);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6);
+    background-color: var(--primitive-white);
+    box-shadow: var(--shadow-modal);
+    z-index: 1001;
+    transform: translateX(100%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), visibility 250ms;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-drawer.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--awc-line);
+  }
+
+  .drawer-logo {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .mobile-drawer-close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    color: var(--awc-navy);
+    cursor: pointer;
+  }
+
+  .mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-link {
+    display: block;
+    padding: 0.8rem var(--space-3);
+    font-size: var(--text-body);
+    font-weight: 800;
+    color: var(--awc-navy);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: background-color var(--transition-fast);
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+  }
+
+  .mobile-portfolio-link {
+    margin-top: 8px;
+    background-color: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+    border: 1px solid rgba(15, 118, 110, 0.25);
+  }
+
+  .mobile-drawer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--awc-line);
+  }
+
+  .mobile-whatsapp-link {
+    padding: 0.75rem var(--space-3);
+    text-align: center;
+    font-size: var(--text-body-sm);
+    font-weight: 800;
+    color: var(--primitive-white);
+    background-color: var(--awc-navy);
+    border-radius: 10px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 520px) {
+    .header-container {
+      gap: 0.4rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .brand-logo-full {
+      height: 31px;
+      max-width: 142px;
+    }
+
+    .mobile-header-portfolio-btn {
+      padding: 0.4rem 0.58rem;
+      font-size: 0.72rem;
+    }
+
+    .mobile-menu-toggle {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 345px) {
+    .brand-logo-full {
+      display: none;
+    }
+    .brand-logo-short {
+      display: block;
+      height: 38px;
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .desktop-nav {
+      display: block;
+    }
+
+    .header-actions {
+      display: none;
+    }
+  }
+</style>

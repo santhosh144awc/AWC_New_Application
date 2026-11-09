@@ -1,0 +1,304 @@
+---
+import { BUSINESS_PROFILE } from '../../config/businessProfile';
+import { LEGAL_ROUTES, TOP_NAV_ROUTES } from '../../config/routes';
+
+const sectionLinks = TOP_NAV_ROUTES.filter((r) => r.path !== '/');
+---
+
+<footer class="site-footer surface-dark" role="contentinfo" id="footer-disclosures">
+  <div class="container footer-container">
+    <div class="footer-grid">
+      <!-- Identity -->
+      <div class="footer-col brand-col">
+        <div class="footer-logo-badge">
+          <img
+            src="/assets/logo_awc_full.png"
+            alt="Ant Wealth Creation — Your Trusted Partner for Insurance & Investments"
+            width="240"
+            height="48"
+            class="footer-logo-img"
+            loading="lazy"
+          />
+        </div>
+        <p class="footer-tagline">{BUSINESS_PROFILE.firm.tagline}</p>
+        <div class="footer-credentials">
+          <p><strong>Founder:</strong> {BUSINESS_PROFILE.founder.fullName}</p>
+          <p><strong>Status:</strong> {BUSINESS_PROFILE.regulatory.registrationStatusText}</p>
+          <p><strong>Credentials:</strong> {BUSINESS_PROFILE.founder.credentials}</p>
+          <p><strong>Experience:</strong> Financial Markets Since {BUSINESS_PROFILE.firm.experienceSince}</p>
+        </div>
+      </div>
+
+      <!-- Explore Sections -->
+      <nav class="footer-col" aria-label="Explore sections">
+        <h4 class="footer-heading">Explore</h4>
+        <ul class="footer-links" role="list">
+          {sectionLinks.map((route) => (
+            <li><a href={route.path}>{route.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Core Services & Investor Portal -->
+      <nav class="footer-col" aria-label="Services and Investor Portal">
+        <h4 class="footer-heading">Services &amp; Portal</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="/#services">Life &amp; Health Insurance (LIC &amp; Star Health)</a></li>
+          <li><a href="/#services">Mutual Fund Distribution (ARN-266896)</a></li>
+          <li><a href="/#services">Personal Finance Family Roadmap</a></li>
+          <li><a href="/#journey">6-Step Personal Finance Journey</a></li>
+          <li>
+            <a
+              href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-highlight-link"
+            >
+              Client Portfolio Login (TheMFBox) ↗
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Contact</h4>
+        <p class="footer-contact-item">
+          <a
+            href={BUSINESS_PROFILE.contact.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {BUSINESS_PROFILE.firm.headquarters} ↗
+          </a>
+        </p>
+        <p class="footer-contact-item">
+          <a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a>
+        </p>
+        <p class="footer-contact-item">
+          <a href={`mailto:${BUSINESS_PROFILE.contact.email}`}>{BUSINESS_PROFILE.contact.email}</a>
+        </p>
+        <p class="footer-contact-item">
+          <a
+            href={BUSINESS_PROFILE.contact.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp {BUSINESS_PROFILE.founder.shortName} ↗
+          </a>
+        </p>
+        <p class="footer-contact-item">
+          <a
+            href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Client portfolio login ↗
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Statutory notices -->
+    <div class="statutory-notice-box" id="statutory-notices">
+      <p class="statutory-risk-title">Regulatory disclosures &amp; consumer information</p>
+
+      <p class="statutory-text">
+        <strong>Mutual Fund Market Risk Notice:</strong> {BUSINESS_PROFILE.disclosures.mutualFundRisk}
+      </p>
+
+      <p class="statutory-text">
+        <strong>Intermediary Disclosure:</strong> {BUSINESS_PROFILE.disclosures.intermediaryStatement}
+      </p>
+
+      <p class="statutory-text">
+        <strong>Business Structure:</strong> {BUSINESS_PROFILE.disclosures.soleProprietorStatement}
+      </p>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <p class="copyright-text">
+        {BUSINESS_PROFILE.disclosures.copyrightText}
+      </p>
+      <nav class="legal-nav" aria-label="Legal">
+        {LEGAL_ROUTES.map((item) => (
+          <a href={item.path}>{item.label}</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding: var(--space-12) 0 var(--space-8);
+    background-color: var(--awc-navy);
+    color: rgba(255, 255, 255, 0.8);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-10);
+  }
+
+  .footer-logo-badge {
+    display: inline-block;
+    background-color: #FFFFFF;
+    padding: 8px 14px;
+    border-radius: 12px;
+    margin-bottom: var(--space-3);
+  }
+
+  .footer-logo-img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .footer-tagline {
+    font-size: var(--text-body-sm);
+    color: var(--awc-gold);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-credentials {
+    font-size: var(--text-caption);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .footer-credentials p {
+    margin-bottom: var(--space-1);
+  }
+
+  .footer-credentials strong {
+    color: var(--color-text-inverse);
+  }
+
+  .footer-heading {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .footer-links a,
+  .footer-contact-item a {
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    font-size: var(--text-body-sm);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-links a:hover,
+  .footer-contact-item a:hover {
+    color: var(--awc-gold);
+    text-decoration: underline;
+  }
+
+  .footer-highlight-link {
+    color: var(--awc-gold) !important;
+    font-weight: 700;
+  }
+
+  .footer-contact-item {
+    font-size: var(--text-body-sm);
+    margin-bottom: var(--space-2);
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .statutory-notice-box {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .statutory-risk-title {
+    font-size: var(--text-caption);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--awc-gold);
+    margin-bottom: var(--space-3);
+  }
+
+  .statutory-text {
+    font-size: var(--text-caption);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: var(--space-3);
+  }
+
+  .statutory-text strong {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .footer-bottom-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-6);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: var(--text-caption);
+    color: rgba(255, 255, 255, 0.64);
+  }
+
+  .copyright-text {
+    margin: 0;
+  }
+
+  .legal-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .legal-nav a {
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .legal-nav a:hover {
+    color: var(--color-text-inverse);
+    text-decoration: underline;
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-bottom-bar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: 1.5fr 1fr 1.2fr 1.1fr;
+    }
+  }
+</style>
+

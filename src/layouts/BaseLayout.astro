@@ -1,0 +1,67 @@
+---
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+  canonicalUrl?: string;
+  robots?: string;
+}
+
+const {
+  title = `${BUSINESS_PROFILE.firm.name} — Your Trusted Partner for Insurance & Investments`,
+  description = 'Ant Wealth Creation (AMFI ARN-266896), founded by C. Santhosh Sathriyan, B.E., QPFP, helps Indian families with Mutual Fund investments, LIC Life Insurance, Star Health Insurance, and clear Personal Finance planning.',
+  currentPath = Astro.url.pathname,
+  robots = 'index, follow',
+} = Astro.props;
+
+const canonicalUrl = Astro.props.canonicalUrl ?? new URL(currentPath, BUSINESS_PROFILE.firm.canonicalDomain).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/assets/logo_awc.png" />
+    <link rel="apple-touch-icon" href="/assets/logo_awc.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content="/assets/logo_awc_full.png" />
+  </head>
+  <body>
+    <!-- WCAG Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Global Header Landmark -->
+    <Header currentPath={currentPath} />
+
+    <!-- Main Content Landmark -->
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <!-- Global Footer Landmark -->
+    <Footer />
+  </body>
+</html>
+
+<style>
+  #main-content:focus {
+    outline: none;
+  }
+</style>
+

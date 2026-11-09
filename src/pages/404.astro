@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS_PROFILE } from '../config/businessProfile';
+---
+
+<BaseLayout
+  title="Page Not Found — Ant Wealth Creation"
+  description="Return to the Ant Wealth Creation home page."
+  robots="noindex, nofollow"
+>
+  <div class="container not-found-wrap">
+    <div class="not-found-card">
+      <span class="kicker">404</span>
+      <h1>Page Not Found</h1>
+      <p>
+        The page you are looking for is not available. Please return to our main page or log in to your mutual fund portfolio.
+      </p>
+      <div class="actions">
+        <a href="/" class="btn-primary">← Back to Ant Wealth Creation Home</a>
+        <a
+          href={BUSINESS_PROFILE.contact.portfolioLoginUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-secondary"
+        >
+          Client Portfolio Login (TheMFBox) ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-wrap {
+    padding: 64px 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .not-found-card {
+    max-width: 560px;
+    width: 100%;
+    background: var(--primitive-white);
+    border: 1px solid var(--awc-line);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .kicker {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--awc-jade);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 28px;
+    color: var(--awc-navy);
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: var(--awc-navy);
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: var(--awc-jade-soft);
+    color: var(--awc-jade-deep);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>
+
