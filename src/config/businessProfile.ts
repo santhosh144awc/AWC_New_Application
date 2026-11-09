@@ -57,6 +57,7 @@ export interface BusinessProfile {
     phoneDisplay: string;
     email: string;
     locationDisplay: string;
+    googleMapsUrl: string;
     whatsappUrl: string;
     portfolioLoginUrl: string;
   };
@@ -84,11 +85,11 @@ export const BUSINESS_PROFILE: BusinessProfile = {
     shortName: "Santhosh",
     credentials: "QPFP Certified | Mutual Fund Distributor",
     designation: "Founder & Mutual Fund Distributor",
-    photoPath: "/assets/santhosh_photo.webp",
-    quote: "My goal is simple — to help everyday Indian families make better financial decisions and build lasting wealth with peace of mind.",
-    bio: "With experience in Indian financial markets since 2012, Santhosh helps families systematically plan for real-life milestones through disciplined, goal-oriented mutual fund investing, sensible risk protection, and debt management.",
+    photoPath: "/assets/santhosh_photo.jpeg",
+    quote: "My goal is simple — to help individuals and families make better financial decisions and build lasting wealth with peace of mind.",
+    bio: "With experience in the financial markets since 2012, Santhosh helps clients plan for their future goals through mutual fund investing, insurance protection, and structured financial planning.",
     heritage: "Raised in a family with deep roots in financial protection through his father's decades of dedicated service at LIC, Santhosh witnessed firsthand how disciplined savings and risk cover protect families during life's most vulnerable transitions.",
-    foundingStory: "In 2023, Santhosh formally established Ant Wealth Creation with a transparent, client-first philosophy: making personal financial planning approachable, simple, and devoid of opaque sales pressure or fear-based marketing.",
+    foundingStory: "In 2023, Santhosh established Ant Wealth Creation to make personal financial planning simple, clear, and easy to understand for every family.",
     professionalRoles: [
       "AMFI-registered Mutual Fund Distributor",
       "LIC life-insurance advisor",
@@ -119,6 +120,7 @@ export const BUSINESS_PROFILE: BusinessProfile = {
     phoneDisplay: "+91 80879 71566",
     email: "santhosh@antwealth.in",
     locationDisplay: "Dharmapuri, Tamil Nadu, India",
+    googleMapsUrl: "https://maps.app.goo.gl/woGhSAg18fCoHxxG7",
     whatsappUrl: "https://wa.me/918087971566?text=Hi%20Santhosh,%20I%20would%20like%20to%20discuss%20my%20family%20financial%20goals.",
     portfolioLoginUrl: "https://antwealth.themfbox.com/",
   },

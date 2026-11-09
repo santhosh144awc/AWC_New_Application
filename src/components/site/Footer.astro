@@ -55,7 +55,15 @@ const goalLinks = [...GOAL_ROUTES, ...(realStatement ? [realStatement] : [])];
       <!-- Contact -->
       <div class="footer-col">
         <h4 class="footer-heading">Contact</h4>
-        <p class="footer-contact-item">{BUSINESS_PROFILE.firm.headquarters}</p>
+        <p class="footer-contact-item">
+          <a
+            href={BUSINESS_PROFILE.contact.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {BUSINESS_PROFILE.firm.headquarters} ↗
+          </a>
+        </p>
         <p class="footer-contact-item">
           <a href={`tel:${BUSINESS_PROFILE.contact.phone}`}>{BUSINESS_PROFILE.contact.phoneDisplay}</a>
         </p>

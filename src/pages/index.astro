@@ -26,7 +26,7 @@ const servicePillars = [
     points: [
       'Pure Term Life Insurance for family income security',
       'Family Floater & Senior Citizen Health Insurance',
-      'Honest, needs-based coverage sizing without high-pressure sales',
+      'Right coverage selection based on your family’s needs and budget',
     ],
     ctaLabel: 'Estimate your family protection need →',
     ctaHref: '/tools/life-insurance/',
@@ -113,7 +113,7 @@ const startingTools = [
           <span class="hero-kicker">Personal Finance · Mutual Funds · Insurance</span>
           <h1 id="hero-heading">Make Better Money Decisions. Build a Better Future.</h1>
           <p>
-            We help Indian families organize their household finances, protect their loved ones with the right Life and Health Insurance, and build lasting wealth through disciplined Mutual Fund investing.
+            We help you organize your finances, protect your family with the right Life and Health Insurance, and build long-term wealth through Mutual Fund investments.
           </p>
           <div class="hero-buttons">
             <a
@@ -170,10 +170,10 @@ const startingTools = [
       <div class="advisor-card">
         <div class="advisor-photo-wrap">
           <img
-            src="/assets/santhosh_photo.webp"
+            src="/assets/santhosh_photo.jpeg"
             alt={BUSINESS_PROFILE.founder.fullName}
             width="240"
-            height="280"
+            height="308"
             loading="eager"
           />
         </div>
@@ -190,7 +190,7 @@ const startingTools = [
           </blockquote>
 
           <p class="advisor-bio">
-            With experience in Indian financial markets since {BUSINESS_PROFILE.firm.experienceSince} and raised in a family with decades of LIC service heritage, Santhosh founded {BUSINESS_PROFILE.firm.name} in {BUSINESS_PROFILE.firm.foundingYear} to give families honest, jargon-free guidance across Mutual Funds, Life Insurance, and Health Insurance—without high-pressure sales.
+            With experience in the financial markets since {BUSINESS_PROFILE.firm.experienceSince} and raised in a family with decades of LIC service heritage, Santhosh founded {BUSINESS_PROFILE.firm.name} in {BUSINESS_PROFILE.firm.foundingYear} to provide clear, structured financial guidance across Mutual Funds, Life Insurance, and Health Insurance.
           </p>
 
           <div class="advisor-contact-row">
@@ -204,7 +204,15 @@ const startingTools = [
             </div>
             <div class="contact-item">
               <span>Office</span>
-              <strong>Dharmapuri, Tamil Nadu</strong>
+              <strong>
+                <a
+                  href={BUSINESS_PROFILE.contact.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Dharmapuri, Tamil Nadu ↗
+                </a>
+              </strong>
             </div>
             <div class="contact-item">
               <span>Practice Details</span>
@@ -222,7 +230,7 @@ const startingTools = [
           <span class="section-kicker">How We Help Your Family</span>
           <h2 id="services-heading">Clear Products &amp; Practical Financial Guidance</h2>
           <p>
-            Everything your family needs to stay protected today and invest confidently for tomorrow—explained in plain English.
+            Complete support for your family's insurance protection, mutual fund investments, and long-term financial goals.
           </p>
         </div>
       </div>
@@ -247,14 +255,14 @@ const startingTools = [
       </div>
     </section>
 
-    <!-- 4. CLIENT EXPERIENCES (ALL 8 VERIFIED CLIENT REVIEWS SLIDER) -->
+    <!-- 4. CLIENT REVIEWS (ALL 8 CLIENT REVIEWS SLIDER) -->
     <section class="section" id="testimonials" aria-labelledby="testimonials-heading">
       <div class="section-header section-header-slider">
         <div class="slider-header-text">
-          <span class="section-kicker">Client Experiences</span>
-          <h2 id="testimonials-heading">Trusted by Families, Educators &amp; Professionals</h2>
+          <span class="section-kicker">Client Reviews</span>
+          <h2 id="testimonials-heading">What Our Clients Say</h2>
           <p>
-            Genuine words from clients who partner with {BUSINESS_PROFILE.founder.shortName} and {BUSINESS_PROFILE.firm.name} for mutual fund investing, insurance protection, and long-term family planning.
+            Experiences shared by our clients on their insurance, mutual fund investments, and financial planning.
           </p>
         </div>
         <div class="slider-controls" aria-label="Review slider controls">
@@ -313,10 +321,6 @@ const startingTools = [
                     {item.companyOrOrg ? ` · ${item.companyOrOrg}` : ''}
                   </p>
                 </div>
-              </div>
-              <div class="review-rating-badge" aria-label="5 out of 5 stars">
-                <span class="star-rating" aria-hidden="true">★★★★★</span>
-                <span class="verified-badge">Verified Client</span>
               </div>
             </div>
             <blockquote class="review-text">“{item.quote}”</blockquote>
@@ -388,7 +392,7 @@ const startingTools = [
           <span class="section-kicker">Direct 1-on-1 Consultation</span>
           <h2 id="contact-heading">Have a question about your family’s finances?</h2>
           <p>
-            Reach out directly to <strong>{BUSINESS_PROFILE.founder.fullName}</strong> for a friendly, no-obligation conversation about Mutual Funds, Life Insurance, Health Insurance, or your household financial roadmap.
+            Get in touch with <strong>{BUSINESS_PROFILE.founder.fullName}</strong> to discuss your Mutual Fund investments, Life Insurance, Health Insurance, or family financial planning.
           </p>
           <div class="hero-buttons">
             <a
@@ -416,7 +420,15 @@ const startingTools = [
           </div>
           <div class="contact-meta-box">
             <span>Office Location</span>
-            <strong>{BUSINESS_PROFILE.firm.headquarters}</strong>
+            <strong>
+              <a
+                href={BUSINESS_PROFILE.contact.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {BUSINESS_PROFILE.firm.headquarters} (Google Maps ↗)
+              </a>
+            </strong>
           </div>
         </div>
       </div>
@@ -668,11 +680,12 @@ const startingTools = [
 
   .advisor-photo-wrap img {
     width: 220px;
-    height: 260px;
-    object-fit: cover;
+    height: auto;
+    aspect-ratio: 1245 / 1600;
+    object-fit: contain;
     border-radius: 16px;
     border: 1px solid var(--awc-line);
-    background: var(--awc-paper);
+    background: #FFFFFF;
   }
 
   .advisor-body h2 {
