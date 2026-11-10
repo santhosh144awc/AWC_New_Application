@@ -15,7 +15,15 @@ interface FormState {
   currentAge: string;
 }
 
-const DEFAULT_STATE: FormState = {
+const EMPTY_STATE: FormState = {
+  initialCorpus: '',
+  monthlySWP: '',
+  annualReturnRate: '',
+  stepUpRate: '',
+  currentAge: ''
+};
+
+const SAMPLE_STATE: FormState = {
   initialCorpus: '10000000', // ₹1 Crore
   monthlySWP: '50000',       // ₹50,000/mo (6% annual withdrawal rate)
   annualReturnRate: '8.5',   // 8.5% p.a.
@@ -24,21 +32,35 @@ const DEFAULT_STATE: FormState = {
 };
 
 export default function SwpCalculatorIsland(): React.JSX.Element {
-  const [form, setForm] = useState<FormState>(DEFAULT_STATE);
+  const [form, setForm] = useState<FormState>(EMPTY_STATE);
   const [lumpSums, setLumpSums] = useState<SWPLumpSumWithdrawal[]>([]);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [isSampleData, setIsSampleData] = useState<boolean>(true);
   const baseId = useId();
+
+  const isBlank =
+    form.initialCorpus.trim() === '' &&
+    form.monthlySWP.trim() === '' &&
+    form.annualReturnRate.trim() === '';
+
+  const isValid =
+    Number(form.initialCorpus) > 0 &&
+    Number(form.monthlySWP) > 0 &&
+    form.annualReturnRate.trim() !== '' &&
+    Number(form.annualReturnRate) >= 0;
 
   const handleInputChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setIsSampleData(false);
   };
 
-  const handleReset = () => {
-    setForm(DEFAULT_STATE);
+  const handleLoadSample = () => {
+    setForm(SAMPLE_STATE);
     setLumpSums([]);
-    setIsSampleData(true);
+    setShowTable(false);
+  };
+
+  const handleClear = () => {
+    setForm(EMPTY_STATE);
+    setLumpSums([]);
     setShowTable(false);
   };
 
@@ -51,33 +73,33 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
     lumpSums
   }), [form, lumpSums]);
 
-  const result: SWPResult = useMemo(() => {
+  const result: SWPResult | null = useMemo(() => {
+    if (!isValid) return null;
     return calculateSWPPlan(inputs);
-  }, [inputs]);
+  }, [inputs, isValid]);
 
   // Annual withdrawal rate as % of initial corpus
   const initialAnnualWithdrawal = (Number(form.monthlySWP) || 0) * 12;
   const initialCorpusNum = Number(form.initialCorpus) || 1;
-  const initialWithdrawalRatePercent = Math.round((initialAnnualWithdrawal / initialCorpusNum) * 1000) / 10;
+  const initialWithdrawalRatePercent = isValid ? Math.round((initialAnnualWithdrawal / initialCorpusNum) * 1000) / 10 : 0;
 
   return (
     <div className="swp-simulator-workbench" id="swp-longevity-simulator">
-      {/* Sample Data Banner */}
-      {isSampleData && (
-        <div className="sample-banner" role="status">
-          <span className="banner-icon" aria-hidden="true">ⓘ</span>
-          <div className="banner-text">
-            <strong>Illustrative SWP Sustainability Plan:</strong> ₹1 Crore invested at 8.5% p.a. providing ₹50,000/month initial cash flow with a 5% annual inflation step-up. Adjust any slider below to test your own numbers.
-          </div>
-        </div>
-      )}
-
       <div className="calc-layout-grid">
         {/* Input Panel */}
         <div className="calc-input-column card-surface">
           <div className="panel-title-row">
             <h3 className="panel-heading">SWP Parameters</h3>
-            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset to Sample</button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button type="button" id="load-sample-swp-btn" onClick={handleLoadSample} className="btn-sample-pill">
+                Sample Data
+              </button>
+              {!isBlank && (
+                <button type="button" id="reset-swp-btn" onClick={handleClear} className="btn-reset-text">
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Initial Corpus */}
@@ -88,6 +110,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-corpus`}
                 type="number"
+                placeholder="10000000"
                 min="500000"
                 max="500000000"
                 step="100000"
@@ -101,7 +124,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               min="1000000"
               max="50000000"
               step="500000"
-              value={Number(form.initialCorpus) || 10000000}
+              value={Number(form.initialCorpus) || 1000000}
               onChange={(e) => handleInputChange('initialCorpus', e.target.value)}
               className="range-slider"
               aria-label="Initial corpus slider"
@@ -116,13 +139,14 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           <div className="form-group">
             <div className="label-with-rate">
               <label htmlFor={`${baseId}-monthly`} className="field-label">Initial Monthly Withdrawal (₹)</label>
-              <span className="withdrawal-rate-badge">Rate: {initialWithdrawalRatePercent}% p.a.</span>
+              {isValid && <span className="withdrawal-rate-badge">Rate: {initialWithdrawalRatePercent}% p.a.</span>}
             </div>
             <div className="input-currency-wrapper">
               <span className="currency-prefix">₹</span>
               <input
                 id={`${baseId}-monthly`}
                 type="number"
+                placeholder="50000"
                 min="5000"
                 max="2000000"
                 step="5000"
@@ -136,7 +160,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               min="10000"
               max="200000"
               step="5000"
-              value={Number(form.monthlySWP) || 50000}
+              value={Number(form.monthlySWP) || 10000}
               onChange={(e) => handleInputChange('monthlySWP', e.target.value)}
               className="range-slider"
               aria-label="Monthly withdrawal slider"
@@ -154,6 +178,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-ret`}
                 type="number"
+                placeholder="8.5"
                 min="4"
                 max="16"
                 step="0.5"
@@ -161,7 +186,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
                 onChange={(e) => handleInputChange('annualReturnRate', e.target.value)}
                 className="number-input"
               />
-              <span className="input-hint">Hybrid/Equity benchmark: 8%–10%</span>
+              <span className="input-hint">Hybrid/Equity: 8%–10%</span>
             </div>
 
             <div className="form-group">
@@ -169,6 +194,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-stepUp`}
                 type="number"
+                placeholder="5.0"
                 min="0"
                 max="12"
                 step="0.5"
@@ -176,7 +202,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
                 onChange={(e) => handleInputChange('stepUpRate', e.target.value)}
                 className="number-input"
               />
-              <span className="input-hint">Inflation hedge for living expenses</span>
+              <span className="input-hint">Optional inflation step-up</span>
             </div>
           </div>
         </div>
@@ -189,83 +215,93 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
               <h3 className="results-headline">Decumulation Sustainability</h3>
             </div>
 
-            {/* Status Hero Box */}
-            <div className={`hero-metric-box ${result.corpusDepleted ? 'depleted-box' : 'sustainable-box'}`}>
-              <span className="hero-label">Portfolio Longevity Status</span>
-              <div className="hero-value" data-testid="swp-duration-text">
-                {result.corpusDepleted ? `Depletes in ${result.swpDurationYears} Years` : 'Sustains 50+ Years'}
-              </div>
-              <span className="hero-sub">
-                {result.corpusDepleted
-                  ? `At an initial withdrawal rate of ${initialWithdrawalRatePercent}% with a ${form.stepUpRate}% annual step-up, capital exhausts around ${result.depletionDate || `Year ${Math.round(result.swpDurationYears)}`}.`
-                  : `Portfolio remains resilient throughout 50 years with an estimated ${formatIndianCompact(result.finalCorpus)} residual balance.`}
-              </span>
-            </div>
+            {result ? (
+              <>
+                {/* Status Hero Box */}
+                <div className={`hero-metric-box ${result.corpusDepleted ? 'depleted-box' : 'sustainable-box'}`}>
+                  <span className="hero-label">Portfolio Longevity Status</span>
+                  <div className="hero-value" data-testid="swp-duration-text">
+                    {result.corpusDepleted ? `Depletes in ${result.swpDurationYears} Years` : 'Sustains 50+ Years'}
+                  </div>
+                  <span className="hero-sub">
+                    {result.corpusDepleted
+                      ? `At an initial withdrawal rate of ${initialWithdrawalRatePercent}% with a ${Number(form.stepUpRate) || 0}% annual step-up, capital exhausts around ${result.depletionDate || `Year ${Math.round(result.swpDurationYears)}`}.`
+                      : `Portfolio remains resilient throughout 50 years with an estimated ${formatIndianCompact(result.finalCorpus)} residual balance.`}
+                  </span>
+                </div>
 
-            {/* Metrics Breakdown Grid */}
-            <div className="metrics-grid">
-              <div className="metric-item">
-                <span className="metric-tag">Total Withdrawn</span>
-                <div className="metric-val text-brand">{formatINR(result.totalWithdrawals)}</div>
-                <span className="metric-sub">
-                  {(result.totalWithdrawals / (Number(form.initialCorpus) || 1)).toFixed(1)}x initial capital
-                </span>
-              </div>
+                {/* Metrics Breakdown Grid */}
+                <div className="metrics-grid">
+                  <div className="metric-item">
+                    <span className="metric-tag">Total Withdrawn</span>
+                    <div className="metric-val text-brand">{formatINR(result.totalWithdrawals)}</div>
+                    <span className="metric-sub">
+                      {(result.totalWithdrawals / (Number(form.initialCorpus) || 1)).toFixed(1)}x initial capital
+                    </span>
+                  </div>
 
-              <div className="metric-item">
-                <span className="metric-tag">Ending Corpus</span>
-                <div className="metric-val">{formatINR(result.finalCorpus)}</div>
-                <span className="metric-sub">After 50 years or depletion</span>
-              </div>
-            </div>
+                  <div className="metric-item">
+                    <span className="metric-tag">Ending Corpus</span>
+                    <div className="metric-val">{formatINR(result.finalCorpus)}</div>
+                    <span className="metric-sub">After 50 years or depletion</span>
+                  </div>
+                </div>
 
-            {/* Key Factual Insight */}
-            <div className="insight-callout">
-              <span className="insight-icon" aria-hidden="true">📊</span>
-              <div className="insight-text">{result.keyInsight}</div>
-            </div>
+                {/* Key Factual Insight */}
+                <div className="insight-callout">
+                  <span className="insight-icon" aria-hidden="true">📊</span>
+                  <div className="insight-text">{result.keyInsight}</div>
+                </div>
 
-            {/* Table Toggle */}
-            <div className="table-toggle-wrap">
-              <button
-                type="button"
-                className="btn-toggle-table"
-                onClick={() => setShowTable(!showTable)}
-                aria-expanded={showTable}
-              >
-                {showTable ? 'Hide Annual Decumulation Schedule ▲' : 'View Annual Decumulation Schedule ▼'}
-              </button>
+                {/* Table Toggle */}
+                <div className="table-toggle-wrap">
+                  <button
+                    type="button"
+                    className="btn-toggle-table"
+                    onClick={() => setShowTable(!showTable)}
+                    aria-expanded={showTable}
+                  >
+                    {showTable ? 'Hide Annual Decumulation Schedule ▲' : 'View Annual Decumulation Schedule ▼'}
+                  </button>
 
-              {showTable && (
-                <div className="table-responsive">
-                  <table className="schedule-table">
-                    <thead>
-                      <tr>
-                        <th>Year</th>
-                        <th>Opening Corpus</th>
-                        <th>Monthly SWP</th>
-                        <th>Annual Withdrawal</th>
-                        <th>Closing Corpus</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.yearlySummary.slice(0, 30).map((row) => (
-                        <tr key={row.yearNumber}>
-                          <td className="year-cell">Year {row.yearNumber}</td>
-                          <td>{formatINR(row.startingCorpus)}</td>
-                          <td className="text-brand">{formatINR(row.monthlySWPAtYearStart)}</td>
-                          <td className="text-rose">{formatINR(row.totalWithdrawals)}</td>
-                          <td className="font-bold">{formatINR(row.endingCorpus)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {result.yearlySummary.length > 30 && (
-                    <p className="table-caption">Showing first 30 years of projection.</p>
+                  {showTable && (
+                    <div className="table-responsive">
+                      <table className="schedule-table">
+                        <thead>
+                          <tr>
+                            <th>Year</th>
+                            <th>Opening Corpus</th>
+                            <th>Monthly SWP</th>
+                            <th>Annual Withdrawal</th>
+                            <th>Closing Corpus</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {result.yearlySummary.slice(0, 30).map((row) => (
+                            <tr key={row.yearNumber}>
+                              <td className="year-cell">Year {row.yearNumber}</td>
+                              <td>{formatINR(row.startingCorpus)}</td>
+                              <td className="text-brand">{formatINR(row.monthlySWPAtYearStart)}</td>
+                              <td className="text-rose">{formatINR(row.totalWithdrawals)}</td>
+                              <td className="font-bold">{formatINR(row.endingCorpus)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {result.yearlySummary.length > 30 && (
+                        <p className="table-caption">Showing first 30 years of projection.</p>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
+              </>
+            ) : (
+              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b' }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>
+                  Enter your SWP details on the left or click <strong>Sample Data</strong> to preview a scenario.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -344,13 +380,25 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           color: #0f172a;
           font-weight: 700;
         }
+        .btn-sample-pill {
+          background: var(--awc-jade-soft, #E6F4F1);
+          color: var(--color-brand-primary, #0f5338);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 8px;
+          padding: 5px 12px;
+          font-weight: 700;
+          cursor: pointer;
+          font-size: 0.82rem;
+        }
         .btn-reset-text {
           background: none;
-          border: none;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 5px 10px;
           color: #64748b;
           font-weight: 600;
           cursor: pointer;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
         }
         .form-group {
           margin-bottom: 1.15rem;

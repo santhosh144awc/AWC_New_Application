@@ -19,6 +19,7 @@ import {
   PREDEFINED_ASSET_ITEMS,
   PREDEFINED_LIABILITY_ITEMS,
   createBlankPredefinedStatement,
+  createSamplePredefinedStatement,
   type IncomeLineItem,
   type ExpenseLineItem,
   type AssetLineItem,
@@ -391,6 +392,21 @@ describe('Personal Finance Statement Domain Engine', () => {
       expect(res.totalLiabilities).toBe(0);
       expect(res.netWorthIncludingPersonalAssets).toBe(0);
       expect(res.netWorthExcludingPersonalAssets).toBe(0);
+
+      // Verify createSamplePredefinedStatement loads realistic sample data with zero deductions
+      const sample = createSamplePredefinedStatement();
+      sample.incomes.forEach((i: any) => expect(i.annualDeductions).toBe(0));
+      const sampleRes = calculateComprehensivePersonalFinanceStatement({
+        metadata: { clientName: 'Sample Household', statementDate: '2026-10-28', preparedBy: 'C. Santhosh Sathriyan' },
+        incomeItems: sample.incomes,
+        expenseInputs: { householdMode: 'ITEMIZED_MODE', singleMonthlyHouseholdExpense: 0, itemizedExpenses: sample.expenses },
+        ongoingInvestments: sample.ongoingInvestments,
+        assetItems: sample.assets,
+        liabilityItems: sample.liabilities,
+      });
+      expect(sampleRes.incomeStage.totalNetAnnualIncome).toBeGreaterThan(0);
+      expect(sampleRes.incomeStage.totalAnnualDeductions).toBe(0);
+      expect(sampleRes.netWorthIncludingPersonalAssets).toBeGreaterThan(0);
     });
   });
 

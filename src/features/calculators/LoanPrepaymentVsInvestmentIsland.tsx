@@ -28,6 +28,14 @@ interface FormInputs {
   annualInvestmentReturnPercent: string;
 }
 
+const EMPTY_INPUTS: FormInputs = {
+  principal: '',
+  annualLoanInterestRatePercent: '',
+  remainingTenureYears: '',
+  monthlySurplus: '',
+  annualInvestmentReturnPercent: '',
+};
+
 const DEFAULT_INPUTS: FormInputs = {
   principal: '3000000', // ₹30 Lakhs
   annualLoanInterestRatePercent: '8.5', // 8.5% p.a.
@@ -41,10 +49,10 @@ const DEFAULT_ONE_TIMES: OneTimeUIItem[] = [
 ];
 
 export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
-  const [inputs, setInputs] = useState<FormInputs>(DEFAULT_INPUTS);
-  const [oneTimes, setOneTimes] = useState<OneTimeUIItem[]>(DEFAULT_ONE_TIMES);
+  const [inputs, setInputs] = useState<FormInputs>(EMPTY_INPUTS);
+  const [oneTimes, setOneTimes] = useState<OneTimeUIItem[]>([]);
   const [isCustom, setIsCustom] = useState<boolean>(false);
-  const [showOneTimes, setShowOneTimes] = useState<boolean>(true);
+  const [showOneTimes, setShowOneTimes] = useState<boolean>(false);
   const [showSchedule, setShowSchedule] = useState<boolean>(false);
   const baseId = useId();
 
@@ -54,6 +62,14 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
   const tenureYearsTrimmed = inputs.remainingTenureYears.trim();
   const surplusTrimmed = inputs.monthlySurplus.trim();
   const returnTrimmed = inputs.annualInvestmentReturnPercent.trim();
+
+  const isBlank =
+    principalTrimmed === '' &&
+    loanRateTrimmed === '' &&
+    tenureYearsTrimmed === '' &&
+    surplusTrimmed === '' &&
+    returnTrimmed === '' &&
+    oneTimes.length === 0;
 
   const principalNum = principalTrimmed === '' ? NaN : Number(principalTrimmed);
   const loanRateNum = loanRateTrimmed === '' ? NaN : Number(loanRateTrimmed);
@@ -217,11 +233,19 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
     setOneTimes((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleReset = () => {
+  const handleLoadSample = () => {
     setIsCustom(false);
     setInputs(DEFAULT_INPUTS);
     setOneTimes(DEFAULT_ONE_TIMES);
     setShowOneTimes(true);
+    setShowSchedule(false);
+  };
+
+  const handleReset = () => {
+    setIsCustom(false);
+    setInputs(EMPTY_INPUTS);
+    setOneTimes([]);
+    setShowOneTimes(false);
     setShowSchedule(false);
   };
 
@@ -320,45 +344,37 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
         </div>
       </div>
 
-      {/* Illustrative Example Notice Banner */}
-      <div
-        className={`workbench-notice-banner ${isCustom ? 'custom-active' : ''}`}
-        id="loan-notice-banner"
-        role="region"
-        aria-label="Simulation Notice"
-      >
-        <div className="notice-icon" aria-hidden="true">
-          {isCustom ? '⚙️' : 'ℹ️'}
-        </div>
-        <div className="notice-content">
-          <strong>{isCustom ? 'Custom scenario active' : 'Illustrative example — not your figures'}</strong>
-          <span className="notice-sub">
-            {isCustom
-              ? 'Results update automatically as you adjust mortgage balance, surplus, return, or milestone cash injections.'
-              : 'Showing a starting scenario with ₹30L loan at 8.5% p.a., 15-year remaining term, ₹10,000/mo surplus, 12% investment return, and ₹1L injection at Month 12.'}
-          </span>
-        </div>
-        {isCustom && (
-          <button
-            type="button"
-            className="workbench-reset-btn"
-            id="reset-loan-calc-btn"
-            onClick={handleReset}
-          >
-            Reset to Illustrative Example
-          </button>
-        )}
-      </div>
-
       {/* Main Two-Column Connected Workbench */}
       <div className="calc-layout-grid">
         {/* Left Column: Form Controls (1.08fr) */}
         <div className="calc-controls-col">
           <div className="calc-card">
-            <h3 className="card-section-title">Core Mortgage & Investment Assumptions</h3>
-            <p className="card-section-desc">
-              Define your current home loan parameters and discretionary household cash flow.
-            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+              <div>
+                <h3 className="card-section-title" style={{ marginBottom: '2px' }}>Loan &amp; Investment Details</h3>
+                <p className="card-section-desc" style={{ marginBottom: 0 }}>
+                  Enter your loan balance, monthly surplus, and expected return.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="workbench-reset-btn"
+                  id="load-sample-loan-calc-btn"
+                  onClick={handleLoadSample}
+                >
+                  Sample Data
+                </button>
+                <button
+                  type="button"
+                  className="workbench-reset-btn"
+                  id="reset-loan-calc-btn"
+                  onClick={handleReset}
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
 
             {/* 1. Outstanding Principal */}
             <div className="input-group">
@@ -1043,10 +1059,14 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
             </div>
           ) : (
             <div className="calc-pending-card">
-              <div className="pending-icon" aria-hidden="true">⚠️</div>
-              <h4 className="pending-title">Simulation inputs need review</h4>
+              <div className="pending-icon" aria-hidden="true">{isBlank ? '🏠' : '⚠️'}</div>
+              <h4 className="pending-title">
+                {isBlank ? 'Enter your loan details to compare' : 'Simulation inputs need review'}
+              </h4>
               <p className="pending-desc">
-                Please correct the flagged inputs on the left to recalculate the loan prepayment vs parallel investment comparison.
+                {isBlank
+                  ? 'Fill in your loan balance, interest rate, tenure, and surplus on the left—or click Sample Data to preview.'
+                  : 'Please correct the flagged inputs on the left to recalculate the loan prepayment vs parallel investment comparison.'}
               </p>
             </div>
           )}

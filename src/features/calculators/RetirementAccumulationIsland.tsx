@@ -35,7 +35,31 @@ interface FormState {
   annualStepUpRate: string;
 }
 
-const DEFAULT_STATE: FormState = {
+const EMPTY_STATE: FormState = {
+  householdExpenses: '',
+  lifestyleExpenses: '',
+  otherExpenses: '',
+  currentAge: '',
+  retirementAge: '',
+  inflationPreRetirement: '',
+  expenseReductionPercent: '',
+  lifeExpectancyAge: '',
+  inflationPostRetirement: '',
+  corpusReturnPreTax: '',
+  taxRateOnCorpusReturn: '',
+  childrenOrCharityCorpus: '',
+  epfNps: '',
+  gratuity: '',
+  superannuationOther: '',
+  fixedDeposits: '',
+  insuranceMaturity: '',
+  mutualFundsInvestments: '',
+  startInvestingDelay: '',
+  expectedNewInvestmentReturn: '',
+  annualStepUpRate: ''
+};
+
+const SAMPLE_STATE: FormState = {
   householdExpenses: '1200000',
   lifestyleExpenses: '0',
   otherExpenses: '0',
@@ -60,19 +84,30 @@ const DEFAULT_STATE: FormState = {
 };
 
 export default function RetirementAccumulationIsland(): React.JSX.Element {
-  const [form, setForm] = useState<FormState>(DEFAULT_STATE);
+  const [form, setForm] = useState<FormState>(EMPTY_STATE);
   const [activeTab, setActiveTab] = useState<'expenses' | 'timeline' | 'assets' | 'funding'>('expenses');
-  const [isSampleData, setIsSampleData] = useState<boolean>(true);
   const baseId = useId();
+
+  const isBlank =
+    form.householdExpenses.trim() === '' &&
+    form.currentAge.trim() === '' &&
+    form.retirementAge.trim() === '';
+
+  const isValid =
+    (Number(form.householdExpenses) > 0 || Number(form.lifestyleExpenses) > 0) &&
+    Number(form.currentAge) >= 18 &&
+    Number(form.retirementAge) > Number(form.currentAge);
 
   const handleInputChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setIsSampleData(false);
   };
 
-  const handleReset = () => {
-    setForm(DEFAULT_STATE);
-    setIsSampleData(true);
+  const handleLoadSample = () => {
+    setForm(SAMPLE_STATE);
+  };
+
+  const handleClear = () => {
+    setForm(EMPTY_STATE);
     setActiveTab('expenses');
   };
 
@@ -113,22 +148,13 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
     }
   }), [form]);
 
-  const result: RetirementPlannerResult = useMemo(() => {
+  const result: RetirementPlannerResult | null = useMemo(() => {
+    if (!isValid) return null;
     return calculateRetirementAccumulationPlan(input);
-  }, [input]);
+  }, [input, isValid]);
 
   return (
     <div className="retirement-accumulator-workbench" id="retirement-accumulation-calculator">
-      {/* Benchmark Banner */}
-      {isSampleData && (
-        <div className="sample-banner" role="status">
-          <span className="banner-icon" aria-hidden="true">ⓘ</span>
-          <div className="banner-text">
-            <strong>Illustrative Family Planning Baseline:</strong> Age 45 retiring at 60 with ₹12L current annual living expenses and ₹1.2 Cr accumulated savings. Adjust any tab below to personalize.
-          </div>
-        </div>
-      )}
-
       {/* Main Grid */}
       <div className="calc-layout-grid">
         {/* Input Navigation & Controls Panel */}
@@ -164,13 +190,24 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             </button>
             <button
               type="button"
-              onClick={handleReset}
+              id="load-sample-ret-accum-btn"
+              onClick={handleLoadSample}
               className="tab-btn"
-              style={{ marginLeft: 'auto', color: 'var(--awc-jade-deep)' }}
-              title="Reset all tabs to sample baseline"
+              style={{ marginLeft: 'auto', color: 'var(--color-brand-primary, #0f5338)', fontWeight: 700 }}
             >
-              ↺ Reset
+              Sample Data
             </button>
+            {!isBlank && (
+              <button
+                type="button"
+                id="reset-ret-accum-btn"
+                onClick={handleClear}
+                className="tab-btn"
+                style={{ color: '#64748b' }}
+              >
+                Clear
+              </button>
+            )}
           </div>
 
           <div className="tab-content-panel">
@@ -419,63 +456,73 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
               <h3 className="results-headline">Accumulation &amp; Deficit Roadmap</h3>
             </div>
 
-            {/* Primary Required Corpus Metric */}
-            <div className="hero-metric-box">
-              <span className="hero-label">Total Retirement Corpus Required</span>
-              <div className="hero-value text-brand" data-testid="target-corpus-val">
-                {formatINR(result.totalRetirementCorpusRequired)}
-              </div>
-              <span className="hero-sub">
-                Supports {result.yearsPostRetirement} years of living expenses ({formatINR(result.futureMonthlyExpenses)}/month inflated at age {form.retirementAge})
-              </span>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="progress-section">
-              <div className="progress-label-row">
-                <span>Existing Assets Coverage</span>
-                <strong>{result.goalProgress}% Funded</strong>
-              </div>
-              <div className="progress-track" role="progressbar" aria-valuenow={result.goalProgress} aria-valuemin={0} aria-valuemax={100}>
-                <div className="progress-fill" style={{ width: `${Math.min(100, result.goalProgress)}%` }} />
-              </div>
-              <div className="progress-details-row">
-                <span>Existing Assets: {formatIndianCompact(result.totalRetirementAssets)}</span>
-                <span>Deficit: {formatIndianCompact(result.fundingDeficit)}</span>
-              </div>
-            </div>
-
-            {/* 3 Solutions Grid */}
-            <div className="funding-options-box">
-              <h4 className="options-title">Disciplined Strategies to Bridge the Gap:</h4>
-
-              <div className="solutions-grid">
-                <div className="solution-card featured-stepup">
-                  <span className="solution-badge">Recommended</span>
-                  <span className="solution-name">Step-Up Monthly SIP</span>
-                  <div className="solution-value">{formatINR(result.requiredStepUpSIP)}/mo</div>
-                  <span className="solution-note">Starts at {formatINR(result.requiredStepUpSIP)}, increasing {form.annualStepUpRate}% annually</span>
+            {result ? (
+              <>
+                {/* Primary Required Corpus Metric */}
+                <div className="hero-metric-box">
+                  <span className="hero-label">Total Retirement Corpus Required</span>
+                  <div className="hero-value text-brand" data-testid="target-corpus-val">
+                    {formatINR(result.totalRetirementCorpusRequired)}
+                  </div>
+                  <span className="hero-sub">
+                    Supports {result.yearsPostRetirement} years of living expenses ({formatINR(result.futureMonthlyExpenses)}/month inflated at age {form.retirementAge || 60})
+                  </span>
                 </div>
 
-                <div className="solution-card">
-                  <span className="solution-name">Fixed Monthly SIP</span>
-                  <div className="solution-value">{formatINR(result.requiredFixedSIP)}/mo</div>
-                  <span className="solution-note">Constant investment without step-up for {result.yearsUntilRetirement} years</span>
+                {/* Progress Bar */}
+                <div className="progress-section">
+                  <div className="progress-label-row">
+                    <span>Existing Assets Coverage</span>
+                    <strong>{result.goalProgress}% Funded</strong>
+                  </div>
+                  <div className="progress-track" role="progressbar" aria-valuenow={result.goalProgress} aria-valuemin={0} aria-valuemax={100}>
+                    <div className="progress-fill" style={{ width: `${Math.min(100, result.goalProgress)}%` }} />
+                  </div>
+                  <div className="progress-details-row">
+                    <span>Existing Assets: {formatIndianCompact(result.totalRetirementAssets)}</span>
+                    <span>Deficit: {formatIndianCompact(result.fundingDeficit)}</span>
+                  </div>
                 </div>
 
-                <div className="solution-card">
-                  <span className="solution-name">One-Time Lump Sum Today</span>
-                  <div className="solution-value">{formatINR(result.requiredLumpSum)}</div>
-                  <span className="solution-note">Single initial investment compounding for {result.yearsUntilRetirement} years</span>
+                {/* 3 Solutions Grid */}
+                <div className="funding-options-box">
+                  <h4 className="options-title">Disciplined Strategies to Bridge the Gap:</h4>
+
+                  <div className="solutions-grid">
+                    <div className="solution-card featured-stepup">
+                      <span className="solution-badge">Recommended</span>
+                      <span className="solution-name">Step-Up Monthly SIP</span>
+                      <div className="solution-value">{formatINR(result.requiredStepUpSIP)}/mo</div>
+                      <span className="solution-note">Starts at {formatINR(result.requiredStepUpSIP)}, increasing {form.annualStepUpRate || 10}% annually</span>
+                    </div>
+
+                    <div className="solution-card">
+                      <span className="solution-name">Fixed Monthly SIP</span>
+                      <div className="solution-value">{formatINR(result.requiredFixedSIP)}/mo</div>
+                      <span className="solution-note">Constant investment without step-up for {result.yearsUntilRetirement} years</span>
+                    </div>
+
+                    <div className="solution-card">
+                      <span className="solution-name">One-Time Lump Sum Today</span>
+                      <div className="solution-value">{formatINR(result.requiredLumpSum)}</div>
+                      <span className="solution-note">Single initial investment compounding for {result.yearsUntilRetirement} years</span>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Factual Observation */}
+                <div className="insight-callout">
+                  <span className="insight-icon" aria-hidden="true">📌</span>
+                  <div className="insight-text">{result.keyInsight}</div>
+                </div>
+              </>
+            ) : (
+              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b' }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>
+                  Enter your retirement expenses and ages across the tabs or click <strong>Sample Data</strong> to preview a scenario.
+                </p>
               </div>
-            </div>
-
-            {/* Factual Observation */}
-            <div className="insight-callout">
-              <span className="insight-icon" aria-hidden="true">📌</span>
-              <div className="insight-text">{result.keyInsight}</div>
-            </div>
+            )}
           </div>
         </div>
       </div>

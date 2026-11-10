@@ -19,6 +19,7 @@ import React, { useState, useId, useRef } from 'react';
 import {
   calculateComprehensivePersonalFinanceStatement,
   createBlankPredefinedStatement,
+  createSamplePredefinedStatement,
   type ComprehensiveStatementInputs,
   type PersonalFinanceStatementResult,
   type ExpenseFrequency,
@@ -238,6 +239,26 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
     setCurrentStage(1);
   };
 
+  // Load Sample Data on demand
+  const handleLoadSampleData = () => {
+    const sample = createSamplePredefinedStatement();
+    setClientName('Ramesh & Priya Sundaram');
+    setSpouseName('Priya');
+    setChildrenNames('Ananya, Aarav');
+    setStatementDate(getTodayLocalDateString());
+    setPreparedBy('C. Santhosh Sathriyan');
+    setDiscussionNotes('');
+    setIncomes(sample.incomes);
+    setExpenses(sample.expenses);
+    setOngoingInvestments(sample.ongoingInvestments);
+    setAssets(sample.assets);
+    setLiabilities(sample.liabilities);
+    setExpenseEntryMode('CATEGORY_BREAKDOWN');
+    setSingleMonthlyExpense('0');
+    setAssumedReturnRatePercent('10');
+    setPdfError(null);
+  };
+
   // Income row mutations with live bidirectional Monthly/Annual synchronization
   const updateIncomeField = (id: string, field: 'label' | 'monthly' | 'annual' | 'deductions', val: string | number) => {
     setIncomes((prev) =>
@@ -435,12 +456,21 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       <section className="pfs-meta-section" aria-label="Statement Header Details">
         <div className="pfs-meta-header">
           <div className="pfs-meta-title-box">
-            <h2 className="pfs-meta-title">Client &amp; Statement Information</h2>
+            <h2 className="pfs-meta-title">Client &amp; Family Details</h2>
             <p className="pfs-meta-subtitle">
-              Configure family names and statement metadata. Names entered below populate ownership columns in Assets and Liabilities.
+              Add family names to personalize ownership columns and your PDF report.
             </p>
           </div>
           <div className="pfs-meta-actions">
+            <button
+              type="button"
+              className="pfs-btn-sample"
+              onClick={handleLoadSampleData}
+              id="btn-load-sample"
+              title="Populate sample household data"
+            >
+              Sample Data
+            </button>
             <button
               type="button"
               className="pfs-btn-outline-danger"
@@ -495,8 +525,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               onChange={(e) => setChildrenNames(e.target.value)}
             />
           </div>
-
-
         </div>
       </section>
 
@@ -541,7 +569,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       <section className="pfs-live-bar" aria-label="Live Statement Summary">
         <div className="pfs-live-grid">
           <div className="pfs-metric-card" id="metric-income">
-            <span className="pfs-metric-label">Annual Inflow</span>
+            <span className="pfs-metric-label">Annual Income</span>
             <span className="pfs-metric-value">{formatINR(result.incomeStage.totalNetAnnualIncome)}</span>
             <span className="pfs-metric-sub">Monthly: {formatINR(result.incomeStage.totalNetMonthlyIncome)}</span>
           </div>
@@ -596,9 +624,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 1 of 6</span>
-                <h3 id="stage-1-heading" className="pfs-pane-title">Household Inflows &amp; Income Sources</h3>
+                <h3 id="stage-1-heading" className="pfs-pane-title">Household Income</h3>
                 <p className="pfs-pane-desc">
-                  Record all primary cash inflows for both spouses, including take-home salary, annual performance bonuses, professional business earnings, rental yield, and investment returns.
+                  Enter your monthly or annual take-home income.
                 </p>
               </div>
               <button
@@ -615,11 +643,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               <table className="pfs-table" id="table-income">
                 <thead>
                   <tr>
-                    <th style={{ width: '30%' }}>Source Particulars</th>
-                    <th style={{ width: '18%' }} className="text-right">Monthly Gross (₹)</th>
-                    <th style={{ width: '18%' }} className="text-right">Annual Gross (₹)</th>
-                    <th style={{ width: '18%' }} className="text-right">Annual Deductions (₹)</th>
-                    <th style={{ width: '16%' }} className="text-right">Net Annual (₹)</th>
+                    <th style={{ width: '44%' }}>Income Source</th>
+                    <th style={{ width: '26%' }} className="text-right">Monthly (₹)</th>
+                    <th style={{ width: '26%' }} className="text-right">Annual (₹)</th>
                     <th style={{ width: '4%' }}></th>
                   </tr>
                 </thead>
@@ -627,7 +653,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   {incomes.map((row) => {
                     const grossAnnual = row.grossAnnualAmount ?? (row.grossMonthlyAmount ? row.grossMonthlyAmount * 12 : (row.enteredGrossAmount || 0));
                     const grossMonthly = row.grossMonthlyAmount ?? Math.round(grossAnnual / 12);
-                    const netAnnual = Math.max(0, grossAnnual - (row.annualDeductions || 0));
 
                     return (
                       <tr key={row.id}>
@@ -660,19 +685,6 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                             onChange={(e) => updateIncomeField(row.id, 'annual', e.target.value)}
                           />
                         </td>
-                        <td>
-                          <input
-                            type="number"
-                            className="pfs-table-input text-right pfs-input-deductions"
-                            data-field="deductions-amount"
-                            value={row.annualDeductions || ''}
-                            placeholder="0"
-                            onChange={(e) => updateIncomeField(row.id, 'deductions', e.target.value)}
-                          />
-                        </td>
-                        <td className="text-right font-bold tabular-nums">
-                          {formatINR(netAnnual)}
-                        </td>
                         <td className="text-center">
                           <button
                             type="button"
@@ -690,18 +702,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <tfoot>
                   <tr className="pfs-table-total-row">
                     <td>
-                      <strong>Total Household Cash Inflow</strong>
+                      <strong>Total Household Income</strong>
                     </td>
                     <td className="text-right font-bold tabular-nums">
-                      {formatINR(result.incomeStage.totalGrossAnnualIncome / 12)}
+                      {formatINR(result.incomeStage.totalNetMonthlyIncome)}
                     </td>
-                    <td className="text-right font-bold tabular-nums">
-                      {formatINR(result.incomeStage.totalGrossAnnualIncome)}
-                    </td>
-                    <td className="text-right font-bold tabular-nums text-muted">
-                      {formatINR(result.incomeStage.totalAnnualDeductions)}
-                    </td>
-                    <td className="text-right font-bold highlight-cell">
+                    <td className="text-right font-bold highlight-cell tabular-nums">
                       {formatINR(result.incomeStage.totalNetAnnualIncome)}
                     </td>
                     <td></td>
@@ -732,10 +738,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 2 of 6</span>
-                <h3 id="stage-2-heading" className="pfs-pane-title">Household Living Costs &amp; Outflows</h3>
+                <h3 id="stage-2-heading" className="pfs-pane-title">Household Expenses</h3>
                 <p className="pfs-pane-desc">
-                  Classify living costs across essentials, lifestyle, dependent support, insurance policies, and loan EMIs.
-                  Choose between entering a combined monthly total or a complete category breakdown.
+                  Enter one combined monthly total or list expenses by category.
                 </p>
               </div>
             </div>
@@ -754,7 +759,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   </div>
                   <div className="pfs-choice-content">
                     <span className="pfs-choice-title">Enter total monthly expenses</span>
-                    <span className="pfs-choice-desc">Enter one combined monthly amount for all family expenses.</span>
+                    <span className="pfs-choice-desc">One combined monthly amount.</span>
                   </div>
                 </button>
 
@@ -768,8 +773,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                     <span className="pfs-radio-circle"></span>
                   </div>
                   <div className="pfs-choice-content">
-                    <span className="pfs-choice-title">Break down expenses by category</span>
-                    <span className="pfs-choice-desc">Enter individual expenses to see how spending is distributed.</span>
+                    <span className="pfs-choice-title">Break down by category</span>
+                    <span className="pfs-choice-desc">Itemize household, lifestyle, insurance &amp; EMIs.</span>
                   </div>
                 </button>
               </div>
@@ -787,26 +792,13 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                         type="number"
                         className="pfs-input text-lg font-bold"
                         value={singleMonthlyExpense}
-                        placeholder="e.g. 60000"
+                        placeholder="0"
                         onChange={(e) => setSingleMonthlyExpense(e.target.value)}
                       />
                       <span className="pfs-input-hint">
-                        Single combined amount includes all 5 categories (Household Essentials, Lifestyle, Dependents, Insurance, and Loan EMIs).
-                        Multiplied by 12 = <strong>{formatINR(parseNum(singleMonthlyExpense) * 12)} / year</strong>.
+                        Annual equivalent: <strong>{formatINR(parseNum(singleMonthlyExpense) * 12)} / year</strong>
                       </span>
                     </div>
-                  </div>
-                  <div className="pfs-alert-info">
-                    <strong>Consolidated mode active:</strong> The amount entered above represents the combined family total. All 5 detailed category sections are bypassed and excluded from calculations.
-                  </div>
-                </div>
-              )}
-
-              {/* Option 2 Helper Banner */}
-              {expenseEntryMode === 'CATEGORY_BREAKDOWN' && (
-                <div className="pfs-mode-body" id="category-breakdown-banner">
-                  <div className="pfs-alert-info">
-                    <strong>Category breakdown active:</strong> Calculating family living costs from the 5 itemized categories below (Household Essentials, Lifestyle, Dependents, Insurance, and Loan EMIs).
                   </div>
                 </div>
               )}
@@ -820,23 +812,23 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 const catTitles: Record<string, { title: string; subtitle: string }> = {
                   HOUSEHOLD: {
                     title: '1. Household Essentials',
-                    subtitle: 'Rent, groceries, society maintenance, domestic help, utilities, fuel, medicals.',
+                    subtitle: 'Rent, groceries, utilities, domestic help, medicals.',
                   },
                   LIFESTYLE: {
-                    title: '2. Lifestyle & Personal Discretionary',
-                    subtitle: 'Dining, vacations, electronics, gym, club memberships, shopping, charity.',
+                    title: '2. Lifestyle & Discretionary',
+                    subtitle: 'Dining, travel, shopping, subscriptions.',
                   },
                   DEPENDENT: {
-                    title: '3. Dependent & Family Support',
-                    subtitle: 'Children school & college fees, coaching, allowances, support for elderly parents.',
+                    title: '3. Family & Education',
+                    subtitle: 'School fees, coaching, parent support.',
                   },
                   INSURANCE: {
-                    title: '4. Insurance Protection Premiums',
-                    subtitle: 'Term life cover, family health insurance floater, critical illness, vehicle motor policies.',
+                    title: '4. Insurance Premiums',
+                    subtitle: 'Term life, health, and motor insurance.',
                   },
                   LOAN_EMI: {
-                    title: '5. Ongoing Loan EMIs & Servicing',
-                    subtitle: 'Home loan monthly EMI, car loan, personal loans, education loan servicing.',
+                    title: '5. Loan EMIs',
+                    subtitle: 'Home, car, personal, and education loan EMIs.',
                   },
                 };
 
@@ -981,9 +973,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 3 of 6</span>
-                <h3 id="stage-3-heading" className="pfs-pane-title">Savings, Ongoing Investments &amp; Investible Surplus</h3>
+                <h3 id="stage-3-heading" className="pfs-pane-title">Savings &amp; Ongoing Investments</h3>
                 <p className="pfs-pane-desc">
-                  Evaluate your gross family savings capacity, account for existing regular SIPs and recurring commitments, and determine fresh deployable surplus capital.
+                  Review your annual savings and ongoing SIP or recurring commitments.
                 </p>
               </div>
             </div>
@@ -1017,7 +1009,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <div>
                   <h4 className="pfs-cat-title">Committed Ongoing Investments</h4>
                   <p className="pfs-cat-desc">
-                    Mutual fund monthly SIPs, voluntary PPF/EPF contributions, recurring deposits, and regular savings policies.
+                    Regular SIPs, PPF/EPF contributions, and recurring deposits.
                   </p>
                 </div>
                 <div className="pfs-cat-right">
@@ -1123,11 +1115,11 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
               {result.savingsStage.annualSurplusForFreshInvestments < 0 ? (
                 <div className="pfs-alert-warning">
-                  <strong>Cash Flow Deficit Warning:</strong> Your total household expenses ({formatINR(result.expenseStage.totalAnnualExpenses)}) and committed ongoing investments ({formatINR(result.savingsStage.totalOngoingInvestmentsAnnual)}) exceed your net annual income by {formatINR(Math.abs(result.savingsStage.annualSurplusForFreshInvestments))}. Review discretionary lifestyle costs or debt obligations to restore a positive monthly surplus.
+                  <strong>Cash Flow Deficit:</strong> Expenses and ongoing investments exceed your annual income by {formatINR(Math.abs(result.savingsStage.annualSurplusForFreshInvestments))}.
                 </div>
               ) : (
                 <p className="pfs-surplus-desc">
-                  This surplus represents unallocated monthly savings available to fund future milestone goals (children higher education, home down payment, retirement wealth accumulation).
+                  Unallocated monthly savings available for new financial goals.
                 </p>
               )}
             </div>
@@ -1137,9 +1129,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
               <div className="pfs-projections-card" id="projections-container">
                 <div className="pfs-proj-header">
                   <div>
-                    <h4 className="pfs-proj-title">Illustrative Wealth Accumulation from Surplus</h4>
+                    <h4 className="pfs-proj-title">Illustrative Surplus Growth</h4>
                     <p className="pfs-proj-desc">
-                      Potential growth if current monthly surplus (~{formatINR(result.savingsStage.monthlySurplusForFreshInvestments)}/mo) is systematically deployed into long-term wealth assets.
+                      Projected value if ~{formatINR(result.savingsStage.monthlySurplusForFreshInvestments)}/mo is invested regularly.
                     </p>
                   </div>
                   <div className="pfs-proj-rate-box">
@@ -1170,7 +1162,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   ))}
                 </div>
                 <span className="pfs-disclaimer-sub">
-                  *Illustrative mathematical projection compounded annually assuming constant contributions and an assumed {result.savingsStage.assumedReturnPercent}% return. Not a guaranteed return. Mutual fund investments are subject to market risks.
+                  *Illustrative mathematical projection at {result.savingsStage.assumedReturnPercent}% p.a. Mutual fund investments are subject to market risks.
                 </span>
               </div>
             )}
@@ -1194,14 +1186,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 4 of 6</span>
-                <h3 id="stage-4-heading" className="pfs-pane-title">Family Assets &amp; Investment Portfolio</h3>
+                <h3 id="stage-4-heading" className="pfs-pane-title">Family Assets &amp; Portfolio</h3>
                 <p className="pfs-pane-desc">
-                  Itemize assets across the six core financial classes with ownership attribution across {selfLabel}, {spouseLabel}, and {childrenLabel}.
+                  Enter current values across {selfLabel}, {spouseLabel}, and {childrenLabel}.
                 </p>
-                <div className="pfs-asset-purpose-guidance" id="asset-purpose-guidance-banner">
-                  <span className="pfs-guidance-icon">ℹ</span>
-                  <span>Optional: note the intended purpose of this holding, such as an emergency fund, education or retirement.</span>
-                </div>
               </div>
             </div>
 
@@ -1214,28 +1202,28 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
               const classInfo: Record<AssetClass, { title: string; subtitle: string; isPersonal?: boolean }> = {
                 LIQUID: {
-                  title: '1. Liquid Safety Reserves',
-                  subtitle: 'Savings accounts, sweep FDs, cash, and overnight/liquid funds for emergencies.',
+                  title: '1. Liquid Reserves',
+                  subtitle: 'Savings accounts, liquid funds, and cash.',
                 },
                 DEBT: {
-                  title: '2. Fixed Income & Debt Instruments',
-                  subtitle: 'Fixed deposits, PPF, EPF, NPS debt tier, SGBs, bonds, and recurring deposits.',
+                  title: '2. Fixed Income & Debt',
+                  subtitle: 'FDs, PPF, EPF, bonds, and debt funds.',
                 },
                 EQUITY: {
-                  title: '3. Equity & Market Growth Capital',
-                  subtitle: 'Direct stocks, equity mutual funds, PMS, NPS equity tier, and market-linked assets.',
+                  title: '3. Equity & Growth',
+                  subtitle: 'Equity mutual funds, stocks, and NPS equity.',
                 },
                 GOLD: {
                   title: '4. Gold & Precious Metals',
-                  subtitle: 'Gold ETFs, Sovereign Gold Bonds, and pure physical gold bars/coins.',
+                  subtitle: 'Gold ETFs, SGBs, and gold coins/bars.',
                 },
                 REAL_ESTATE: {
-                  title: '5. Productive Real Estate & REITs',
-                  subtitle: 'Rental apartments, commercial plots, land investments, and REIT units.',
+                  title: '5. Investment Real Estate',
+                  subtitle: 'Rental property, land, and REITs.',
                 },
                 PERSONAL: {
-                  title: '6. Personal Consumption Assets',
-                  subtitle: 'Primary residence, private vehicles, personal jewelry, and household contents.',
+                  title: '6. Personal Use Assets',
+                  subtitle: 'Primary home, vehicles, and personal jewellery.',
                   isPersonal: true,
                 },
               };
@@ -1401,9 +1389,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 5 of 6</span>
-                <h3 id="stage-5-heading" className="pfs-pane-title">Household Debt Obligations &amp; Liabilities</h3>
+                <h3 id="stage-5-heading" className="pfs-pane-title">Loans &amp; Liabilities</h3>
                 <p className="pfs-pane-desc">
-                  Record all outstanding debt principals across home loans, vehicle financing, personal borrowings, education loans, and credit card balances.
+                  Enter outstanding loan balances and credit card dues.
                 </p>
               </div>
               <button
@@ -1522,7 +1510,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <span className={`pfs-metric-big ${result.debtToAssetRatioPercent !== null && result.debtToAssetRatioPercent > 40 ? 'text-negative' : 'text-navy'}`}>
                   {result.debtToAssetRatioPercent !== null ? formatPercentage(result.debtToAssetRatioPercent) : '0%'}
                 </span>
-                <span className="pfs-metric-hint">Prudent benchmark: Keep debt below 35% of total asset base.</span>
+                <span className="pfs-metric-hint">Benchmark: Keep debt below 35% of total assets.</span>
               </div>
             </div>
 
@@ -1545,9 +1533,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-pane-header">
               <div>
                 <span className="pfs-pane-kicker">Stage 6 of 6</span>
-                <h3 id="stage-6-heading" className="pfs-pane-title">Final Financial Statement &amp; Net Worth Balance Sheet</h3>
+                <h3 id="stage-6-heading" className="pfs-pane-title">Net Worth &amp; Statement Review</h3>
                 <p className="pfs-pane-desc">
-                  Comprehensive review of your family financial balance sheet, dual net worth measures, solvency ratios, and client-ready PDF document generation.
+                  Review your net worth, key ratios, and download your statement PDF.
                 </p>
               </div>
             </div>
@@ -1556,23 +1544,23 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
             <div className="pfs-networth-dashboard" id="networth-dashboard">
               {/* Measure 1: Accounting Net Worth */}
               <div className="pfs-nw-card accounting-card">
-                <span className="pfs-nw-kicker">Notional Balance Sheet Net Worth</span>
+                <span className="pfs-nw-kicker">Total Balance Sheet</span>
                 <h4 className="pfs-nw-title">Net Worth (Including Personal Assets)</h4>
                 <div className="pfs-nw-equation">
                   <span>Total Assets ({formatINR(result.totalAssets)})</span>
-                  <span>− Total Liabilities ({formatINR(result.totalLiabilities)})</span>
+                  <span> − Liabilities ({formatINR(result.totalLiabilities)})</span>
                 </div>
                 <div className="pfs-nw-result-val text-navy">
                   {formatINR(result.netWorthIncludingPersonalAssets)}
                 </div>
                 <p className="pfs-nw-desc">
-                  This standard accounting metric counts everything you own, including your primary residence and car. While it reflects overall balance sheet size, personal assets cannot be liquidated to pay monthly bills without disrupting your living arrangements.
+                  Includes your primary home, vehicles, and personal jewellery.
                 </p>
               </div>
 
               {/* Measure 2: Actual / Productive Net Worth */}
               <div className="pfs-nw-card productive-card">
-                <span className="pfs-nw-kicker highlight-kicker">True Milestone Funding Capital</span>
+                <span className="pfs-nw-kicker highlight-kicker">Goal-Funding Capital</span>
                 <h4 className="pfs-nw-title">Actual Net Worth (Excluding Personal Assets)</h4>
                 <div className="pfs-nw-equation">
                   <span>Total Assets − Liabilities − Personal Assets ({formatINR(result.totalPersonalAssets)})</span>
@@ -1581,7 +1569,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   {formatINR(result.netWorthExcludingPersonalAssets)}
                 </div>
                 <p className="pfs-nw-desc">
-                  <strong>The Reality Metric:</strong> This represents the real financial capital you own in financial markets and yielding investments after all debts are cleared. This is the capital that will actually generate income to fund retirement and life goals.
+                  Productive investments available to fund retirement and future goals.
                 </p>
               </div>
             </div>
@@ -1593,7 +1581,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <span className="pfs-ratio-val">
                   {result.liquidAssetsRunwayMonths !== null ? `${result.liquidAssetsRunwayMonths.toFixed(1)} Months` : 'N/A'}
                 </span>
-                <span className="pfs-ratio-guide">Target: 3 to 6 months of living expenses in liquid cash.</span>
+                <span className="pfs-ratio-guide">Target: 3–6 months of expenses.</span>
               </div>
 
               <div className="pfs-ratio-card">
@@ -1601,15 +1589,15 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <span className="pfs-ratio-val">
                   {result.savingsRatePercent !== null ? formatPercentage(result.savingsRatePercent) : 'N/A'}
                 </span>
-                <span className="pfs-ratio-guide">Target: &gt; 25% of gross annual family inflows.</span>
+                <span className="pfs-ratio-guide">Target: &gt; 25% of annual income.</span>
               </div>
 
               <div className="pfs-ratio-card">
-                <span className="pfs-ratio-lbl">Solvency: Debt-to-Asset Ratio</span>
+                <span className="pfs-ratio-lbl">Debt-to-Asset Ratio</span>
                 <span className="pfs-ratio-val">
                   {result.debtToAssetRatioPercent !== null ? formatPercentage(result.debtToAssetRatioPercent) : 'N/A'}
                 </span>
-                <span className="pfs-ratio-guide">Target: &lt; 35% of total household assets.</span>
+                <span className="pfs-ratio-guide">Target: &lt; 35% of total assets.</span>
               </div>
 
               <div className="pfs-ratio-card">
@@ -1617,21 +1605,21 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                 <span className="pfs-ratio-val">
                   {result.productiveAssetsRatioPercent !== null ? formatPercentage(result.productiveAssetsRatioPercent) : 'N/A'}
                 </span>
-                <span className="pfs-ratio-guide">Target: &gt; 50% of assets deployed in productive investments.</span>
+                <span className="pfs-ratio-guide">Target: &gt; 50% in financial assets.</span>
               </div>
             </div>
 
             {/* PREPARER DISCUSSION NOTES */}
             <div className="pfs-notes-section">
               <label htmlFor={`${baseId}-discussionNotes`} className="pfs-label font-bold">
-                Preparer Observations &amp; Discussion Notes <span className="pfs-optional">(Included on PDF report)</span>
+                Discussion Notes <span className="pfs-optional">(Included on PDF report)</span>
               </label>
               <textarea
                 id={`${baseId}-discussionNotes`}
                 className="pfs-textarea"
-                rows={4}
+                rows={3}
                 value={discussionNotes}
-                placeholder="Enter client observations, priority action items, or documents required for follow-up..."
+                placeholder="Optional notes or action items for the PDF report..."
                 onChange={(e) => setDiscussionNotes(e.target.value)}
               />
             </div>
@@ -1645,10 +1633,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
             <div className="pfs-pdf-action-card">
               <div className="pfs-pdf-action-left">
-                <h4 className="pfs-pdf-title">Client-Ready Statement Document</h4>
+                <h4 className="pfs-pdf-title">Download Statement PDF</h4>
                 <p className="pfs-pdf-desc">
-                  Generates a full 5-page PDF report with complete schedules for income, expenses, savings surplus, asset registers, liabilities, and solvency diagnostic.
-                  Generated 100% locally in your browser. No financial data leaves your device.
+                  Generates a 5-page PDF statement locally in your browser.
                 </p>
               </div>
               <div className="pfs-pdf-action-right">
@@ -1721,10 +1708,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
                   </thead>
                   <tbody>
                     <tr>
-                      <td><strong>1. Net Annual Inflows</strong></td>
+                      <td><strong>1. Total Household Income</strong></td>
                       <td className="text-right font-bold text-teal">{formatINR(result.incomeStage.totalNetAnnualIncome)}</td>
                       <td className="text-right tabular-nums">{formatINR(result.incomeStage.totalNetMonthlyIncome)}</td>
-                      <td>Gross: {formatINR(result.incomeStage.totalGrossAnnualIncome)}</td>
+                      <td>All household income sources</td>
                     </tr>
                     <tr>
                       <td><strong>2. Annual Living Costs</strong></td>
@@ -1855,7 +1842,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
       )}
 
       {/* ------------------------------------------------------------- */}
-      {/* SCOPED COMPONENT STYLES                                       */}
+      {/* SCOPED COMPONENT STYLES (Concept C Warm Sage & Pine Theme)     */}
       {/* ------------------------------------------------------------- */}
       <style>{`
         .pfs-app-wrapper {
@@ -1864,16 +1851,16 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           gap: var(--space-6, 24px);
           width: 100%;
           box-sizing: border-box;
-          color: var(--color-brand-primary, #00182A);
+          color: var(--awc-navy, #132A40);
         }
 
         /* LIVE SUMMARY BAR */
         .pfs-live-bar {
           background: #FFFFFF;
-          border: 1px solid var(--color-border-subtle, #E2E8F0);
-          border-radius: var(--radius-lg, 12px);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 14px;
           padding: var(--space-4, 16px);
-          box-shadow: 0 2px 8px rgba(0, 24, 42, 0.04);
+          box-shadow: 0 2px 10px rgba(15, 83, 56, 0.04);
         }
         .pfs-live-grid {
           display: grid;
@@ -1893,54 +1880,56 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-metric-card {
           display: flex;
           flex-direction: column;
-          padding: var(--space-2, 8px) var(--space-3, 12px);
-          border-radius: var(--radius-md, 8px);
-          background: #F8FAFC;
-          border: 1px solid #EEF2F6;
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
         }
         .pfs-metric-card.highlight-card {
-          background: linear-gradient(135deg, #00182A 0%, #082842 100%);
+          background: linear-gradient(135deg, var(--color-brand-primary, #0f5338) 0%, var(--awc-jade-deep, #0B6B63) 100%);
           color: #FFFFFF;
-          border: 1px solid #00182A;
+          border: 1px solid var(--color-brand-primary, #0f5338);
         }
         .pfs-metric-label {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #64748B;
+          color: #546A7B;
           margin-bottom: 2px;
         }
         .pfs-metric-card.highlight-card .pfs-metric-label {
-          color: #94A3B8;
+          color: #D6E4E0;
         }
         .pfs-metric-value {
           font-size: 1.15rem;
           font-weight: 800;
           font-variant-numeric: tabular-nums;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
         }
         .pfs-metric-card.highlight-card .highlight-value {
-          color: #FFC107;
+          color: var(--awc-gold, #F2C65D);
         }
         .pfs-metric-sub {
           font-size: 0.72rem;
-          color: #64748B;
+          color: #546A7B;
           margin-top: 2px;
         }
         .pfs-metric-card.highlight-card .pfs-metric-sub {
-          color: #CBD5E1;
+          color: #E6F4F1;
         }
-        .text-teal { color: #00AB96 !important; }
-        .text-gold { color: #D97706 !important; }
+        .text-teal { color: var(--awc-jade-deep, #0B6B63) !important; }
+        .text-gold { color: var(--awc-gold, #F2C65D) !important; }
+        .text-navy { color: var(--awc-navy, #132A40) !important; }
         .text-negative { color: #DC2626 !important; }
 
         /* METADATA SECTION */
         .pfs-meta-section {
           background: #FFFFFF;
-          border: 1px solid var(--color-border-subtle, #E2E8F0);
-          border-radius: var(--radius-lg, 12px);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 14px;
           padding: var(--space-4, 16px);
+          box-shadow: 0 2px 10px rgba(15, 83, 56, 0.03);
         }
         .pfs-meta-header {
           display: flex;
@@ -1958,12 +1947,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-meta-title {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0;
         }
         .pfs-meta-subtitle {
           font-size: 0.8rem;
-          color: #64748B;
+          color: #546A7B;
           margin: 2px 0 0 0;
         }
         .pfs-meta-actions {
@@ -1992,12 +1981,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-nav-stepper {
           position: static;
           background: #FFFFFF;
-          border: 1px solid var(--color-border-subtle, #E2E8F0);
-          border-radius: var(--radius-lg, 12px);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 14px;
           padding: 6px;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          box-shadow: 0 1px 3px rgba(0, 24, 42, 0.04);
+          box-shadow: 0 2px 8px rgba(15, 83, 56, 0.04);
           margin-bottom: 0;
         }
         .pfs-stepper-list {
@@ -2022,7 +2011,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           min-height: 44px;
           background: transparent;
           border: 1px solid transparent;
-          border-radius: var(--radius-md, 8px);
+          border-radius: 10px;
           cursor: pointer;
           font-family: inherit;
           text-align: left;
@@ -2030,14 +2019,15 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           transition: all 0.2s ease;
           box-sizing: border-box;
           white-space: nowrap;
+          color: var(--awc-navy, #132A40);
         }
         .pfs-step-btn:hover {
-          background: #F1F5F9;
+          background: var(--awc-paper, #F5F8F6);
         }
         .pfs-step-btn.active {
-          background: #00182A;
+          background: var(--color-brand-primary, #0f5338);
           color: #FFFFFF;
-          border-color: #00182A;
+          border-color: var(--color-brand-primary, #0f5338);
         }
         .pfs-step-badge {
           display: flex;
@@ -2047,18 +2037,18 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           height: 22px;
           min-width: 22px;
           border-radius: 50%;
-          background: #EEF2F6;
-          color: #475569;
+          background: var(--awc-jade-soft, #E6F4F1);
+          color: var(--color-brand-primary, #0f5338);
           font-size: 0.72rem;
           font-weight: 700;
         }
         .pfs-step-btn.active .pfs-step-badge {
-          background: #00AB96;
-          color: #FFFFFF;
+          background: var(--awc-gold, #F2C65D);
+          color: var(--awc-navy, #132A40);
         }
         .pfs-step-btn.completed .pfs-step-badge {
-          background: #CFEFE3;
-          color: #00695C;
+          background: var(--awc-jade-soft, #E6F4F1);
+          color: var(--awc-jade-deep, #0B6B63);
         }
         .pfs-step-text {
           display: flex;
@@ -2070,7 +2060,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-size: 0.65rem;
           text-transform: uppercase;
           letter-spacing: 0.04em;
-          opacity: 0.7;
+          opacity: 0.75;
           line-height: 1.1;
         }
         .pfs-step-title {
@@ -2110,16 +2100,17 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         /* STAGE CANVAS & PANES */
         .pfs-stage-canvas {
           background: #FFFFFF;
-          border: 1px solid var(--color-border-subtle, #E2E8F0);
-          border-radius: var(--radius-lg, 12px);
-          padding: var(--space-5, 20px);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 16px;
+          padding: var(--space-5, 22px);
+          box-shadow: 0 4px 16px rgba(15, 83, 56, 0.04);
         }
         .pfs-pane-header {
           display: flex;
           flex-direction: column;
           gap: var(--space-3, 12px);
           margin-bottom: var(--space-5, 20px);
-          border-bottom: 1px solid #EEF2F6;
+          border-bottom: 1px solid var(--awc-line, #D6E4E0);
           padding-bottom: var(--space-4, 16px);
         }
         @media (min-width: 768px) {
@@ -2134,39 +2125,39 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-weight: 800;
           text-transform: uppercase;
           letter-spacing: 0.06em;
-          color: #00AB96;
+          color: var(--awc-jade-deep, #0B6B63);
         }
         .pfs-pane-title {
           font-size: 1.35rem;
           font-weight: 800;
-          color: #00182A;
-          margin: 2px 0 6px 0;
+          color: var(--awc-navy, #132A40);
+          margin: 2px 0 4px 0;
         }
         .pfs-pane-desc {
           font-size: 0.88rem;
-          color: #475569;
+          color: #546A7B;
           max-width: 780px;
           line-height: 1.5;
           margin: 0;
         }
 
-        /* FORM CONTROLS */
+        /* FORM CONTROLS — WARM SAGE & PINE THEME */
         .pfs-field-group {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 5px;
         }
         .pfs-preparer-badge {
           display: flex;
           align-items: center;
           gap: 8px;
-          height: 38px;
-          padding: 6px 12px;
-          background: #F8FAFC;
-          border: 1px solid #CBD5E1;
-          border-radius: 6px;
+          height: 40px;
+          padding: 8px 12px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           box-sizing: border-box;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           font-size: 0.82rem;
           white-space: nowrap;
           overflow: hidden;
@@ -2178,12 +2169,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           flex-shrink: 0;
         }
         .pfs-preparer-text {
-          color: #334155;
+          color: #546A7B;
           overflow: hidden;
           text-overflow: ellipsis;
         }
         .pfs-preparer-text strong {
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           font-weight: 700;
         }
         .pfs-date-header-row {
@@ -2194,53 +2185,62 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-date-badge-indian {
           font-size: 0.72rem;
           font-weight: 700;
-          color: #00182A;
-          background: #E6F7F5;
-          border: 1px solid #00AB96;
-          border-radius: 4px;
-          padding: 1px 6px;
+          color: var(--color-brand-primary, #0f5338);
+          background: var(--awc-jade-soft, #E6F4F1);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 6px;
+          padding: 1px 8px;
           letter-spacing: 0.02em;
         }
         .pfs-label {
-          font-size: 0.78rem;
+          font-size: 0.8rem;
           font-weight: 600;
-          color: #334155;
+          color: var(--awc-navy, #132A40);
         }
         .pfs-required { color: #DC2626; }
-        .pfs-optional { font-size: 0.72rem; color: #94A3B8; font-weight: normal; }
+        .pfs-optional { font-size: 0.72rem; color: #7C909D; font-weight: normal; }
         .pfs-input {
-          padding: 8px 12px;
-          border: 1px solid #CBD5E1;
-          border-radius: 6px;
-          font-size: 0.88rem;
+          padding: 9px 12px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
+          font-size: 0.9rem;
           font-family: inherit;
-          color: #00182A;
+          font-weight: 600;
+          color: var(--awc-navy, #132A40);
+          background: var(--awc-paper, #F5F8F6);
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .pfs-input:focus, .pfs-table-input:focus, .pfs-table-select:focus, .pfs-textarea:focus, .pfs-input-sm:focus {
+          outline: none;
+          border-color: var(--color-border-interactive, #0f5338);
+          box-shadow: 0 0 0 3px rgba(15, 83, 56, 0.14);
           background: #FFFFFF;
         }
-        .pfs-input:focus, .pfs-table-input:focus, .pfs-table-select:focus, .pfs-textarea:focus {
-          outline: none;
-          border-color: #00AB96;
-          box-shadow: 0 0 0 2px rgba(0, 171, 150, 0.2);
-        }
         .pfs-input-sm {
-          padding: 4px 8px;
-          border: 1px solid #CBD5E1;
-          border-radius: 6px;
-          font-size: 0.82rem;
-          width: 80px;
+          padding: 6px 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--awc-navy, #132A40);
+          background: var(--awc-paper, #F5F8F6);
+          width: 84px;
         }
         .pfs-input-hint {
-          font-size: 0.72rem;
-          color: #64748B;
+          font-size: 0.75rem;
+          color: #546A7B;
         }
         .pfs-textarea {
           width: 100%;
-          padding: 10px 12px;
-          border: 1px solid #CBD5E1;
-          border-radius: 6px;
+          padding: 10px 14px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           font-size: 0.88rem;
           font-family: inherit;
+          color: var(--awc-navy, #132A40);
+          background: var(--awc-paper, #F5F8F6);
           box-sizing: border-box;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
 
         /* TABLES */
@@ -2255,31 +2255,38 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-size: 0.85rem;
         }
         .pfs-table th {
-          background: #F8FAFC;
-          color: #334155;
+          background: var(--awc-paper, #F5F8F6);
+          color: var(--awc-navy, #132A40);
           font-weight: 700;
-          padding: 8px 10px;
-          border-bottom: 2px solid #E2E8F0;
+          padding: 10px 12px;
+          border-bottom: 2px solid var(--awc-line, #D6E4E0);
           text-align: left;
         }
         .pfs-table td {
           padding: 8px 10px;
-          border-bottom: 1px solid #EEF2F6;
+          border-bottom: 1px solid #EBF1EE;
           vertical-align: middle;
         }
         .pfs-table-input {
           width: 100%;
-          height: 36px;
-          padding: 6px 8px;
-          border: 1px solid #E2E8F0;
-          border-radius: 4px;
-          font-size: 0.85rem;
+          height: 38px;
+          padding: 6px 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
+          font-size: 0.86rem;
+          font-weight: 600;
           line-height: 1.4;
           font-family: inherit;
-          background: #FFFFFF;
+          color: var(--awc-navy, #132A40);
+          background: var(--awc-paper, #F5F8F6);
           box-sizing: border-box;
           display: block;
           margin: 0;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .pfs-table-input::placeholder {
+          color: #8CA099;
+          font-weight: 500;
         }
         .pfs-table-input-purpose {
           min-width: 165px;
@@ -2287,30 +2294,34 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-table-input-purpose::placeholder {
           font-size: 11.5px;
-          color: #94A3B8;
+          color: #8CA099;
         }
         .pfs-table-select {
           width: 100%;
-          height: 36px;
-          padding: 6px 8px;
-          border: 1px solid #E2E8F0;
-          border-radius: 4px;
+          height: 38px;
+          padding: 6px 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           font-size: 0.82rem;
+          font-weight: 600;
           line-height: 1.4;
-          background: #FFFFFF;
+          color: var(--awc-navy, #132A40);
+          background: var(--awc-paper, #F5F8F6);
           box-sizing: border-box;
           display: block;
           margin: 0;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
         .pfs-table-total-row td {
-          background: #F8FAFC;
-          border-top: 2px solid #00182A;
-          border-bottom: 2px solid #00182A;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border-top: 2px solid var(--color-brand-primary, #0f5338);
+          border-bottom: 2px solid var(--color-brand-primary, #0f5338);
+          color: var(--awc-navy, #132A40);
           font-weight: 700;
-          padding: 10px;
+          padding: 12px 10px;
         }
         .highlight-cell {
-          color: #00182A;
+          color: var(--color-brand-primary, #0f5338);
           font-size: 1.05rem;
         }
         .text-right { text-align: right; }
@@ -2320,52 +2331,70 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
         /* BUTTONS */
         .pfs-btn-primary {
-          background: #00182A;
+          background: var(--color-brand-primary, #0f5338);
           color: #FFFFFF;
-          padding: 10px 20px;
-          border-radius: 6px;
+          padding: 10px 22px;
+          border-radius: 10px;
           border: none;
           font-weight: 700;
           font-size: 0.9rem;
           cursor: pointer;
-          transition: background 0.2s ease;
+          transition: background 0.2s ease, transform 0.1s ease;
+          box-shadow: 0 2px 6px rgba(15, 83, 56, 0.18);
         }
         .pfs-btn-primary:hover {
-          background: #00AB96;
+          background: var(--awc-jade-deep, #0B6B63);
+        }
+        .pfs-btn-sample {
+          background: var(--awc-jade-soft, #E6F4F1);
+          color: var(--color-brand-primary, #0f5338);
+          padding: 8px 16px;
+          border-radius: 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          font-weight: 700;
+          font-size: 0.82rem;
+          cursor: pointer;
+          transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .pfs-btn-sample:hover {
+          background: #D3ECE6;
+          border-color: var(--color-brand-primary, #0f5338);
         }
         .pfs-btn-secondary {
-          background: #F1F5F9;
-          color: #334155;
-          padding: 8px 14px;
-          border-radius: 6px;
-          border: 1px solid #CBD5E1;
+          background: var(--awc-paper, #F5F8F6);
+          color: var(--awc-navy, #132A40);
+          padding: 8px 16px;
+          border-radius: 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
           font-weight: 600;
           font-size: 0.82rem;
           cursor: pointer;
+          transition: background 0.15s ease, border-color 0.15s ease;
         }
         .pfs-btn-secondary:hover {
-          background: #E2E8F0;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border-color: var(--awc-jade-deep, #0B6B63);
         }
         .pfs-btn-secondary-sm {
-          background: #FFFFFF;
-          color: #00182A;
-          padding: 4px 10px;
-          border-radius: 4px;
-          border: 1px solid #CBD5E1;
-          font-weight: 600;
+          background: var(--awc-paper, #F5F8F6);
+          color: var(--color-brand-primary, #0f5338);
+          padding: 5px 12px;
+          border-radius: 8px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          font-weight: 700;
           font-size: 0.78rem;
           cursor: pointer;
+          transition: all 0.15s ease;
         }
         .pfs-btn-secondary-sm:hover {
-          background: #F8FAFC;
-          border-color: #00AB96;
-          color: #00AB96;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border-color: var(--color-brand-primary, #0f5338);
         }
         .pfs-btn-outline-danger {
           background: transparent;
           color: #DC2626;
           padding: 8px 14px;
-          border-radius: 6px;
+          border-radius: 10px;
           border: 1px solid #FCA5A5;
           font-weight: 600;
           font-size: 0.82rem;
@@ -2378,14 +2407,14 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           background: #DC2626;
           color: #FFFFFF;
           padding: 8px 16px;
-          border-radius: 6px;
+          border-radius: 10px;
           border: none;
           font-weight: 700;
           cursor: pointer;
         }
         .pfs-btn-row-del {
           background: transparent;
-          color: #94A3B8;
+          color: #8CA099;
           border: none;
           font-size: 1.2rem;
           cursor: pointer;
@@ -2396,10 +2425,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           color: #DC2626;
         }
         .pfs-btn-download-pdf {
-          background: #00AB96;
+          background: var(--color-brand-primary, #0f5338);
           color: #FFFFFF;
           padding: 12px 24px;
-          border-radius: 8px;
+          border-radius: 10px;
           border: none;
           font-size: 0.95rem;
           font-weight: 800;
@@ -2409,10 +2438,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           justify-content: center;
           min-height: 48px;
           transition: background 0.2s ease, transform 0.1s ease;
-          box-shadow: 0 4px 12px rgba(0, 171, 150, 0.25);
+          box-shadow: 0 4px 12px rgba(15, 83, 56, 0.22);
         }
         .pfs-btn-download-pdf:hover {
-          background: #008f7d;
+          background: var(--awc-jade-deep, #0B6B63);
         }
         .pfs-btn-download-pdf:active {
           transform: translateY(1px);
@@ -2421,53 +2450,53 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         /* SEGMENTED CONTROL */
         .pfs-segmented-control {
           display: inline-flex;
-          background: #F1F5F9;
+          background: var(--awc-paper, #F5F8F6);
           padding: 3px;
-          border-radius: 8px;
-          border: 1px solid #E2E8F0;
+          border-radius: 10px;
+          border: 1px solid var(--awc-line, #D6E4E0);
         }
         .pfs-segmented-control button {
           background: transparent;
           border: none;
           padding: 6px 14px;
-          border-radius: 6px;
+          border-radius: 8px;
           font-size: 0.82rem;
           font-weight: 600;
-          color: #64748B;
+          color: #546A7B;
           cursor: pointer;
         }
         .pfs-segmented-control button.active {
           background: #FFFFFF;
-          color: #00182A;
+          color: var(--color-brand-primary, #0f5338);
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
           font-weight: 700;
         }
         .pfs-segmented-control-sm {
           display: inline-flex;
-          background: #F1F5F9;
+          background: var(--awc-paper, #F5F8F6);
           padding: 2px;
-          border-radius: 4px;
+          border-radius: 6px;
         }
         .pfs-segmented-control-sm button {
           background: transparent;
           border: none;
           padding: 2px 8px;
-          border-radius: 3px;
+          border-radius: 4px;
           font-size: 0.72rem;
-          color: #64748B;
+          color: #546A7B;
           cursor: pointer;
         }
         .pfs-segmented-control-sm button.active {
           background: #FFFFFF;
-          color: #00182A;
+          color: var(--color-brand-primary, #0f5338);
           font-weight: 700;
         }
 
         /* CATEGORY SECTION */
         .pfs-category-section {
           margin-bottom: var(--space-5, 20px);
-          border: 1px solid #EEF2F6;
-          border-radius: 8px;
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 12px;
           padding: var(--space-4, 16px);
           background: #FFFFFF;
         }
@@ -2500,12 +2529,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-cat-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0;
         }
         .pfs-cat-desc {
           font-size: 0.78rem;
-          color: #64748B;
+          color: #546A7B;
           margin: 2px 0 0 0;
         }
         .pfs-cat-right {
@@ -2515,22 +2544,22 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-cat-subtotal {
           font-size: 0.85rem;
-          color: #475569;
+          color: #546A7B;
         }
         .pfs-badge-warning {
           background: #FEF3C7;
           color: #92400E;
           font-size: 0.7rem;
           font-weight: 700;
-          padding: 2px 6px;
-          border-radius: 4px;
+          padding: 2px 8px;
+          border-radius: 6px;
         }
 
         /* EXPENSE ENTRY CHOICE SELECTOR CARD */
         .pfs-mode-selector-card {
-          background: #F8FAFC;
-          border: 1px solid #CBD5E1;
-          border-radius: 10px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 12px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
         }
@@ -2550,20 +2579,20 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           gap: var(--space-3, 12px);
           padding: var(--space-4, 16px);
           background: #FFFFFF;
-          border: 2px solid #E2E8F0;
-          border-radius: 8px;
+          border: 2px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           cursor: pointer;
           text-align: left;
           transition: all 0.2s ease-in-out;
         }
         .pfs-expense-choice-card:hover {
-          border-color: #94A3B8;
-          background: #F8FAFC;
+          border-color: var(--awc-jade-deep, #0B6B63);
+          background: var(--awc-paper, #F5F8F6);
         }
         .pfs-expense-choice-card.active {
-          border-color: #00182A;
-          background: #F0F9FF;
-          box-shadow: 0 2px 8px rgba(0, 24, 42, 0.08);
+          border-color: var(--color-brand-primary, #0f5338);
+          background: var(--awc-jade-soft, #E6F4F1);
+          box-shadow: 0 2px 8px rgba(15, 83, 56, 0.08);
         }
         .pfs-choice-radio-indicator {
           display: flex;
@@ -2579,12 +2608,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          border: 2px solid #94A3B8;
+          border: 2px solid #8CA099;
           box-sizing: border-box;
           transition: all 0.2s ease;
         }
         .pfs-expense-choice-card.active .pfs-radio-circle {
-          border-color: #00182A;
+          border-color: var(--color-brand-primary, #0f5338);
           border-width: 5px;
           background: #FFFFFF;
         }
@@ -2596,41 +2625,25 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-choice-title {
           font-weight: 700;
           font-size: 0.95rem;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
         }
         .pfs-choice-desc {
           font-size: 0.8rem;
-          color: #64748B;
+          color: #546A7B;
           line-height: 1.4;
         }
         .pfs-mode-body {
           margin-top: var(--space-4, 16px);
           padding-top: var(--space-4, 16px);
-          border-top: 1px solid #E2E8F0;
+          border-top: 1px solid var(--awc-line, #D6E4E0);
         }
 
         /* ASSET PURPOSE GUIDANCE */
-        .pfs-asset-purpose-guidance {
-          display: flex;
-          align-items: center;
-          gap: var(--space-2, 8px);
-          margin-top: var(--space-2, 8px);
-          padding: 8px 12px;
-          background: #F0F9FF;
-          border-left: 3px solid #0284C7;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          color: #0369A1;
-        }
-        .pfs-guidance-icon {
-          font-weight: 700;
-          font-size: 0.9rem;
-        }
         .pfs-th-sub {
           display: block;
           font-size: 0.65rem;
           font-weight: normal;
-          color: #94A3B8;
+          color: #7C909D;
           text-transform: none;
         }
 
@@ -2640,8 +2653,8 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           flex-wrap: wrap;
           align-items: center;
           justify-content: space-around;
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
           border-radius: 12px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
@@ -2656,7 +2669,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-size: 0.72rem;
           text-transform: uppercase;
           font-weight: 700;
-          color: #64748B;
+          color: #546A7B;
         }
         .pfs-bridge-val {
           font-size: 1.35rem;
@@ -2665,18 +2678,18 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-bridge-sub {
           font-size: 0.75rem;
-          color: #64748B;
+          color: #546A7B;
         }
         .pfs-bridge-op {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #94A3B8;
+          color: #8CA099;
         }
 
         /* SURPLUS CARD */
         .pfs-surplus-card {
-          background: #F0FDF4;
-          border: 1px solid #BBF7D0;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border: 1px solid var(--awc-line, #D6E4E0);
           border-radius: 12px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
@@ -2701,7 +2714,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-size: 0.72rem;
           text-transform: uppercase;
           font-weight: 800;
-          color: #00AB96;
+          color: var(--awc-jade-deep, #0B6B63);
         }
         .pfs-surplus-card.surplus-deficit .pfs-surplus-kicker {
           color: #DC2626;
@@ -2709,7 +2722,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-surplus-title {
           font-size: 1.15rem;
           font-weight: 800;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0;
         }
         .pfs-surplus-amount {
@@ -2720,18 +2733,18 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-surplus-monthly {
           font-size: 0.8rem;
-          color: #64748B;
+          color: #546A7B;
         }
         .pfs-surplus-desc {
           font-size: 0.85rem;
-          color: #334155;
+          color: var(--awc-navy, #132A40);
           margin: var(--space-2, 8px) 0 0 0;
         }
 
         /* PROJECTIONS */
         .pfs-projections-card {
           background: #FFFFFF;
-          border: 1px solid #E2E8F0;
+          border: 1px solid var(--awc-line, #D6E4E0);
           border-radius: 12px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
@@ -2752,12 +2765,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-proj-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0;
         }
         .pfs-proj-desc {
           font-size: 0.8rem;
-          color: #64748B;
+          color: #546A7B;
           margin: 2px 0 0 0;
         }
         .pfs-proj-rate-box {
@@ -2776,9 +2789,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           }
         }
         .pfs-proj-box {
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
-          border-radius: 8px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           padding: 12px;
           display: flex;
           flex-direction: column;
@@ -2788,38 +2801,38 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-proj-years {
           font-size: 0.8rem;
           font-weight: 700;
-          color: #475569;
+          color: #546A7B;
           margin-bottom: 4px;
         }
         .pfs-proj-future-val {
           font-size: 1.25rem;
           font-weight: 800;
-          color: #00AB96;
+          color: var(--color-brand-primary, #0f5338);
           font-variant-numeric: tabular-nums;
         }
         .pfs-proj-invested {
           font-size: 0.72rem;
-          color: #64748B;
+          color: #546A7B;
           margin-top: 4px;
         }
         .pfs-proj-gain {
           font-size: 0.72rem;
-          color: #16A34A;
+          color: var(--awc-jade-deep, #0B6B63);
           font-weight: 600;
         }
         .pfs-disclaimer-sub {
           display: block;
           font-size: 0.7rem;
-          color: #94A3B8;
+          color: #7C909D;
           margin-top: var(--space-3, 12px);
           font-style: italic;
         }
 
         /* TOTAL SUMMARY CARD */
         .pfs-total-summary-card {
-          background: #F8FAFC;
-          border: 1px solid #CBD5E1;
-          border-radius: 8px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           padding: var(--space-4, 16px);
           display: flex;
           flex-direction: column;
@@ -2836,9 +2849,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
         /* DEBT METRIC CARD */
         .pfs-debt-metric-card {
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
-          border-radius: 8px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           padding: var(--space-4, 16px);
           margin-bottom: var(--space-5, 20px);
         }
@@ -2851,7 +2864,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-metric-lbl {
           font-size: 0.8rem;
           font-weight: 700;
-          color: #64748B;
+          color: #546A7B;
           text-transform: uppercase;
         }
         .pfs-metric-big {
@@ -2862,7 +2875,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-metric-hint {
           font-size: 0.75rem;
-          color: #64748B;
+          color: #546A7B;
         }
 
         /* NET WORTH DASHBOARD */
@@ -2878,18 +2891,18 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           }
         }
         .pfs-nw-card {
-          border-radius: 12px;
+          border-radius: 14px;
           padding: var(--space-5, 20px);
           display: flex;
           flex-direction: column;
         }
         .accounting-card {
-          background: #F8FAFC;
-          border: 1px solid #CBD5E1;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
         }
         .productive-card {
-          background: linear-gradient(135deg, #00182A 0%, #062438 100%);
-          border: 1px solid #00182A;
+          background: linear-gradient(135deg, var(--color-brand-primary, #0f5338) 0%, var(--awc-jade-deep, #0B6B63) 100%);
+          border: 1px solid var(--color-brand-primary, #0f5338);
           color: #FFFFFF;
         }
         .pfs-nw-kicker {
@@ -2897,42 +2910,42 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-weight: 800;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #64748B;
+          color: #546A7B;
         }
         .productive-card .highlight-kicker {
-          color: #2DD4BF;
+          color: #A7F3D0;
         }
         .pfs-nw-title {
           font-size: 1.15rem;
           font-weight: 800;
           margin: 4px 0 8px 0;
-          color: var(--color-text-primary, #00182A);
+          color: var(--awc-navy, #132A40);
         }
         .productive-card .pfs-nw-title {
           color: #FFFFFF;
         }
         .pfs-nw-equation {
           font-size: 0.78rem;
-          color: #64748B;
+          color: #546A7B;
           margin-bottom: 12px;
         }
         .productive-card .pfs-nw-equation {
-          color: #E2E8F0;
+          color: #E6F4F1;
         }
         .pfs-nw-result-val {
           font-size: 2rem;
           font-weight: 800;
           font-variant-numeric: tabular-nums;
-          margin-bottom: 12px;
+          margin-bottom: 10px;
         }
         .pfs-nw-desc {
           font-size: 0.82rem;
           line-height: 1.5;
           margin: 0;
-          color: #475569;
+          color: #546A7B;
         }
         .productive-card .pfs-nw-desc {
-          color: #CBD5E1;
+          color: #E6F4F1;
         }
 
         /* RATIOS GRID */
@@ -2953,9 +2966,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           }
         }
         .pfs-ratio-card {
-          background: #FFFFFF;
-          border: 1px solid #E2E8F0;
-          border-radius: 8px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 10px;
           padding: 14px;
           display: flex;
           flex-direction: column;
@@ -2963,19 +2976,19 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-ratio-lbl {
           font-size: 0.75rem;
           font-weight: 700;
-          color: #64748B;
+          color: #546A7B;
           text-transform: uppercase;
         }
         .pfs-ratio-val {
           font-size: 1.4rem;
           font-weight: 800;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 4px 0;
           font-variant-numeric: tabular-nums;
         }
         .pfs-ratio-guide {
           font-size: 0.72rem;
-          color: #64748B;
+          color: #546A7B;
         }
 
         /* NOTES SECTION */
@@ -2985,9 +2998,9 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
         /* PDF ACTION CARD */
         .pfs-pdf-action-card {
-          background: #F0FDF4;
-          border: 1px solid #86EFAC;
-          border-radius: 12px;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 14px;
           padding: var(--space-5, 20px);
           display: flex;
           flex-direction: column;
@@ -3015,10 +3028,10 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-btn-preview-action {
           background: #FFFFFF;
-          color: #00182A;
-          border: 1px solid #CBD5E1;
+          color: var(--awc-navy, #132A40);
+          border: 1px solid var(--awc-line, #D6E4E0);
           padding: 12px 20px;
-          border-radius: 8px;
+          border-radius: 10px;
           font-size: 0.92rem;
           font-weight: 700;
           cursor: pointer;
@@ -3028,22 +3041,22 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           white-space: nowrap;
           min-height: 48px;
           transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
         .pfs-btn-preview-action:hover {
-          background: #F8FAFC;
-          border-color: #00AB96;
-          color: #00AB96;
+          background: var(--awc-paper, #F5F8F6);
+          border-color: var(--color-brand-primary, #0f5338);
+          color: var(--color-brand-primary, #0f5338);
         }
         .pfs-pdf-title {
           font-size: 1.15rem;
           font-weight: 800;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0 0 4px 0;
         }
         .pfs-pdf-desc {
           font-size: 0.85rem;
-          color: #334155;
+          color: #546A7B;
           max-width: 580px;
           line-height: 1.5;
           margin: 0;
@@ -3051,17 +3064,17 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
 
         /* ALERTS */
         .pfs-alert-info {
-          background: #EFF6FF;
-          border: 1px solid #BFDBFE;
-          border-radius: 6px;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 8px;
           padding: 8px 12px;
           font-size: 0.82rem;
-          color: #1E40AF;
+          color: var(--color-brand-primary, #0f5338);
         }
         .pfs-alert-warning {
           background: #FEF3C7;
           border: 1px solid #FDE68A;
-          border-radius: 6px;
+          border-radius: 8px;
           padding: 10px 14px;
           font-size: 0.85rem;
           color: #92400E;
@@ -3070,7 +3083,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-alert-danger {
           background: #FEF2F2;
           border: 1px solid #FECACA;
-          border-radius: 6px;
+          border-radius: 8px;
           padding: 10px 14px;
           font-size: 0.85rem;
           color: #DC2626;
@@ -3084,7 +3097,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           align-items: center;
           margin-top: var(--space-5, 20px);
           padding-top: var(--space-4, 16px);
-          border-top: 1px solid #EEF2F6;
+          border-top: 1px solid var(--awc-line, #D6E4E0);
         }
 
         /* MODAL */
@@ -3094,7 +3107,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 24, 42, 0.6);
+          background: rgba(19, 42, 64, 0.6);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -3103,7 +3116,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         }
         .pfs-modal-box {
           background: #FFFFFF;
-          border-radius: 12px;
+          border-radius: 14px;
           padding: 24px;
           max-width: 440px;
           width: 100%;
@@ -3112,12 +3125,12 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
         .pfs-modal-title {
           font-size: 1.2rem;
           font-weight: 800;
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
           margin: 0 0 8px 0;
         }
         .pfs-modal-desc {
           font-size: 0.88rem;
-          color: #475569;
+          color: #546A7B;
           line-height: 1.5;
           margin: 0 0 20px 0;
         }
@@ -3139,26 +3152,26 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          border-bottom: 1px solid #EEF2F6;
+          border-bottom: 1px solid var(--awc-line, #D6E4E0);
           padding-bottom: 12px;
           margin-bottom: 12px;
         }
         .pfs-preview-meta-line {
           font-size: 0.8rem;
-          color: #64748B;
+          color: #546A7B;
           margin: 4px 0 0 0;
         }
         .pfs-btn-close-modal {
           background: transparent;
           border: none;
           font-size: 1.25rem;
-          color: #94A3B8;
+          color: #8CA099;
           cursor: pointer;
           padding: 4px 8px;
           line-height: 1;
         }
         .pfs-btn-close-modal:hover {
-          color: #00182A;
+          color: var(--awc-navy, #132A40);
         }
         .pfs-preview-modal-body {
           overflow-y: auto;
@@ -3169,7 +3182,7 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           margin-bottom: 12px;
         }
         .pfs-preview-table th {
-          background: #00182A;
+          background: var(--color-brand-primary, #0f5338);
           color: #FFFFFF;
           font-size: 0.8rem;
           padding: 8px 10px;
@@ -3179,21 +3192,21 @@ export default function PersonalFinanceStatementApp(): React.JSX.Element {
           font-size: 0.82rem;
         }
         .highlight-preview-row td {
-          background: #FEF9C3;
-          border-top: 1px solid #FDE047;
-          border-bottom: 1px solid #FDE047;
+          background: var(--awc-jade-soft, #E6F4F1);
+          border-top: 1px solid var(--awc-line, #D6E4E0);
+          border-bottom: 1px solid var(--awc-line, #D6E4E0);
         }
         .pfs-preview-notes {
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
-          border-radius: 6px;
+          background: var(--awc-paper, #F5F8F6);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 8px;
           padding: 10px 12px;
           font-size: 0.82rem;
-          color: #334155;
+          color: var(--awc-navy, #132A40);
           line-height: 1.5;
         }
         .pfs-preview-actions {
-          border-top: 1px solid #EEF2F6;
+          border-top: 1px solid var(--awc-line, #D6E4E0);
           padding-top: 12px;
         }
 

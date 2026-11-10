@@ -17,6 +17,16 @@ interface FormState {
   annualInvestmentReturnRatePercent: string;
 }
 
+const EMPTY_FORM_STATE: FormState = {
+  loanPrincipal: '',
+  annualLoanInterestRatePercent: '',
+  loanTenureYears: '',
+  sipMode: 'PERCENTAGE_OF_EMI',
+  sipPercentageOfEmi: '',
+  fixedMonthlySipAmount: '',
+  annualInvestmentReturnRatePercent: '',
+};
+
 const DEFAULT_FORM_STATE: FormState = {
   loanPrincipal: '5000000', // ₹50 Lakhs
   annualLoanInterestRatePercent: '8.5',
@@ -28,17 +38,24 @@ const DEFAULT_FORM_STATE: FormState = {
 };
 
 export default function LoanSipRecoveryIsland(): React.JSX.Element {
-  const [form, setForm] = useState<FormState>(DEFAULT_FORM_STATE);
-  const [isExample, setIsExample] = useState<boolean>(true);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM_STATE);
   const [showMilestones, setShowMilestones] = useState<boolean>(false);
 
+  const isBlank =
+    form.loanPrincipal.trim() === '' &&
+    form.annualLoanInterestRatePercent.trim() === '' &&
+    form.loanTenureYears.trim() === '' &&
+    form.sipPercentageOfEmi.trim() === '' &&
+    form.fixedMonthlySipAmount.trim() === '' &&
+    form.annualInvestmentReturnRatePercent.trim() === '';
+
   // Parsing values
-  const principalNum = Number(form.loanPrincipal);
-  const loanRateNum = Number(form.annualLoanInterestRatePercent);
-  const tenureNum = Number(form.loanTenureYears);
-  const sipPctNum = Number(form.sipPercentageOfEmi);
-  const fixedSipNum = Number(form.fixedMonthlySipAmount);
-  const returnRateNum = Number(form.annualInvestmentReturnRatePercent);
+  const principalNum = form.loanPrincipal.trim() === '' ? NaN : Number(form.loanPrincipal);
+  const loanRateNum = form.annualLoanInterestRatePercent.trim() === '' ? NaN : Number(form.annualLoanInterestRatePercent);
+  const tenureNum = form.loanTenureYears.trim() === '' ? NaN : Number(form.loanTenureYears);
+  const sipPctNum = form.sipPercentageOfEmi.trim() === '' ? NaN : Number(form.sipPercentageOfEmi);
+  const fixedSipNum = form.fixedMonthlySipAmount.trim() === '' ? NaN : Number(form.fixedMonthlySipAmount);
+  const returnRateNum = form.annualInvestmentReturnRatePercent.trim() === '' ? NaN : Number(form.annualInvestmentReturnRatePercent);
 
   // Validate inputs
   const inputs: LoanSipRecoveryInputs = useMemo(
@@ -69,27 +86,20 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
 
   const handleInputChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setIsExample(false);
+  };
+
+  const handleLoadSample = () => {
+    setForm(DEFAULT_FORM_STATE);
+    setShowMilestones(false);
   };
 
   const handleReset = () => {
-    setForm(DEFAULT_FORM_STATE);
-    setIsExample(true);
+    setForm(EMPTY_FORM_STATE);
     setShowMilestones(false);
   };
 
   return (
     <div className="recovery-workbench" id="loan-sip-recovery-calculator" data-testid="recovery-workbench">
-      {/* Example Status Banner */}
-      {isExample && (
-        <div className="example-banner example-active" role="status" data-testid="illustrative-banner">
-          <span className="banner-icon" aria-hidden="true">ⓘ</span>
-          <div className="banner-text">
-            <strong>Illustrative Benchmark Scenario:</strong> A ₹50 Lakhs home loan at 8.5% over 20 years paired with a 15% parallel SIP earning an assumed 12.0% p.a. Adjust any slider below to model your family scenario.
-          </div>
-        </div>
-      )}
-
       {/* Mobile Top Summary Card (<760px first-fold metric visibility) */}
       {result && (
         <div className="mobile-recovery-summary" id="loan-sip-mobile-summary" aria-label="Quick Recovery Summary">
@@ -125,17 +135,29 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
         {/* Controls Column */}
         <div className="controls-panel card-surface">
           <div className="panel-header">
-            <h2 className="panel-title">1. Home Loan &amp; Parallel SIP Parameters</h2>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="btn-reset-link"
-              id="recovery-reset-btn"
-              data-testid="recovery-reset-btn"
-              aria-label="Reset all inputs to default"
-            >
-              Reset
-            </button>
+            <h2 className="panel-title">1. Home Loan &amp; Parallel SIP</h2>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={handleLoadSample}
+                className="btn-reset-link"
+                id="load-sample-recovery-btn"
+                data-testid="load-sample-recovery-btn"
+                aria-label="Load sample data"
+              >
+                Sample Data
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="btn-reset-link"
+                id="recovery-reset-btn"
+                data-testid="recovery-reset-btn"
+                aria-label="Clear all inputs"
+              >
+                Clear
+              </button>
+            </div>
           </div>
 
           <div className="inputs-group">
@@ -393,7 +415,7 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
           </div>
 
           {/* Validation Errors */}
-          {!isValid && (
+          {!isValid && !isBlank && (
             <div className="validation-alert" role="alert">
               <strong>Please correct the following inputs:</strong>
               <ul>
@@ -565,8 +587,12 @@ export default function LoanSipRecoveryIsland(): React.JSX.Element {
           ) : (
             <div className="results-card card-surface empty-results">
               <span className="empty-icon" aria-hidden="true">📊</span>
-              <h3>Calculation Unavailable</h3>
-              <p>Please enter valid positive loan and investment parameters to view the interest recovery analysis.</p>
+              <h3>{isBlank ? 'Enter loan & SIP details' : 'Calculation Unavailable'}</h3>
+              <p>
+                {isBlank
+                  ? 'Fill in your loan amount, rate, tenure, and parallel SIP on the left—or click Sample Data to preview.'
+                  : 'Please enter valid positive loan and investment parameters to view the interest recovery analysis.'}
+              </p>
             </div>
           )}
         </div>

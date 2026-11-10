@@ -16,7 +16,17 @@ interface FormState {
   bucket3Return: string;
 }
 
-const DEFAULT_STATE: FormState = {
+const EMPTY_STATE: FormState = {
+  retirementAge: '',
+  monthlyRetirementExpense: '',
+  lifeExpectancy: '',
+  inflationRate: '',
+  bucket1Return: '',
+  bucket2Return: '',
+  bucket3Return: ''
+};
+
+const SAMPLE_STATE: FormState = {
   retirementAge: '60',
   monthlyRetirementExpense: '80000',
   lifeExpectancy: '90',
@@ -27,19 +37,30 @@ const DEFAULT_STATE: FormState = {
 };
 
 export default function RetirementDistributionIsland(): React.JSX.Element {
-  const [form, setForm] = useState<FormState>(DEFAULT_STATE);
+  const [form, setForm] = useState<FormState>(EMPTY_STATE);
   const [showAssumptions, setShowAssumptions] = useState<boolean>(false);
-  const [isSampleData, setIsSampleData] = useState<boolean>(true);
   const baseId = useId();
+
+  const isBlank =
+    form.monthlyRetirementExpense.trim() === '' &&
+    form.retirementAge.trim() === '' &&
+    form.lifeExpectancy.trim() === '';
+
+  const isValid =
+    Number(form.monthlyRetirementExpense) > 0 &&
+    Number(form.retirementAge) >= 18 &&
+    Number(form.lifeExpectancy) > Number(form.retirementAge);
 
   const handleInputChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setIsSampleData(false);
   };
 
-  const handleReset = () => {
-    setForm(DEFAULT_STATE);
-    setIsSampleData(true);
+  const handleLoadSample = () => {
+    setForm(SAMPLE_STATE);
+  };
+
+  const handleClear = () => {
+    setForm(EMPTY_STATE);
     setShowAssumptions(false);
   };
 
@@ -61,28 +82,28 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
     };
   }, [form]);
 
-  const result: RetirementDistributionResult = useMemo(() => {
+  const result: RetirementDistributionResult | null = useMemo(() => {
+    if (!isValid) return null;
     return calculateRetirementDistributionPlan(input);
-  }, [input]);
+  }, [input, isValid]);
 
   return (
     <div className="retirement-dist-workbench" id="retirement-distribution-calculator">
-      {/* Sample Data Banner */}
-      {isSampleData && (
-        <div className="sample-banner" role="status">
-          <span className="banner-icon" aria-hidden="true">ⓘ</span>
-          <div className="banner-text">
-            <strong>Illustrative Retirement Cash-Flow Plan:</strong> Retiring at age 60 living through age 90 with ₹80,000/month living expense under a 3-bucket decumulation framework. Adjust parameters below to model your requirements.
-          </div>
-        </div>
-      )}
-
       <div className="calc-layout-grid">
         {/* Input Panel */}
         <div className="calc-input-column card-surface">
           <div className="panel-title-row">
             <h3 className="panel-heading">Retirement Decumulation Inputs</h3>
-            <button type="button" onClick={handleReset} className="btn-reset-text">↺ Reset to Sample</button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button type="button" id="load-sample-ret-dist-btn" onClick={handleLoadSample} className="btn-sample-pill">
+                Sample Data
+              </button>
+              {!isBlank && (
+                <button type="button" id="reset-ret-dist-btn" onClick={handleClear} className="btn-reset-text">
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Monthly Living Expense */}
@@ -95,6 +116,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-monthlyExp`}
                 type="number"
+                placeholder="80000"
                 min="10000"
                 max="1000000"
                 step="5000"
@@ -108,7 +130,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               min="20000"
               max="300000"
               step="5000"
-              value={Number(form.monthlyRetirementExpense) || 80000}
+              value={Number(form.monthlyRetirementExpense) || 20000}
               onChange={(e) => handleInputChange('monthlyRetirementExpense', e.target.value)}
               className="range-slider"
               aria-label="Monthly retirement expense slider"
@@ -126,6 +148,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-retAge`}
                 type="number"
+                placeholder="60"
                 min="45"
                 max="75"
                 value={form.retirementAge}
@@ -138,6 +161,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               <input
                 id={`${baseId}-lifeExp`}
                 type="number"
+                placeholder="90"
                 min="65"
                 max="100"
                 value={form.lifeExpectancy}
@@ -147,9 +171,11 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
             </div>
           </div>
 
-          <span className="timeline-badge">
-            Planning Horizon: <strong>{result.distributionYears} Years</strong> (from age {form.retirementAge} to {form.lifeExpectancy})
-          </span>
+          {result && (
+            <span className="timeline-badge">
+              Planning Horizon: <strong>{result.distributionYears} Years</strong> (from age {form.retirementAge} to {form.lifeExpectancy})
+            </span>
+          )}
 
           {/* Assumptions Toggle */}
           <div className="assumptions-toggle-wrap">
@@ -170,6 +196,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
                 <input
                   id={`${baseId}-inf`}
                   type="number"
+                  placeholder="6.0"
                   min="4"
                   max="10"
                   step="0.5"
@@ -185,6 +212,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
                   <input
                     id={`${baseId}-b1Ret`}
                     type="number"
+                    placeholder="6.0"
                     min="3"
                     max="8"
                     step="0.5"
@@ -199,6 +227,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
                   <input
                     id={`${baseId}-b2Ret`}
                     type="number"
+                    placeholder="8.0"
                     min="5"
                     max="11"
                     step="0.5"
@@ -213,6 +242,7 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
                   <input
                     id={`${baseId}-b3Ret`}
                     type="number"
+                    placeholder="10.0"
                     min="8"
                     max="15"
                     step="0.5"
@@ -235,93 +265,103 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               <h3 className="results-headline">Three-Bucket Allocation Architecture</h3>
             </div>
 
-            {/* Total Required Investment Hero Metric */}
-            <div className="hero-metric-box">
-              <span className="hero-label">Total Capital Required at Age {form.retirementAge}</span>
-              <div className="hero-value text-brand" data-testid="total-distribution-corpus">
-                {formatINR(result.totalInvestmentRequiredToday)}
-              </div>
-              <span className="hero-sub">
-                Weighted post-tax return: <strong>{result.weightedAveragePostTaxReturn}% p.a.</strong> · Real Return: <strong>{result.overallRealReturn}% p.a.</strong>
-              </span>
-            </div>
+            {result ? (
+              <>
+                {/* Total Required Investment Hero Metric */}
+                <div className="hero-metric-box">
+                  <span className="hero-label">Total Capital Required at Age {form.retirementAge}</span>
+                  <div className="hero-value text-brand" data-testid="total-distribution-corpus">
+                    {formatINR(result.totalInvestmentRequiredToday)}
+                  </div>
+                  <span className="hero-sub">
+                    Weighted post-tax return: <strong>{result.weightedAveragePostTaxReturn}% p.a.</strong> · Real Return: <strong>{result.overallRealReturn}% p.a.</strong>
+                  </span>
+                </div>
 
-            {/* Allocation Visual Bar */}
-            <div className="allocation-bar-section">
-              <div className="allocation-bar-track">
-                <div
-                  className="bar-b1"
-                  style={{ width: `${result.bucket1.allocationPercent}%` }}
-                  title={`Bucket 1: ${result.bucket1.allocationPercent}%`}
-                />
-                <div
-                  className="bar-b2"
-                  style={{ width: `${result.bucket2.allocationPercent}%` }}
-                  title={`Bucket 2: ${result.bucket2.allocationPercent}%`}
-                />
-                <div
-                  className="bar-b3"
-                  style={{ width: `${result.bucket3.allocationPercent}%` }}
-                  title={`Bucket 3: ${result.bucket3.allocationPercent}%`}
-                />
-              </div>
-              <div className="allocation-legend">
-                <span className="legend-item"><span className="legend-dot dot-b1" /> B1 Liquidity ({result.bucket1.allocationPercent}%)</span>
-                <span className="legend-item"><span className="legend-dot dot-b2" /> B2 Safety ({result.bucket2.allocationPercent}%)</span>
-                <span className="legend-item"><span className="legend-dot dot-b3" /> B3 Growth ({result.bucket3.allocationPercent}%)</span>
-              </div>
-            </div>
+                {/* Allocation Visual Bar */}
+                <div className="allocation-bar-section">
+                  <div className="allocation-bar-track">
+                    <div
+                      className="bar-b1"
+                      style={{ width: `${result.bucket1.allocationPercent}%` }}
+                      title={`Bucket 1: ${result.bucket1.allocationPercent}%`}
+                    />
+                    <div
+                      className="bar-b2"
+                      style={{ width: `${result.bucket2.allocationPercent}%` }}
+                      title={`Bucket 2: ${result.bucket2.allocationPercent}%`}
+                    />
+                    <div
+                      className="bar-b3"
+                      style={{ width: `${result.bucket3.allocationPercent}%` }}
+                      title={`Bucket 3: ${result.bucket3.allocationPercent}%`}
+                    />
+                  </div>
+                  <div className="allocation-legend">
+                    <span className="legend-item"><span className="legend-dot dot-b1" /> B1 Liquidity ({result.bucket1.allocationPercent}%)</span>
+                    <span className="legend-item"><span className="legend-dot dot-b2" /> B2 Safety ({result.bucket2.allocationPercent}%)</span>
+                    <span className="legend-item"><span className="legend-dot dot-b3" /> B3 Growth ({result.bucket3.allocationPercent}%)</span>
+                  </div>
+                </div>
 
-            {/* 3 Bucket Cards */}
-            <div className="buckets-grid">
-              {/* Bucket 1 */}
-              <div className="bucket-card card-b1">
-                <div className="bucket-header">
-                  <span className="bucket-tag tag-b1">Bucket 1 · Liquidity</span>
-                  <span className="bucket-years">{result.bucket1.yearsRange}</span>
-                </div>
-                <div className="bucket-corpus-amt">{formatINR(result.bucket1.investmentRequiredToday)}</div>
-                <div className="bucket-meta">
-                  <span>Allocation: <strong>{result.bucket1.allocationPercent}%</strong></span>
-                  <span>Post-Tax Return: <strong>{result.bucket1.postTaxReturn}%</strong></span>
-                </div>
-                <p className="bucket-desc">Covers immediate 3 years of cash flow in bank sweep and liquid funds, immunizing your family against sequence-of-returns risk.</p>
-              </div>
+                {/* 3 Bucket Cards */}
+                <div className="buckets-grid">
+                  {/* Bucket 1 */}
+                  <div className="bucket-card card-b1">
+                    <div className="bucket-header">
+                      <span className="bucket-tag tag-b1">Bucket 1 · Liquidity</span>
+                      <span className="bucket-years">{result.bucket1.yearsRange}</span>
+                    </div>
+                    <div className="bucket-corpus-amt">{formatINR(result.bucket1.investmentRequiredToday)}</div>
+                    <div className="bucket-meta">
+                      <span>Allocation: <strong>{result.bucket1.allocationPercent}%</strong></span>
+                      <span>Post-Tax Return: <strong>{result.bucket1.postTaxReturn}%</strong></span>
+                    </div>
+                    <p className="bucket-desc">Covers immediate 3 years of cash flow in bank sweep and liquid funds.</p>
+                  </div>
 
-              {/* Bucket 2 */}
-              <div className="bucket-card card-b2">
-                <div className="bucket-header">
-                  <span className="bucket-tag tag-b2">Bucket 2 · Safety</span>
-                  <span className="bucket-years">{result.bucket2.yearsRange}</span>
-                </div>
-                <div className="bucket-corpus-amt">{formatINR(result.bucket2.investmentRequiredToday)}</div>
-                <div className="bucket-meta">
-                  <span>Allocation: <strong>{result.bucket2.allocationPercent}%</strong></span>
-                  <span>Post-Tax Return: <strong>{result.bucket2.postTaxReturn}%</strong></span>
-                </div>
-                <p className="bucket-desc">Invested in conservative hybrid and corporate debt. Periodically rolls over to replenish Bucket 1 liquidity.</p>
-              </div>
+                  {/* Bucket 2 */}
+                  <div className="bucket-card card-b2">
+                    <div className="bucket-header">
+                      <span className="bucket-tag tag-b2">Bucket 2 · Safety</span>
+                      <span className="bucket-years">{result.bucket2.yearsRange}</span>
+                    </div>
+                    <div className="bucket-corpus-amt">{formatINR(result.bucket2.investmentRequiredToday)}</div>
+                    <div className="bucket-meta">
+                      <span>Allocation: <strong>{result.bucket2.allocationPercent}%</strong></span>
+                      <span>Post-Tax Return: <strong>{result.bucket2.postTaxReturn}%</strong></span>
+                    </div>
+                    <p className="bucket-desc">Invested in conservative hybrid and debt to replenish Bucket 1.</p>
+                  </div>
 
-              {/* Bucket 3 */}
-              <div className="bucket-card card-b3">
-                <div className="bucket-header">
-                  <span className="bucket-tag tag-b3">Bucket 3 · Growth</span>
-                  <span className="bucket-years">{result.bucket3.yearsRange}</span>
+                  {/* Bucket 3 */}
+                  <div className="bucket-card card-b3">
+                    <div className="bucket-header">
+                      <span className="bucket-tag tag-b3">Bucket 3 · Growth</span>
+                      <span className="bucket-years">{result.bucket3.yearsRange}</span>
+                    </div>
+                    <div className="bucket-corpus-amt">{formatINR(result.bucket3.investmentRequiredToday)}</div>
+                    <div className="bucket-meta">
+                      <span>Allocation: <strong>{result.bucket3.allocationPercent}%</strong></span>
+                      <span>Post-Tax Return: <strong>{result.bucket3.postTaxReturn}%</strong></span>
+                    </div>
+                    <p className="bucket-desc">Compounds in diversified equities for 7+ years to beat inflation.</p>
+                  </div>
                 </div>
-                <div className="bucket-corpus-amt">{formatINR(result.bucket3.investmentRequiredToday)}</div>
-                <div className="bucket-meta">
-                  <span>Allocation: <strong>{result.bucket3.allocationPercent}%</strong></span>
-                  <span>Post-Tax Return: <strong>{result.bucket3.postTaxReturn}%</strong></span>
-                </div>
-                <p className="bucket-desc">Compounds undisturbed in diversified equities for 7+ years to beat healthcare and lifestyle inflation across the final 23 years.</p>
-              </div>
-            </div>
 
-            {/* Strategic Insight */}
-            <div className="insight-callout">
-              <span className="insight-icon" aria-hidden="true">💡</span>
-              <div className="insight-text">{result.keyInsight}</div>
-            </div>
+                {/* Strategic Insight */}
+                <div className="insight-callout">
+                  <span className="insight-icon" aria-hidden="true">💡</span>
+                  <div className="insight-text">{result.keyInsight}</div>
+                </div>
+              </>
+            ) : (
+              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b' }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>
+                  Enter your desired monthly retirement expense and ages or click <strong>Sample Data</strong> to preview a scenario.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -403,13 +443,25 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
           color: #0f172a;
           font-weight: 700;
         }
+        .btn-sample-pill {
+          background: var(--awc-jade-soft, #E6F4F1);
+          color: var(--color-brand-primary, #0f5338);
+          border: 1px solid var(--awc-line, #D6E4E0);
+          border-radius: 8px;
+          padding: 5px 12px;
+          font-weight: 700;
+          cursor: pointer;
+          font-size: 0.82rem;
+        }
         .btn-reset-text {
           background: none;
-          border: none;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 5px 10px;
           color: #64748b;
           font-weight: 600;
           cursor: pointer;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
         }
         .form-group {
           margin-bottom: 1.15rem;

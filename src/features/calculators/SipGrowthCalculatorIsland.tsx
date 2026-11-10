@@ -22,7 +22,16 @@ interface FormInputs {
   postSipYears: string;
 }
 
-const DEFAULT_INPUTS: FormInputs = {
+const EMPTY_INPUTS: FormInputs = {
+  monthlySIP: '',
+  sipDurationYears: '',
+  annualReturnPercent: '',
+  stepUpPercent: '',
+  stepUpDurationYears: '',
+  postSipYears: '',
+};
+
+const SAMPLE_INPUTS: FormInputs = {
   monthlySIP: '10000',
   sipDurationYears: '10',
   annualReturnPercent: '12',
@@ -31,16 +40,21 @@ const DEFAULT_INPUTS: FormInputs = {
   postSipYears: '5',
 };
 
-const DEFAULT_LUMP_SUMS: LumpSumUIItem[] = [
+const SAMPLE_LUMP_SUMS: LumpSumUIItem[] = [
   { id: 'ls-default-1', year: '3', amount: '100000', label: 'Bonus / Incentive' },
 ];
 
 export default function SipGrowthCalculatorIsland(): React.JSX.Element {
-  const [inputs, setInputs] = useState<FormInputs>(DEFAULT_INPUTS);
-  const [lumpSums, setLumpSums] = useState<LumpSumUIItem[]>(DEFAULT_LUMP_SUMS);
+  const [inputs, setInputs] = useState<FormInputs>(EMPTY_INPUTS);
+  const [lumpSums, setLumpSums] = useState<LumpSumUIItem[]>([]);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [showSchedule, setShowSchedule] = useState<boolean>(false);
-  const [isCustom, setIsCustom] = useState<boolean>(false);
+
+  const isBlank =
+    inputs.monthlySIP.trim() === '' &&
+    inputs.sipDurationYears.trim() === '' &&
+    inputs.annualReturnPercent.trim() === '' &&
+    lumpSums.length === 0;
 
   // Parsing & validation
   const monthlyTrimmed = inputs.monthlySIP.trim();
@@ -53,9 +67,11 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
   const monthlyNum = monthlyTrimmed === '' ? NaN : Number(monthlyTrimmed);
   const sipYearsNum = sipYearsTrimmed === '' ? NaN : Number(sipYearsTrimmed);
   const returnNum = returnTrimmed === '' ? NaN : Number(returnTrimmed);
-  const stepUpNum = stepUpTrimmed === '' ? NaN : Number(stepUpTrimmed);
-  const stepUpDurationNum = stepUpDurationTrimmed === '' ? NaN : Number(stepUpDurationTrimmed);
-  const postSipNum = postSipTrimmed === '' ? NaN : Number(postSipTrimmed);
+  const stepUpNum = stepUpTrimmed === '' ? 0 : Number(stepUpTrimmed);
+  const maxStepUpDuration =
+    sipYearsTrimmed !== '' && Number.isFinite(sipYearsNum) && sipYearsNum >= 1 ? sipYearsNum : 40;
+  const stepUpDurationNum = stepUpDurationTrimmed === '' ? maxStepUpDuration : Number(stepUpDurationTrimmed);
+  const postSipNum = postSipTrimmed === '' ? 0 : Number(postSipTrimmed);
 
   // Bounds checking
   const isMonthlyValid =
@@ -78,25 +94,24 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
     returnNum <= 50;
 
   const isStepUpValid =
-    stepUpTrimmed !== '' &&
-    Number.isFinite(stepUpNum) &&
+    stepUpTrimmed === '' ||
+    (Number.isFinite(stepUpNum) &&
     stepUpNum >= 0 &&
-    stepUpNum <= 50;
+    stepUpNum <= 50);
 
-  const maxStepUpDuration = isSipYearsValid ? sipYearsNum : 40;
   const isStepUpDurationValid =
-    stepUpDurationTrimmed !== '' &&
-    Number.isFinite(stepUpDurationNum) &&
+    stepUpDurationTrimmed === '' ||
+    (Number.isFinite(stepUpDurationNum) &&
     Number.isInteger(stepUpDurationNum) &&
     stepUpDurationNum >= 1 &&
-    stepUpDurationNum <= maxStepUpDuration;
+    stepUpDurationNum <= maxStepUpDuration);
 
   const isPostSipValid =
-    postSipTrimmed !== '' &&
-    Number.isFinite(postSipNum) &&
+    postSipTrimmed === '' ||
+    (Number.isFinite(postSipNum) &&
     Number.isInteger(postSipNum) &&
     postSipNum >= 0 &&
-    postSipNum <= 30;
+    postSipNum <= 30);
 
   const totalProjectionYears =
     (Number.isFinite(sipYearsNum) && sipYearsNum >= 1 ? sipYearsNum : 10) +
@@ -203,7 +218,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
   // Handlers
   const handleInputChange = (field: keyof FormInputs, val: string): void => {
-    setIsCustom(true);
     setInputs((prev) => {
       const next = { ...prev, [field]: val };
       // If SIP duration shrinks, ensure stepUpDuration doesn't exceed it
@@ -220,33 +234,36 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
     });
   };
 
-  const handleReset = (): void => {
-    setInputs(DEFAULT_INPUTS);
-    setLumpSums(DEFAULT_LUMP_SUMS);
+  const handleLoadSample = (): void => {
+    setInputs(SAMPLE_INPUTS);
+    setLumpSums(SAMPLE_LUMP_SUMS);
+    setShowAdvanced(true);
+    setShowSchedule(false);
+  };
+
+  const handleClear = (): void => {
+    setInputs(EMPTY_INPUTS);
+    setLumpSums([]);
     setShowAdvanced(false);
     setShowSchedule(false);
-    setIsCustom(false);
   };
 
   const handleAddLumpSum = (): void => {
-    setIsCustom(true);
     const nextYear = Math.min(totalProjectionYears, Math.max(1, (lumpSums.length + 1) * 2));
     const newItem: LumpSumUIItem = {
       id: `ls-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       year: String(nextYear),
-      amount: '50000',
-      label: 'One-Time Addition',
+      amount: '',
+      label: '',
     };
     setLumpSums([...lumpSums, newItem]);
   };
 
   const handleRemoveLumpSum = (id: string): void => {
-    setIsCustom(true);
     setLumpSums(lumpSums.filter((item) => item.id !== id));
   };
 
   const handleLumpSumChange = (id: string, field: keyof LumpSumUIItem, value: string): void => {
-    setIsCustom(true);
     setLumpSums(
       lumpSums.map((item) => (item.id === id ? { ...item, [field]: value } : item))
     );
@@ -303,7 +320,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
       <div className="mobile-result-summary" id="sip-growth-mobile-summary" aria-label="Quick Investment Result">
         <div className="mobile-summary-header">
           <span className="mobile-summary-tag">
-            {isCustom ? 'Custom scenario active' : 'Illustrative example'}
+            {isValid && result ? 'Estimate Ready' : 'Enter Values'}
           </span>
           <span className="mobile-summary-subtitle">Estimated Future Value</span>
         </div>
@@ -328,7 +345,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
             </>
           ) : (
             <div className="mobile-summary-unavailable">
-              <span>Simulation inputs need review</span>
+              <span>Enter values below or click Sample Data</span>
             </div>
           )}
         </div>
@@ -339,42 +356,16 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
             className="mobile-action-btn primary"
             onClick={() => scrollToSection('growth-monthly-num', 'growth-monthly-num')}
           >
-            Adjust assumptions ↓
+            Enter numbers ↓
           </button>
           <button
             type="button"
             className="mobile-action-btn secondary"
             onClick={() => scrollToSection('sip-growth-desktop-results')}
           >
-            View full breakdown ↓
+            View breakdown ↓
           </button>
         </div>
-      </div>
-
-      {/* Illustrative Notice Banner */}
-      <div className={`workbench-notice-banner ${isCustom ? 'state-custom' : 'state-example'}`}>
-        <div className="notice-content">
-          <span className="notice-icon" aria-hidden="true">{isCustom ? '⚡' : 'ℹ️'}</span>
-          <div className="notice-text-block">
-            <span className="notice-title">
-              {isCustom ? 'Custom scenario active' : 'Illustrative example — not your figures'}
-            </span>
-            <p className="notice-desc">
-              {isCustom
-                ? 'Calculations update live with your inputs. These projections illustrate compounding mathematics and are not performance guarantees.'
-                : 'Showing a starting scenario with ₹10,000/mo, 10% annual step-up for 5 years, one ₹1 Lakh top-up in Year 3, and 5-year post-SIP compounding at an assumed 12% return.'}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          id="reset-sip-growth-btn"
-          onClick={handleReset}
-          className="reset-scenario-btn"
-          title="Restore standard illustrative values"
-        >
-          Reset example
-        </button>
       </div>
 
       {/* Connected Two-Column Workbench Layout */}
@@ -382,8 +373,33 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
         {/* Left Column: Form Controls (1.08fr) */}
         <div className="controls-column">
           <form onSubmit={(e) => e.preventDefault()} className="calculator-form">
-            <h2 className="controls-section-heading">Core Investment Assumptions</h2>
-            <p className="controls-section-sub">Start with your core recurring commitment. Reveal advanced options when ready.</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+              <div>
+                <h2 className="controls-section-heading" style={{ marginBottom: '4px' }}>SIP Growth Details</h2>
+                <p className="controls-section-sub" style={{ marginBottom: 0 }}>Enter your SIP plan or click Sample Data.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  id="load-sample-sip-growth-btn"
+                  onClick={handleLoadSample}
+                  className="reset-scenario-btn"
+                >
+                  Sample Data
+                </button>
+                {!isBlank && (
+                  <button
+                    type="button"
+                    id="reset-sip-growth-btn"
+                    onClick={handleClear}
+                    className="reset-scenario-btn"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
 
             {/* 1. Monthly SIP Amount */}
             <div className="input-group">
@@ -397,11 +413,12 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-monthly-num"
                     value={inputs.monthlySIP}
+                    placeholder="10000"
                     min={0}
                     max={1000000}
                     step={500}
                     onChange={(e) => handleInputChange('monthlySIP', e.target.value)}
-                    className={`number-input ${!isMonthlyValid ? 'input-error' : ''}`}
+                    className={`number-input ${monthlyTrimmed !== '' && !isMonthlyValid ? 'input-error' : ''}`}
                     aria-describedby="growth-monthly-error"
                   />
                 </div>
@@ -421,11 +438,9 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                 <span>₹0 (Lump Sums Only)</span>
                 <span>₹10,00,000</span>
               </div>
-              {!isMonthlyValid && (
+              {monthlyTrimmed !== '' && !isMonthlyValid && (
                 <span id="growth-monthly-error" className="inline-error" role="alert">
-                  {monthlyTrimmed === ''
-                    ? 'Enter a starting monthly installment (or 0 if investing via lump sums only).'
-                    : 'Monthly amount must be between ₹0 and ₹10,00,000.'}
+                  Monthly amount must be between ₹0 and ₹10,00,000.
                 </span>
               )}
             </div>
@@ -441,11 +456,12 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-sipyears-num"
                     value={inputs.sipDurationYears}
+                    placeholder="10"
                     min={1}
                     max={40}
                     step={1}
                     onChange={(e) => handleInputChange('sipDurationYears', e.target.value)}
-                    className={`number-input ${!isSipYearsValid ? 'input-error' : ''}`}
+                    className={`number-input ${sipYearsTrimmed !== '' && !isSipYearsValid ? 'input-error' : ''}`}
                     aria-describedby="growth-sipyears-error"
                   />
                   <span className="unit-suffix">Yrs</span>
@@ -466,11 +482,9 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                 <span>1 Year</span>
                 <span>40 Years</span>
               </div>
-              {!isSipYearsValid && (
+              {sipYearsTrimmed !== '' && !isSipYearsValid && (
                 <span id="growth-sipyears-error" className="inline-error" role="alert">
-                  {sipYearsTrimmed === ''
-                    ? 'Please enter SIP contribution duration in whole years.'
-                    : 'Duration must be between 1 and 40 whole years.'}
+                  Duration must be between 1 and 40 whole years.
                 </span>
               )}
             </div>
@@ -486,11 +500,12 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-return-num"
                     value={inputs.annualReturnPercent}
+                    placeholder="12"
                     min={0}
                     max={50}
                     step={0.5}
                     onChange={(e) => handleInputChange('annualReturnPercent', e.target.value)}
-                    className={`number-input ${!isReturnValid ? 'input-error' : ''}`}
+                    className={`number-input ${returnTrimmed !== '' && !isReturnValid ? 'input-error' : ''}`}
                     aria-describedby="growth-return-hint"
                   />
                   <span className="unit-suffix">%</span>
@@ -508,19 +523,12 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                 aria-label="Assumed Annual Return Rate Slider"
               />
               <div className="slider-bounds">
-                <span>0% (No Growth)</span>
+                <span>0%</span>
                 <span>50%</span>
               </div>
-              <span id="growth-return-hint" className="field-helper-text">
-                {returnNum === 0
-                  ? 'At 0% return, your final corpus equals your exact total contributions.'
-                  : 'Effective Annual Rate (EAR) converted geometrically to monthly compounding. Hypothetical illustration, not a forecast.'}
-              </span>
-              {!isReturnValid && (
+              {returnTrimmed !== '' && !isReturnValid && (
                 <span className="inline-error" role="alert">
-                  {returnTrimmed === ''
-                    ? 'Please enter an assumed annual return.'
-                    : 'Enter an assumed return between 0% and 50%.'}
+                  Enter an assumed return between 0% and 50%.
                 </span>
               )}
             </div>
@@ -656,7 +664,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                           <button
                             type="button"
                             onClick={() => {
-                              setIsCustom(true);
                               setLumpSums([]);
                             }}
                             className="btn-add-lump"
@@ -976,10 +983,12 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
               </>
             ) : (
               <div className="unavailable-card">
-                <span className="unavailable-icon" aria-hidden="true">⚠️</span>
-                <h4 className="unavailable-title">Simulation Unavailable</h4>
+                <span className="unavailable-icon" aria-hidden="true">{isBlank ? '📊' : '⚠️'}</span>
+                <h4 className="unavailable-title">{isBlank ? 'Enter SIP Growth Details' : 'Simulation Unavailable'}</h4>
                 <p className="unavailable-desc">
-                  {!hasContribution
+                  {isBlank
+                    ? 'Enter your SIP details on the left or click "Sample Data" to preview a scenario.'
+                    : !hasContribution
                     ? 'Please specify at least one recurring monthly SIP installment or one positive lump-sum addition.'
                     : 'Check your inputs above for valid simulation parameters.'}
                 </p>

@@ -8,22 +8,27 @@ interface FormInputs {
   years: string;
 }
 
-const DEFAULT_INPUTS: FormInputs = {
+const EMPTY_INPUTS: FormInputs = {
+  principal: '',
+  annualReturnPercent: '',
+  years: '',
+};
+
+const SAMPLE_INPUTS: FormInputs = {
   principal: '100000',
   annualReturnPercent: '12',
   years: '10',
 };
 
 export default function LumpSumCalculatorIsland(): React.JSX.Element {
-  const [inputs, setInputs] = useState<FormInputs>(DEFAULT_INPUTS);
+  const [inputs, setInputs] = useState<FormInputs>(EMPTY_INPUTS);
   const [showSchedule, setShowSchedule] = useState<boolean>(false);
   const baseId = useId();
 
-  // Check if inputs have been customized from canonical defaults
-  const isCustomized =
-    inputs.principal !== DEFAULT_INPUTS.principal ||
-    inputs.annualReturnPercent !== DEFAULT_INPUTS.annualReturnPercent ||
-    inputs.years !== DEFAULT_INPUTS.years;
+  const isBlank =
+    inputs.principal.trim() === '' &&
+    inputs.annualReturnPercent.trim() === '' &&
+    inputs.years.trim() === '';
 
   // Parse numeric values (handling empty string gracefully during typing)
   const principalTrimmed = inputs.principal.trim();
@@ -60,8 +65,13 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
     }
   }
 
-  const handleReset = (): void => {
-    setInputs(DEFAULT_INPUTS);
+  const handleLoadSample = (): void => {
+    setInputs(SAMPLE_INPUTS);
+    setShowSchedule(false);
+  };
+
+  const handleClear = (): void => {
+    setInputs(EMPTY_INPUTS);
     setShowSchedule(false);
   };
 
@@ -92,7 +102,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
 
   return (
     <div className="lumpsum-workbench-wrapper" id="lumpsum-calculator-app">
-      {/* Mobile Live Result Overview (<850px viewport) — Placed ahead of banner for immediate first-fold visibility */}
+      {/* Mobile Live Result Overview (<850px viewport) */}
       <section
         className="mobile-result-summary mobile-quick-jump"
         id="lumpsum-mobile-summary"
@@ -100,14 +110,14 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
       >
         <div className="mrs-header">
           <div className="mrs-pill-row">
-            <span className={`mrs-tag ${isCustomized ? 'tag-custom' : 'tag-example'}`}>
-              {isCustomized ? 'Custom inputs active' : 'Illustrative example'}
+            <span className="mrs-tag tag-custom">
+              {isValid && result ? 'Estimate Ready' : 'Enter Values'}
             </span>
             <span className="mrs-timing">EAR · Annual Compounding</span>
           </div>
 
           <div className="mrs-headline-block">
-            <span className="mrs-headline-label">Current Estimated Future Value</span>
+            <span className="mrs-headline-label">Estimated Future Value</span>
             <div className="mrs-amount-row">
               <span className="mrs-amount" id="lumpsum-mobile-headline-val">
                 {isValid && result ? formatINR(result.futureValue) : '—'}
@@ -121,13 +131,9 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           </div>
 
           <p className="mrs-scenario-caption">
-            {isValid && result ? (
-              isCustomized
-                ? `Estimate for ₹${Number(principalNum).toLocaleString('en-IN')} over ${yearsNum} yrs @ ${returnNum}% annual return.`
-                : 'Scenario based on default inputs: ₹1,00,000 over 10 years at assumed 12% return.'
-            ) : (
-              'Enter valid inputs in the form below to compute your estimate.'
-            )}
+            {isValid && result
+              ? `₹${Number(principalNum).toLocaleString('en-IN')} over ${yearsNum} yrs @ ${returnNum}% p.a.`
+              : 'Enter your lump sum details below or click Sample Data.'}
           </p>
         </div>
 
@@ -144,43 +150,16 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
               }
             }}
           >
-            Adjust assumptions ↓
+            Enter numbers ↓
           </a>
           <a
             href="#workbench-results"
             className="mrs-action-btn mrs-btn-breakdown"
           >
-            View full breakdown ↓
+            View breakdown ↓
           </a>
         </div>
       </section>
-
-      {/* Illustrative Notice Banner */}
-      <aside className={`workbench-notice-banner ${isCustomized ? 'is-customized' : ''}`} aria-label="Scenario notice">
-        <div className="notice-icon-box">
-          <span className="notice-icon" aria-hidden="true">{isCustomized ? '⚙️' : 'ℹ️'}</span>
-        </div>
-        <div className="notice-text-col">
-          <strong className="notice-title">
-            {isCustomized ? 'Custom scenario active' : 'Illustrative example — not your figures'}
-          </strong>
-          <p className="notice-body">
-            {isCustomized
-              ? 'Showing mathematical projections based on your entered parameters. This model calculates compounding with a single upfront deposit under the Effective Annual Rate convention.'
-              : 'This tool models hypothetical compound growth from a one-time investment under the Effective Annual Rate convention. Adjust any assumption below to test your scenario.'}
-          </p>
-        </div>
-        {isCustomized && (
-          <button
-            type="button"
-            onClick={handleReset}
-            className="banner-reset-action"
-            title="Reset to default illustrative example"
-          >
-            Reset example
-          </button>
-        )}
-      </aside>
 
       {/* Main 2-Column Workbench Grid */}
       <div className="workbench-grid">
@@ -188,18 +167,29 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
         <section className="workbench-card surface controls-card" aria-labelledby="controls-heading">
           <div className="controls-header">
             <div>
-              <h2 id="controls-heading" className="calc-title">Set your assumptions</h2>
-              <p className="calc-description">Change any input and the scenario updates immediately.</p>
+              <h2 id="controls-heading" className="calc-title">Lump-Sum Details</h2>
+              <p className="calc-description">Enter your investment or load sample data.</p>
             </div>
-            <button
-              type="button"
-              id="reset-lumpsum-btn"
-              onClick={handleReset}
-              className="reset-btn"
-              title="Reset all inputs to the default example"
-            >
-              Reset Example
-            </button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                id="load-sample-lumpsum-btn"
+                onClick={handleLoadSample}
+                className="sample-btn"
+              >
+                Sample Data
+              </button>
+              {!isBlank && (
+                <button
+                  type="button"
+                  id="reset-lumpsum-btn"
+                  onClick={handleClear}
+                  className="reset-btn"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           <form onSubmit={(e) => e.preventDefault()} className="lumpsum-form">
@@ -215,11 +205,12 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-principal-num`}
                     value={inputs.principal}
+                    placeholder="100000"
                     min={5000}
                     max={10000000}
                     step={5000}
                     onChange={(e) => setInputs({ ...inputs, principal: e.target.value })}
-                    className={`num-input ${!isPrincipalValid ? 'input-error' : ''}`}
+                    className={`num-input ${principalTrimmed !== '' && !isPrincipalValid ? 'input-error' : ''}`}
                     aria-describedby={`${baseId}-principal-help`}
                   />
                 </div>
@@ -239,15 +230,9 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                 <span>₹5,000</span>
                 <span>₹1,00,00,000</span>
               </div>
-              {!isPrincipalValid ? (
+              {principalTrimmed !== '' && !isPrincipalValid && (
                 <span id={`${baseId}-principal-help`} className="field-error" role="alert">
-                  {principalTrimmed === ''
-                    ? 'Please enter an initial investment amount.'
-                    : 'Enter an amount between ₹5,000 and ₹1,00,00,000.'}
-                </span>
-              ) : (
-                <span id={`${baseId}-principal-help`} className="field-hint">
-                  The one-time capital amount you deposit upfront today.
+                  Enter an amount between ₹5,000 and ₹1,00,00,000.
                 </span>
               )}
             </div>
@@ -263,11 +248,12 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-return-num`}
                     value={inputs.annualReturnPercent}
+                    placeholder="12"
                     min={0}
                     max={50}
                     step={0.5}
                     onChange={(e) => setInputs({ ...inputs, annualReturnPercent: e.target.value })}
-                    className={`num-input ${!isReturnValid ? 'input-error' : ''}`}
+                    className={`num-input ${returnTrimmed !== '' && !isReturnValid ? 'input-error' : ''}`}
                     aria-describedby={`${baseId}-return-help`}
                   />
                   <span className="percent-suffix">%</span>
@@ -285,18 +271,12 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                 aria-label="Assumed Annual Return Rate Slider"
               />
               <div className="range-ends slider-ticks">
-                <span>0% (No Growth)</span>
-                <span>50% (Max Bound)</span>
+                <span>0%</span>
+                <span>50%</span>
               </div>
-              {!isReturnValid ? (
+              {returnTrimmed !== '' && !isReturnValid && (
                 <span id={`${baseId}-return-help`} className="field-error" role="alert">
-                  {returnTrimmed === ''
-                    ? 'Please enter an expected annual return rate.'
-                    : 'Enter an effective annual return between 0% and 50%.'}
-                </span>
-              ) : (
-                <span id={`${baseId}-return-help`} className="field-hint">
-                  A hypothetical scenario used for illustration, not a forecast or promise.
+                  Enter an effective annual return between 0% and 50%.
                 </span>
               )}
             </div>
@@ -312,11 +292,12 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-years-num`}
                     value={inputs.years}
+                    placeholder="10"
                     min={1}
                     max={40}
                     step={1}
                     onChange={(e) => setInputs({ ...inputs, years: e.target.value })}
-                    className={`num-input ${!isYearsValid ? 'input-error' : ''}`}
+                    className={`num-input ${yearsTrimmed !== '' && !isYearsValid ? 'input-error' : ''}`}
                     aria-describedby={`${baseId}-years-help`}
                   />
                   <span className="unit-suffix">Yrs</span>
@@ -337,24 +318,11 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                 <span>1 Year</span>
                 <span>40 Years</span>
               </div>
-              {!isYearsValid ? (
+              {yearsTrimmed !== '' && !isYearsValid && (
                 <span id={`${baseId}-years-help`} className="field-error" role="alert">
-                  {yearsTrimmed === ''
-                    ? 'Please enter duration in years.'
-                    : !Number.isInteger(yearsNum)
-                    ? 'Duration must be a whole number of years (1 to 40).'
-                    : 'Enter a duration between 1 and 40 whole years.'}
-                </span>
-              ) : (
-                <span id={`${baseId}-years-help`} className="field-hint">
-                  The multi-year horizon over which your lump sum stays invested.
+                  Enter a whole number between 1 and 40 years.
                 </span>
               )}
-            </div>
-
-            <div className="helper-row">
-              <span className="helper-icon">ⓘ</span>
-              <span>An assumed return does not capture market volatility. Model conservative, moderate, and ambitious rates before making decisions.</span>
             </div>
           </form>
         </section>
@@ -476,9 +444,11 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
             </>
           ) : (
             <div className="invalid-state-box">
-              <span className="invalid-icon">⚠️</span>
+              <span className="invalid-icon">{isBlank ? '📊' : '⚠️'}</span>
               <p className="invalid-msg">
-                Please provide valid calculation parameters to display simulation results.
+                {isBlank
+                  ? 'Enter your lump-sum details on the left or click "Sample Data" to preview a scenario.'
+                  : 'Please enter valid investment values to view your projection.'}
               </p>
             </div>
           )}
@@ -832,6 +802,24 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           color: var(--color-text-muted);
           line-height: 1.5;
           margin: 0;
+        }
+
+        .sample-btn {
+          background-color: var(--awc-jade-soft);
+          border: 1px solid var(--awc-line);
+          border-radius: 10px;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--color-brand-primary, #0f5338);
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.15s ease;
+        }
+
+        .sample-btn:hover {
+          background-color: #D3ECE6;
+          border-color: var(--color-border-interactive);
         }
 
         .reset-btn {

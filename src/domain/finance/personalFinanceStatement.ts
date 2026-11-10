@@ -1007,13 +1007,13 @@ export function createBlankPredefinedStatement(): {
 // CANONICAL SAMPLE FIXTURES (Explicitly Loaded by User Action Only)
 // -------------------------------------------------------------
 export const SAMPLE_INCOME_ITEMS: IncomeLineItem[] = [
-  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', grossMonthlyAmount: 150000, grossAnnualAmount: 1800000, annualDeductions: 180000 },
-  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', grossMonthlyAmount: 80000, grossAnnualAmount: 960000, annualDeductions: 60000 },
-  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', grossMonthlyAmount: Math.round(200000 / 12), grossAnnualAmount: 200000, annualDeductions: 40000 },
-  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', grossMonthlyAmount: Math.round(100000 / 12), grossAnnualAmount: 100000, annualDeductions: 20000 },
+  { id: 'inc-sal-self', label: 'Salary income — Self', category: 'SALARY_SELF', grossMonthlyAmount: 135000, grossAnnualAmount: 1620000, annualDeductions: 0 },
+  { id: 'inc-sal-spouse', label: 'Salary income — Spouse', category: 'SALARY_SPOUSE', grossMonthlyAmount: 75000, grossAnnualAmount: 900000, annualDeductions: 0 },
+  { id: 'inc-bonus-self', label: 'Annual Bonus — Self', category: 'BONUS_SELF', grossMonthlyAmount: 15000, grossAnnualAmount: 180000, annualDeductions: 0 },
+  { id: 'inc-bonus-spouse', label: 'Annual Bonus — Spouse', category: 'BONUS_SPOUSE', grossMonthlyAmount: 7500, grossAnnualAmount: 90000, annualDeductions: 0 },
   { id: 'inc-business', label: 'Business Income', category: 'BUSINESS', grossMonthlyAmount: 0, grossAnnualAmount: 0, annualDeductions: 0 },
-  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', grossMonthlyAmount: 25000, grossAnnualAmount: 300000, annualDeductions: 30000 },
-  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', grossMonthlyAmount: Math.round(50000 / 12), grossAnnualAmount: 50000, annualDeductions: 5000 },
+  { id: 'inc-rental', label: 'Rental Income', category: 'RENTAL', grossMonthlyAmount: 22000, grossAnnualAmount: 264000, annualDeductions: 0 },
+  { id: 'inc-investment', label: 'Investment Income', category: 'INVESTMENT', grossMonthlyAmount: 4000, grossAnnualAmount: 48000, annualDeductions: 0 },
 ];
 
 export const SAMPLE_ITEMIZED_EXPENSES: ExpenseLineItem[] = [
@@ -1095,3 +1095,19 @@ export const DEFAULT_ITEMIZED_EXPENSES = SAMPLE_ITEMIZED_EXPENSES;
 export const DEFAULT_ONGOING_INVESTMENTS = SAMPLE_ONGOING_INVESTMENTS;
 export const DEFAULT_ASSET_ITEMS = SAMPLE_ASSET_ITEMS;
 export const DEFAULT_LIABILITY_ITEMS = SAMPLE_LIABILITY_ITEMS;
+
+export function createSamplePredefinedStatement(): {
+  incomes: IncomeLineItem[];
+  expenses: ExpenseLineItem[];
+  ongoingInvestments: OngoingInvestmentItem[];
+  assets: AssetLineItem[];
+  liabilities: LiabilityLineItem[];
+} {
+  return {
+    incomes: SAMPLE_INCOME_ITEMS.map((item) => ({ ...item })),
+    expenses: SAMPLE_ITEMIZED_EXPENSES.map((item) => ({ ...item })),
+    ongoingInvestments: SAMPLE_ONGOING_INVESTMENTS.map((item) => ({ ...item })),
+    assets: SAMPLE_ASSET_ITEMS.map((item) => ({ ...item })),
+    liabilities: SAMPLE_LIABILITY_ITEMS.map((item) => ({ ...item })),
+  };
+}

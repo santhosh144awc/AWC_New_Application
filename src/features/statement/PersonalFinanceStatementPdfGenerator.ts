@@ -289,9 +289,7 @@ export function generatePersonalFinanceStatementPdf(
     startY: curY,
     head: [['Financial Dimension', 'Annual Amount (Rs.)', 'Monthly Amount (Rs.)', 'Share / Benchmark']],
     body: [
-      ['Gross Household Income', formatRupees(data.incomeStage.totalGrossAnnualIncome), formatRupees(data.incomeStage.totalGrossAnnualIncome / 12), '100% Gross'],
-      ['Less: Tax & Statutory Deductions', formatRupees(data.incomeStage.totalAnnualDeductions), formatRupees(data.incomeStage.totalAnnualDeductions / 12), formatPercent(data.incomeStage.totalGrossAnnualIncome > 0 ? (data.incomeStage.totalAnnualDeductions / data.incomeStage.totalGrossAnnualIncome) * 100 : null)],
-      ['Net Take-Home Income', formatRupees(data.incomeStage.totalNetAnnualIncome), formatRupees(data.incomeStage.totalNetMonthlyIncome), '100% Net Disposable'],
+      ['Total Household Income', formatRupees(data.incomeStage.totalNetAnnualIncome), formatRupees(data.incomeStage.totalNetMonthlyIncome), '100% Inflow'],
       ['Total Annual Living & Loan Expenses', formatRupees(data.expenseStage.totalAnnualExpenses), formatRupees(data.expenseStage.totalMonthlyExpenses), formatPercent(data.expenseStage.expenseToIncomeRatio)],
       ['Annual Household Savings (Income - Expenses)', formatRupees(data.savingsStage.annualSavings), formatRupees(data.savingsStage.monthlySavings), `Savings Rate: ${formatPercent(data.savingsRatePercent)}`],
       ['Committed Ongoing Investments (SIPs/PPF/RDs)', formatRupees(data.savingsStage.totalOngoingInvestmentsAnnual), formatRupees(data.savingsStage.totalOngoingInvestmentsMonthly), formatPercent(data.incomeStage.totalNetAnnualIncome > 0 ? (data.savingsStage.totalOngoingInvestmentsAnnual / data.incomeStage.totalNetAnnualIncome) * 100 : null)],
@@ -343,17 +341,15 @@ export function generatePersonalFinanceStatementPdf(
     item.label,
     formatRupees(item.grossMonthlyAmount),
     formatRupees(item.grossAnnualAmount),
-    formatRupees(item.annualDeductions),
-    formatRupees(item.netAnnualAmount),
     formatPercent(item.percentOfTotalNetIncome),
   ]);
 
   autoTable(doc, {
     startY: curY,
-    head: [['Income Particulars', 'Monthly Gross (Rs.)', 'Annual Gross (Rs.)', 'Annual Deductions (Rs.)', 'Net Annual (Rs.)', '% Share']],
+    head: [['Income Source', 'Monthly (Rs.)', 'Annual (Rs.)', '% Share']],
     body: incomeBody,
     foot: [
-      ['Total Household Income', formatRupees(data.incomeStage.totalGrossAnnualIncome / 12), formatRupees(data.incomeStage.totalGrossAnnualIncome), formatRupees(data.incomeStage.totalAnnualDeductions), formatRupees(data.incomeStage.totalNetAnnualIncome), '100.0%'],
+      ['Total Household Income', formatRupees(data.incomeStage.totalNetMonthlyIncome), formatRupees(data.incomeStage.totalNetAnnualIncome), '100.0%'],
     ],
     theme: 'grid',
     headStyles: { fillColor: COLOR_NAVY as any, textColor: COLOR_WHITE as any, fontSize: 8 },
@@ -361,10 +357,8 @@ export function generatePersonalFinanceStatementPdf(
     styles: { fontSize: 7, cellPadding: 2 },
     columnStyles: {
       1: { halign: 'right' },
-      2: { halign: 'right' },
-      3: { halign: 'right' },
-      4: { halign: 'right', fontStyle: 'bold' },
-      5: { halign: 'center' },
+      2: { halign: 'right', fontStyle: 'bold' },
+      3: { halign: 'center' },
     },
     margin: { left: marginX, right: marginX },
   });
