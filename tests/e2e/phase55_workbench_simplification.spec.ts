@@ -20,7 +20,7 @@ test.describe('Phase 55: Clean Editorial Company Homepage, Workbench Simplificat
     const aboutSection = page.locator('#about');
     await expect(aboutSection).toBeVisible();
     await expect(aboutSection).toContainText('C. Santhosh Sathriyan, B.E.');
-    await expect(aboutSection).toContainText('+91 80879 71566');
+    await expect(aboutSection).toContainText('+91 80879 71556');
     await expect(aboutSection).toContainText('santhosh@antwealth.in');
 
     // 3. How We Help Your Family: 3 Clean Service Pillars
@@ -81,7 +81,7 @@ test.describe('Phase 55: Clean Editorial Company Homepage, Workbench Simplificat
       const waBtn = leadBar.locator('a.btn-whatsapp-lead');
       await expect(waBtn).toBeVisible();
       const href = await waBtn.getAttribute('href');
-      expect(href).toContain('https://wa.me/918087971566?text=');
+      expect(href).toContain('https://wa.me/918087971556?text=');
     }
   });
 

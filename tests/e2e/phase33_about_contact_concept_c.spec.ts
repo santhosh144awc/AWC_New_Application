@@ -64,14 +64,14 @@ test.describe('Phase 33 / Concept C Phase 14 — About & Contact Trust Experienc
     // WhatsApp link verification
     const whatsappBtn = page.locator('.btn-whatsapp');
     await expect(whatsappBtn).toBeVisible();
-    await expect(whatsappBtn).toHaveAttribute('href', /https:\/\/wa\.me\/918087971566/);
+    await expect(whatsappBtn).toHaveAttribute('href', /https:\/\/wa\.me\/918087971556/);
     await expect(whatsappBtn).toHaveAttribute('target', '_blank');
     await expect(whatsappBtn).toHaveAttribute('rel', 'noopener noreferrer');
 
     // Phone link scoped to channel cards
     const phoneLink = page.locator('.channel-cards a[href^="tel:"]');
-    await expect(phoneLink).toHaveAttribute('href', 'tel:+918087971566');
-    await expect(phoneLink).toContainText('+91 80879 71566');
+    await expect(phoneLink).toHaveAttribute('href', 'tel:+918087971556');
+    await expect(phoneLink).toContainText('+91 80879 71556');
 
     // Email link scoped to channel cards
     const emailLink = page.locator('.channel-cards a[href^="mailto:"]');

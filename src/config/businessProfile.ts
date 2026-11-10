@@ -116,12 +116,12 @@ export const BUSINESS_PROFILE: BusinessProfile = {
     complianceReviewStatus: 'PENDING_LEGAL_REVIEW'
   },
   contact: {
-    phone: "+918087971566",
-    phoneDisplay: "+91 80879 71566",
+    phone: "+918087971556",
+    phoneDisplay: "+91 80879 71556",
     email: "santhosh@antwealth.in",
     locationDisplay: "Dharmapuri, Tamil Nadu, India",
     googleMapsUrl: "https://maps.app.goo.gl/woGhSAg18fCoHxxG7",
-    whatsappUrl: "https://wa.me/918087971566?text=Hi%20Santhosh,%20I%20would%20like%20to%20discuss%20my%20family%20financial%20goals.",
+    whatsappUrl: "https://wa.me/918087971556?text=Hi%20Santhosh,%20I%20would%20like%20to%20discuss%20my%20family%20financial%20goals.",
     portfolioLoginUrl: "https://antwealth.themfbox.com/",
   },
   disclosures: {
