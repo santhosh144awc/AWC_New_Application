@@ -393,7 +393,7 @@ describe('Personal Finance Statement Domain Engine', () => {
       expect(res.netWorthIncludingPersonalAssets).toBe(0);
       expect(res.netWorthExcludingPersonalAssets).toBe(0);
 
-      // Verify createSamplePredefinedStatement loads realistic sample data with zero deductions
+      // Verify createSamplePredefinedStatement loads middle-class sample data (~₹13.80L income, positive surplus, positive investment net worth)
       const sample = createSamplePredefinedStatement();
       sample.incomes.forEach((i: any) => expect(i.annualDeductions).toBe(0));
       const sampleRes = calculateComprehensivePersonalFinanceStatement({
@@ -404,9 +404,14 @@ describe('Personal Finance Statement Domain Engine', () => {
         assetItems: sample.assets,
         liabilityItems: sample.liabilities,
       });
-      expect(sampleRes.incomeStage.totalNetAnnualIncome).toBeGreaterThan(0);
+      expect(sampleRes.incomeStage.totalNetAnnualIncome).toBe(1380000);
       expect(sampleRes.incomeStage.totalAnnualDeductions).toBe(0);
-      expect(sampleRes.netWorthIncludingPersonalAssets).toBeGreaterThan(0);
+      expect(sampleRes.expenseStage.totalAnnualExpenses).toBe(840000);
+      expect(sampleRes.savingsStage.annualSavings).toBe(540000);
+      expect(sampleRes.savingsStage.totalOngoingInvestmentsAnnual).toBe(240000);
+      expect(sampleRes.savingsStage.annualSurplusForFreshInvestments).toBe(300000);
+      expect(sampleRes.netWorthExcludingPersonalAssets).toBe(1950000);
+      expect(sampleRes.netWorthIncludingPersonalAssets).toBe(6800000);
     });
   });
 
