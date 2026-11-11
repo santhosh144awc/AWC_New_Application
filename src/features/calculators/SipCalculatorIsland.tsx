@@ -382,6 +382,21 @@ export default function SipCalculatorIsland(): React.JSX.Element {
                 </span>
               )}
             </div>
+
+            {/* Schedule Toggle Button (moved below left side panel inputs) */}
+            {isValid && result && (
+              <div className="schedule-toggle-wrapper-left">
+                <button
+                  type="button"
+                  id="toggle-sip-schedule-btn"
+                  onClick={() => setShowSchedule(!showSchedule)}
+                  className="btn-toggle-schedule-left"
+                  aria-expanded={showSchedule}
+                >
+                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+                </button>
+              </div>
+            )}
           </form>
         </section>
 
@@ -523,41 +538,10 @@ export default function SipCalculatorIsland(): React.JSX.Element {
                 </div>
               )}
 
-              {/* Schedule Toggle Button */}
-              <div className="schedule-toggle-wrapper">
-                <button
-                  type="button"
-                  id="toggle-sip-schedule-btn"
-                  onClick={() => setShowSchedule(!showSchedule)}
-                  className="btn-toggle-schedule"
-                  aria-expanded={showSchedule}
-                >
-                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
-                </button>
-              </div>
-
               {/* Caveat & Context Actions */}
-              <p className="result-foot">
+              <p className="result-foot" style={{ marginTop: 'auto' }}>
                 This model excludes taxes, fees, fund selection and volatility. The final value is sensitive to the assumed return and contribution timing.
               </p>
-
-              <div className="results-cta-row">
-                <a
-                  href="#controls-heading"
-                  className="btn-adjust-assumptions"
-                  onClick={() => {
-                    const inputEl = document.getElementById(`${baseId}-amount-num`);
-                    if (inputEl) {
-                      inputEl.focus();
-                    }
-                  }}
-                >
-                  ↑ Adjust assumptions
-                </a>
-                <a href="/tools/" className="button button-lime" style={{ textDecoration: 'none' }}>
-                  Explore another tool →
-                </a>
-              </div>
             </>
           ) : (
             <div className="invalid-state-box">
@@ -608,32 +592,6 @@ export default function SipCalculatorIsland(): React.JSX.Element {
           </div>
         </section>
       )}
-
-      {/* Accessible Collapsible Details Disclosures */}
-      <section className="surface explainer-surface" aria-label="Calculation methodology">
-        <div className="disclosures-list" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-          <details className="disclosure-item">
-            <summary>Calculation assumptions & compounding methodology</summary>
-            <div className="disclosure-content">
-              <ul className="methodology-list">
-                <li>
-                  <strong>Effective Annual Rate (EAR):</strong> The assumed return rate is converted to an exact geometric monthly rate using{' '}
-                  <code>i = (1 + r)^(1/12) - 1</code>, reflecting true annual compounding rather than simple nominal division.
-                </li>
-                <li>
-                  <strong>Beginning-of-Month Timing (Annuity-Due):</strong> Cash flows are modelled as invested on the first day of each monthly period, compounding for the entire month.
-                </li>
-                <li>
-                  <strong>Step-Up Implementation:</strong> The first 12 monthly installments remain at your base entry amount. The first step-up applies strictly at Month 13, the second at Month 25, and so on.
-                </li>
-                <li>
-                  <strong>Important Regulatory Notice:</strong> Mutual fund investments are subject to market risks. Read all scheme-related documents carefully. Calculated figures are purely illustrative mathematical projections based on assumed parameters and do not constitute an investment recommendation, guarantee, or market forecast.
-                </li>
-              </ul>
-            </div>
-          </details>
-        </div>
-      </section>
 
       <style>{`
         /* Concept C Palette & Design System Variables for SIP Calculator */
@@ -1317,6 +1275,38 @@ export default function SipCalculatorIsland(): React.JSX.Element {
           color: #BDCEC9;
           line-height: 1.5;
           margin: 0;
+        }
+
+        /* Schedule Toggle (Left Side Panel) */
+        .schedule-toggle-wrapper-left {
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px dashed var(--awc-line);
+        }
+
+        .btn-toggle-schedule-left {
+          width: 100%;
+          background: var(--awc-jade-soft);
+          border: 1.5px solid #B7DDD3;
+          border-radius: 12px;
+          color: var(--awc-jade-deep);
+          padding: 12px 14px;
+          font-size: 13px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .btn-toggle-schedule-left:hover {
+          background: var(--awc-mint);
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+          transform: translateY(-1px);
         }
 
         /* Schedule Toggle */
