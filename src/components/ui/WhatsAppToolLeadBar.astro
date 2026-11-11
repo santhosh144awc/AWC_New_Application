@@ -4,11 +4,13 @@ import { BUSINESS_PROFILE } from '../../config/businessProfile';
 interface Props {
   toolName: string;
   promptQuestion?: string;
+  showStatementButton?: boolean;
 }
 
 const {
   toolName,
   promptQuestion = 'Want to review how these numbers fit into your family financial plan?',
+  showStatementButton = false,
 } = Astro.props;
 
 const whatsappMessage = encodeURIComponent(
@@ -22,7 +24,7 @@ const whatsappHref = `https://wa.me/${BUSINESS_PROFILE.contact.phone.replace(/[^
     <span class="lead-eyebrow">Personalized Review · Direct Guidance</span>
     <h2 class="lead-title">{promptQuestion}</h2>
     <p class="lead-desc">
-      Share your scenario directly with <strong>{BUSINESS_PROFILE.founder.fullName}</strong> ({BUSINESS_PROFILE.founder.credentials}) on WhatsApp for a clear, practical discussion—or build your full 6-stage household statement.
+      Share your scenario directly with <strong>{BUSINESS_PROFILE.founder.fullName}</strong> ({BUSINESS_PROFILE.founder.credentials}) on WhatsApp for a clear, practical discussion.
     </p>
   </div>
 
@@ -35,9 +37,11 @@ const whatsappHref = `https://wa.me/${BUSINESS_PROFILE.contact.phone.replace(/[^
     >
       Discuss This Scenario on WhatsApp ↗
     </a>
-    <a href="/tools/personal-finance-statement/" class="btn-pfs-secondary">
-      Open Personal Finance Statement →
-    </a>
+    {showStatementButton && (
+      <a href="/tools/personal-finance-statement/" class="btn-pfs-secondary">
+        Open Personal Finance Statement →
+      </a>
+    )}
   </div>
 </section>
 

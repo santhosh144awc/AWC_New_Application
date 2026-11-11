@@ -1549,54 +1549,53 @@ export default function SipCalculatorIsland(): React.JSX.Element {
           color: var(--awc-navy);
         }
 
-        /* Schedule Table */
-        .schedule-header-actions {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-bottom: 14px;
+        /* Schedule Table Section */
+        .schedule-section {
+          background-color: #ffffff;
+          border: 1px solid var(--awc-line);
+          border-radius: var(--radius-xl);
+          padding: 28px;
+          margin-top: 32px;
+          box-shadow: var(--shadow-card);
+        }
+
+        .schedule-header {
+          margin-bottom: 20px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--awc-line);
+        }
+
+        .schedule-title {
+          font-size: 20px;
+          font-weight: 850;
+          letter-spacing: -0.03em;
+          color: var(--awc-navy);
+          margin: 0 0 4px;
         }
 
         .schedule-subtitle {
-          font-size: 11px;
+          font-size: 12.5px;
           color: var(--color-text-muted);
-        }
-
-        .btn-toggle-schedule {
-          background: none;
-          border: 1px solid var(--awc-line);
-          border-radius: 8px;
-          padding: 4px 10px;
-          color: var(--color-text-brand);
-          font-weight: 700;
-          font-size: 11px;
-          cursor: pointer;
-          transition: all 0.15s ease;
-        }
-
-        .btn-toggle-schedule:hover {
-          background-color: #ffffff;
+          margin: 0;
         }
 
         .table-responsive {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          border: 1px solid #EDF3F1;
+          border-radius: 14px;
         }
 
         .schedule-table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 12px;
+          font-size: 13px;
           font-variant-numeric: tabular-nums;
           background: #ffffff;
-          border-radius: 12px;
-          overflow: hidden;
         }
 
         .schedule-table th, .schedule-table td {
-          padding: 10px 14px;
+          padding: 12px 16px;
           text-align: right;
           border-bottom: 1px solid #EDF3F1;
         }
@@ -1609,6 +1608,9 @@ export default function SipCalculatorIsland(): React.JSX.Element {
           background-color: #EAF1EF;
           font-weight: 800;
           color: var(--awc-navy);
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
         }
 
         .text-accent-gold {
