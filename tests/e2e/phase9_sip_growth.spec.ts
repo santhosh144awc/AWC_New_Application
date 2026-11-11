@@ -113,18 +113,12 @@ test.describe('Phase 9 — Advanced SIP Growth Simulator (/tools/sip-growth/)', 
     await expect(emptyNotice).toBeVisible();
   });
 
-  test('displays clear one-time investment timing explanation and post-SIP holding explanation', async ({ page }) => {
+  test('displays clear post-SIP holding explanation and regulatory disclosure', async ({ page }) => {
     // Expand advanced options if collapsed
     const advToggle = page.locator('#toggle-advanced-options-btn');
     if (await advToggle.isVisible() && (await advToggle.getAttribute('aria-expanded')) === 'false') {
       await advToggle.click();
     }
-
-    // Timing notice in lump sums section
-    const timingNotice = page.locator('.timing-notice');
-    await expect(timingNotice).toBeVisible();
-    await expect(timingNotice).toContainText('Each one-time investment is assumed to be added at the beginning of the selected projection year');
-    await expect(timingNotice).toContainText('Lump sums scheduled in post-SIP holding years continue compounding');
 
     // Regulatory disclosure note
     const disclosure = page.locator('.regulatory-disclosure-note');

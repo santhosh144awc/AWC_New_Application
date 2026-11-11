@@ -605,7 +605,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     <div className="input-group">
                       <div className="input-header-row">
                         <label htmlFor="growth-stepupdur-num" className="field-label-sm">
-                          Step-Up Limit (Cap Year)
+                          Step-Up Limit
                         </label>
                         <div className="unit-field-sm">
                           <input
@@ -635,7 +635,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                       />
                       <div className="slider-bounds">
                         <span>1 Year</span>
-                        <span>{maxStepUpDuration} Yrs (Full SIP)</span>
+                        <span>{maxStepUpDuration} Yrs</span>
                       </div>
                     </div>
                   </div>
@@ -780,10 +780,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                         })}
                       </div>
                     )}
-
-                    <p className="timing-notice">
-                      <strong>Timing Convention:</strong> Each one-time investment is assumed to be added at the <em>beginning</em> of the selected projection year (Month <code>(y - 1) × 12 + 1</code>). Lump sums scheduled in post-SIP holding years continue compounding even though recurring monthly contributions have stopped.
-                    </p>
                   </div>
 
                   {/* 6. Post-SIP Holding Period */}
@@ -832,6 +828,21 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
               )}
             </div>
           </form>
+
+          {/* Schedule Toggle Button (moved below left side panel inputs) */}
+          {isValid && result && (
+            <div className="schedule-toggle-wrapper-left">
+              <button
+                type="button"
+                id="toggle-sip-growth-schedule-btn"
+                onClick={() => setShowSchedule(!showSchedule)}
+                className="btn-toggle-schedule-left"
+                aria-expanded={showSchedule}
+              >
+                {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right Column: High-Contrast Results Panel (0.92fr) */}
@@ -859,8 +870,8 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                   </div>
                 </div>
 
-                {/* 3-Card Metrics Grid */}
-                <div className="metrics-grid">
+                {/* 2-Metric Translucent Grid with Prominent Font Sizes */}
+                <div className="metrics-grid-2col">
                   <div className="metric-cell">
                     <span className="metric-label">Total Capital Contributed</span>
                     <div className="metric-figure" id="growth-total-invested">
@@ -877,18 +888,19 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                       {formatINR(result.totalGrowth)}
                     </div>
                     <span className="metric-sub">
-                      approx. {formatIndianCompact(result.totalGrowth)} via compounding
+                      approx. {formatIndianCompact(result.totalGrowth)} compounding
                     </span>
                   </div>
+                </div>
 
-                  <div className="metric-cell">
-                    <span className="metric-label">Wealth Multiplier</span>
-                    <div className="metric-figure" id="growth-multiplier">
-                      {(result.finalCorpus / Math.max(1, result.totalInvested)).toFixed(2)}x
-                    </div>
-                    <span className="metric-sub">
-                      final value vs principal
-                    </span>
+                {/* Wealth Multiplier Banner */}
+                <div className="multiplier-banner">
+                  <div className="multiplier-left">
+                    <span className="multiplier-badge">Wealth Multiplier</span>
+                    <span className="multiplier-sub">Final portfolio value vs total principal invested</span>
+                  </div>
+                  <div className="multiplier-value" id="growth-multiplier">
+                    {(result.finalCorpus / Math.max(1, result.totalInvested)).toFixed(2)}x
                   </div>
                 </div>
 
@@ -922,25 +934,32 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                 {stepUpNum > 0 && baselineResult && (
                   <div className="scenario-comparison-card">
                     <div className="comparison-header">
-                      <span className="comparison-tag">Step-Up Acceleration</span>
-                      <h4 className="comparison-title">Comparison vs Fixed Monthly SIP</h4>
+                      <span className="comparison-tag">Step-Up Advantage</span>
+                      <h4 className="comparison-title">Why Step-Up Beats a Fixed SIP</h4>
                     </div>
                     <p className="comparison-desc">
-                      Keeping starting installment (₹{formatINR(monthlyNum)}), duration ({sipYearsNum}y), return ({returnNum}%), and lump sums identical:
+                      Comparing against a fixed monthly SIP of {formatINR(monthlyNum)} (no annual increase):
                     </p>
                     <div className="comparison-metrics">
                       <div className="comp-item">
                         <span className="comp-label">Fixed SIP Corpus</span>
                         <span className="comp-val">{formatINR(baselineResult.finalCorpus)}</span>
+                        <span className="comp-sub">without step-up</span>
                       </div>
                       <div className="comp-item highlight">
                         <span className="comp-label">Step-Up Advantage</span>
                         <span className="comp-val">+{formatINR(result.finalCorpus - baselineResult.finalCorpus)}</span>
+                        <span className="comp-sub">extra wealth created</span>
                       </div>
                     </div>
-                    <span className="comparison-footnote">
-                      Annual step-ups of {stepUpNum}% up to Year {stepUpDurationNum} added {formatINR(result.totalInvested - baselineResult.totalInvested)} in contributions, generating {formatINR((result.finalCorpus - baselineResult.finalCorpus) - (result.totalInvested - baselineResult.totalInvested))} in extra compounding growth.
-                    </span>
+                    <div className="comparison-breakdown-box">
+                      <p className="comparison-point">
+                        • <strong>Extra contributions:</strong> Stepping up by {stepUpNum}% each year (until Year {stepUpDurationNum}) adds a total of <strong>{formatINR(result.totalInvested - baselineResult.totalInvested)}</strong> in investments.
+                      </p>
+                      <p className="comparison-point">
+                        • <strong>Extra compounding bonus:</strong> Those timely additions compound into <strong>+{formatINR((result.finalCorpus - baselineResult.finalCorpus) - (result.totalInvested - baselineResult.totalInvested))}</strong> in additional investment returns!
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -967,19 +986,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                       </li>
                     )}
                   </ul>
-                </div>
-
-                {/* Toggle Year-by-Year Schedule */}
-                <div className="schedule-toggle-row">
-                  <button
-                    type="button"
-                    id="toggle-sip-growth-schedule-btn"
-                    onClick={() => setShowSchedule(!showSchedule)}
-                    className="btn-toggle-schedule"
-                    aria-expanded={showSchedule}
-                  >
-                    {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
-                  </button>
                 </div>
               </>
             ) : (
@@ -1046,30 +1052,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
               </tbody>
             </table>
           </div>
-
-          {/* Mathematical Methodology Details */}
-          <details className="methodology-disclosure">
-            <summary className="methodology-summary">
-              <span>View Calculation Engine Methodology & Compounding Formulas</span>
-            </summary>
-            <div className="methodology-body">
-              <p>
-                <strong>Effective Annual Rate (EAR) Convention:</strong> The annual return rate <code>r</code> is converted geometrically to an equivalent monthly effective rate <code>i = (1 + r)^(1/12) - 1</code>, ensuring that twelve months of compounding yields the precise annual rate without nominal distortion.
-              </p>
-              <p>
-                <strong>Annuity-Due Monthly Timing:</strong> Monthly SIP contributions occur at the <em>beginning of each month</em>, compounding for the entire month: <code>FV_month = (balance + installment) × (1 + i)</code>.
-              </p>
-              <p>
-                <strong>One-Time Investment Timing:</strong> Milestone additions occur at the <em>beginning</em> of their designated projection year (Month <code>(y - 1) × 12 + 1</code>).
-              </p>
-              <p>
-                <strong>Holding Period Compounding:</strong> During the post-SIP holding horizon, no recurring monthly installments are added (<code>installment = 0</code>). The accumulated portfolio continues to compound monthly: <code>balance × (1 + i)</code>.
-              </p>
-              <p>
-                <strong>Zero-Return Baseline:</strong> Under 0% return (<code>r = 0</code>), monthly rate <code>i = 0</code>. Growth amount equals exactly ₹0, and the closing balance reconciles identically with cumulative contributions.
-              </p>
-            </div>
-          </details>
         </div>
       )}
 
@@ -1509,12 +1491,58 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
           grid-template-columns: 1fr;
           gap: 16px;
           margin-bottom: 8px;
+          align-items: start;
         }
 
         @media (min-width: 550px) {
           .stepup-grid {
             grid-template-columns: 1fr 1fr;
+            gap: 20px;
           }
+        }
+
+        .stepup-grid .input-group {
+          margin-bottom: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .stepup-grid .input-header-row {
+          min-height: 38px;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+
+        /* Schedule Toggle (Left Column) */
+        .schedule-toggle-wrapper-left {
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px dashed var(--awc-line);
+        }
+
+        .btn-toggle-schedule-left {
+          width: 100%;
+          background: var(--awc-jade-soft);
+          border: 1.5px solid #B7DDD3;
+          border-radius: 12px;
+          color: var(--awc-jade-deep);
+          padding: 12px 14px;
+          font-size: 13px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .btn-toggle-schedule-left:hover {
+          background: var(--awc-mint);
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+          transform: translateY(-1px);
         }
 
         /* Lump Sums Manager */
@@ -1717,55 +1745,102 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
           border-radius: 20px;
         }
 
-        /* Metrics Grid */
-        .metrics-grid {
+        /* Metrics Grid - 2 Column Redesign */
+        .metrics-grid-2col {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 10px;
-          margin-bottom: 20px;
+          gap: 12px;
+          margin-bottom: 12px;
         }
 
-        @media (min-width: 450px) {
-          .metrics-grid {
-            grid-template-columns: repeat(3, 1fr);
+        @media (min-width: 480px) {
+          .metrics-grid-2col {
+            grid-template-columns: 1fr 1fr;
           }
         }
 
         .metric-cell {
-          background-color: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background-color: rgba(255, 255, 255, 0.07);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 14px;
-          padding: 12px;
+          padding: 14px 16px;
         }
 
         .metric-cell.highlight-cell {
           background-color: rgba(207, 239, 227, 0.12);
-          border-color: rgba(207, 239, 227, 0.2);
+          border-color: rgba(207, 239, 227, 0.25);
         }
 
         .metric-label {
           display: block;
-          font-size: 10.5px;
-          font-weight: 700;
-          color: rgba(255, 255, 255, 0.65);
-          margin-bottom: 4px;
+          font-size: 11px;
+          font-weight: 750;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 6px;
         }
 
         .metric-figure {
-          font-size: 16px;
+          font-size: clamp(20px, 3.8vw, 24px);
           font-weight: 850;
           color: #ffffff;
-          margin-bottom: 2px;
+          margin-bottom: 4px;
+          font-variant-numeric: tabular-nums;
+          line-height: 1.2;
         }
 
         .metric-figure.highlight-text {
-          color: var(--awc-mint);
+          color: var(--awc-gold);
         }
 
         .metric-sub {
           display: block;
+          font-size: 11px;
+          color: #C5D7D2;
+          font-weight: 500;
+        }
+
+        /* Wealth Multiplier Banner */
+        .multiplier-banner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px dashed rgba(255, 255, 255, 0.18);
+          border-radius: 12px;
+          padding: 10px 14px;
+          margin-bottom: 18px;
+        }
+
+        .multiplier-left {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .multiplier-badge {
           font-size: 10px;
-          color: rgba(255, 255, 255, 0.55);
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--awc-mint);
+        }
+
+        .multiplier-sub {
+          font-size: 10.5px;
+          color: #A7BEB8;
+        }
+
+        .multiplier-value {
+          font-size: 22px;
+          font-weight: 900;
+          color: #ffffff;
+          font-variant-numeric: tabular-nums;
+          background: rgba(22, 135, 126, 0.25);
+          border: 1px solid rgba(22, 135, 126, 0.45);
+          border-radius: 8px;
+          padding: 4px 10px;
         }
 
         /* Distribution Bar */
@@ -1825,7 +1900,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
           background-color: rgba(255, 255, 255, 0.07);
           border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 14px;
-          padding: 14px;
+          padding: 16px;
           margin-bottom: 18px;
         }
 
@@ -1847,7 +1922,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
         }
 
         .comparison-title {
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 800;
           color: #ffffff;
           margin: 0;
@@ -1855,7 +1930,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
         .comparison-desc {
           font-size: 11.5px;
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.75);
           margin: 0 0 10px;
           line-height: 1.4;
         }
@@ -1869,8 +1944,8 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
         .comp-item {
           background-color: rgba(0, 0, 0, 0.2);
-          padding: 8px;
-          border-radius: 8px;
+          padding: 10px 12px;
+          border-radius: 10px;
         }
 
         .comp-item.highlight {
@@ -1880,20 +1955,45 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
         .comp-label {
           display: block;
           font-size: 10px;
-          color: rgba(255, 255, 255, 0.6);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: rgba(255, 255, 255, 0.65);
+          margin-bottom: 2px;
         }
 
         .comp-val {
-          font-size: 13px;
-          font-weight: 800;
+          font-size: 15px;
+          font-weight: 850;
           color: #ffffff;
+          font-variant-numeric: tabular-nums;
         }
 
-        .comparison-footnote {
+        .comp-sub {
           display: block;
-          font-size: 10.5px;
-          color: rgba(255, 255, 255, 0.6);
-          line-height: 1.35;
+          font-size: 10px;
+          color: #9AB4B0;
+          margin-top: 2px;
+        }
+
+        .comparison-breakdown-box {
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .comparison-point {
+          font-size: 11.5px;
+          color: #C5D7D2;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .comparison-point strong {
+          color: #ffffff;
         }
 
         /* Dynamics Summary */
@@ -1924,30 +2024,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
         .dynamics-list li {
           margin-bottom: 4px;
-        }
-
-        /* Schedule Toggle */
-        .schedule-toggle-row {
-          text-align: center;
-        }
-
-        .btn-toggle-schedule {
-          width: 100%;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          border-radius: 12px;
-          color: #ffffff;
-          padding: 12px 14px;
-          font-size: 12.5px;
-          font-weight: 800;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          text-align: center;
-        }
-
-        .btn-toggle-schedule:hover {
-          background: rgba(255, 255, 255, 0.15);
-          border-color: rgba(255, 255, 255, 0.35);
         }
 
         /* Unavailable State Card */
@@ -2087,46 +2163,6 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
         .holding-row {
           background-color: #FDFAF6;
-        }
-
-        /* Methodology Disclosure */
-        .methodology-disclosure {
-          border-top: 1px solid var(--awc-line);
-          padding-top: 14px;
-        }
-
-        .methodology-summary {
-          font-size: 12.5px;
-          font-weight: 750;
-          color: var(--color-text-brand);
-          cursor: pointer;
-          outline: none;
-        }
-
-        .methodology-body {
-          margin-top: 12px;
-          padding: 14px;
-          background-color: var(--awc-paper);
-          border-radius: 12px;
-          font-size: 11.5px;
-          color: var(--color-text-muted);
-          line-height: 1.55;
-        }
-
-        .methodology-body p {
-          margin: 0 0 8px;
-        }
-
-        .methodology-body p:last-child {
-          margin-bottom: 0;
-        }
-
-        .methodology-body code {
-          background-color: rgba(23, 48, 71, 0.06);
-          padding: 1px 4px;
-          border-radius: 4px;
-          color: var(--awc-navy);
-          font-size: 11px;
         }
       `}</style>
     </div>

@@ -205,9 +205,9 @@ test.describe('Phase 23 / Phase 4 — Advanced SIP Growth Simulator Concept C Re
     const headline = await page.locator('#growth-final-corpus').textContent();
     expect(finalRowClosing?.trim()).toBe(headline?.trim());
 
-    // Methodology disclosure is interactive
+    // Methodology disclosure removed for streamlined UI
     const methodology = page.locator('.methodology-disclosure');
-    await expect(methodology).toBeVisible();
+    await expect(methodology).toHaveCount(0);
   });
 
   test('13. Reset example button restores canonical defaults and collapses advanced/schedule', async ({ page }) => {
