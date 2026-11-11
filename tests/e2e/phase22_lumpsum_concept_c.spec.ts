@@ -223,7 +223,7 @@ test.describe('Phase 22 / Phase 3 — Lump-Sum Calculator Concept C Redesign (/t
     await expect(page.locator('#lumpsum-schedule-table')).not.toBeVisible();
   });
 
-  test('9. Rule of 72 copy is approximate and methodology disclosure is accessible', async ({ page }) => {
+  test('9. Rule of 72 copy is approximate and methodology disclosure is streamlined', async ({ page }) => {
     await page.goto('/tools/lumpsum/');
     await page.waitForSelector('astro-island:not([ssr])');
 
@@ -233,14 +233,9 @@ test.describe('Phase 22 / Phase 3 — Lump-Sum Calculator Concept C Redesign (/t
     await expect(rule72Card).toContainText('6.0 years');
     await expect(rule72Card).toContainText('approximate mental shortcut, not an exact compounding calculation');
 
-    // Check methodology native details disclosure
+    // Methodology disclosure removed for streamlined UI
     const details = page.locator('details.disclosure-item');
-    await expect(details).toBeVisible();
-    await details.locator('summary').click();
-    await expect(details).toHaveAttribute('open', '');
-    await expect(details).toContainText('Future Value = Principal × (1 + r)^n');
-    await expect(details).toContainText('Effective Annual Rate (EAR) Convention');
-    await expect(details).toContainText('Mutual fund investments are subject to market risks');
+    await expect(details).toHaveCount(0);
   });
 
   test('10. Reset button restores canonical example and collapses open schedule', async ({ page }) => {

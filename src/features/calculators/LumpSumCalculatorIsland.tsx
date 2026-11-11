@@ -324,6 +324,21 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                 </span>
               )}
             </div>
+
+            {/* Schedule Toggle Button (moved below left side panel inputs) */}
+            {isValid && result && (
+              <div className="schedule-toggle-wrapper-left">
+                <button
+                  type="button"
+                  id="toggle-lumpsum-schedule-btn"
+                  onClick={() => setShowSchedule(!showSchedule)}
+                  className="btn-toggle-schedule-left"
+                  aria-expanded={showSchedule}
+                >
+                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+                </button>
+              </div>
+            )}
           </form>
         </section>
 
@@ -406,41 +421,10 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                 </div>
               </div>
 
-              {/* Schedule Toggle Button */}
-              <div className="schedule-toggle-wrapper">
-                <button
-                  type="button"
-                  id="toggle-lumpsum-schedule-btn"
-                  onClick={() => setShowSchedule(!showSchedule)}
-                  className="btn-toggle-schedule"
-                  aria-expanded={showSchedule}
-                >
-                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
-                </button>
-              </div>
-
-              {/* Caveat & Context Actions */}
-              <p className="result-foot">
+              {/* Caveat & Context Notice */}
+              <p className="result-foot" style={{ marginTop: 'auto', marginBottom: 0 }}>
                 This simulation models hypothetical compounding and excludes taxes, inflation, exit loads, and fund expense ratios. Actual market returns are never fixed or guaranteed.
               </p>
-
-              <div className="results-cta-row">
-                <a
-                  href="#controls-heading"
-                  className="btn-adjust-assumptions"
-                  onClick={() => {
-                    const inputEl = document.getElementById(`${baseId}-principal-num`);
-                    if (inputEl) {
-                      inputEl.focus();
-                    }
-                  }}
-                >
-                  ↑ Adjust assumptions
-                </a>
-                <a href="/tools/sip/" className="button button-lime" style={{ textDecoration: 'none' }}>
-                  Compare with SIP →
-                </a>
-              </div>
             </>
           ) : (
             <div className="invalid-state-box">
@@ -490,10 +474,10 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
         </section>
       )}
 
-      {/* Rule of 72 & Methodology Disclosure */}
-      <section className="surface explainer-surface" aria-label="Rule of 72 and calculation methodology">
+      {/* Rule of 72 Card */}
+      <section className="surface explainer-surface" aria-label="Rule of 72 in perspective">
         {/* Dynamic Rule of 72 Education Card */}
-        <div className="rule72-context-card" style={{ marginTop: 0 }}>
+        <div className="rule72-context-card" style={{ marginTop: 0, marginBottom: 0 }}>
           <div className="rule72-header">
             <span className="rule72-tag">Mental Shortcut</span>
             <strong className="rule72-title">The Rule of 72 in Perspective</strong>
@@ -513,30 +497,6 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
             )}
             {' '}Please remember: the Rule of 72 is an approximate mental shortcut, not an exact compounding calculation or a guarantee of investment returns. Real market returns fluctuate from year to year.
           </p>
-        </div>
-
-        {/* Accessible Collapsible Details Disclosures */}
-        <div className="disclosures-list">
-          <details className="disclosure-item">
-            <summary>How this estimate is calculated & compounding methodology</summary>
-            <div className="disclosure-content">
-              <ul className="methodology-list">
-                <li>
-                  <strong>Compounding Formula:</strong> Evaluated using the standard effective compound interest equation:{' '}
-                  <code>Future Value = Principal × (1 + r)^n</code>, where <code>r</code> is the annual return decimal and <code>n</code> is tenure in whole years.
-                </li>
-                <li>
-                  <strong>Effective Annual Rate (EAR) Convention:</strong> The assumed annual percentage return is applied once per complete annual cycle, matching standard Indian mutual fund multi-year CAGR conventions.
-                </li>
-                <li>
-                  <strong>Precision & Rounding:</strong> All intermediate values in the progression schedule maintain full floating-point precision internally and are rounded to whole rupees solely for clear visual display.
-                </li>
-                <li>
-                  <strong>Exclusions & Regulatory Risk Notice:</strong> Mutual fund investments are subject to market risks. Read all scheme-related documents carefully. This simulation excludes taxes, exit loads, and fund management expenses. Calculated projections are purely illustrative scenarios based on assumed parameters and do not constitute financial advice, performance forecasts, or capital guarantees.
-                </li>
-              </ul>
-            </div>
-          </details>
         </div>
       </section>
 
@@ -1121,30 +1081,36 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           background-color: var(--awc-gold);
         }
 
-        /* Schedule Toggle */
-        .schedule-toggle-wrapper {
-          position: relative;
-          z-index: 1;
-          margin-bottom: 16px;
+        /* Schedule Toggle (Left Side Panel) */
+        .schedule-toggle-wrapper-left {
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px dashed var(--awc-line);
         }
 
-        .btn-toggle-schedule {
+        .btn-toggle-schedule-left {
           width: 100%;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          background: var(--awc-jade-soft);
+          border: 1.5px solid #B7DDD3;
           border-radius: 12px;
-          color: #ffffff;
+          color: var(--awc-jade-deep);
           padding: 12px 14px;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 800;
           cursor: pointer;
           transition: all 0.15s ease;
           text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
         }
 
-        .btn-toggle-schedule:hover {
-          background: rgba(255, 255, 255, 0.15);
-          border-color: rgba(255, 255, 255, 0.35);
+        .btn-toggle-schedule-left:hover {
+          background: var(--awc-mint);
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+          transform: translateY(-1px);
         }
 
         .num-input::placeholder {
@@ -1160,71 +1126,6 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           line-height: 1.6;
           padding-top: 14px;
           border-top: 1px solid rgba(255, 255, 255, 0.12);
-          margin: 0 0 16px !important;
-        }
-
-        .results-cta-row {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          gap: 10px;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-
-        .btn-adjust-assumptions {
-          display: none;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
-          color: #ffffff;
-          padding: 12px 16px;
-          font-size: 13px;
-          font-weight: 800;
-          text-decoration: none;
-          text-align: center;
-          transition: all 0.15s ease;
-        }
-
-        .btn-adjust-assumptions:hover {
-          background: rgba(255, 255, 255, 0.18);
-          border-color: rgba(255, 255, 255, 0.35);
-        }
-
-        @media (max-width: 850px) {
-          .btn-adjust-assumptions {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .results-cta-row {
-            flex-direction: column;
-            align-items: stretch;
-          }
-
-          .results-cta-row .button-lime {
-            justify-content: center;
-          }
-        }
-
-        .button-lime {
-          background-color: var(--awc-gold);
-          color: var(--awc-navy);
-          font-weight: 800;
-          font-size: 13px;
-          padding: 12px 18px;
-          border-radius: 12px;
-          border: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .button-lime:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(242, 198, 93, 0.25);
         }
 
         /* Invalid State Box */
@@ -1255,7 +1156,8 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           border: 1px solid var(--awc-line);
           border-radius: var(--radius-xl);
           padding: 28px;
-          margin-top: 28px;
+          margin-top: 32px;
+          margin-bottom: 24px;
           box-shadow: var(--shadow-card);
         }
 
@@ -1281,6 +1183,8 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
         .table-responsive {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          border: 1px solid #E5EBE8;
+          border-radius: 14px;
         }
 
         .schedule-table {
@@ -1292,9 +1196,10 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
 
         .schedule-table th,
         .schedule-table td {
-          padding: 12px 14px;
+          padding: 12px 16px;
           border-bottom: 1px solid #EDF3F1;
           white-space: nowrap;
+          font-variant-numeric: tabular-nums;
         }
 
         .schedule-table th {
@@ -1309,6 +1214,10 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
         .schedule-table th:first-child,
         .schedule-table td:first-child {
           text-align: left;
+        }
+
+        .schedule-table tr:last-child td {
+          border-bottom: none;
         }
 
         .schedule-table tr:hover td {
@@ -1410,7 +1319,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           border: 1px solid #C5E3DA;
           border-radius: 18px;
           padding: 20px 22px;
-          margin-bottom: 24px;
+          margin-bottom: 0;
         }
 
         .rule72-header {
@@ -1442,58 +1351,6 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
           line-height: 1.6;
           color: var(--awc-navy);
           margin: 0;
-        }
-
-        /* Collapsible Disclosure Details */
-        .disclosures-list {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .disclosure-item {
-          background: var(--awc-paper);
-          border: 1px solid #E5EBE8;
-          border-radius: 14px;
-          padding: 14px 18px;
-          font-size: 13px;
-        }
-
-        .disclosure-item summary {
-          font-weight: 800;
-          color: var(--awc-navy);
-          cursor: pointer;
-          user-select: none;
-        }
-
-        .disclosure-item summary:hover {
-          color: var(--color-text-brand);
-        }
-
-        .disclosure-content {
-          margin-top: 14px;
-          padding-top: 14px;
-          border-top: 1px solid #E5EBE8;
-          font-size: 12px;
-          line-height: 1.6;
-          color: var(--color-text-muted);
-        }
-
-        .methodology-list {
-          padding-left: 18px;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .methodology-list code {
-          background: #E8ECEB;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 11px;
-          color: var(--awc-navy);
-          font-family: monospace;
         }
       `}</style>
     </div>

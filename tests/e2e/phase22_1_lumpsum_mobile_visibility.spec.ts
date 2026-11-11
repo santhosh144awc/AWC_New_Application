@@ -250,10 +250,8 @@ test.describe('Phase 22.1 / Phase 3.1 — Lump-Sum Mobile Result Visibility & QA
     await page.locator('#toggle-lumpsum-schedule-btn').click();
     await expect(page.locator('#lumpsum-schedule-table')).not.toBeVisible();
 
-    // Methodology disclosure
+    // Methodology disclosure removed for streamlined UI
     const details = page.locator('details.disclosure-item');
-    await expect(details).toBeVisible();
-    await details.locator('summary').click();
-    await expect(details).toHaveAttribute('open', '');
+    await expect(details).toHaveCount(0);
   });
 });
