@@ -159,9 +159,38 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
       <div className="calc-layout-grid">
         {/* Input Navigation & Controls Panel */}
         <div className="calc-input-column card-surface">
-          <div className="input-tabs-header">
+          <div className="controls-header">
+            <div>
+              <h2 className="panel-title">Retirement Corpus Details</h2>
+              <p className="panel-subtitle">Enter your expenses, timeline, and existing assets across the 4 steps.</p>
+            </div>
+            <div className="header-actions-group">
+              <button
+                type="button"
+                id="load-sample-ret-accum-btn"
+                onClick={handleLoadSample}
+                className="btn-sample-pill"
+              >
+                Sample Data
+              </button>
+              {!isBlank && (
+                <button
+                  type="button"
+                  id="reset-ret-accum-btn"
+                  onClick={handleClear}
+                  className="btn-clear-pill"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="input-tabs-header" role="tablist">
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'expenses'}
               className={`tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
               onClick={() => setActiveTab('expenses')}
             >
@@ -169,6 +198,8 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'timeline'}
               className={`tab-btn ${activeTab === 'timeline' ? 'active' : ''}`}
               onClick={() => setActiveTab('timeline')}
             >
@@ -176,6 +207,8 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'assets'}
               className={`tab-btn ${activeTab === 'assets' ? 'active' : ''}`}
               onClick={() => setActiveTab('assets')}
             >
@@ -183,31 +216,13 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'funding'}
               className={`tab-btn ${activeTab === 'funding' ? 'active' : ''}`}
               onClick={() => setActiveTab('funding')}
             >
               4. SIP Strategy
             </button>
-            <button
-              type="button"
-              id="load-sample-ret-accum-btn"
-              onClick={handleLoadSample}
-              className="tab-btn"
-              style={{ marginLeft: 'auto', color: 'var(--color-brand-primary, #0f5338)', fontWeight: 700 }}
-            >
-              Sample Data
-            </button>
-            {!isBlank && (
-              <button
-                type="button"
-                id="reset-ret-accum-btn"
-                onClick={handleClear}
-                className="tab-btn"
-                style={{ color: '#64748b' }}
-              >
-                Clear
-              </button>
-            )}
           </div>
 
           <div className="tab-content-panel">
@@ -215,29 +230,32 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             {activeTab === 'expenses' && (
               <div className="tab-pane">
                 <h3 className="tab-title">Current Family Living Expenses</h3>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-household`} className="field-label">
-                    Household Living Expenses (₹/year)
-                  </label>
-                  <div className="input-currency-wrapper">
-                    <span className="currency-prefix">₹</span>
-                    <input
-                      id={`${baseId}-household`}
-                      type="number"
-                      min="100000"
-                      max="10000000"
-                      step="50000"
-                      value={form.householdExpenses}
-                      onChange={(e) => handleInputChange('householdExpenses', e.target.value)}
-                      className="number-input"
-                    />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-household`} className="field-label">
+                      Household Living Expenses (Annual)
+                    </label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-household`}
+                        type="number"
+                        placeholder="0"
+                        min="100000"
+                        max="10000000"
+                        step="50000"
+                        value={form.householdExpenses}
+                        onChange={(e) => handleInputChange('householdExpenses', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
                   </div>
                   <input
                     type="range"
                     min="200000"
                     max="5000000"
                     step="50000"
-                    value={Number(form.householdExpenses) || 1200000}
+                    value={Number(form.householdExpenses) || 200000}
                     onChange={(e) => handleInputChange('householdExpenses', e.target.value)}
                     className="range-slider"
                     aria-label="Household expenses slider"
@@ -248,22 +266,25 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-lifestyle`} className="field-label">
-                    Discretionary / Travel Expenses (₹/year)
-                  </label>
-                  <div className="input-currency-wrapper">
-                    <span className="currency-prefix">₹</span>
-                    <input
-                      id={`${baseId}-lifestyle`}
-                      type="number"
-                      min="0"
-                      max="5000000"
-                      step="25000"
-                      value={form.lifestyleExpenses}
-                      onChange={(e) => handleInputChange('lifestyleExpenses', e.target.value)}
-                      className="number-input"
-                    />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-lifestyle`} className="field-label">
+                      Discretionary / Travel Expenses (Annual)
+                    </label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-lifestyle`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        max="5000000"
+                        step="25000"
+                        value={form.lifestyleExpenses}
+                        onChange={(e) => handleInputChange('lifestyleExpenses', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -273,65 +294,92 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             {activeTab === 'timeline' && (
               <div className="tab-pane">
                 <h3 className="tab-title">Retirement Timeline &amp; Longevity</h3>
-                <div className="grid-2col">
-                  <div className="form-group">
+                <div className="field-group">
+                  <div className="field-header">
                     <label htmlFor={`${baseId}-currentAge`} className="field-label">Current Age</label>
-                    <input
-                      id={`${baseId}-currentAge`}
-                      type="number"
-                      min="18"
-                      max="75"
-                      value={form.currentAge}
-                      onChange={(e) => handleInputChange('currentAge', e.target.value)}
-                      className="number-input"
-                    />
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-currentAge`}
+                        type="number"
+                        placeholder="0"
+                        min="18"
+                        max="75"
+                        value={form.currentAge}
+                        onChange={(e) => handleInputChange('currentAge', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">Yrs</span>
+                    </div>
                   </div>
-                  <div className="form-group">
+                </div>
+
+                <div className="field-group">
+                  <div className="field-header">
                     <label htmlFor={`${baseId}-retirementAge`} className="field-label">Retirement Age</label>
-                    <input
-                      id={`${baseId}-retirementAge`}
-                      type="number"
-                      min="40"
-                      max="80"
-                      value={form.retirementAge}
-                      onChange={(e) => handleInputChange('retirementAge', e.target.value)}
-                      className="number-input"
-                    />
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-retirementAge`}
+                        type="number"
+                        placeholder="0"
+                        min="40"
+                        max="80"
+                        value={form.retirementAge}
+                        onChange={(e) => handleInputChange('retirementAge', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">Yrs</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid-2col">
-                  <div className="form-group">
+                <div className="field-group">
+                  <div className="field-header">
                     <label htmlFor={`${baseId}-lifeExp`} className="field-label">Life Expectancy Age</label>
-                    <input
-                      id={`${baseId}-lifeExp`}
-                      type="number"
-                      min="65"
-                      max="105"
-                      value={form.lifeExpectancyAge}
-                      onChange={(e) => handleInputChange('lifeExpectancyAge', e.target.value)}
-                      className="number-input"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor={`${baseId}-infPre`} className="field-label">Pre-Retirement Inflation (%)</label>
-                    <input
-                      id={`${baseId}-infPre`}
-                      type="number"
-                      min="3"
-                      max="12"
-                      step="0.5"
-                      value={form.inflationPreRetirement}
-                      onChange={(e) => handleInputChange('inflationPreRetirement', e.target.value)}
-                      className="number-input"
-                    />
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-lifeExp`}
+                        type="number"
+                        placeholder="0"
+                        min="65"
+                        max="105"
+                        value={form.lifeExpectancyAge}
+                        onChange={(e) => handleInputChange('lifeExpectancyAge', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">Yrs</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-reduction`} className="field-label">
-                    Expense Reduction at Retirement (%)
-                  </label>
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-infPre`} className="field-label">Pre-Retirement Inflation</label>
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-infPre`}
+                        type="number"
+                        placeholder="0"
+                        min="3"
+                        max="12"
+                        step="0.5"
+                        value={form.inflationPreRetirement}
+                        onChange={(e) => handleInputChange('inflationPreRetirement', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-reduction`} className="field-label">
+                      Expense Reduction at Retirement
+                    </label>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--awc-navy)' }}>
+                      {form.expenseReductionPercent || 0}%
+                    </span>
+                  </div>
                   <input
                     id={`${baseId}-reduction`}
                     type="range"
@@ -344,7 +392,6 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
                   />
                   <div className="slider-limits">
                     <span>0% (No reduction)</span>
-                    <span>Current: {form.expenseReductionPercent}%</span>
                     <span>50%</span>
                   </div>
                 </div>
@@ -354,54 +401,78 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             {/* TAB 3: Existing Assets */}
             {activeTab === 'assets' && (
               <div className="tab-pane">
-                <h3 className="tab-title">Retirement Assets Expected at Age {form.retirementAge}</h3>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-epf`} className="field-label">EPF / NPS Expected Balance (₹)</label>
-                  <input
-                    id={`${baseId}-epf`}
-                    type="number"
-                    min="0"
-                    step="100000"
-                    value={form.epfNps}
-                    onChange={(e) => handleInputChange('epfNps', e.target.value)}
-                    className="number-input"
-                  />
+                <h3 className="tab-title">Retirement Assets Expected at Age {form.retirementAge || 60}</h3>
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-epf`} className="field-label">EPF / NPS Expected Balance</label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-epf`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        step="100000"
+                        value={form.epfNps}
+                        onChange={(e) => handleInputChange('epfNps', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-gratuity`} className="field-label">Gratuity Expected (₹)</label>
-                  <input
-                    id={`${baseId}-gratuity`}
-                    type="number"
-                    min="0"
-                    step="50000"
-                    value={form.gratuity}
-                    onChange={(e) => handleInputChange('gratuity', e.target.value)}
-                    className="number-input"
-                  />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-gratuity`} className="field-label">Gratuity Expected</label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-gratuity`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        step="50000"
+                        value={form.gratuity}
+                        onChange={(e) => handleInputChange('gratuity', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-mf`} className="field-label">Existing Mutual Funds &amp; Equity (₹)</label>
-                  <input
-                    id={`${baseId}-mf`}
-                    type="number"
-                    min="0"
-                    step="100000"
-                    value={form.mutualFundsInvestments}
-                    onChange={(e) => handleInputChange('mutualFundsInvestments', e.target.value)}
-                    className="number-input"
-                  />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-mf`} className="field-label">Existing Mutual Funds &amp; Equity</label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-mf`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        step="100000"
+                        value={form.mutualFundsInvestments}
+                        onChange={(e) => handleInputChange('mutualFundsInvestments', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-fd`} className="field-label">Fixed Deposits &amp; PPF (₹)</label>
-                  <input
-                    id={`${baseId}-fd`}
-                    type="number"
-                    min="0"
-                    step="50000"
-                    value={form.fixedDeposits}
-                    onChange={(e) => handleInputChange('fixedDeposits', e.target.value)}
-                    className="number-input"
-                  />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-fd`} className="field-label">Fixed Deposits &amp; PPF</label>
+                    <div className="input-with-symbol">
+                      <span className="symbol-prefix">₹</span>
+                      <input
+                        id={`${baseId}-fd`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        step="50000"
+                        value={form.fixedDeposits}
+                        onChange={(e) => handleInputChange('fixedDeposits', e.target.value)}
+                        className="num-input"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -410,37 +481,49 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
             {activeTab === 'funding' && (
               <div className="tab-pane">
                 <h3 className="tab-title">Fresh Investment Accumulation Assumptions</h3>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-retRate`} className="field-label">
-                    Expected Equity Investment Return (% p.a.)
-                  </label>
-                  <input
-                    id={`${baseId}-retRate`}
-                    type="number"
-                    min="6"
-                    max="18"
-                    step="0.5"
-                    value={form.expectedNewInvestmentReturn}
-                    onChange={(e) => handleInputChange('expectedNewInvestmentReturn', e.target.value)}
-                    className="number-input"
-                  />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-retRate`} className="field-label">
+                      Expected Equity Investment Return
+                    </label>
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-retRate`}
+                        type="number"
+                        placeholder="0"
+                        min="6"
+                        max="18"
+                        step="0.5"
+                        value={form.expectedNewInvestmentReturn}
+                        onChange={(e) => handleInputChange('expectedNewInvestmentReturn', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">%</span>
+                    </div>
+                  </div>
                   <span className="input-hint">Long-term diversified equity benchmark: 11%–13%</span>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-stepUp`} className="field-label">
-                    Annual SIP Step-Up (%)
-                  </label>
-                  <input
-                    id={`${baseId}-stepUp`}
-                    type="number"
-                    min="0"
-                    max="25"
-                    step="1"
-                    value={form.annualStepUpRate}
-                    onChange={(e) => handleInputChange('annualStepUpRate', e.target.value)}
-                    className="number-input"
-                  />
+                <div className="field-group">
+                  <div className="field-header">
+                    <label htmlFor={`${baseId}-stepUp`} className="field-label">
+                      Annual SIP Step-Up
+                    </label>
+                    <div className="input-with-symbol">
+                      <input
+                        id={`${baseId}-stepUp`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        max="25"
+                        step="1"
+                        value={form.annualStepUpRate}
+                        onChange={(e) => handleInputChange('annualStepUpRate', e.target.value)}
+                        className="num-input"
+                      />
+                      <span className="symbol-suffix">%</span>
+                    </div>
+                  </div>
                   <span className="input-hint">Increasing your SIP with annual salary hikes dramatically reduces starting commitment</span>
                 </div>
               </div>
@@ -450,24 +533,16 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
 
         {/* Results Panel */}
         <div className="calc-results-column">
-          <div className="results-card card-surface">
-            <div className="results-header">
-              <span className="results-eyebrow">Retirement Financial Blueprint</span>
-              <h3 className="results-headline">Accumulation &amp; Deficit Roadmap</h3>
-            </div>
-
+          <div className="result-panel">
             {result ? (
               <>
-                {/* Primary Required Corpus Metric */}
-                <div className="hero-metric-box">
-                  <span className="hero-label">Total Retirement Corpus Required</span>
-                  <div className="hero-value text-brand" data-testid="target-corpus-val">
-                    {formatINR(result.totalRetirementCorpusRequired)}
-                  </div>
-                  <span className="hero-sub">
-                    Supports {result.yearsPostRetirement} years of living expenses ({formatINR(result.futureMonthlyExpenses)}/month inflated at age {form.retirementAge || 60})
-                  </span>
+                <span className="result-eyebrow">Total Retirement Corpus Required</span>
+                <div className="result-headline-value" data-testid="target-corpus-val">
+                  {formatINR(result.totalRetirementCorpusRequired)}
                 </div>
+                <p className="result-subline">
+                  Supports {result.yearsPostRetirement} years of living expenses ({formatINR(result.futureMonthlyExpenses)}/month inflated at age {form.retirementAge || 60}).
+                </p>
 
                 {/* Progress Bar */}
                 <div className="progress-section">
@@ -486,7 +561,7 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
 
                 {/* 3 Solutions Grid */}
                 <div className="funding-options-box">
-                  <h4 className="options-title">Disciplined Strategies to Bridge the Gap:</h4>
+                  <h4 className="options-title">Disciplined Strategies to Bridge the Gap</h4>
 
                   <div className="solutions-grid">
                     <div className="solution-card featured-stepup">
@@ -503,7 +578,7 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
                     </div>
 
                     <div className="solution-card">
-                      <span className="solution-name">One-Time Lump Sum Today</span>
+                      <span className="solution-name">One-Time Lump Sum</span>
                       <div className="solution-value">{formatINR(result.requiredLumpSum)}</div>
                       <span className="solution-note">Single initial investment compounding for {result.yearsUntilRetirement} years</span>
                     </div>
@@ -517,9 +592,11 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
                 </div>
               </>
             ) : (
-              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b' }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>
-                  Enter your retirement expenses and ages across the tabs or click <strong>Sample Data</strong> to preview a scenario.
+              <div className="result-empty-state">
+                <div className="empty-state-icon" aria-hidden="true">🏖️</div>
+                <h3 className="empty-state-title">Enter retirement details</h3>
+                <p className="empty-state-desc">
+                  Fill in your living expenses and timeline on the left—or click <strong>Sample Data</strong> to preview a scenario.
                 </p>
               </div>
             )}
@@ -529,270 +606,443 @@ export default function RetirementAccumulationIsland(): React.JSX.Element {
 
       <style>{`
         .retirement-accumulator-workbench {
-          margin: 2rem 0;
+          width: 100%;
           font-family: var(--font-family-body);
         }
-        .sample-banner {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          background: var(--awc-jade-soft);
-          border: 1px solid var(--awc-mint);
-          padding: 0.85rem 1.25rem;
-          border-radius: var(--radius-md, 12px);
-          margin-bottom: 1.5rem;
-          font-size: 0.9rem;
-          color: var(--awc-navy);
-        }
-        .btn-banner-reset {
-          margin-left: auto;
-          background: #2563eb;
-          color: #fff;
-          border: none;
-          padding: 0.4rem 0.85rem;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-          white-space: nowrap;
-        }
+
         .calc-layout-grid {
           display: grid;
-          grid-template-columns: 1fr 1.15fr;
-          gap: 1.5rem;
+          grid-template-columns: 1.06fr 0.94fr;
+          gap: 24px;
+          align-items: start;
         }
+
         .calc-layout-grid > div {
           min-width: 0;
         }
-        @media (max-width: 900px) {
+
+        .card-surface {
+          background: #ffffff;
+          border: 1px solid var(--awc-line);
+          border-radius: 24px;
+          padding: 28px;
+          box-shadow: 0 12px 30px rgba(23, 48, 71, 0.05);
+        }
+
+        .controls-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 18px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--awc-line);
+        }
+
+        .panel-title {
+          font-family: var(--font-family-heading);
+          font-size: 20px;
+          font-weight: 800;
+          color: var(--awc-navy);
+          margin: 0 0 4px 0;
+          letter-spacing: -0.02em;
+        }
+
+        .panel-subtitle {
+          font-size: 13px;
+          color: var(--color-text-muted);
+          margin: 0;
+        }
+
+        .header-actions-group {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .btn-sample-pill {
+          background: var(--awc-jade-soft);
+          border: 1px solid #B7DDD3;
+          color: var(--color-text-brand);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-sample-pill:hover {
+          border-color: var(--color-border-interactive);
+          background: var(--awc-mint);
+        }
+
+        .btn-clear-pill {
+          background: #ffffff;
+          border: 1px solid var(--awc-line);
+          color: var(--color-text-muted);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-clear-pill:hover {
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+        }
+
+        .input-tabs-header {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 6px;
+          background: var(--awc-paper);
+          padding: 6px;
+          border-radius: 14px;
+          border: 1px solid var(--awc-line);
+          margin-bottom: 22px;
+        }
+
+        .tab-btn {
+          background: transparent;
+          border: none;
+          padding: 9px 8px;
+          font-size: 12px;
+          font-weight: 750;
+          color: var(--color-text-muted);
+          cursor: pointer;
+          border-radius: 10px;
+          transition: all 0.15s ease;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        .tab-btn.active {
+          background: #ffffff;
+          color: var(--color-text-brand);
+          box-shadow: 0 2px 6px rgba(19, 42, 64, 0.08);
+        }
+
+        .tab-title {
+          font-size: 15px;
+          font-weight: 800;
+          margin: 0 0 16px;
+          color: var(--awc-navy);
+        }
+
+        .field-group {
+          padding-bottom: 18px;
+          margin-bottom: 18px;
+          border-bottom: 1px solid rgba(214, 228, 224, 0.65);
+        }
+
+        .field-group:last-of-type {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+
+        .field-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 10px;
+        }
+
+        .field-label {
+          font-size: 13.5px;
+          font-weight: 750;
+          color: var(--awc-navy);
+        }
+
+        .input-with-symbol {
+          display: flex;
+          align-items: center;
+          background: var(--awc-paper);
+          border: 1.5px solid var(--awc-line);
+          border-radius: 12px;
+          padding: 6px 12px;
+          min-width: 140px;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .input-with-symbol:focus-within {
+          border-color: var(--color-border-interactive);
+          box-shadow: 0 0 0 3px rgba(22, 135, 126, 0.12);
+          background: #ffffff;
+        }
+
+        .symbol-prefix,
+        .symbol-suffix {
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--color-text-muted);
+          user-select: none;
+        }
+
+        .symbol-prefix {
+          margin-right: 6px;
+        }
+
+        .symbol-suffix {
+          margin-left: 6px;
+        }
+
+        .num-input {
+          width: 100%;
+          border: none;
+          background: transparent;
+          font-family: var(--font-family-body);
+          font-size: 15px;
+          font-weight: 800;
+          color: var(--awc-navy);
+          text-align: right;
+          outline: none;
+        }
+
+        .num-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
+          font-weight: 600;
+        }
+
+        .range-slider {
+          width: 100%;
+          height: 6px;
+          border-radius: 999px;
+          background: var(--awc-line);
+          outline: none;
+          accent-color: var(--color-border-interactive);
+          cursor: pointer;
+          margin-bottom: 8px;
+        }
+
+        .slider-limits {
+          display: flex;
+          justify-content: space-between;
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--color-text-muted);
+        }
+
+        .input-hint {
+          display: block;
+          font-size: 11.5px;
+          color: var(--color-text-muted);
+          margin-top: 6px;
+        }
+
+        /* Right Result Panel — Concept C Deep Atlantic Navy */
+        .result-panel {
+          background: var(--awc-navy);
+          color: #ffffff;
+          border-radius: 24px;
+          padding: 30px;
+          box-shadow: 0 22px 46px rgba(19, 42, 64, 0.2);
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .result-eyebrow {
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.72);
+        }
+
+        .result-headline-value {
+          font-family: var(--font-family-heading);
+          font-size: clamp(30px, 4.2vw, 44px);
+          font-weight: 900;
+          line-height: 1.04;
+          letter-spacing: -0.03em;
+          color: var(--awc-gold);
+          margin-top: -6px;
+        }
+
+        .result-subline {
+          font-size: 12.5px;
+          color: rgba(255, 255, 255, 0.78);
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .progress-section {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 16px;
+          padding: 16px;
+        }
+
+        .progress-label-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 12px;
+          margin-bottom: 8px;
+          color: rgba(255, 255, 255, 0.85);
+        }
+
+        .progress-track {
+          background: rgba(255, 255, 255, 0.12);
+          height: 10px;
+          border-radius: 999px;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          background: var(--awc-mint);
+          height: 100%;
+          border-radius: 999px;
+          transition: width 0.3s ease;
+        }
+
+        .progress-details-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 11.5px;
+          color: rgba(255, 255, 255, 0.7);
+          margin-top: 8px;
+        }
+
+        .options-title {
+          font-size: 12px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          margin: 0 0 12px;
+          color: rgba(255, 255, 255, 0.75);
+        }
+
+        .solutions-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .solution-card {
+          position: relative;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 14px;
+          padding: 14px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .solution-card.featured-stepup {
+          background: rgba(93, 217, 193, 0.12);
+          border-color: rgba(93, 217, 193, 0.4);
+        }
+
+        .solution-badge {
+          align-self: flex-start;
+          background: var(--awc-mint);
+          color: var(--awc-navy);
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          padding: 2px 7px;
+          border-radius: 6px;
+          margin-bottom: 2px;
+        }
+
+        .solution-name {
+          font-size: 11px;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.72);
+          text-transform: uppercase;
+        }
+
+        .solution-value {
+          font-size: 16px;
+          font-weight: 850;
+          color: #ffffff;
+          margin: 2px 0;
+        }
+
+        .solution-card.featured-stepup .solution-value {
+          color: #5DD9C1;
+        }
+
+        .solution-note {
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.65);
+          line-height: 1.35;
+          margin-top: auto;
+        }
+
+        .insight-callout {
+          display: flex;
+          gap: 10px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          padding: 14px;
+          border-radius: 14px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.5;
+        }
+
+        .result-empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 48px 20px;
+          min-height: 280px;
+        }
+
+        .empty-state-icon {
+          font-size: 36px;
+          margin-bottom: 12px;
+          opacity: 0.9;
+        }
+
+        .empty-state-title {
+          font-family: var(--font-family-heading);
+          font-size: 18px;
+          font-weight: 800;
+          color: var(--awc-gold);
+          margin: 0 0 8px;
+        }
+
+        .empty-state-desc {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.78);
+          line-height: 1.55;
+          max-width: 320px;
+          margin: 0;
+        }
+
+        @media (max-width: 960px) {
           .calc-layout-grid {
             grid-template-columns: 1fr;
           }
         }
+
         @media (max-width: 640px) {
-          .sample-banner {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
+          .card-surface,
+          .result-panel {
+            padding: 20px;
           }
-          .btn-banner-reset {
-            margin-left: 0;
+
+          .input-tabs-header {
+            grid-template-columns: repeat(2, 1fr);
           }
-          .grid-2col {
-            grid-template-columns: 1fr !important;
-          }
-          .solutions-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        .card-surface {
-          background: var(--color-bg-surface);
-          border: 1px solid var(--color-border-subtle);
-          border-radius: var(--radius-lg, 12px);
-          padding: 1.5rem;
-        }
-        .input-tabs-header {
-          display: flex;
-          gap: 0.5rem;
-          border-bottom: 2px solid #e2e8f0;
-          margin-bottom: 1.25rem;
-          overflow-x: auto;
-        }
-        .tab-btn {
-          background: none;
-          border: none;
-          padding: 0.6rem 0.9rem;
-          font-weight: 600;
-          color: #64748b;
-          cursor: pointer;
-          border-bottom: 2px solid transparent;
-          margin-bottom: -2px;
-          white-space: nowrap;
-        }
-        .tab-btn.active {
-          color: #0f766e;
-          border-bottom-color: #0f766e;
-        }
-        .tab-title {
-          font-size: 1.1rem;
-          margin-bottom: 1rem;
-          color: #0f172a;
-        }
-        .form-group {
-          margin-bottom: 1.15rem;
-        }
-        .field-label {
-          display: block;
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: #334155;
-          margin-bottom: 0.35rem;
-        }
-        .input-currency-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-        .currency-prefix {
-          position: absolute;
-          left: 0.75rem;
-          color: #64748b;
-          font-weight: 600;
-        }
-        .number-input {
-          width: 100%;
-          padding: 0.55rem 0.75rem 0.55rem 1.75rem;
-          border: 1px solid #cbd5e1;
-          border-radius: 6px;
-          font-size: 0.95rem;
-          font-weight: 600;
-        }
-        .range-slider {
-          width: 100%;
-          margin-top: 0.5rem;
-          accent-color: #0f766e;
-        }
-        .slider-limits {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.75rem;
-          color: #64748b;
-        }
-        .grid-2col {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-        .input-hint {
-          display: block;
-          font-size: 0.75rem;
-          color: #64748b;
-          margin-top: 0.25rem;
-        }
-        .hero-metric-box {
-          background: #f0fdf4;
-          border: 1px solid #bbf7d0;
-          border-radius: 8px;
-          padding: 1.25rem;
-          text-align: center;
-          margin-bottom: 1.25rem;
-        }
-        .hero-label {
-          font-size: 0.85rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: #166534;
-        }
-        .hero-value {
-          font-size: 2rem;
-          font-weight: 800;
-          color: #15803d;
-          margin: 0.35rem 0;
-        }
-        .hero-sub {
-          font-size: 0.85rem;
-          color: #166534;
-        }
-        .progress-section {
-          margin-bottom: 1.25rem;
-        }
-        .progress-label-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.85rem;
-          margin-bottom: 0.35rem;
-          color: #334155;
-        }
-        .progress-track {
-          background: #e2e8f0;
-          height: 10px;
-          border-radius: 5px;
-          overflow: hidden;
-        }
-        .progress-fill {
-          background: #0f766e;
-          height: 100%;
-          border-radius: 5px;
-          transition: width 0.3s ease;
-        }
-        .progress-details-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.8rem;
-          color: #64748b;
-          margin-top: 0.35rem;
-        }
-        .funding-options-box {
-          margin-bottom: 1.25rem;
-        }
-        .options-title {
-          font-size: 0.95rem;
-          font-weight: 700;
-          margin-bottom: 0.75rem;
-          color: #0f172a;
-        }
-        .solutions-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.75rem;
-        }
-        @media (max-width: 600px) {
+
           .solutions-grid {
             grid-template-columns: 1fr;
           }
-        }
-        .solution-card {
-          position: relative;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 0.85rem;
-          display: flex;
-          flex-direction: column;
-        }
-        .solution-card.featured-stepup {
-          background: #f0fdfa;
-          border-color: #99f6e4;
-        }
-        .solution-badge {
-          position: absolute;
-          top: -8px;
-          right: 8px;
-          background: #0f766e;
-          color: #fff;
-          font-size: 0.65rem;
-          font-weight: 700;
-          padding: 2px 6px;
-          border-radius: 4px;
-        }
-        .solution-name {
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: #475569;
-          text-transform: uppercase;
-        }
-        .solution-value {
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: #0f172a;
-          margin: 0.25rem 0;
-        }
-        .solution-note {
-          font-size: 0.7rem;
-          color: #64748b;
-          line-height: 1.3;
-          margin-top: auto;
-        }
-        .insight-callout {
-          display: flex;
-          gap: 0.75rem;
-          background: #f1f5f9;
-          border-left: 4px solid #0f766e;
-          padding: 0.85rem 1rem;
-          border-radius: 4px;
-          font-size: 0.85rem;
-          color: #334155;
-          line-height: 1.5;
         }
       `}</style>
     </div>

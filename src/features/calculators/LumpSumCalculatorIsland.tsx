@@ -205,7 +205,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-principal-num`}
                     value={inputs.principal}
-                    placeholder="100000"
+                    placeholder="0"
                     min={5000}
                     max={10000000}
                     step={5000}
@@ -248,7 +248,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-return-num`}
                     value={inputs.annualReturnPercent}
-                    placeholder="12"
+                    placeholder="0"
                     min={0}
                     max={50}
                     step={0.5}
@@ -292,7 +292,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-years-num`}
                     value={inputs.years}
-                    placeholder="10"
+                    placeholder="0"
                     min={1}
                     max={40}
                     step={1}
@@ -415,7 +415,7 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
                   className="btn-toggle-schedule"
                   aria-expanded={showSchedule}
                 >
-                  {showSchedule ? '▲ Hide Year-by-Year Growth' : '▼ View Year-by-Year Growth'}
+                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
                 </button>
               </div>
 
@@ -1145,6 +1145,11 @@ export default function LumpSumCalculatorIsland(): React.JSX.Element {
         .btn-toggle-schedule:hover {
           background: rgba(255, 255, 255, 0.15);
           border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .num-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
+          font-weight: 600;
         }
 
         .result-foot {

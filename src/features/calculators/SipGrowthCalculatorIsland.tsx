@@ -384,6 +384,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                   id="load-sample-sip-growth-btn"
                   onClick={handleLoadSample}
                   className="reset-scenario-btn"
+                  style={{ background: 'var(--awc-jade-soft)', borderColor: '#B7DDD3', color: 'var(--color-text-brand)' }}
                 >
                   Sample Data
                 </button>
@@ -413,7 +414,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-monthly-num"
                     value={inputs.monthlySIP}
-                    placeholder="10000"
+                    placeholder="0"
                     min={0}
                     max={1000000}
                     step={500}
@@ -456,7 +457,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-sipyears-num"
                     value={inputs.sipDurationYears}
-                    placeholder="10"
+                    placeholder="0"
                     min={1}
                     max={40}
                     step={1}
@@ -500,7 +501,7 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id="growth-return-num"
                     value={inputs.annualReturnPercent}
-                    placeholder="12"
+                    placeholder="0"
                     min={0}
                     max={50}
                     step={0.5}
@@ -1381,6 +1382,11 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
           padding: 4px;
         }
 
+        .number-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
+          font-weight: 600;
+        }
+
         .number-input-sm {
           width: 70px;
           border: none;
@@ -1927,19 +1933,21 @@ export default function SipGrowthCalculatorIsland(): React.JSX.Element {
 
         .btn-toggle-schedule {
           width: 100%;
-          font-size: 12.5px;
-          font-weight: 750;
-          color: var(--awc-gold);
-          background-color: rgba(242, 198, 93, 0.12);
-          border: 1px solid rgba(242, 198, 93, 0.3);
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.18);
           border-radius: 12px;
-          padding: 10px 16px;
+          color: #ffffff;
+          padding: 12px 14px;
+          font-size: 12.5px;
+          font-weight: 800;
           cursor: pointer;
           transition: all 0.15s ease;
+          text-align: center;
         }
 
         .btn-toggle-schedule:hover {
-          background-color: rgba(242, 198, 93, 0.22);
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.35);
         }
 
         /* Unavailable State Card */

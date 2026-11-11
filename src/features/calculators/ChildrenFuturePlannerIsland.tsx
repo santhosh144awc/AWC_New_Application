@@ -405,7 +405,7 @@ export const ChildrenFuturePlannerIsland: React.FC = () => {
             onClick={handleLoadExample}
             data-testid="btn-load-family-example"
           >
-            Load Illustrative Family Example
+            Sample Data
           </button>
           {(children.length > 0 || milestones.length > 0 || existingInvestments.length > 0) && (
             <button
@@ -414,7 +414,7 @@ export const ChildrenFuturePlannerIsland: React.FC = () => {
               onClick={handleClearAll}
               data-testid="btn-clear-planner"
             >
-              Clear All Entries
+              Clear
             </button>
           )}
         </div>
@@ -1250,7 +1250,7 @@ export const ChildrenFuturePlannerIsland: React.FC = () => {
                     onClick={() => setIsScheduleExpanded(!isScheduleExpanded)}
                     aria-expanded={isScheduleExpanded}
                   >
-                    {isScheduleExpanded ? 'Hide Schedule Table ↑' : 'Show Schedule Table ↓'}
+                    {isScheduleExpanded ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
                   </button>
                 </div>
 

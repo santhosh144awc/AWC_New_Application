@@ -4,7 +4,7 @@ import {
   type LoanPrepaymentVsInvestmentResult,
   type OneTimeSurplusEntry,
 } from '../../domain/finance/loanPrepaymentVsInvestment';
-import { formatINR, formatIndianCompact, formatPercentage } from '../../lib/formatters';
+import { formatINR, formatIndianCompact } from '../../lib/formatters';
 
 interface OneTimeUIItem {
   id: string;
@@ -349,30 +349,32 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
         {/* Left Column: Form Controls (1.08fr) */}
         <div className="calc-controls-col">
           <div className="calc-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+            <div className="controls-header">
               <div>
                 <h3 className="card-section-title" style={{ marginBottom: '2px' }}>Loan &amp; Investment Details</h3>
                 <p className="card-section-desc" style={{ marginBottom: 0 }}>
                   Enter your loan balance, monthly surplus, and expected return.
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="header-actions-group">
                 <button
                   type="button"
-                  className="workbench-reset-btn"
+                  className="btn-sample-pill"
                   id="load-sample-loan-calc-btn"
                   onClick={handleLoadSample}
                 >
                   Sample Data
                 </button>
-                <button
-                  type="button"
-                  className="workbench-reset-btn"
-                  id="reset-loan-calc-btn"
-                  onClick={handleReset}
-                >
-                  Clear
-                </button>
+                {!isBlank && (
+                  <button
+                    type="button"
+                    className="btn-clear-pill"
+                    id="reset-loan-calc-btn"
+                    onClick={handleReset}
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 
@@ -382,23 +384,23 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
                 <label htmlFor={`${baseId}-principal`} className="input-label">
                   Outstanding Home Loan Balance
                 </label>
-                <span className="input-hint">{formatIndianCompact(isPrincipalValid ? principalNum : 0)}</span>
-              </div>
-              <div className="input-affix-wrapper">
-                <span className="input-prefix">₹</span>
-                <input
-                  id={`${baseId}-principal`}
-                  type="number"
-                  inputMode="numeric"
-                  className={`input-field ${!isPrincipalValid && principalTrimmed !== '' ? 'input-error' : ''}`}
-                  value={inputs.principal}
-                  onChange={(e) => handleInputChange('principal', e.target.value)}
-                  min={10000}
-                  max={100000000}
-                  step={10000}
-                  aria-describedby={`${baseId}-principal-hint`}
-                  aria-invalid={!isPrincipalValid && principalTrimmed !== ''}
-                />
+                <div className="input-with-symbol">
+                  <span className="symbol-prefix" aria-hidden="true">₹</span>
+                  <input
+                    id={`${baseId}-principal`}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="0"
+                    className={`num-input ${!isPrincipalValid && principalTrimmed !== '' ? 'input-error' : ''}`}
+                    value={inputs.principal}
+                    onChange={(e) => handleInputChange('principal', e.target.value)}
+                    min={10000}
+                    max={100000000}
+                    step={10000}
+                    aria-describedby={`${baseId}-principal-hint`}
+                    aria-invalid={!isPrincipalValid && principalTrimmed !== ''}
+                  />
+                </div>
               </div>
               <input
                 id={`${baseId}-principal-slider`}
@@ -432,23 +434,23 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
                 <label htmlFor={`${baseId}-loan-rate`} className="input-label">
                   Annual Loan Interest Rate
                 </label>
-                <span className="input-hint">{formatPercentage(isLoanRateValid ? loanRateNum : 0)}</span>
-              </div>
-              <div className="input-affix-wrapper">
-                <input
-                  id={`${baseId}-loan-rate`}
-                  type="number"
-                  inputMode="decimal"
-                  className={`input-field ${!isLoanRateValid && loanRateTrimmed !== '' ? 'input-error' : ''}`}
-                  value={inputs.annualLoanInterestRatePercent}
-                  onChange={(e) => handleInputChange('annualLoanInterestRatePercent', e.target.value)}
-                  min={0}
-                  max={30}
-                  step={0.1}
-                  aria-describedby={`${baseId}-loan-rate-hint`}
-                  aria-invalid={!isLoanRateValid && loanRateTrimmed !== ''}
-                />
-                <span className="input-suffix">% p.a.</span>
+                <div className="input-with-symbol">
+                  <input
+                    id={`${baseId}-loan-rate`}
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="0"
+                    className={`num-input ${!isLoanRateValid && loanRateTrimmed !== '' ? 'input-error' : ''}`}
+                    value={inputs.annualLoanInterestRatePercent}
+                    onChange={(e) => handleInputChange('annualLoanInterestRatePercent', e.target.value)}
+                    min={0}
+                    max={30}
+                    step={0.1}
+                    aria-describedby={`${baseId}-loan-rate-hint`}
+                    aria-invalid={!isLoanRateValid && loanRateTrimmed !== ''}
+                  />
+                  <span className="symbol-suffix" aria-hidden="true">%</span>
+                </div>
               </div>
               <input
                 id={`${baseId}-loan-rate-slider`}
@@ -480,25 +482,25 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
             <div className="input-group">
               <div className="input-header">
                 <label htmlFor={`${baseId}-tenure`} className="input-label">
-                  Remaining Loan Tenure (Years)
+                  Remaining Loan Tenure {isTenureValid ? `(${tenureMonths} Months)` : ''}
                 </label>
-                <span className="input-hint">{tenureMonths} Months ({inputs.remainingTenureYears} Yrs)</span>
-              </div>
-              <div className="input-affix-wrapper">
-                <input
-                  id={`${baseId}-tenure`}
-                  type="number"
-                  inputMode="numeric"
-                  className={`input-field ${!isTenureValid && tenureYearsTrimmed !== '' ? 'input-error' : ''}`}
-                  value={inputs.remainingTenureYears}
-                  onChange={(e) => handleInputChange('remainingTenureYears', e.target.value)}
-                  min={1}
-                  max={30}
-                  step={1}
-                  aria-describedby={`${baseId}-tenure-hint`}
-                  aria-invalid={!isTenureValid && tenureYearsTrimmed !== ''}
-                />
-                <span className="input-suffix">Years left</span>
+                <div className="input-with-symbol">
+                  <input
+                    id={`${baseId}-tenure`}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="0"
+                    className={`num-input ${!isTenureValid && tenureYearsTrimmed !== '' ? 'input-error' : ''}`}
+                    value={inputs.remainingTenureYears}
+                    onChange={(e) => handleInputChange('remainingTenureYears', e.target.value)}
+                    min={1}
+                    max={30}
+                    step={1}
+                    aria-describedby={`${baseId}-tenure-hint`}
+                    aria-invalid={!isTenureValid && tenureYearsTrimmed !== ''}
+                  />
+                  <span className="symbol-suffix" aria-hidden="true">Yrs</span>
+                </div>
               </div>
               <input
                 id={`${baseId}-tenure-slider`}
@@ -532,23 +534,23 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
                 <label htmlFor={`${baseId}-surplus`} className="input-label">
                   Extra Monthly Household Cash Surplus
                 </label>
-                <span className="input-hint">{formatIndianCompact(isSurplusValid ? surplusNum : 0)}</span>
-              </div>
-              <div className="input-affix-wrapper">
-                <span className="input-prefix">₹</span>
-                <input
-                  id={`${baseId}-surplus`}
-                  type="number"
-                  inputMode="numeric"
-                  className={`input-field ${!isSurplusValid && surplusTrimmed !== '' ? 'input-error' : ''}`}
-                  value={inputs.monthlySurplus}
-                  onChange={(e) => handleInputChange('monthlySurplus', e.target.value)}
-                  min={0}
-                  max={1000000}
-                  step={1000}
-                  aria-describedby={`${baseId}-surplus-hint`}
-                  aria-invalid={!isSurplusValid && surplusTrimmed !== ''}
-                />
+                <div className="input-with-symbol">
+                  <span className="symbol-prefix" aria-hidden="true">₹</span>
+                  <input
+                    id={`${baseId}-surplus`}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="0"
+                    className={`num-input ${!isSurplusValid && surplusTrimmed !== '' ? 'input-error' : ''}`}
+                    value={inputs.monthlySurplus}
+                    onChange={(e) => handleInputChange('monthlySurplus', e.target.value)}
+                    min={0}
+                    max={1000000}
+                    step={1000}
+                    aria-describedby={`${baseId}-surplus-hint`}
+                    aria-invalid={!isSurplusValid && surplusTrimmed !== ''}
+                  />
+                </div>
               </div>
               <input
                 id={`${baseId}-surplus-slider`}
@@ -582,23 +584,23 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
                 <label htmlFor={`${baseId}-return`} className="input-label">
                   Assumed Annual Investment Return (EAR)
                 </label>
-                <span className="input-hint">{formatPercentage(isReturnValid ? returnNum : 0)}</span>
-              </div>
-              <div className="input-affix-wrapper">
-                <input
-                  id={`${baseId}-return`}
-                  type="number"
-                  inputMode="decimal"
-                  className={`input-field ${!isReturnValid && returnTrimmed !== '' ? 'input-error' : ''}`}
-                  value={inputs.annualInvestmentReturnPercent}
-                  onChange={(e) => handleInputChange('annualInvestmentReturnPercent', e.target.value)}
-                  min={0}
-                  max={50}
-                  step={0.5}
-                  aria-describedby={`${baseId}-return-hint`}
-                  aria-invalid={!isReturnValid && returnTrimmed !== ''}
-                />
-                <span className="input-suffix">% p.a.</span>
+                <div className="input-with-symbol">
+                  <input
+                    id={`${baseId}-return`}
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="0"
+                    className={`num-input ${!isReturnValid && returnTrimmed !== '' ? 'input-error' : ''}`}
+                    value={inputs.annualInvestmentReturnPercent}
+                    onChange={(e) => handleInputChange('annualInvestmentReturnPercent', e.target.value)}
+                    min={0}
+                    max={50}
+                    step={0.5}
+                    aria-describedby={`${baseId}-return-hint`}
+                    aria-invalid={!isReturnValid && returnTrimmed !== ''}
+                  />
+                  <span className="symbol-suffix" aria-hidden="true">%</span>
+                </div>
               </div>
               <input
                 id={`${baseId}-return-slider`}
@@ -1308,21 +1310,126 @@ export default function LoanPrepaymentVsInvestmentIsland(): React.JSX.Element {
           margin: 0;
         }
 
+        .controls-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 20px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--awc-line);
+        }
+
+        .header-actions-group {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .btn-sample-pill {
+          background: var(--awc-jade-soft);
+          border: 1px solid #B7DDD3;
+          color: var(--color-text-brand);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-sample-pill:hover {
+          border-color: var(--color-border-interactive);
+          background: var(--awc-mint);
+        }
+
+        .btn-clear-pill {
+          background: #ffffff;
+          border: 1px solid var(--awc-line);
+          color: var(--color-text-muted);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-clear-pill:hover {
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+        }
+
         .input-group {
-          margin-bottom: 22px;
+          padding-bottom: 20px;
+          margin-bottom: 20px;
+          border-bottom: 1px solid rgba(214, 228, 224, 0.65);
         }
 
         .input-header {
           display: flex;
           justify-content: space-between;
-          align-items: baseline;
-          margin-bottom: 6px;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
         }
 
         .input-label {
           font-size: 13.5px;
           font-weight: 750;
           color: var(--awc-navy);
+        }
+
+        .input-with-symbol {
+          display: flex;
+          align-items: center;
+          background: var(--awc-paper);
+          border: 1.5px solid var(--awc-line);
+          border-radius: 12px;
+          padding: 6px 12px;
+          min-width: 140px;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .input-with-symbol:focus-within {
+          border-color: var(--color-border-interactive);
+          box-shadow: 0 0 0 3px rgba(22, 135, 126, 0.12);
+          background: #ffffff;
+        }
+
+        .symbol-prefix,
+        .symbol-suffix {
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--color-text-muted);
+          user-select: none;
+        }
+
+        .symbol-prefix {
+          margin-right: 6px;
+        }
+
+        .symbol-suffix {
+          margin-left: 6px;
+        }
+
+        .num-input {
+          width: 100%;
+          border: none;
+          background: transparent;
+          font-family: var(--font-family-body);
+          font-size: 15px;
+          font-weight: 800;
+          color: var(--awc-navy);
+          text-align: right;
+          outline: none;
+        }
+
+        .num-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
+          font-weight: 600;
         }
 
         .input-hint {

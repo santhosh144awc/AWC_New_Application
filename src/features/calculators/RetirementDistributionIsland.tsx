@@ -92,14 +92,17 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
       <div className="calc-layout-grid">
         {/* Input Panel */}
         <div className="calc-input-column card-surface">
-          <div className="panel-title-row">
-            <h3 className="panel-heading">Retirement Decumulation Inputs</h3>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="controls-header">
+            <div>
+              <h2 className="panel-title">Retirement Decumulation Details</h2>
+              <p className="panel-subtitle">Enter your desired monthly retirement expense and horizon.</p>
+            </div>
+            <div className="header-actions-group">
               <button type="button" id="load-sample-ret-dist-btn" onClick={handleLoadSample} className="btn-sample-pill">
                 Sample Data
               </button>
               {!isBlank && (
-                <button type="button" id="reset-ret-dist-btn" onClick={handleClear} className="btn-reset-text">
+                <button type="button" id="reset-ret-dist-btn" onClick={handleClear} className="btn-clear-pill">
                   Clear
                 </button>
               )}
@@ -107,23 +110,25 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
           </div>
 
           {/* Monthly Living Expense */}
-          <div className="form-group">
-            <label htmlFor={`${baseId}-monthlyExp`} className="field-label">
-              Desired Starting Monthly Pension / Expenses (₹)
-            </label>
-            <div className="input-currency-wrapper">
-              <span className="currency-prefix">₹</span>
-              <input
-                id={`${baseId}-monthlyExp`}
-                type="number"
-                placeholder="80000"
-                min="10000"
-                max="1000000"
-                step="5000"
-                value={form.monthlyRetirementExpense}
-                onChange={(e) => handleInputChange('monthlyRetirementExpense', e.target.value)}
-                className="number-input"
-              />
+          <div className="field-group">
+            <div className="field-header">
+              <label htmlFor={`${baseId}-monthlyExp`} className="field-label">
+                Desired Monthly Pension / Expenses
+              </label>
+              <div className="input-with-symbol">
+                <span className="symbol-prefix">₹</span>
+                <input
+                  id={`${baseId}-monthlyExp`}
+                  type="number"
+                  placeholder="0"
+                  min="10000"
+                  max="1000000"
+                  step="5000"
+                  value={form.monthlyRetirementExpense}
+                  onChange={(e) => handleInputChange('monthlyRetirementExpense', e.target.value)}
+                  className="num-input"
+                />
+              </div>
             </div>
             <input
               type="range"
@@ -141,33 +146,71 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
             </div>
           </div>
 
-          {/* Retirement Age & Life Expectancy */}
-          <div className="grid-2col">
-            <div className="form-group">
+          {/* Retirement Age */}
+          <div className="field-group">
+            <div className="field-header">
               <label htmlFor={`${baseId}-retAge`} className="field-label">Retirement Age</label>
-              <input
-                id={`${baseId}-retAge`}
-                type="number"
-                placeholder="60"
-                min="45"
-                max="75"
-                value={form.retirementAge}
-                onChange={(e) => handleInputChange('retirementAge', e.target.value)}
-                className="number-input"
-              />
+              <div className="input-with-symbol">
+                <input
+                  id={`${baseId}-retAge`}
+                  type="number"
+                  placeholder="0"
+                  min="45"
+                  max="75"
+                  value={form.retirementAge}
+                  onChange={(e) => handleInputChange('retirementAge', e.target.value)}
+                  className="num-input"
+                />
+                <span className="symbol-suffix">Yrs</span>
+              </div>
             </div>
-            <div className="form-group">
+            <input
+              type="range"
+              min="45"
+              max="75"
+              step="1"
+              value={Number(form.retirementAge) || 60}
+              onChange={(e) => handleInputChange('retirementAge', e.target.value)}
+              className="range-slider"
+              aria-label="Retirement age slider"
+            />
+            <div className="slider-limits">
+              <span>45 Years</span>
+              <span>75 Years</span>
+            </div>
+          </div>
+
+          {/* Life Expectancy */}
+          <div className="field-group">
+            <div className="field-header">
               <label htmlFor={`${baseId}-lifeExp`} className="field-label">Life Expectancy</label>
-              <input
-                id={`${baseId}-lifeExp`}
-                type="number"
-                placeholder="90"
-                min="65"
-                max="100"
-                value={form.lifeExpectancy}
-                onChange={(e) => handleInputChange('lifeExpectancy', e.target.value)}
-                className="number-input"
-              />
+              <div className="input-with-symbol">
+                <input
+                  id={`${baseId}-lifeExp`}
+                  type="number"
+                  placeholder="0"
+                  min="65"
+                  max="100"
+                  value={form.lifeExpectancy}
+                  onChange={(e) => handleInputChange('lifeExpectancy', e.target.value)}
+                  className="num-input"
+                />
+                <span className="symbol-suffix">Yrs</span>
+              </div>
+            </div>
+            <input
+              type="range"
+              min="65"
+              max="100"
+              step="1"
+              value={Number(form.lifeExpectancy) || 90}
+              onChange={(e) => handleInputChange('lifeExpectancy', e.target.value)}
+              className="range-slider"
+              aria-label="Life expectancy slider"
+            />
+            <div className="slider-limits">
+              <span>65 Years</span>
+              <span>100 Years</span>
             </div>
           </div>
 
@@ -185,72 +228,89 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
               onClick={() => setShowAssumptions(!showAssumptions)}
               aria-expanded={showAssumptions}
             >
-              {showAssumptions ? 'Hide Return & Inflation Assumptions ▲' : 'Customize Return & Inflation Assumptions ▼'}
+              {showAssumptions ? '▲ Hide Return & Inflation Assumptions' : '▼ Customize Return & Inflation Assumptions'}
             </button>
           </div>
 
           {showAssumptions && (
             <div className="assumptions-box">
-              <div className="form-group">
-                <label htmlFor={`${baseId}-inf`} className="field-label">Assumed Inflation Rate (% p.a.)</label>
-                <input
-                  id={`${baseId}-inf`}
-                  type="number"
-                  placeholder="6.0"
-                  min="4"
-                  max="10"
-                  step="0.5"
-                  value={form.inflationRate}
-                  onChange={(e) => handleInputChange('inflationRate', e.target.value)}
-                  className="number-input"
-                />
+              <div className="field-group">
+                <div className="field-header">
+                  <label htmlFor={`${baseId}-inf`} className="field-label">Assumed Inflation Rate</label>
+                  <div className="input-with-symbol">
+                    <input
+                      id={`${baseId}-inf`}
+                      type="number"
+                      placeholder="0"
+                      min="4"
+                      max="10"
+                      step="0.5"
+                      value={form.inflationRate}
+                      onChange={(e) => handleInputChange('inflationRate', e.target.value)}
+                      className="num-input"
+                    />
+                    <span className="symbol-suffix">%</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid-3col">
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-b1Ret`} className="field-label">B1 Return (%)</label>
-                  <input
-                    id={`${baseId}-b1Ret`}
-                    type="number"
-                    placeholder="6.0"
-                    min="3"
-                    max="8"
-                    step="0.5"
-                    value={form.bucket1Return}
-                    onChange={(e) => handleInputChange('bucket1Return', e.target.value)}
-                    className="number-input"
-                  />
-                  <span className="input-hint">Liquid</span>
+              <div className="field-group">
+                <div className="field-header">
+                  <label htmlFor={`${baseId}-b1Ret`} className="field-label">Bucket 1 Return (Liquid)</label>
+                  <div className="input-with-symbol">
+                    <input
+                      id={`${baseId}-b1Ret`}
+                      type="number"
+                      placeholder="0"
+                      min="3"
+                      max="8"
+                      step="0.5"
+                      value={form.bucket1Return}
+                      onChange={(e) => handleInputChange('bucket1Return', e.target.value)}
+                      className="num-input"
+                    />
+                    <span className="symbol-suffix">%</span>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-b2Ret`} className="field-label">B2 Return (%)</label>
-                  <input
-                    id={`${baseId}-b2Ret`}
-                    type="number"
-                    placeholder="8.0"
-                    min="5"
-                    max="11"
-                    step="0.5"
-                    value={form.bucket2Return}
-                    onChange={(e) => handleInputChange('bucket2Return', e.target.value)}
-                    className="number-input"
-                  />
-                  <span className="input-hint">Hybrid/Debt</span>
+              </div>
+
+              <div className="field-group">
+                <div className="field-header">
+                  <label htmlFor={`${baseId}-b2Ret`} className="field-label">Bucket 2 Return (Hybrid/Debt)</label>
+                  <div className="input-with-symbol">
+                    <input
+                      id={`${baseId}-b2Ret`}
+                      type="number"
+                      placeholder="0"
+                      min="5"
+                      max="11"
+                      step="0.5"
+                      value={form.bucket2Return}
+                      onChange={(e) => handleInputChange('bucket2Return', e.target.value)}
+                      className="num-input"
+                    />
+                    <span className="symbol-suffix">%</span>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor={`${baseId}-b3Ret`} className="field-label">B3 Return (%)</label>
-                  <input
-                    id={`${baseId}-b3Ret`}
-                    type="number"
-                    placeholder="10.0"
-                    min="8"
-                    max="15"
-                    step="0.5"
-                    value={form.bucket3Return}
-                    onChange={(e) => handleInputChange('bucket3Return', e.target.value)}
-                    className="number-input"
-                  />
-                  <span className="input-hint">Equity</span>
+              </div>
+
+              <div className="field-group">
+                <div className="field-header">
+                  <label htmlFor={`${baseId}-b3Ret`} className="field-label">Bucket 3 Return (Equity)</label>
+                  <div className="input-with-symbol">
+                    <input
+                      id={`${baseId}-b3Ret`}
+                      type="number"
+                      placeholder="0"
+                      min="8"
+                      max="15"
+                      step="0.5"
+                      value={form.bucket3Return}
+                      onChange={(e) => handleInputChange('bucket3Return', e.target.value)}
+                      className="num-input"
+                    />
+                    <span className="symbol-suffix">%</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -259,24 +319,16 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
 
         {/* Results Panel */}
         <div className="calc-results-column">
-          <div className="results-card card-surface">
-            <div className="results-header">
-              <span className="results-eyebrow">Strategy Results</span>
-              <h3 className="results-headline">Three-Bucket Allocation Architecture</h3>
-            </div>
-
+          <div className="result-panel">
             {result ? (
               <>
-                {/* Total Required Investment Hero Metric */}
-                <div className="hero-metric-box">
-                  <span className="hero-label">Total Capital Required at Age {form.retirementAge}</span>
-                  <div className="hero-value text-brand" data-testid="total-distribution-corpus">
-                    {formatINR(result.totalInvestmentRequiredToday)}
-                  </div>
-                  <span className="hero-sub">
-                    Weighted post-tax return: <strong>{result.weightedAveragePostTaxReturn}% p.a.</strong> · Real Return: <strong>{result.overallRealReturn}% p.a.</strong>
-                  </span>
+                <span className="result-eyebrow">Total Capital Required at Age {form.retirementAge}</span>
+                <div className="result-headline-value" data-testid="total-distribution-corpus">
+                  {formatINR(result.totalInvestmentRequiredToday)}
                 </div>
+                <p className="result-subline">
+                  Weighted post-tax return: <strong>{result.weightedAveragePostTaxReturn}% p.a.</strong> · Real Return: <strong>{result.overallRealReturn}% p.a.</strong>
+                </p>
 
                 {/* Allocation Visual Bar */}
                 <div className="allocation-bar-section">
@@ -356,9 +408,11 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
                 </div>
               </>
             ) : (
-              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b' }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>
-                  Enter your desired monthly retirement expense and ages or click <strong>Sample Data</strong> to preview a scenario.
+              <div className="result-empty-state">
+                <div className="empty-state-icon" aria-hidden="true">🪣</div>
+                <h3 className="empty-state-title">Enter retirement income details</h3>
+                <p className="empty-state-desc">
+                  Fill in your desired monthly retirement expense and horizon on the left—or click <strong>Sample Data</strong> to preview a scenario.
                 </p>
               </div>
             )}
@@ -368,307 +422,429 @@ export default function RetirementDistributionIsland(): React.JSX.Element {
 
       <style>{`
         .retirement-dist-workbench {
-          margin: 2rem 0;
+          width: 100%;
           font-family: var(--font-family-body);
         }
-        .sample-banner {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          background: var(--awc-jade-soft);
-          border: 1px solid var(--awc-mint);
-          padding: 0.85rem 1.25rem;
-          border-radius: var(--radius-md, 12px);
-          margin-bottom: 1.5rem;
-          font-size: 0.9rem;
-          color: var(--awc-navy);
-        }
-        .btn-banner-reset {
-          margin-left: auto;
-          background: #16a34a;
-          color: #fff;
-          border: none;
-          padding: 0.4rem 0.85rem;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-          white-space: nowrap;
-        }
+
         .calc-layout-grid {
           display: grid;
-          grid-template-columns: 1fr 1.25fr;
-          gap: 1.5rem;
+          grid-template-columns: 1.06fr 0.94fr;
+          gap: 24px;
+          align-items: start;
         }
+
         .calc-layout-grid > div {
           min-width: 0;
         }
-        @media (max-width: 900px) {
-          .calc-layout-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-        @media (max-width: 640px) {
-          .sample-banner {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-          }
-          .btn-banner-reset {
-            margin-left: 0;
-          }
-          .grid-2col {
-            grid-template-columns: 1fr !important;
-          }
-          .grid-3col {
-            grid-template-columns: 1fr !important;
-          }
-          .buckets-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
+
         .card-surface {
-          background: var(--color-bg-surface);
-          border: 1px solid var(--color-border-subtle);
-          border-radius: var(--radius-lg, 12px);
-          padding: 1.5rem;
+          background: #ffffff;
+          border: 1px solid var(--awc-line);
+          border-radius: 24px;
+          padding: 28px;
+          box-shadow: 0 12px 30px rgba(23, 48, 71, 0.05);
         }
-        .panel-title-row {
+
+        .controls-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 22px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--awc-line);
+        }
+
+        .panel-title {
+          font-family: var(--font-family-heading);
+          font-size: 20px;
+          font-weight: 800;
+          color: var(--awc-navy);
+          margin: 0 0 4px 0;
+          letter-spacing: -0.02em;
+        }
+
+        .panel-subtitle {
+          font-size: 13px;
+          color: var(--color-text-muted);
+          margin: 0;
+        }
+
+        .header-actions-group {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .btn-sample-pill {
+          background: var(--awc-jade-soft);
+          border: 1px solid #B7DDD3;
+          color: var(--color-text-brand);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-sample-pill:hover {
+          border-color: var(--color-border-interactive);
+          background: var(--awc-mint);
+        }
+
+        .btn-clear-pill {
+          background: #ffffff;
+          border: 1px solid var(--awc-line);
+          color: var(--color-text-muted);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 7px 13px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+
+        .btn-clear-pill:hover {
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+        }
+
+        .field-group {
+          padding-bottom: 18px;
+          margin-bottom: 18px;
+          border-bottom: 1px solid rgba(214, 228, 224, 0.65);
+        }
+
+        .field-group:last-of-type {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+
+        .field-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.25rem;
+          gap: 12px;
+          margin-bottom: 10px;
         }
-        .panel-heading {
-          font-size: 1.1rem;
-          color: #0f172a;
-          font-weight: 700;
-        }
-        .btn-sample-pill {
-          background: var(--awc-jade-soft, #E6F4F1);
-          color: var(--color-brand-primary, #0f5338);
-          border: 1px solid var(--awc-line, #D6E4E0);
-          border-radius: 8px;
-          padding: 5px 12px;
-          font-weight: 700;
-          cursor: pointer;
-          font-size: 0.82rem;
-        }
-        .btn-reset-text {
-          background: none;
-          border: 1px solid #cbd5e1;
-          border-radius: 8px;
-          padding: 5px 10px;
-          color: #64748b;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 0.82rem;
-        }
-        .form-group {
-          margin-bottom: 1.15rem;
-        }
+
         .field-label {
-          display: block;
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: #334155;
-          margin-bottom: 0.35rem;
+          font-size: 13.5px;
+          font-weight: 750;
+          color: var(--awc-navy);
         }
-        .input-currency-wrapper {
-          position: relative;
+
+        .input-with-symbol {
           display: flex;
           align-items: center;
+          background: var(--awc-paper);
+          border: 1.5px solid var(--awc-line);
+          border-radius: 12px;
+          padding: 6px 12px;
+          min-width: 140px;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .currency-prefix {
-          position: absolute;
-          left: 0.75rem;
-          color: #64748b;
-          font-weight: 600;
+
+        .input-with-symbol:focus-within {
+          border-color: var(--color-border-interactive);
+          box-shadow: 0 0 0 3px rgba(22, 135, 126, 0.12);
+          background: #ffffff;
         }
-        .number-input {
+
+        .symbol-prefix,
+        .symbol-suffix {
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--color-text-muted);
+          user-select: none;
+        }
+
+        .symbol-prefix {
+          margin-right: 6px;
+        }
+
+        .symbol-suffix {
+          margin-left: 6px;
+        }
+
+        .num-input {
           width: 100%;
-          padding: 0.55rem 0.75rem 0.55rem 1.75rem;
-          border: 1px solid #cbd5e1;
-          border-radius: 6px;
-          font-size: 0.95rem;
+          border: none;
+          background: transparent;
+          font-family: var(--font-family-body);
+          font-size: 15px;
+          font-weight: 800;
+          color: var(--awc-navy);
+          text-align: right;
+          outline: none;
+        }
+
+        .num-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
           font-weight: 600;
         }
+
         .range-slider {
           width: 100%;
-          margin-top: 0.5rem;
-          accent-color: #0f766e;
+          height: 6px;
+          border-radius: 999px;
+          background: var(--awc-line);
+          outline: none;
+          accent-color: var(--color-border-interactive);
+          cursor: pointer;
+          margin-bottom: 8px;
         }
+
         .slider-limits {
           display: flex;
           justify-content: space-between;
-          font-size: 0.75rem;
-          color: #64748b;
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--color-text-muted);
         }
-        .grid-2col {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-        .grid-3col {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.5rem;
-        }
+
         .timeline-badge {
           display: inline-block;
-          background: #f1f5f9;
-          padding: 0.4rem 0.75rem;
-          border-radius: 6px;
-          font-size: 0.8rem;
-          color: #475569;
-          margin-bottom: 1.25rem;
+          background: var(--awc-jade-soft);
+          border: 1px solid #B7DDD3;
+          padding: 6px 12px;
+          border-radius: 10px;
+          font-size: 12px;
+          color: var(--awc-navy);
+          margin-bottom: 14px;
         }
+
         .assumptions-toggle-wrap {
-          margin-top: 0.5rem;
-          border-top: 1px dashed #cbd5e1;
-          padding-top: 1rem;
+          margin-top: 8px;
+          border-top: 1px dashed var(--awc-line);
+          padding-top: 14px;
         }
+
         .btn-toggle-assumptions {
-          background: none;
-          border: none;
-          color: #0f766e;
-          font-weight: 700;
-          font-size: 0.85rem;
+          background: var(--awc-paper);
+          border: 1px solid var(--awc-line);
+          border-radius: 10px;
+          color: var(--color-text-brand);
+          font-weight: 750;
+          font-size: 12.5px;
           cursor: pointer;
-          padding: 0;
+          padding: 9px 14px;
+          width: 100%;
+          text-align: left;
+          transition: all 0.15s ease;
         }
+
+        .btn-toggle-assumptions:hover {
+          border-color: var(--color-border-interactive);
+        }
+
         .assumptions-box {
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 1rem;
-          margin-top: 0.75rem;
+          background: var(--awc-paper);
+          border: 1px solid var(--awc-line);
+          border-radius: 14px;
+          padding: 16px;
+          margin-top: 12px;
         }
-        .input-hint {
-          display: block;
-          font-size: 0.7rem;
-          color: #64748b;
-          margin-top: 0.2rem;
-        }
-        .hero-metric-box {
-          background: #f0fdf4;
-          border: 1px solid #bbf7d0;
-          border-radius: 8px;
-          padding: 1.25rem;
-          text-align: center;
-          margin-bottom: 1.25rem;
-        }
-        .hero-label {
-          font-size: 0.85rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: #166534;
-        }
-        .hero-value {
-          font-size: 2rem;
-          font-weight: 800;
-          color: #15803d;
-          margin: 0.35rem 0;
-        }
-        .hero-sub {
-          font-size: 0.85rem;
-          color: #166534;
-        }
-        .allocation-bar-section {
-          margin-bottom: 1.5rem;
-        }
-        .allocation-bar-track {
+
+        /* Right Result Panel — Concept C Deep Atlantic Navy */
+        .result-panel {
+          background: var(--awc-navy);
+          color: #ffffff;
+          border-radius: 24px;
+          padding: 30px;
+          box-shadow: 0 22px 46px rgba(19, 42, 64, 0.2);
           display: flex;
-          height: 12px;
-          border-radius: 6px;
+          flex-direction: column;
+          gap: 18px;
+          position: relative;
           overflow: hidden;
         }
-        .bar-b1 { background: #3b82f6; }
-        .bar-b2 { background: #f59e0b; }
-        .bar-b3 { background: #10b981; }
+
+        .result-eyebrow {
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.72);
+        }
+
+        .result-headline-value {
+          font-family: var(--font-family-heading);
+          font-size: clamp(30px, 4.2vw, 44px);
+          font-weight: 900;
+          line-height: 1.04;
+          letter-spacing: -0.03em;
+          color: var(--awc-gold);
+          margin-top: -6px;
+        }
+
+        .result-subline {
+          font-size: 12.5px;
+          color: rgba(255, 255, 255, 0.78);
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .allocation-bar-section {
+          margin: 4px 0;
+        }
+
+        .allocation-bar-track {
+          display: flex;
+          height: 10px;
+          border-radius: 999px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bar-b1 { background: #60A5FA; }
+        .bar-b2 { background: var(--awc-gold); }
+        .bar-b3 { background: #5DD9C1; }
+
         .allocation-legend {
           display: flex;
-          gap: 1rem;
-          font-size: 0.75rem;
-          color: #475569;
-          margin-top: 0.4rem;
+          gap: 14px;
+          font-size: 11px;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.8);
+          margin-top: 8px;
           flex-wrap: wrap;
         }
-        .legend-item { display: flex; align-items: center; gap: 0.3rem; }
+
+        .legend-item { display: flex; align-items: center; gap: 6px; }
         .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot-b1 { background: #3b82f6; }
-        .dot-b2 { background: #f59e0b; }
-        .dot-b3 { background: #10b981; }
+        .dot-b1 { background: #60A5FA; }
+        .dot-b2 { background: var(--awc-gold); }
+        .dot-b3 { background: #5DD9C1; }
+
         .buckets-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 0.75rem;
-          margin-bottom: 1.25rem;
+          gap: 10px;
         }
-        @media (max-width: 650px) {
-          .buckets-grid {
-            grid-template-columns: 1fr;
-          }
-        }
+
         .bucket-card {
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 0.85rem;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 14px;
+          padding: 14px 12px;
           display: flex;
           flex-direction: column;
         }
-        .card-b1 { background: #eff6ff; border-color: #bfdbfe; }
-        .card-b2 { background: #fffbeb; border-color: #fde68a; }
-        .card-b3 { background: #ecfdf5; border-color: #a7f3d0; }
+
+        .card-b1 { border-top: 3px solid #60A5FA; }
+        .card-b2 { border-top: 3px solid var(--awc-gold); }
+        .card-b3 { border-top: 3px solid #5DD9C1; }
+
         .bucket-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 0.4rem;
+          margin-bottom: 6px;
         }
+
         .bucket-tag {
-          font-size: 0.7rem;
-          font-weight: 700;
+          font-size: 10.5px;
+          font-weight: 800;
           text-transform: uppercase;
         }
-        .tag-b1 { color: #1d4ed8; }
-        .tag-b2 { color: #b45309; }
-        .tag-b3 { color: #047857; }
+
+        .tag-b1 { color: #93C5FD; }
+        .tag-b2 { color: var(--awc-gold); }
+        .tag-b3 { color: #5DD9C1; }
+
         .bucket-years {
-          font-size: 0.7rem;
-          color: #64748b;
-          font-weight: 600;
+          font-size: 10px;
+          color: rgba(255, 255, 255, 0.65);
+          font-weight: 700;
         }
+
         .bucket-corpus-amt {
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: #0f172a;
-          margin-bottom: 0.35rem;
+          font-size: 16px;
+          font-weight: 850;
+          color: #ffffff;
+          margin-bottom: 6px;
         }
+
         .bucket-meta {
           display: flex;
           flex-direction: column;
-          gap: 0.15rem;
-          font-size: 0.75rem;
-          color: #475569;
-          margin-bottom: 0.5rem;
+          gap: 2px;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.78);
+          margin-bottom: 8px;
         }
+
         .bucket-desc {
-          font-size: 0.7rem;
-          color: #64748b;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.62);
           line-height: 1.35;
-          margin-top: auto;
+          margin: auto 0 0;
         }
+
         .insight-callout {
           display: flex;
-          gap: 0.75rem;
-          background: #f1f5f9;
-          border-left: 4px solid #0f766e;
-          padding: 0.85rem 1rem;
-          border-radius: 4px;
-          font-size: 0.85rem;
-          color: #334155;
+          gap: 10px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          padding: 14px;
+          border-radius: 14px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.85);
           line-height: 1.5;
+        }
+
+        .result-empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 48px 20px;
+          min-height: 280px;
+        }
+
+        .empty-state-icon {
+          font-size: 36px;
+          margin-bottom: 12px;
+          opacity: 0.9;
+        }
+
+        .empty-state-title {
+          font-family: var(--font-family-heading);
+          font-size: 18px;
+          font-weight: 800;
+          color: var(--awc-gold);
+          margin: 0 0 8px;
+        }
+
+        .empty-state-desc {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.78);
+          line-height: 1.55;
+          max-width: 320px;
+          margin: 0;
+        }
+
+        @media (max-width: 960px) {
+          .calc-layout-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 650px) {
+          .card-surface,
+          .result-panel {
+            padding: 20px;
+          }
+
+          .buckets-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>

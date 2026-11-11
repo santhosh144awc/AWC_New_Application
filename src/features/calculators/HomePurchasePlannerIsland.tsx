@@ -286,7 +286,7 @@ export const HomePurchasePlannerIsland: React.FC = () => {
             onClick={handleLoadExample}
             data-testid="load-example-btn"
           >
-            Load illustrative home-purchase example
+            Sample Data
           </button>
           <button
             type="button"
@@ -294,7 +294,7 @@ export const HomePurchasePlannerIsland: React.FC = () => {
             onClick={handleClearAll}
             data-testid="clear-all-btn"
           >
-            Clear all / Start over
+            Clear
           </button>
         </div>
       </div>
@@ -1237,17 +1237,18 @@ export const HomePurchasePlannerIsland: React.FC = () => {
               {/* RESULT CARD 4: YEAR-BY-YEAR ACCUMULATION SCHEDULE */}
               {result.yearlyFundingSchedule.length > 0 && (
                 <div className="result-card" data-testid="card-yearly-schedule">
-                  <div className="card-top-row">
+                  <div className="card-top-row" style={{ marginBottom: '12px' }}>
                     <span className="card-eyebrow">Progression Schedule</span>
-                    <button
-                      type="button"
-                      className="btn-toggle-schedule"
-                      onClick={() => setShowSchedule((prev) => !prev)}
-                      data-testid="toggle-schedule-btn"
-                    >
-                      {showSchedule ? '▲ Hide Year-by-Year Schedule' : '▼ View Year-by-Year Schedule'}
-                    </button>
                   </div>
+                  <button
+                    type="button"
+                    className="btn-toggle-schedule"
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', fontWeight: 800 }}
+                    onClick={() => setShowSchedule((prev) => !prev)}
+                    data-testid="toggle-schedule-btn"
+                  >
+                    {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+                  </button>
 
                   {showSchedule && (
                     <div className="schedule-drawer" data-testid="schedule-drawer">

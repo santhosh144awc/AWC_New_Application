@@ -117,9 +117,9 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
             id="reset-net-worth-example-btn"
             onClick={handleLoadExample}
             className="btn-toolbar-example"
-            title="Load illustrative urban family example"
+            title="Load sample data"
           >
-            Load Example
+            Sample Data
           </button>
           <button
             type="button"
@@ -128,7 +128,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
             className="btn-toolbar-clear"
             title="Clear all entries"
           >
-            Clear all entries
+            Clear
           </button>
         </div>
       </div>
@@ -190,7 +190,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
                   value={inputs.liquidAssets}
                   onChange={(e) => handleInputChange('liquidAssets', e.target.value)}
                   className={`num-input ${!isLiquidValid ? 'input-err' : ''}`}
-                  placeholder="500000"
+                  placeholder="0"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
                   value={inputs.financialAssets}
                   onChange={(e) => handleInputChange('financialAssets', e.target.value)}
                   className={`num-input ${!isFinancialValid ? 'input-err' : ''}`}
-                  placeholder="2500000"
+                  placeholder="0"
                 />
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
                   value={inputs.physicalAssets}
                   onChange={(e) => handleInputChange('physicalAssets', e.target.value)}
                   className={`num-input ${!isPhysicalValid ? 'input-err' : ''}`}
-                  placeholder="7000000"
+                  placeholder="0"
                 />
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function NetWorthCalculatorIsland(): React.JSX.Element {
                   value={inputs.securedLiabilities}
                   onChange={(e) => handleInputChange('securedLiabilities', e.target.value)}
                   className={`num-input ${!isSecuredValid ? 'input-err' : ''}`}
-                  placeholder="4000000"
+                  placeholder="0"
                 />
               </div>
             </div>

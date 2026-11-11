@@ -208,9 +208,9 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                 id="load-goal-example-btn"
                 onClick={handleLoadExample}
                 className="btn-example-pill"
-                title="Load illustrative 10-year milestone example"
+                title="Load sample data"
               >
-                Load illustrative example
+                Sample Data
               </button>
               {hasAnyEntered && (
                 <button
@@ -220,7 +220,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                   className="btn-reset-clean"
                   title="Clear all fields and start over"
                 >
-                  Clear all
+                  Clear
                 </button>
               )}
             </div>
@@ -265,7 +265,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                       min={50000}
                       max={50000000}
                       step={25000}
-                      placeholder="e.g. 2500000"
+                      placeholder="0"
                       onChange={(e) => handleInputChange('costToday', e.target.value)}
                       className={`num-input ${showCostError ? 'input-error' : ''}`}
                       aria-describedby={`${baseId}-cost-help`}
@@ -319,7 +319,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                       min={1}
                       max={35}
                       step={1}
-                      placeholder="e.g. 10"
+                      placeholder="0"
                       onChange={(e) => handleInputChange('yearsHorizon', e.target.value)}
                       className={`num-input ${showYearsError ? 'input-error' : ''}`}
                       aria-describedby={`${baseId}-years-help`}
@@ -377,7 +377,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                       min={0}
                       max={50000000}
                       step={25000}
-                      placeholder="e.g. 200000"
+                      placeholder="0"
                       onChange={(e) => handleInputChange('existingSavings', e.target.value)}
                       className={`num-input ${showSavingsError ? 'input-error' : ''}`}
                       aria-describedby={`${baseId}-savings-help`}
@@ -443,7 +443,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                       min={0}
                       max={25}
                       step={0.5}
-                      placeholder="e.g. 8"
+                      placeholder="0"
                       onChange={(e) => handleInputChange('annualInflationPercent', e.target.value)}
                       className={`num-input ${showInflationError ? 'input-error' : ''}`}
                       aria-describedby={`${baseId}-inflation-help`}
@@ -499,7 +499,7 @@ export default function GoalPlannerIsland(): React.JSX.Element {
                       min={0}
                       max={50}
                       step={0.5}
-                      placeholder="e.g. 12"
+                      placeholder="0"
                       onChange={(e) => handleInputChange('assumedAnnualReturnPercent', e.target.value)}
                       className={`num-input ${showReturnError ? 'input-error' : ''}`}
                       aria-describedby={`${baseId}-return-help`}

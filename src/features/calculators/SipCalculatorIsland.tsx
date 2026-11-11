@@ -219,7 +219,7 @@ export default function SipCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-amount-num`}
                     value={inputs.monthlyInvestment}
-                    placeholder="10000"
+                    placeholder="0"
                     min={500}
                     max={1000000}
                     step={500}
@@ -262,7 +262,7 @@ export default function SipCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-return-num`}
                     value={inputs.annualReturnPercent}
-                    placeholder="12"
+                    placeholder="0"
                     min={0}
                     max={50}
                     step={0.5}
@@ -306,7 +306,7 @@ export default function SipCalculatorIsland(): React.JSX.Element {
                     type="number"
                     id={`${baseId}-years-num`}
                     value={inputs.years}
-                    placeholder="10"
+                    placeholder="0"
                     min={1}
                     max={40}
                     step={1}
@@ -527,11 +527,12 @@ export default function SipCalculatorIsland(): React.JSX.Element {
               <div className="schedule-toggle-wrapper">
                 <button
                   type="button"
+                  id="toggle-sip-schedule-btn"
                   onClick={() => setShowSchedule(!showSchedule)}
                   className="btn-toggle-schedule"
                   aria-expanded={showSchedule}
                 >
-                  {showSchedule ? '▲ Hide Year-by-Year Schedule' : '▼ View Year-by-Year Growth Schedule'}
+                  {showSchedule ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
                 </button>
               </div>
 
@@ -1316,6 +1317,37 @@ export default function SipCalculatorIsland(): React.JSX.Element {
           color: #BDCEC9;
           line-height: 1.5;
           margin: 0;
+        }
+
+        /* Schedule Toggle */
+        .schedule-toggle-wrapper {
+          position: relative;
+          z-index: 1;
+          margin-bottom: 16px;
+        }
+
+        .btn-toggle-schedule {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          border-radius: 12px;
+          color: #ffffff;
+          padding: 12px 14px;
+          font-size: 12.5px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-align: center;
+        }
+
+        .btn-toggle-schedule:hover {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .num-input::placeholder {
+          color: rgba(19, 42, 64, 0.28);
+          font-weight: 600;
         }
 
         .result-foot {

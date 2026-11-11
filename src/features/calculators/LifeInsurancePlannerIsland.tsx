@@ -225,8 +225,7 @@ export const LifeInsurancePlannerIsland: React.FC = () => {
           data-testid="load-example-btn"
           id="load-example-btn"
         >
-          <span className="btn-icon" aria-hidden="true">💡</span>
-          Load Illustrative Family Example
+          Sample Data
         </button>
         <button
           type="button"
@@ -235,8 +234,7 @@ export const LifeInsurancePlannerIsland: React.FC = () => {
           data-testid="clear-all-btn"
           id="clear-all-btn"
         >
-          <span className="btn-icon" aria-hidden="true">↺</span>
-          Clear All
+          Clear
         </button>
       </div>
 
