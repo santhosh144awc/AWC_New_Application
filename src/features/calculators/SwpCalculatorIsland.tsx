@@ -31,6 +31,14 @@ const SAMPLE_STATE: FormState = {
   currentAge: '60'
 };
 
+function formatDurationYearsMonths(yearsFloat: number): string {
+  const totalMonths = Math.round(yearsFloat * 12);
+  const yrs = Math.floor(totalMonths / 12);
+  const mos = totalMonths % 12;
+  if (mos === 0) return `${yrs} ${yrs === 1 ? 'Year' : 'Years'}`;
+  return `${yrs} Yrs ${mos} Mos`;
+}
+
 export default function SwpCalculatorIsland(): React.JSX.Element {
   const [form, setForm] = useState<FormState>(EMPTY_STATE);
   const [lumpSums, setLumpSums] = useState<SWPLumpSumWithdrawal[]>([]);
@@ -283,71 +291,95 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
                 <span>12%</span>
               </div>
             </div>
-
-            {/* Schedule Toggle Button (moved below left side panel inputs) */}
-            {isValid && result && (
-              <div className="schedule-toggle-wrapper-left">
-                <button
-                  type="button"
-                  id="toggle-swp-schedule-btn"
-                  className="btn-toggle-schedule-left"
-                  onClick={() => setShowTable(!showTable)}
-                  aria-expanded={showTable}
-                >
-                  {showTable ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
-                </button>
-              </div>
-            )}
           </form>
+
+          {/* Schedule Toggle Button (moved below left side panel inputs) */}
+          {isValid && result && (
+            <div className="schedule-toggle-wrapper-left">
+              <button
+                type="button"
+                id="toggle-swp-schedule-btn"
+                className="btn-toggle-schedule-left"
+                onClick={() => setShowTable(!showTable)}
+                aria-expanded={showTable}
+              >
+                {showTable ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Right Column: Concept C Deep Atlantic Navy Results Panel */}
         <aside className="workbench-card result-panel swp-results-col" id="workbench-results" aria-labelledby="swp-results-heading">
-          {result ? (
-            <>
-              <div className="result-hero-box">
-                <span id="swp-results-heading" className="result-label">
-                  Portfolio Longevity Status
-                </span>
-                <div className="result-number" data-testid="swp-duration-text">
-                  {result.corpusDepleted ? `Depletes in ${result.swpDurationYears} Years` : 'Sustains 50+ Years'}
-                </div>
-                <div className="result-compact">
-                  Initial Withdrawal Rate: {initialWithdrawalRatePercent}% p.a.
-                </div>
-                <p className="result-explainer">
-                  {result.corpusDepleted
-                    ? `With a ${Number(form.stepUpRate) || 0}% annual step-up, the corpus exhausts around ${result.depletionDate || `Year ${Math.round(result.swpDurationYears)}`}.`
-                    : `Portfolio sustains withdrawals across 50 years with an estimated ${formatIndianCompact(result.finalCorpus)} closing balance.`}
-                </p>
-              </div>
+          {result ? (() => {
+            const initialCorpusNum = Number(form.initialCorpus) || 0;
+            const monthlySwpNum = Number(form.monthlySWP) || 0;
+            const stepUpNum = Number(form.stepUpRate) || 0;
+            const durationText = result.corpusDepleted ? formatDurationYearsMonths(result.swpDurationYears) : '50+ Years';
+            const totalReturnsEarned = Math.max(0, result.totalWithdrawals + result.finalCorpus - initialCorpusNum);
 
-              <div className="metric-grid">
-                <div className="metric">
-                  <small className="metric-label">Total Withdrawn</small>
-                  <b className="metric-value highlight-val">{formatINR(result.totalWithdrawals)}</b>
-                  <span className="metric-sub">
-                    {(result.totalWithdrawals / (Number(form.initialCorpus) || 1)).toFixed(1)}x initial capital
+            return (
+              <>
+                <div className="result-hero-box">
+                  <span id="swp-results-heading" className="result-label">
+                    How Long Your Money Lasts
                   </span>
+                  <div className="result-number" data-testid="swp-duration-text">
+                    Lasts {durationText}
+                  </div>
+                  <div className="result-compact">
+                    Starting withdrawal: {initialWithdrawalRatePercent}% per year ({formatINR(monthlySwpNum)}/mo)
+                  </div>
+                  <p className="result-explainer">
+                    {result.corpusDepleted
+                      ? stepUpNum > 0
+                        ? `Even with ${stepUpNum}% yearly withdrawal increases, your money funds your monthly income for ${durationText}.`
+                        : `At a fixed ${formatINR(monthlySwpNum)}/month, your savings fund your monthly income for ${durationText}.`
+                      : `Your savings earn enough returns to fund all monthly payouts for 50+ years without running out.`}
+                  </p>
                 </div>
 
-                <div className="metric">
-                  <small className="metric-label">Ending Corpus</small>
-                  <b className="metric-value">{formatINR(result.finalCorpus)}</b>
-                  <span className="metric-sub">After 50 years or depletion</span>
+                <div className="metric-grid">
+                  <div className="metric">
+                    <small className="metric-label">Total Money Withdrawn</small>
+                    <b className="metric-value highlight-val">{formatINR(result.totalWithdrawals)}</b>
+                    <span className="metric-sub">
+                      {(result.totalWithdrawals / Math.max(1, initialCorpusNum)).toFixed(1)}x of your {formatIndianCompact(initialCorpusNum)} invested
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <small className="metric-label">Money Left at End</small>
+                    <b className="metric-value">{formatINR(result.finalCorpus)}</b>
+                    <span className="metric-sub">
+                      {result.corpusDepleted
+                        ? `Fully used up after ${durationText}`
+                        : 'Remaining balance after 50 years'}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="insight-card">
-                <span className="insight-badge">Longevity Insight</span>
-                <p className="insight-text">{result.keyInsight}</p>
-              </div>
+                <div className="insight-card">
+                  <span className="insight-badge">Simple Summary</span>
+                  <p className="insight-text">
+                    {result.corpusDepleted ? (
+                      <>
+                        You start with <strong>{formatIndianCompact(initialCorpusNum)}</strong>. While you withdraw monthly, your remaining money keeps earning <strong>{form.annualReturnRate}%</strong> p.a. — adding <strong>{formatIndianCompact(totalReturnsEarned)}</strong> in returns so you receive <strong>{formatIndianCompact(result.totalWithdrawals)}</strong> in total before the balance reaches ₹0.
+                      </>
+                    ) : (
+                      <>
+                        You start with <strong>{formatIndianCompact(initialCorpusNum)}</strong>. Your investments earn <strong>{formatIndianCompact(totalReturnsEarned)}</strong> in returns over 50 years — paying you <strong>{formatIndianCompact(result.totalWithdrawals)}</strong> in total income and still leaving <strong>{formatIndianCompact(result.finalCorpus)}</strong> behind.
+                      </>
+                    )}
+                  </p>
+                </div>
 
-              <p className="result-foot" style={{ marginTop: 'auto' }}>
-                Simulates monthly withdrawals with geometric return compounding. Excludes capital gains tax, exit loads, and market sequence-of-returns volatility.
-              </p>
-            </>
-          ) : (
+                <p className="result-foot" style={{ marginTop: 'auto' }}>
+                  Simulates monthly withdrawals with annual compounding. Excludes taxes, exit loads, and market ups & downs.
+                </p>
+              </>
+            );
+          })() : (
             <div className="invalid-state-box">
               <span className="invalid-icon">{isBlank ? '📊' : '⚠️'}</span>
               <p className="invalid-msg">
@@ -599,6 +631,15 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           position: relative;
           overflow: hidden;
           box-shadow: 0 18px 40px rgba(19, 42, 64, 0.18);
+          display: flex;
+          flex-direction: column;
+        }
+
+        @media (min-width: 960px) {
+          .result-panel {
+            position: sticky;
+            top: 96px;
+          }
         }
 
         .result-hero-box {
@@ -707,16 +748,20 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
         }
 
         .insight-text {
-          font-size: 11.5px;
+          font-size: 12px;
           color: #DDEBE7;
-          line-height: 1.5;
+          line-height: 1.55;
           margin: 0;
+        }
+
+        .insight-text strong {
+          color: #ffffff;
         }
 
         /* Schedule Toggle (Left Side Panel) */
         .schedule-toggle-wrapper-left {
-          margin-top: 24px;
-          padding-top: 16px;
+          margin-top: 18px;
+          padding-top: 18px;
           border-top: 1px dashed var(--awc-line);
         }
 
