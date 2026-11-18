@@ -283,6 +283,21 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
                 <span>12%</span>
               </div>
             </div>
+
+            {/* Schedule Toggle Button (moved below left side panel inputs) */}
+            {isValid && result && (
+              <div className="schedule-toggle-wrapper-left">
+                <button
+                  type="button"
+                  id="toggle-swp-schedule-btn"
+                  className="btn-toggle-schedule-left"
+                  onClick={() => setShowTable(!showTable)}
+                  aria-expanded={showTable}
+                >
+                  {showTable ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
+                </button>
+              </div>
+            )}
           </form>
         </section>
 
@@ -328,19 +343,7 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
                 <p className="insight-text">{result.keyInsight}</p>
               </div>
 
-              <div className="schedule-toggle-wrapper">
-                <button
-                  type="button"
-                  id="toggle-swp-schedule-btn"
-                  className="btn-toggle-schedule"
-                  onClick={() => setShowTable(!showTable)}
-                  aria-expanded={showTable}
-                >
-                  {showTable ? '▲ Hide Year-by-Year Growth Schedule' : '▼ View Year-by-Year Growth Schedule'}
-                </button>
-              </div>
-
-              <p className="result-foot">
+              <p className="result-foot" style={{ marginTop: 'auto' }}>
                 Simulates monthly withdrawals with geometric return compounding. Excludes capital gains tax, exit loads, and market sequence-of-returns volatility.
               </p>
             </>
@@ -710,29 +713,36 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           margin: 0;
         }
 
-        .schedule-toggle-wrapper {
-          position: relative;
-          z-index: 1;
-          margin-bottom: 16px;
+        /* Schedule Toggle (Left Side Panel) */
+        .schedule-toggle-wrapper-left {
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px dashed var(--awc-line);
         }
 
-        .btn-toggle-schedule {
+        .btn-toggle-schedule-left {
           width: 100%;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          background: var(--awc-jade-soft);
+          border: 1.5px solid #B7DDD3;
           border-radius: 12px;
-          color: #ffffff;
+          color: var(--awc-jade-deep);
           padding: 12px 14px;
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 800;
           cursor: pointer;
           transition: all 0.15s ease;
           text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
         }
 
-        .btn-toggle-schedule:hover {
-          background: rgba(255, 255, 255, 0.15);
-          border-color: rgba(255, 255, 255, 0.35);
+        .btn-toggle-schedule-left:hover {
+          background: var(--awc-mint);
+          border-color: var(--color-border-interactive);
+          color: var(--awc-navy);
+          transform: translateY(-1px);
         }
 
         .result-foot {
@@ -770,7 +780,8 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
           border: 1px solid var(--awc-line);
           border-radius: var(--radius-xl);
           padding: 28px;
-          margin-top: 28px;
+          margin-top: 32px;
+          margin-bottom: 24px;
           box-shadow: var(--shadow-card);
         }
 
@@ -795,6 +806,9 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
 
         .table-responsive {
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          border: 1px solid #E5EBE8;
+          border-radius: 14px;
         }
 
         .schedule-table {
@@ -806,9 +820,18 @@ export default function SwpCalculatorIsland(): React.JSX.Element {
 
         .schedule-table th,
         .schedule-table td {
-          padding: 12px 14px;
+          padding: 12px 16px;
           border-bottom: 1px solid #EDF3F1;
           white-space: nowrap;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .schedule-table tr:last-child td {
+          border-bottom: none;
+        }
+
+        .schedule-table tr:hover td {
+          background-color: #F8FAF9;
         }
 
         .schedule-table th {
